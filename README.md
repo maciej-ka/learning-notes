@@ -1,5 +1,8 @@
 ### Contents
 
+[Algorithms](./algorithms.md)  
+The Last Algorithms Course You'll Need, Frontend Masters
+
 [Docker](./docker.md)  
 Kubernetes in action, Manning  
 Complete Intro to Containers, Frontend Masters

@@ -155,7 +155,7 @@ continue
   
   
 ## Frontendmasters: Rust for typescript devs  
-Primegen  
+Primeagen  
 https://frontendmasters.com/courses/rust-ts-devs  
 course:  
 https://theprimeagen.github.io/rust-for-typescript-devs/  

@@ -12,34 +12,34 @@ cargo run
 ```  
   
 all variables are immutable by default  
-```  
+```rust  
 let apples = 5;  
 ```  
   
 to make variable mutable, use `mut` keyword  
-```  
+```rust  
 let mut apples = 5;  
 ```  
   
 we can call `read_line` short, if we include library  
-```  
+```rust  
 use std::io;  
 io::stdin().read_line(...);  
 ```  
   
 but also we can call it without including  
-```  
+```rust  
 std::io::stdin().read_line(...);  
 ```  
   
 to pass by reference use `&` keyword  
-```  
+```rust  
 io::stdin().read_line(&guess);  
 ```  
   
 however, references are also immutable by default  
 so to pass mutable reference add `mut` keyword  
-```  
+```rust  
 io::stdin().read_line(&mut guess);  
 ```  
   
@@ -54,11 +54,11 @@ Ok: will return value that Ok is holding
 Err: will cause program to crash  
   
 string templates in `println`  
-```  
+```rust  
 println!("your guess: {guess}");  
 ```  
 or empty brackets  
-```  
+```rust  
 println!("two is : {} and double two is {}", 2, 2 * 2);  
 ```  
   
@@ -89,11 +89,11 @@ cargo update
   
 ranges  
 include start  
-```  
+```rust  
 start..end  
 ```  
 include start and end  
-```  
+```rust  
 start..=end  
 ```  
   
@@ -108,7 +108,7 @@ has many arms
 each is made of a pattern  
 and code to run when value fits  
 match ends after first fit  
-```  
+```rust  
 match guess.cmp(&secret_number) {  
     Ordering::Less => println!("Too small"),  
     Ordering::Greater => println!("Too big"),  
@@ -124,7 +124,7 @@ and a type inference
   
 parse string into number  
 `parse` returns Result variant `Err` or `Ok`  
-```  
+```rust  
 let guess: u32 = guess  
     .trim()  
     .parse()  
@@ -132,7 +132,7 @@ let guess: u32 = guess
 ```  
 or with matching Result  
 `_` is a catch-all value  
-```  
+```rust  
 let guess: u32 = match guess.trim().parse() {  
     Ok(num) => num,  
     Err(_) => continue,  
@@ -143,11 +143,11 @@ when we want to reuse variable
 (even with a different type)  
   
 endless  
-```  
+```rust  
 loop {...}  
 ```  
 works with  
-```  
+```rust  
 break  
 continue  
 ```  
@@ -172,7 +172,7 @@ unlike like in C where its text replacement
 here its token, replacement, AST  
   
 ### 2. Basics  
-```  
+```rust  
 let foo = 5; // constant  
 let mut foo = 5; // mutable  
 ```  
@@ -183,7 +183,7 @@ while you are changing a type of it
   
 #### control  
 generally no brackets  
-```  
+```rust  
 if ... {  
 } else if ... {  
 } else {  
@@ -193,7 +193,7 @@ for i in 0..10 {
 }  
 ```  
 including 10  
-```  
+```rust  
 for i in 0..=10 {  
 }  
   
@@ -201,26 +201,26 @@ while ... {
 }  
 ```  
 endless loop  
-```  
+```rust  
 loop {  
 }  
 ```  
 iterate over collection  
-```  
+```rust  
 for x in &some_array {  
 }  
 ```  
 last call here is to tell  
 what collection should become  
 in this case `<Vec<_>>`: become vector of original type  
-```  
+```rust  
 vec![1, 2, 3]  
   .iter()  
   .map(...)  
   .collect::<Vec<_>>()  
 ```  
 functions  
-```  
+```rust  
 fn foo() {  
 }  
   
@@ -230,13 +230,13 @@ fn foo(arg1: f64, arg2: f64) {
 return type  
 in typescript better not define return type (let TS infer it)  
 in rust you must define return type  
-```  
+```rust  
 fn foo() -> usize {  
   return 5;  
 }  
 ```  
 lambdas  
-```  
+```rust  
 |x| {  
   return x;  
 }  
@@ -245,7 +245,7 @@ lambdas
 ```  
 classes and methods  
 data and behaviour are defined in two separate blocks  
-```  
+```rust  
 struct Foo {  
   properties ...  
   pub properties ...  
@@ -271,7 +271,7 @@ but this can be hard to debug
   
 btw. having properties in interface may be considered bad  
 because properties are sort of implementation detail  
-```  
+```rust  
 trait Foo {  
   // no properties  
   fn method(&self) -> retType;  

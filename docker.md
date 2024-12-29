@@ -2,7 +2,7 @@
 https://livebook.manning.com/book/kubernetes-in-action-second-edition/chapter-1/v-14/  
   
 ### Introducing Kubernetes  
-in greek: person who steers the ship  
+<%= in greek: person who steers the ship   %>
 also called Kates, k8s  
   
 #### What it is  
@@ -254,10 +254,10 @@ yes if
   
   
   
-## Docker Basics  
+## Complete Intro to Containers, v2  
 https://frontendmasters.com/workshops/complete-intro-containers-v2/  
   
-= 1. Welcome =  
+### 1. Welcome  
   
 #### Simple  
 Containers may be intimidating but in reality they are suprisingly simple.  

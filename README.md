@@ -52,3 +52,7 @@ Rust for TypeScript Developers, Frontend Masters
 [Typescript](./typescript.md)  
 TypeScript: From First Steps to Professional, Frontend Masters  
 Intermediate Typescript, Frontend Masters
+
+[Various](./various.md)  
+Fudamentals of web performance, Frontend Masters
+

@@ -37,6 +37,11 @@ Hotwire Screencast
 Using Rails for API-only Applications, Rails Guides  
 Getting Started with Rails, Rails Guides
 
+[React](./react.md)  
+Introduction to Next.js, Frontend Masters  
+Learn Next.js, Next.js Guide  
+Complete Intro to React, Frontend Masters
+
 [Rust](./rust.md)  
 The Rust Programming Language, No Starch Press  
 Rust for TypeScript Developers, Frontend Masters

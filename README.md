@@ -12,6 +12,10 @@ Software Developer Success, Frontend Masters
 [CSS](./css.md)  
 Tailwind CSS, Frontend Masters
 
+[Databases](./databases.md)  
+Complete Intro to Databases, Frontend Masters  
+Complete Intro to SQLite, Frontend Masters
+
 [Docker](./docker.md)  
 Kubernetes in action, Manning  
 Complete Intro to Containers, Frontend Masters

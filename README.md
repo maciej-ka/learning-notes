@@ -24,6 +24,9 @@ Complete Intro to Containers, Frontend Masters
 Building APIs with C# and .NET, Frontend Masters  
 Introduction to C# and .NET, Frontend Masters
 
+[Elixir](./elixir.md)  
+Elixir in action, Manning
+
 [Rust](./rust.md)  
 The Rust Programming Language, No Starch Press  
 Rust for TypeScript Developers, Frontend Masters

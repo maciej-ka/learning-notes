@@ -32,6 +32,11 @@ Functional Programming with Javascript, Frontend Masters
 
 [Linux](./linux.md)
 
+[Rails](./rails.md)  
+Hotwire Screencast  
+Using Rails for API-only Applications, Rails Guides  
+Getting Started with Rails, Rails Guides
+
 [Rust](./rust.md)  
 The Rust Programming Language, No Starch Press  
 Rust for TypeScript Developers, Frontend Masters

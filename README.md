@@ -9,6 +9,9 @@ AWS For Front-End Engineers, Frontend Masters
 [Career](./career.md)  
 Software Developer Success, Frontend Masters
 
+[CSS](./css.md)  
+Tailwind CSS, Frontend Masters
+
 [Docker](./docker.md)  
 Kubernetes in action, Manning  
 Complete Intro to Containers, Frontend Masters

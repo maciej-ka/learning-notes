@@ -20,6 +20,10 @@ Complete Intro to SQLite, Frontend Masters
 Kubernetes in action, Manning  
 Complete Intro to Containers, Frontend Masters
 
+[Dotnet](./dotnet.md)  
+Building APIs with C# and .NET, Frontend Masters  
+Introduction to C# and .NET, Frontend Masters
+
 [Rust](./rust.md)  
 The Rust Programming Language, No Starch Press  
 Rust for TypeScript Developers, Frontend Masters

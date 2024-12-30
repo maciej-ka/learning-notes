@@ -48,3 +48,7 @@ Well Grounded Rubyist, Manning
 [Rust](./rust.md)  
 The Rust Programming Language, No Starch Press  
 Rust for TypeScript Developers, Frontend Masters
+
+[Typescript](./typescript.md)  
+TypeScript: From First Steps to Professional, Frontend Masters
+Intermediate Typescript, Frontend Masters

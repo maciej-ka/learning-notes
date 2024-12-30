@@ -56,3 +56,5 @@ Intermediate Typescript, Frontend Masters
 [Various](./various.md)  
 Fudamentals of web performance, Frontend Masters
 
+[Vim](./vim.md)  
+Vim Fundamentals, Frontend Masters

@@ -42,6 +42,9 @@ Introduction to Next.js, Frontend Masters
 Learn Next.js, Next.js Guide  
 Complete Intro to React, Frontend Masters
 
+[Ruby](./ruby.md)  
+Well Grounded Rubyist, Manning
+
 [Rust](./rust.md)  
 The Rust Programming Language, No Starch Press  
 Rust for TypeScript Developers, Frontend Masters

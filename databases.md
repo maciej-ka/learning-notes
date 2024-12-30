@@ -77,8 +77,7 @@ the more "queryable" db will be later
 
 
 
-
-### ChatGPT: Mongo overview
+## ChatGPT: Mongo overview
 #### how mongo data is organized?
 database  
 collection  
@@ -170,7 +169,8 @@ depending on the configuration
 DynamoDB: noSQL database
 
 
-### Complete Intro to SQLite
+
+## Complete Intro to SQLite
 https://frontendmasters.com/courses/sqlite/  
 Frontend Masters, Brian Holt  
 Complete intro to SQLite

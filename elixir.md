@@ -1,7 +1,7 @@
 ## Elixir in action
 https://livebook.manning.com/book/elixir-in-action-third-edition
 
-#### = First steps =
+#### First steps
 Elixir is built on top of Erlang
 
 #### Erlang

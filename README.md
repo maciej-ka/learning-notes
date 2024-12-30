@@ -27,6 +27,9 @@ Introduction to C# and .NET, Frontend Masters
 [Elixir](./elixir.md)  
 Elixir in action, Manning
 
+[Javascript](./javascript.md)  
+Functional Programming with Javascript, Frontend Masters
+
 [Rust](./rust.md)  
 The Rust Programming Language, No Starch Press  
 Rust for TypeScript Developers, Frontend Masters

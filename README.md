@@ -30,6 +30,8 @@ Elixir in action, Manning
 [Javascript](./javascript.md)  
 Functional Programming with Javascript, Frontend Masters
 
+[Linux](./linux.md)
+
 [Rust](./rust.md)  
 The Rust Programming Language, No Starch Press  
 Rust for TypeScript Developers, Frontend Masters

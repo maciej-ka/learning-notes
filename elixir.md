@@ -47,18 +47,18 @@ sharing happens by asynchronous messages
 and is same for processess on one machine and many
 
 #### Erlang parts
-- language  
-- virtual machine  
-- framework  
+- language
+- virtual machine
+- framework
 - tools
 
 #### framework
 Open Telecom Platform OTP  
 misleading name  
-- concurrency patterns  
-- error detection  
-- packaging into libraries  
-- systems deployment  
+- concurrency patterns
+- error detection
+- packaging into libraries
+- systems deployment
 - live code updates
 
 #### microservices vs erlang
@@ -99,8 +99,8 @@ started and ran by Jose Valim
 more open to contributors
 
 #### Server process that adds two numbers:
-- start server process  
-- run sum  
+- start server process
+- run sum
 - clean
 
 Erlang
@@ -202,7 +202,7 @@ github repos 20k erlang, 45k elixir
 perhaps there will be a missing library
 
 Some ideas for elixir/erlang library  
-- tracing tools for BEAM processess  
+- tracing tools for BEAM processess
 - interation with open telemetry
 
 ### Building blocks
@@ -577,8 +577,8 @@ get element has O(n) complexity
 
 not good for direct access  
 use instead:  
-- tuple  
-- map  
+- tuple
+- map
 - higher level data structure
 
 full docs  
@@ -1051,8 +1051,8 @@ datetime.time_zone
 #### IO lists
 used for incrementally build output  
 each element has to be:  
-- byte integer  
-- binary or  
+- byte integer
+- binary or
 - IO list (IO list is recursive)
 
 ```elixir
@@ -1198,7 +1198,7 @@ mix test
 ### Control flow
 #### pattern matching
 two goals  
-- check right-side term (error if not matched)  
+- check right-side term (error if not matched)
 - bind some parts
 ```elixir
 {name, age} = {"Bob", 25}
@@ -1381,8 +1381,8 @@ that can be stored in variable
 on receiver side  
 to pull message  
 will wait indefinetly if:  
-- mailbox is empty  
-- no message matches pattern  
+- mailbox is empty
+- no message matches pattern
 (if message doesn't match, its put back to mailbox)
 
 ```elixir

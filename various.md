@@ -1,6 +1,7 @@
-## Microfrontends
+[##](##) Microfrontends
 Micro Frontends in Action  
 Manning book by Michael Geers
+https://learning.oreilly.com/library/view/micro-frontends-in/9781617296871/
 
 slice application into pieces so that  
 multiple teams can work independently
@@ -102,6 +103,43 @@ and a button to add to basket
 sometimes including a fragment  
 requires prodiding a context  
 like selected product
+
+#### Frontend integration techniques
+- Page transitions 
+- Composition (of components)
+- Communication (how busket knows to update after button click)
+
+#### Shared topics
+Web performance
+Because we assemble a page from fragments made by multiple teams,
+we often end up with more code that our user must download
+Team isolation comes with additional cost.
+Microfrontends results in more javascript code for client to download.
+
+Design systems
+To ensure a consisten look and feel
+
+Sharing knowledge
+Pick a shared solution.
+Or adopt solutions from other teams.
+
+#### Shared nothing architecture
+Every shared code is a potential for non-trivial maintenance later.
+Avoiding this is sometimes called "shared nothing".
+Although in reality this is not completely true.
+
+#### Redundancy
+There is a lot of redundancy in Microfrontends approach.
+Idea is that faster feature development is worth this cost.
+It's a tradeoff.
+
+#### Consistency
+Perhaps its not good idea if every team to have different tech.
+One solution could be to create a set of allowed techs.
+
+#### Two pizza rule
+team is two large big if two pizzas can't feed it
+(Jeff Bezos)
 
 
 

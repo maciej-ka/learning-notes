@@ -1,13 +1,18 @@
 ## The Rust Programming Language
-book, Second edition  
+https://learning.oreilly.com/library/view/the-rust-programming/9781098156817  
 Steve Klabnik and Carol Nichols
 
 #### toml
 "Toms Obvious Markup Language"
 
 ### 2. Guessing Game
-run
+new project
+```bash
+cargo new my-project
 ```
+
+run
+```bash
 cargo run
 ```
 
@@ -151,6 +156,94 @@ works with
 break
 continue
 ```
+
+### 3. Common Programming Concepts
+
+#### Mutability
+variables are immutable by default
+
+this will fail
+```rust
+let x = 5;
+x = 6;
+```
+
+but this will work
+```rust
+let mut x = 5;
+x = 6;
+```
+
+mutability bugs are especially difficult to find  
+when some place in code is changing value only sometimes
+
+also this will work (but because of shadowing)
+```rust
+let x = 5;
+let x = 6;
+```
+
+#### Constants
+computed at compile time  
+can be in global scope  
+helps to parametrize whole application
+
+```rust
+const THREE_HOURS_IN_SECONDS: u32 = 60 * 60 * 3;
+```
+
+#### Shadowing
+spares from having different names of transformed variable
+
+#### Data types
+Rust is statically typed  
+it must know all types at compile time
+
+Compiler can usually infer type.  
+When many types are possible, we must add.  
+This will not compile without `u32`
+```rust
+let x: u32 = "32".parse().expect("not a number");
+```
+
+#### Integer types
+```rust
+i8  // 8 bit
+i16
+i32 // rust default
+i64
+i128
+
+u8  // unsigned
+u16
+u32
+u64
+u128
+
+isize // 64 bit if on 64 bit machine, otherwise 32
+usize
+```
+
+allowed formats
+```rust
+98_222      // separator
+0xff        // hex
+0o77        // octal
+0b1111_0000 // binary
+b'A' byte (only u8)
+```
+
+#### dealing with overflow
+- in debug mode program will exit with error (so called "panic")
+- in --release mode will use two complement wrapping
+
+handle with one of arithmetic family  
+- wrapping_* implicit two's complement
+- checked_* returns None
+- overflowing_* returns value and flag was there overflow
+- saturating_* stay at maximum or minimum
+
+
 
 
 

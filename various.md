@@ -1,4 +1,4 @@
-[##](##) Microfrontends
+## Microfrontends
 Micro Frontends in Action  
 Manning book by Michael Geers
 https://learning.oreilly.com/library/view/micro-frontends-in/9781617296871/

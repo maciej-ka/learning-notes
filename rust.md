@@ -1,4 +1,4 @@
-## The Rust Programming Language
+## The Rust Programming Language  
 https://learning.oreilly.com/library/view/the-rust-programming/9781098156817  
 Steve Klabnik and Carol Nichols
 
@@ -296,12 +296,83 @@ let first = a[0];
 let second = a[1];
 ```
 
+standard library also has a vector  
+which can change size
+
 #### Out of bounds
 in runtime, when trying to access out of bounds  
-program will panic with error ""
+program will panic with error  
+```
+index out of bounds: the len is 3 but the index is 4
+```
 
-standard library also has vector  
-that can change size
+#### Functions
+Use snake case for function and variable names.  
+It's possible to call a function before its definition
+
+```rust
+fn main() {
+    another_function(5, 'm')
+}
+
+fn another_function(x: i32, unit: char) {
+    println!("The value of x is: {x}{unit}")
+}
+```
+
+Its mandatory to declare type for each parameter.
+
+#### Statements
+Perform some action, don't return a value.
+
+Examples:  
+Creating variable and assigning a value is statement.  
+Because of that you **cannot** use let in assignments, like:
+```rust
+let x = (let y = 5);
+```
+
+it will panic with `expected expression, found statement`
+
+#### Expressions
+Evaluate to a value result.
+
+Examples:  
+Calling a function, calling a macro.  
+New scope created with curly brackets is expression.
+```rust
+let y = {
+    let x = 6;
+    x + 1
+};
+```
+
+Here y will have value 7.
+
+Note that `x + 1` doesn't end with semicolon.  
+If you add semicolon it will become statement.  
+And it will not return value, y will become `()`, a unit.
+
+#### Function return value
+Return type has to be defined.  
+Notation: after an arrow `->`  
+Return is a value of expression in block or function body
+
+```rust
+fn five() -> i32 {
+    5
+}
+```
+
+Note again, no semicolon because its an expression.
+
+Also there is `return` keyword for returning early.
+
+#### Comments
+```rust
+// a comment
+```
+
 
 
 

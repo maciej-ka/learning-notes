@@ -224,6 +224,11 @@ isize // 64 bit if on 64 bit machine, otherwise 32
 usize
 ```
 
+division truncuates to next integer toward zero
+```rust
+let truncated = -5 / 3; // Results in -1
+```
+
 allowed formats
 ```rust
 98_222      // separator
@@ -233,16 +238,70 @@ allowed formats
 b'A' byte (only u8)
 ```
 
-#### dealing with overflow
+#### Overflow
 - in debug mode program will exit with error (so called "panic")
 - in --release mode will use two complement wrapping
 
-handle with one of arithmetic family  
-- wrapping_* implicit two's complement
-- checked_* returns None
-- overflowing_* returns value and flag was there overflow
-- saturating_* stay at maximum or minimum
+handle overvlow with one of arithmetic family  
+methods like `wrapping_add`
+```rust
+wrapping_*    // implicit two's complement
+checked_*     // returns None
+overflowing_* // returns value and flag was there overflow
+saturating_*  // stay at maximum or minimum
+```
 
+#### Float types
+default is 64, because its usually as fast as 32  
+but capable of more precision
+```rust
+f32
+f64 // rust default
+```
+
+#### Chars
+use single quote  
+has 4B, represents unicode scalar value  
+may be misleading, not intutitive (explained later)
+
+#### Tuple
+fixed length, they don't grow  
+example with optional type annotations  
+to read, use destructing or `.` and index
+```rust
+let tup: (i32, f64, u8) = (500, 6.4, 1);
+let (x, y, z) = tup;
+println!("The value of y is: {y}");
+let five_hundred = x.0;
+let one = x.2;
+```
+
+#### Unit
+tuple of zero length  
+used as return in expressions which don't return anything
+```rust
+()
+```
+
+#### Array
+fixed length  
+can live in stack, not heap  
+each element has to be of same type
+```rust
+let a = [1, 2, 3, 4, 5];
+let a: [i32; 5] = [1, 2, 3, 4, 5];
+let a = [3; 5]; // initialize as [3, 3, 3, 3, 3]
+
+let first = a[0];
+let second = a[1];
+```
+
+#### Out of bounds
+in runtime, when trying to access out of bounds  
+program will panic with error ""
+
+standard library also has vector  
+that can change size
 
 
 

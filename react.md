@@ -1,3 +1,28 @@
+## React form validation libraries
+| Name                                                                        | Stars | Year |
+|-----------------------------------------------------------------------------|-------|------|
+| [React Hook Form](https://github.com/react-hook-form/react-hook-form)       | 42k   | 2019 |
+| [Formik](https://github.com/jaredpalmer/formik)                             | 34k   | 2017 |
+| [Yup](https://github.com/jquense/yup)                                       | 23k   | 2014 |
+| [Validator.js](https://github.com/validatorjs/validator.js)                 | 23k   | 2010 |
+| [React JSONSchema Form](https://github.com/rjsf-team/react-jsonschema-form) | 13k   | 2015 |
+| [Redux Form](https://github.com/redux-form/redux-form)                      | 12k   | 2015 |
+| [React Final Form](https://github.com/final-form/react-final-form)          | 7k    | 2017 |
+| [Informed](https://github.com/teslamotors/informed)                         | 1k    | 2018 |
+| [React Formik](https://github.com/formio/react)                             | 0.3k  | 2015 |
+
+## Headless component libraries
+| Name                                                                                 | Stars | Year  |
+|--------------------------------------------------------------------------------------|-------|-------|
+| [Headless UI](https://github.com/tailwindlabs/headlessui)                            | 26k   | 2020  |
+| [Radix UI](https://github.com/radix-ui/primitives)                                   | 16k   | 2020  |
+| [React Aria](https://github.com/adobe/react-spectrum/tree/main/packages/@react-aria) | 13k?  | 2016? |
+| [Donwshift](https://github.com/downshift-js/downshift)                               | 12k   | 2017  |
+| [Ariakit](https://github.com/ariakit/ariakit)                                        | 8k    | 2018  |
+| [Reach UI](https://github.com/reach/reach-ui)                                        | 6k    | 2018  |
+| [Chakra Ark](https://github.com/chakra-ui/ark)                                       | 4k    | 2022  |
+*note: Chakra is not headless, it comes with own styled components*
+
 ## Introduction to Next.js, v3
 https://frontendmasters.com/courses/next-js-v3/  
 https://nextjs.org/docs  
@@ -57,17 +82,6 @@ Next doesn't use websocket
 #### Tailwind and headless components
 Headless components: components that have functionality but no style  
 Tailwind: actually its javascript library that generates css
-
-- Headless UI [20k stars] https://github.com/tailwindlabs/headlessui  
-- Radix UI [12k stars] https://github.com/radix-ui/primitives  
-- Donwshift [11k stars] https://github.com/downshift-js/downshift  
-- React Aria [9k stars] https://github.com/adobe/react-spectrum/tree/main/packages/@react-aria
-
-- Ark UI  
-- Reakit  
-- Reach UI
-
-*note: Chakra is not headless, it comes with own styled components*
 
 #### Setup Next.js
 ```bash

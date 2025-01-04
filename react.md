@@ -21,6 +21,7 @@
 | [Ariakit](https://github.com/ariakit/ariakit)                                        | 8k    | 2018  |
 | [Reach UI](https://github.com/reach/reach-ui)                                        | 6k    | 2018  |
 | [Chakra Ark](https://github.com/chakra-ui/ark)                                       | 4k    | 2022  |
+
 *note: Chakra is not headless, it comes with own styled components*
 
 ## Introduction to Next.js, v3

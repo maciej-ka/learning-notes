@@ -1,3 +1,25 @@
+## NestJS Fundamentals
+https://courseflix.net/course/nestjs-fundamentals
+
+#### Introduction
+Framework around `Node.js`  
+includes setup  
+and archiecture
+
+scalable  
+decoupled
+
+express can be changed to fastify
+
+good for:  
+rest api  
+microservices  
+web sockets  
+graphql
+
+#### Installing
+
+
 ## Functional Programming with Javascript v2
 Anjana Vakil  
 slides: https://observablehq.com/embed/@anjana/what-is-functional-programming  

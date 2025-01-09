@@ -1,3 +1,68 @@
+## NestJS Crud
+
+### Install
+```bash
+npm i -g @nestjs/cli
+nest new project-name
+```
+
+App is organized in  modules.  
+Each defined like this
+
+```typescript
+@Module({
+  imports: [],
+  controllers: [AppController],
+  providers: [AppService],
+})
+```
+
+Symbol `@` is part of TypeScript decorators.  
+They are functions applied to classes, functions or vars.  
+Often used in dependency injection systems.
+
+#### create app
+and exit with code 1 on error
+```typescript
+const app = await NestFactory.create(AppModule);
+```
+
+throw an error instead
+```typescript
+NestFactory.create(AppModule, { abortOnError: false })
+```
+
+#### express
+is default, but fastify can be also choosen  
+to access underlying platform api, add a type
+
+```typescript
+const app = await NestFactory.create<NestExpressApplication>(AppModule);
+```
+
+#### start
+with babel
+```bash
+npm run start
+```
+
+with swc
+```bash
+npm run start -- -b swc .
+```
+
+to watch changes
+```bash
+npm run start: dev
+```
+
+eslinter and prettier
+```bash
+npm run lint
+npm run format
+```
+
+
 ## NestJS Fundamentals
 https://courseflix.net/course/nestjs-fundamentals
 
@@ -16,9 +81,6 @@ rest api
 microservices  
 web sockets  
 graphql
-
-#### Installing
-
 
 ## Functional Programming with Javascript v2
 Anjana Vakil  

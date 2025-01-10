@@ -1,4 +1,4 @@
-## Decorators
+## Decorators proposal
 https://github.com/tc39/proposal-decorators  
 Stage 3
 
@@ -9,7 +9,7 @@ Can be used to metaprogram
 2. can decorate value with accessor function  
 3. can initialize value
 
-## Decorators
+## Decorators digitalocean
 https://www.digitalocean.com/community/tutorials/how-to-use-decorators-in-typescript
 
 all kinds of decorators

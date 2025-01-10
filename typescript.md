@@ -1020,8 +1020,8 @@ and check no constraint on type T
 
 valid property names  
 key can be  
-- string  
-- number  
+- string
+- number
 - symbol
 
 ```typescript
@@ -1195,9 +1195,9 @@ types
 #### Covariance
 is a
 
-| Cookie             | direction     | Snack             |  
-|--------------------|---------------|-------------------|  
-| `Cookie`           | --- is a ---> | `Snack`           |  
+| Cookie             | direction     | Snack             |
+|--------------------|---------------|-------------------|
+| `Cookie`           | --- is a ---> | `Snack`           |
 | `Producer<Cookie>` | --- is a ---> | `Producer<Snack>` |
 
 we say type Producer<T> is covariant  
@@ -1212,9 +1212,9 @@ interface Producer<out T> {
 #### Contravariance
 cookiePackaker = snackPackager
 
-| Cookie             | direction     | Snack             |  
-|--------------------|---------------|-------------------|  
-| `Cookie`           | --- is a ---> | `Snack`           |  
+| Cookie             | direction     | Snack             |
+|--------------------|---------------|-------------------|
+| `Cookie`           | --- is a ---> | `Snack`           |
 | `Packager<Cookie>` | <--- is a --- | `Packager<Snack>` |
 
 we say type Packager<T> is contravariant  

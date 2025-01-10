@@ -96,6 +96,10 @@ two options for manipulating responses:
 JSON serialize result of request handler.  
 status always 200, except for POST, which use 201  
 to change this, use @HttpCode on handler level
+```typescript
+import { HttpCode } from @nestjs/common
+@HttpCode(204)
+```
 
 #### library-specific (Express)
 use Express response object  
@@ -109,7 +113,9 @@ findAll(@Res() response) {
 
 if use of @Res is detected  
 then standard option is disabled  
-unless passtrhough is used
+and you become responsible for managing the response  
+and using `res.json()` or `res.send()`  
+unless passtrough is used which means standard way is still used
 
 ```typescript
 @Res({ passtrough: true })
@@ -121,6 +127,19 @@ findAll(@Req() request: Request)
 ```
 consider installing `@types/express`
 
+| decorator               | value                          |
+|-------------------------|--------------------------------|
+| @Request(), @Req()      | req                            |
+| @Response(), @Res()     | res                            |
+| @Next()                 | next                           |
+| @Session()              | req.session                    |
+| @Param(key? :string)    | req.params, req.params[key]    |
+| @Body(key?: string)     | req.body, req.body[key]        |
+| @Query(key?: string)    | req.query, req.query[key]      |
+| @Headers(name?: string) | req.headers, req.headers[name] |
+| @Ip()                   | req.ip                         |
+| @HostParam()            | req.hosts                      |
+
 ## Few notes on Express
 Express app is organized in series of middleware  
 each middleware should either:
@@ -131,8 +150,64 @@ each middleware should either:
 
 Otherwise request may hang indefinitely
 
+#### Post handler
+
+```typescript
+@Post()
+create() {
+  return 'this action adds a cat';
+}
+```
+
+list of decorators
+```typescript
+@Get()
+@Post()
+@Put()
+@Delete
+@Patch
+@Options
+@Head
+```
+
+this one will handle all of them:
+```typescript
+@All
+```
+
+#### Route wildcards
+can use: `*`, `+`, `?` and `()`
+```typescript
+@Get('ab*cd')
+```
+
+#### Response headers
+```typescript
+@Header('Cache-Control', 'no-store')
+```
+
+#### Redirect
+```typescript
+@Redirect('https://nestjs.com', 301)
+```
+
+returned values will override any arguments of @Rediredt  
+localhost:3000/cats/docs will be redirected to https://docs.nestjs.com  
+localhost:3000/cats/docs?version=5 will be redirected to https://docs.nestjs.com/v5/
+
+```typescript
+@Get('docs')
+@Redirect('https://docs.nestjs.com', 302)
+getDocs(@Query('version') version: string) {
+  if (version && version === '5') {
+    return { url: 'https://docs.nestjs.com/v5/' };
+  }
+}
+```
+
 ## NestJS Fundamentals
 https://courseflix.net/course/nestjs-fundamentals
+(it turned out to be outdated)
 
 #### Introduction
 Framework around `Node.js`  

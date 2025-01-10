@@ -1,3 +1,223 @@
+## Decorators
+https://github.com/tc39/proposal-decorators  
+Stage 3
+
+Decorators are functions called JS elements during definition  
+Can be used to metaprogram
+
+1. can replace decorated value with value of same kind. (replace method with method)  
+2. can decorate value with accessor function  
+3. can initialize value
+
+## Decorators
+https://www.digitalocean.com/community/tutorials/how-to-use-decorators-in-typescript
+
+all kinds of decorators
+```typescript
+@classDecorator
+class Person {
+  @propertyDecorator
+  public name: string;
+
+  @accessorDecorator
+  get fullName() {
+    // ...
+  }
+
+  @methodDecorator
+  printName(@parameterDecorator prefix: string) {
+    // ...
+  }
+}
+```
+
+#### decorator chaining
+also you can add several decorators
+```typescript
+@decoratorA
+@decoratorB
+class Person {}
+```
+
+### Class decorators
+decorator parameters depend on type  
+first parameter is often called target  
+in class decorator this is often the only parameter  
+it will have value of Function and will be class constructor
+
+its not possible to add new fields to class using decorator  
+in a way it would be type-safe
+
+```typescript
+@sealed
+class Person {}
+
+function sealed(target: Function) {
+  Object.seal(target);
+  Object.seal(target.prototype);
+}
+```
+
+#### decorator factories
+```typescript
+@decoratorA(true)
+class Person {}
+
+const decoratorA = (someFlag: boolean) =. {
+  return (target: Function) => {
+    // ...
+  }
+}
+```
+
+### Property decorator
+```typescript
+const printMemberName = (target: any, memberName: string) => {
+  consolel.log(memberName);
+}
+
+class Person {
+  @printMemberName
+  name: string = "Jon";
+}
+```
+
+target is class constructor function or ... prototype of the class  
+depending on wheter property is static or not  
+because of that it may be easier to use `any` type
+
+override decorated property  
+replace it with getter and setter
+
+```typescript
+// define as factory
+const allowlistOnly = (allowlist: string[]) => {
+  return (target: any, memberName: string) => {
+    let currentValue: any = target[memberName];
+
+    Object.defineProperty(target, memberName, {
+      set: (newValue: any) => {
+        if (!allowlist.includes(newValue)) {
+          return;
+        }
+        currentValue = newValue;
+      },
+      get: () => currentValue
+    });
+  };
+}
+
+// example of use
+class Person {
+  @allowlistOnly(["Claire", "Oliver"])
+  name: string = "Claire";
+}
+```
+
+### Accessor decorators
+accessor decorators receive similar properties  
+as property decorators, however they also get one more  
+with Property Descriptor of the accessor member.
+
+Property Descriptor is what is passed in `defineProperty`  
+there are two types: data descriptor and accessor descriptor
+
+#### Data descriptor
+property with a specific value
+
+```typescript
+const obj = {};
+Object.defineProperty(obj, 'key', {
+  value: 42,
+  writable: true,
+  enumerable: false,
+  configurable: true
+});
+```
+
+#### Accessor Descriptor
+property with getter and/or setter
+
+```typescript
+const obj = {};
+Object.defineProperty(obj, 'key', {
+  get() {
+    return 'Hello!';
+  },
+  set(value) {
+    console.log('Setting key to', value);
+  },
+  enumerable: true,
+  configurable: true
+});
+```
+
+if decorator returns value  
+it becomes new property descriptor for the accessor
+
+#### Accessor decorator example
+
+```typescript
+const enumerable = (value: boolean) => {
+  return (target: any, memberName: string, propertyDescriptor: PropertyDescriptor) => {
+    propertyDescriptor.enumerable = value;
+  }
+}
+
+class Person {
+  firstName: string = "Jon"
+  lastName: string = "Doe"
+
+  @enumerable(true)
+  get fullName () {
+    return `${this.firstName} ${this.lastName}`;
+  }
+}
+```
+
+### Method Decorators
+Very similar to Accessor decorators.  
+Parameters passed are identical to accessor decorators
+
+if decorator returns value  
+it becomes new property descriptor for the method
+
+```typescript
+const deprecated = (deprecationReason: string) => {
+  return (target: any, memberName: string, propertyDescriptor: PropertyDescriptor) => {
+    return {
+      get() {
+        const wrapperFn = (...args: any[]) => {
+          console.warn(`Method ${memberName} is deprecated with reason: ${deprecationReason}`);
+          propertyDescriptor.value.apply(this, args)
+        }
+
+        Object.defineProperty(this, memberName, {
+            value: wrapperFn,
+            configurable: true,
+            writable: true
+        });
+        return wrapperFn;
+      }
+    }
+  }
+}
+```
+
+### Parameter Decorators
+not possible to change anything related to the parameter itself  
+useful for observing parameter usage
+
+```typescript
+function print(target: Object, propertyKey: string, parameterIndex: number) {
+  console.log(`Decorating param ${parameterIndex} from ${propertyKey}`);
+}
+
+class TestClass {
+  testMethod(param0: any, @print param1: any) {}
+}
+```
+
 ## TypeScript: From First Steps to Professional
 Anjana Vakil  
 slides: https://github.com/vakila/typescript-first-steps/tree/gh-pages  

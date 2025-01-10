@@ -62,6 +62,74 @@ npm run lint
 npm run format
 ```
 
+### controller
+to generate crud controller with validation
+```bash
+nest g resource [name]
+```
+
+to generate only controller
+```bash
+nest g controller [note]
+```
+
+simple example of controller
+```typescript
+@Controller('cats')
+export class CatsController {
+  @Get()
+  findAll() {
+    return 'This action return all cats';
+  }
+}
+```
+
+@Get decorator before `findAll` method  
+tells Nest to create a handler for http requests.  
+route will be `/cats`
+
+@Get('breed') would have path `/cats/breed`
+
+two options for manipulating responses:
+
+#### standard (recommended)
+JSON serialize result of request handler.  
+status always 200, except for POST, which use 201  
+to change this, use @HttpCode on handler level
+
+#### library-specific (Express)
+use Express response object  
+can be injectd using @Res() in handler
+
+```typescript
+findAll(@Res() response) {
+  response.status(200).send()
+}
+```
+
+if use of @Res is detected  
+then standard option is disabled  
+unless passtrhough is used
+
+```typescript
+@Res({ passtrough: true })
+```
+
+#### Request object
+```typescript
+findAll(@Req() request: Request)
+```
+consider installing `@types/express`
+
+## Few notes on Express
+Express app is organized in series of middleware  
+each middleware should either:
+
+- call `next()`: go to next middleware
+- call `next(err)`: skip to error handling middleware
+- call `res.send()`: terminate with response
+
+Otherwise request may hang indefinitely
 
 ## NestJS Fundamentals
 https://courseflix.net/course/nestjs-fundamentals

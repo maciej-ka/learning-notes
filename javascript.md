@@ -457,7 +457,9 @@ use nest package mapped types
 npm i @nestjs/mapped-types
 ```
 
+```typescript
 export class UpdateCoffeeDto extends PartialType(CreateCoffeeDto) {}
+```
 
 #### validate data using dtos
 to enable validations  

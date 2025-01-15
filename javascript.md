@@ -1,4 +1,5 @@
-## NestJS Crud
+## NestJS Docs Crud
+https://docs.nestjs.com/
 
 ### Install
 ```bash
@@ -205,9 +206,10 @@ getDocs(@Query('version') version: string) {
 }
 ```
 
+
+
 ## NestJS Fundamentals
-https://courseflix.net/course/nestjs-fundamentals
-(it turned out to be outdated)
+https://courseflix.net/course/nestjs-fundamentals  
 
 #### Introduction
 Framework around `Node.js`  
@@ -224,6 +226,314 @@ rest api
 microservices  
 web sockets  
 graphql
+
+#### list all nest commands
+```bash
+nest --help
+```
+
+#### generate controller
+```bash
+nest generate controller
+nest g co
+```
+and give it a name "coffees"
+
+it will ask about name  
+also will add controller to module
+
+place file in sub directory
+```bash
+nest generate controller modules/abc
+```
+
+just test command, don't actually run
+```bash
+nest generate controller modules/abc --dry-run
+```
+
+#### controller get
+order of potentially conflicting `@Get` matters
+
+```typescript
+@Controller('coffees')
+export class CoffeesController {
+  @Get()
+  findAll() {
+    return 'all coffees';
+  }
+
+  @Get('flavors')
+  findFlavors() {
+    return 'all flavors';
+  }
+
+  @Get(':id')
+  findOne(@Param("id") id: string) {
+    return `one coffee by id ${id}`;
+  }
+}
+```
+
+test by using  
+GET /coffees  
+GET /coffees/flavors  
+GET /coffees/123
+
+also all params can be used like
+```typescript
+findOne(@Param() params) {
+```
+
+#### controller post
+```typescript
+@Post()
+create(@Body() body) {
+  return body
+}
+```
+
+body has to be JSON object {...}  
+it cannot be just string, like "2" or number
+
+body can be narrowed to one field
+```typescript
+create(@Body("name") name: string) {
+```
+
+#### status codes
+by default status for all is 200  
+apart from POST which has 201
+
+example of using 410 deprecated
+```typescript
+@HttpCode(410)
+```
+
+#### express response object
+allows for full control, but use with care  
+you lose support for `@HttpCode`and Nest Interceptors
+```typescript
+@Get()
+findAll(@Res() response) {
+  response.status(200).send('all coffees')
+}
+```
+
+#### update and delete
+put: replaces whole object  
+patch: modifies only provided parts
+
+```typescript
+@Patch(':id')
+update(@Param("id") id: string, @Body() body) {
+  return `updates ${id} with ${JSON.stringify(body)}`
+}
+```
+
+```typescript
+@Delete(':id')
+remove(@Param('id') id: string) {
+  return `deletes ${id}`;
+}
+```
+
+#### query params
+```typescript
+@Get("/paging")
+getPage(@Query() query) {
+  return `page ${query.page} with limit ${query.limit}`
+}
+```
+
+or use Query to get one by one
+```typescript
+getPage(@Query("page") page: string, @Query("limit") limit: string) {
+}
+```
+
+#### services
+contain business logic  
+separate logic from controllers  
+often used to interact with data sources
+
+```bash
+nest generate service coffees
+nest g s
+```
+
+each service is provider  
+meaning: it can inject dependencies
+
+```typescript
+@Injectable()
+export class CoffeesService {}
+```
+
+nest.js is using type annotations  
+to resolve injected dependencies
+```typescript
+export class CoffeesController {
+  constructor(coffeesService: CoffeesService) {
+```
+
+by convention it should be private and readonly
+```typescript
+constructor(private readonly coffeesService: CoffeesService) {
+```
+
+Services are injected as singleton  
+they are reused in case more than one place injects them.
+
+src/coffees/entities/coffee.entity.ts:1
+```typescript
+export class Coffee {
+  id: number;
+  name: string;
+  brand: string;
+  flavors: string[];
+}
+```
+
+#### user friendly errors
+```typescript
+  if (!found) {
+    throw new HttpException(`coffeee ${id} not found`, HttpStatus.NOT_FOUND)
+```
+
+or simpler
+```typescript
+throw new NotFoundException(`coffeee ${id} not found`)
+```
+
+any typical error, like `throw new Error("foo")` will be handled by Exceptions layer
+
+#### modules
+used to organize code  
+typical app should consist of several modules
+
+```bash
+nest g module coffeees
+```
+
+this will generate new module and add it to the closest module  
+in relation to current working directory the general command was run  
+(this may be app.module.ts)
+
+```typescript
+@Module({
+  imports: [CoffeesModule],
+```
+
+fields inside `@Module` decorator  
+`controllers`: api routes this module instantiates  
+`providers`: services that need to be instantiated  
+`exports`: we list providers that should be available together with this module  
+`imports`: list other modules that this module requires  
+
+generating new module will also create directory  
+if it doesn't exist already
+
+#### data transfer object
+```bash
+nest g class coffees/dto/create-coffee.dto --no-spec
+```
+
+simple objects  
+used to define shape of data  
+use readonly to force immutability
+```typescript
+export class CreateCoffeeDto {
+  readonly name: string;
+  readonly brand: string;
+  readonly flavors: string[];
+}
+```
+
+#### mapped types
+to not repeat too much code between dtos  
+use nest package mapped types
+```bash
+npm i @nestjs/mapped-types
+```
+
+export class UpdateCoffeeDto extends PartialType(CreateCoffeeDto) {}
+
+#### validate data using dtos
+to enable validations  
+`src/main.ts`
+
+```typescript
+import { ValidationPipe } from '@nestjs/common';
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe())
+```
+
+then install packages
+```bash
+npm i class-validator class-transformer
+```
+
+use in dto
+```typescript
+import { IsString } from 'class-validator';
+
+export class CreateCoffeeDto {
+  @IsString()
+  readonly name: string;
+
+  @IsString()
+  readonly brand: string;
+
+  @IsString({ each: true })
+  readonly flavors: string[];
+}
+```
+
+#### whitelist
+strip properties not mentioned in validation  
+modify configuration
+
+src/main.ts
+```typescript
+app.useGlobalPipes(new ValidationPipe({ whitelist: true }))
+```
+
+to stop processing and throw error  
+instead of stripping an object, use
+```typescript
+app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+```
+
+#### auto transform payloads to dto
+turns out that payload by the defualt is in shape of dto  
+but below code will actually report false
+
+```typescript
+create(@Body() createCoffeeDto: CreateCoffeeDto) {
+  console.log("is dto an instance of createCoffeeeDto:", createCoffeeDto instanceof CreateCoffeeDto);
+```
+
+validation pipe can transform into dto  
+use transform flag
+
+```typescript
+app.useGlobalPipes(
+  new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }),
+);
+```
+
+transform will also modify types  
+it looks at declared type  
+here, by default, every path param is string  
+but validation pipe can try to convert it
+
+
 
 ## Functional Programming with Javascript v2
 Anjana Vakil  

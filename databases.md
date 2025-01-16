@@ -5,27 +5,37 @@ psql -U postgres
 ```
 
 List databases
-```sql
+```
 \l
 ```
 
 Connect to a specific database
-```sql
-\c database_name
+```
+\c database-name
+```
+
+List all from connected database
+```
+\d
 ```
 
 List tables in the current database
-```sql
+```
 \dt
 ```
 
 List tables from all schemas
-```sql
+```
 \dt *.*
 ```
 
+Describe table
+```
+\d table-name
+```
+
 General help on psql commands
-```sql
+```
 \?
 ```
 

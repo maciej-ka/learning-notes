@@ -1,3 +1,34 @@
+## psql cheatsheet
+Start
+```bash
+psql -U postgres
+```
+
+List databases
+```sql
+\l
+```
+
+Connect to a specific database
+```sql
+\c database_name
+```
+
+List tables in the current database
+```sql
+\dt
+```
+
+List tables from all schemas
+```sql
+\dt *.*
+```
+
+General help on psql commands
+```sql
+\?
+```
+
 ## Complete Intro to Databases
 https://frontendmasters.com/courses/databases/introduction/  
 https://btholt.github.io/complete-intro-to-databases/

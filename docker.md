@@ -1,3 +1,15 @@
+## Excerpt from Nest.js fundamentals
+run docker compose in detached mode
+(in background)
+```bash
+docker compose up -d
+```
+
+run only one service
+```bash
+docker compose up db -d
+```
+
 ## Kubernetes in action
 https://livebook.manning.com/book/kubernetes-in-action-second-edition/chapter-1/v-14/
 

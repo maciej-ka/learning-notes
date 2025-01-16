@@ -535,7 +535,131 @@ it looks at declared type
 here, by default, every path param is string  
 but validation pipe can try to convert it
 
+```typescript
+@Get(':id')
+findOne(@Param('id') id: number) {
+```
 
+transform has some efficiency cost
+also when running on production
+
+### TypeORM and PostgreSQL
+#### running postgresql
+
+docker-compose.yml
+```yaml
+version: "3"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: pass123
+```
+
+run docker compose in detached mode
+(in background)
+```bash
+docker compose up -d
+```
+
+run only one service
+```bash
+docker compose up db -d
+```
+
+#### Intro to TypeORM
+Nest.js is database agnostic
+it can run on SQL and document databases
+
+Same for TypeORM, which can support several dbs
+MySQL, PostgreSQL, SQLite and even MongoDB
+
+install dependencies
+```bash
+npm i @nestjs/typeorm typeorm pg
+```
+
+import module
+```typescript
+import { TypeOrmModule } from '@nestjs/typeorm';
+@Module({
+  imports: [
+    CoffeesModule,
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'pass123',
+      database: 'postgres',
+      autoLoadEntities: true,
+      synchronize: true,
+    }),
+  ],
+```
+
+database: name of database used internally in Nest.js
+autoLoadEntities: helps to load modules automatically
+synchronize: ensures that entities are in sync with db
+
+make sure to disable **synchronize** on production
+(it's great on development)
+
+run again and look in logs for
+`[`Nest] 64857  - 01/16/2025, 2:25:15 AM     LOG [InstanceLoader] TypeOrmCoreModule dependencies initialized +23ms
+```bash
+npm run start:dev
+```
+
+#### create entity
+defined using `@Entity` decorator
+`synchronize: true` will automatically detect these in code
+and create tables in databases
+
+src/coffees/entities/coffee.entity.ts
+```typescript
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+
+@Entity()
+export class Coffee {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column()
+  brand: string;
+
+  @Column('json', { nullable: true })
+  flavors: string[];
+}
+```
+
+by default table will be lowercase class name (here "coffee")
+to change the name, pass it to Entity
+```typescript
+@Entity('coffees')
+```
+
+this sets type to json
+and makes column optional
+```typescript
+@Column('json', { nullable: true })
+```
+
+columns are not nullable by default
+(they are required by default)
+
+register entity inside module
+```typescript
+@Module({
+  imports: [TypeOrmModule.forFeature([Coffee])],
+```
 
 ## Functional Programming with Javascript v2
 Anjana Vakil  

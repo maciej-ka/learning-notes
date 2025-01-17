@@ -550,7 +550,7 @@ but validation pipe can try to convert it
 findOne(@Param('id') id: number) {
 ```
 
-transform has some efficiency cost
+transform has some efficiency cost  
 also when running on production
 
 common pagination dto, parse as numbers
@@ -572,9 +572,9 @@ export default class PaginationDto {
 }
 ```
 
-instead of explicit transformation with @Type
-we could also make tranformation implicit
-by changing configuration setting
+instead of explicit transformation with @Type  
+we could also make tranformation implicit  
+by changing configuration setting  
 src/main.ts
 ```typescript
 new ValidationPipe({
@@ -602,7 +602,7 @@ services:
       POSTGRES_PASSWORD: pass123
 ```
 
-run docker compose in detached mode
+run docker compose in detached mode  
 (in background)
 ```bash
 docker compose up -d
@@ -614,10 +614,10 @@ docker compose up db -d
 ```
 
 #### Intro to TypeORM
-Nest.js is database agnostic
+Nest.js is database agnostic  
 it can run on SQL and document databases
 
-Same for TypeORM, which can support several dbs
+Same for TypeORM, which can support several dbs  
 MySQL, PostgreSQL, SQLite and even MongoDB
 
 install dependencies
@@ -644,22 +644,22 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   ],
 ```
 
-database: name of database used internally in Nest.js
-autoLoadEntities: helps to load modules automatically
+database: name of database used internally in Nest.js  
+autoLoadEntities: helps to load modules automatically  
 synchronize: ensures that entities are in sync with db
 
-make sure to disable **synchronize** on production
+make sure to disable **synchronize** on production  
 (it's great on development)
 
-run again and look in logs for
+run again and look in logs for  
 `[`Nest] 64857  - 01/16/2025, 2:25:15 AM     LOG [InstanceLoader] TypeOrmCoreModule dependencies initialized +23ms
 ```bash
 npm run start:dev
 ```
 
 #### create entity
-defined using `@Entity` decorator
-`synchronize: true` will automatically detect these in code
+defined using `@Entity` decorator  
+`synchronize: true` will automatically detect these in code  
 and create tables in databases
 
 src/coffees/entities/coffee.entity.ts
@@ -682,20 +682,26 @@ export class Coffee {
 }
 ```
 
-by default table will be lowercase class name (here "coffee")
+by default table will be lowercase class name (here "coffee")  
 to change the name, pass it to Entity
 ```typescript
 @Entity('coffees')
 ```
 
-this sets type to json
-and makes column optional
+this sets type to json  
+and makes column optional  
+columns are not nullable by default  
+(they are required by default)
+
 ```typescript
 @Column('json', { nullable: true })
 ```
 
-columns are not nullable by default
-(they are required by default)
+default value
+```typescript
+@Column({ default: 0 })
+recommendations: number;
+```
 
 register entity inside module
 ```typescript
@@ -704,11 +710,11 @@ register entity inside module
 ```
 
 #### using repository
-each entity has its own repository
+each entity has its own repository  
 which is an abstraction over data source
 
-since we have Coffee entitity included in a module
-we can start using repository by injecting in constructor
+since we have Coffee entitity included in a module  
+we can start using repository by injecting in constructor  
 and then we can use it in business logic methods
 
 ```typescript
@@ -754,17 +760,17 @@ export class CoffeesService {
 }
 ```
 
-the way update works
-`preload` expects one argument with a id/primary key
-it looks does entity exist in the database
-and retrieves values and modifies them according object
+the way update works  
+`preload` expects one argument with a id/primary key  
+it looks does entity exist in the database  
+and retrieves values and modifies them according object  
 if entity doesn't exist, undefined is returned
 
 #### typeORM relations
 
-relation types
-one-to-one
-one-to-many
+relation types  
+one-to-one  
+one-to-many  
 many-to-many
 
 define owner side
@@ -777,8 +783,8 @@ export class Coffee {
 }
 ```
 
-`@JoinTable()`: place this on side that is owner of relation
-`_ => Flavor`: function that returns related entity
+`@JoinTable()`: place this on side that is owner of relation  
+`_ => Flavor`: function that returns related entity  
 `flavor => flavor.coffees`: function that returns inverse property
 
 define second side of relation
@@ -790,13 +796,13 @@ export class Flavor {
 }
 ```
 
-this will result in three tables:
-flavor
-coffee
+this will result in three tables:  
+flavor  
+coffee  
 coffee_flavors_flavor
 
-relations are **not** eagerly loaded by default
-whe have to specify relations to be resolved
+relations are **not** eagerly loaded by default  
+whe have to specify relations to be resolved  
 when calling repository find method
 
 ```typescript
@@ -827,7 +833,42 @@ to have a cascade insert enabled, add it to configuration
 )
 ```
 
+#### transactions
+database transaction is a unit of work  
+performed by database system
 
+there are many ways to have typeORM transactions  
+Nest.js has an option to wrap evey request in transaction  
+but for now we will use QueryRunner
+
+for a simple case, let's use DataSource  
+and inject it into service
+```typescript
+export class CoffeesService {
+  constructor(
+    private readonly dataSource: DataSource,
+  ) {}
+
+  async recommendCoffee(coffee: Coffee) {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+    try {
+      coffee.recommendations++;
+      const event = new Event()
+      event.name = 'recommend_coffee'
+      event.type = 'coffee'
+      event.payload = { coffeeId: coffee.id }
+
+      queryRunner.manager.save(event)
+      queryRunner.manager.save(coffee)
+    } catch {
+      queryRunner.rollbackTransaction();
+    } finally {
+      queryRunner.release();
+    }
+  }
+```
 
 ## Functional Programming with Javascript v2
 Anjana Vakil  

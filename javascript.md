@@ -493,6 +493,16 @@ export class CreateCoffeeDto {
 }
 ```
 
+validate optinal
+```typescript
+@IsOptional()
+```
+
+validate positive number
+```typescript
+@IsPositive()
+```
+
 #### whitelist
 strip properties not mentioned in validation  
 modify configuration
@@ -542,6 +552,38 @@ findOne(@Param('id') id: number) {
 
 transform has some efficiency cost
 also when running on production
+
+common pagination dto, parse as numbers
+
+```typescript
+import { Type } from "class-transformer";
+import { IsOptional, IsPositive } from "class-validator";
+
+export default class PaginationDto {
+  @Type(() => Number)
+  @IsOptional()
+  @IsPositive()
+  readonly limit: number;
+
+  @Type(() => Number)
+  @IsOptional()
+  @IsPositive()
+  readonly offset: number;
+}
+```
+
+instead of explicit transformation with @Type
+we could also make tranformation implicit
+by changing configuration setting
+src/main.ts
+```typescript
+new ValidationPipe({
+  transform: true,
+  transformOptions: {
+    enableImplicitConversion: true
+  }
+})
+```
 
 ### TypeORM and PostgreSQL
 #### running postgresql

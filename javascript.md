@@ -870,6 +870,22 @@ export class CoffeesService {
   }
 ```
 
+#### database indexes
+typical, one column index
+```typescript
+@Column()
+@Index()
+name: string
+```
+
+compound indices (several columns)
+are defined on entity class
+```typescript
+@Index(['name', 'type'])
+@Entity()
+export class Event {
+```
+
 ## Functional Programming with Javascript v2
 Anjana Vakil  
 slides: https://observablehq.com/embed/@anjana/what-is-functional-programming  

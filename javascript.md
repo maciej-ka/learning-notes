@@ -859,13 +859,13 @@ export class CoffeesService {
       event.name = 'recommend_coffee'
       event.type = 'coffee'
       event.payload = { coffeeId: coffee.id }
-
-      queryRunner.manager.save(event)
-      queryRunner.manager.save(coffee)
+      await queryRunner.manager.save(event)
+      await queryRunner.manager.save(coffee)
+      await queryRunner.commitTransaction()
     } catch {
-      queryRunner.rollbackTransaction();
+      await queryRunner.rollbackTransaction();
     } finally {
-      queryRunner.release();
+      await queryRunner.release();
     }
   }
 ```

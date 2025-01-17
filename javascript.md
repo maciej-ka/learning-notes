@@ -661,6 +661,132 @@ register entity inside module
   imports: [TypeOrmModule.forFeature([Coffee])],
 ```
 
+#### using repository
+each entity has its own repository
+which is an abstraction over data source
+
+since we have Coffee entitity included in a module
+we can start using repository by injecting in constructor
+and then we can use it in business logic methods
+
+```typescript
+@Injectable()
+export class CoffeesService {
+  constructor(
+    @InjectRepository(Coffee)
+    private readonly coffeeRepository: Repository<Coffee>,
+  ) {}
+
+  findAll() {
+    return this.coffeeRepository.find();
+  }
+
+  async findOne(id: number) {
+    const coffee = await this.coffeeRepository.findOneBy({ id });
+    if (!coffee) {
+      throw new NotFoundException(`coffeee ${id} not found`);
+    }
+    return coffee;
+  }
+
+  create(createCoffeeDto: any) {
+    const coffee = this.coffeeRepository.create(createCoffeeDto);
+    return this.coffeeRepository.save(coffee);
+  }
+
+  async update(id: number, updateCoffeeeDto: UpdateCoffeeDto) {
+    const coffee = await this.coffeeRepository.preload({
+      id,
+      ...updateCoffeeeDto,
+    });
+    if (!coffee) {
+      throw new NotFoundException(`coffeee ${id} not found`);
+    }
+    return this.coffeeRepository.save(coffee);
+  }
+
+  async remove(id: number) {
+    const coffee = await this.findOne(id)
+    return this.coffeeRepository.remove(coffee)
+  }
+}
+```
+
+the way update works
+`preload` expects one argument with a id/primary key
+it looks does entity exist in the database
+and retrieves values and modifies them according object
+if entity doesn't exist, undefined is returned
+
+#### typeORM relations
+
+relation types
+one-to-one
+one-to-many
+many-to-many
+
+define owner side
+```typescript
+@Entity()
+export class Coffee {
+  @JoinTable()
+  @ManyToMany(() => Flavor, flavor => flavor.coffees)
+  flavors: string[];
+}
+```
+
+`@JoinTable()`: place this on side that is owner of relation
+`_ => Flavor`: function that returns related entity
+`flavor => flavor.coffees`: function that returns inverse property
+
+define second side of relation
+```typescript
+@Entity()
+export class Flavor {
+  @ManyToMany(() => Coffee, (coffee: Coffee) => coffee.flavors)
+  coffees: Coffee[];
+}
+```
+
+this will result in three tables:
+flavor
+coffee
+coffee_flavors_flavor
+
+relations are **not** eagerly loaded by default
+whe have to specify relations to be resolved
+when calling repository find method
+
+```typescript
+return this.coffeeRepository.find({ relations: ['flavors'] });
+
+const coffee = await this.coffeeRepository.findOne({
+  where: { id },
+  relations: ['flavors'],
+});
+```
+
+#### insert into relation
+to have a cascade insert enabled, add it to configuration
+
+```typescript
+// only insert
+@ManyToMany(
+  () => Flavor,
+  (flavor) => flavor.coffees,
+  { cascade: ['insert'] }
+)
+
+// all cascades
+@ManyToMany(
+  () => Flavor,
+  (flavor) => flavor.coffees,
+  { cascade: true }
+)
+```
+
+
+
 ## Functional Programming with Javascript v2
 Anjana Vakil  
 slides: https://observablehq.com/embed/@anjana/what-is-functional-programming  

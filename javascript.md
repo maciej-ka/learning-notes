@@ -878,12 +878,102 @@ typical, one column index
 name: string
 ```
 
-compound indices (several columns)
+compound indices (several columns)  
 are defined on entity class
 ```typescript
 @Index(['name', 'type'])
 @Entity()
 export class Event {
+```
+
+#### migrations
+migrations are placed separately from nest.js source  
+they life cycle is managed by typeorm
+
+create config in root of project  
+ormconfig.js
+```javascript
+import { DataSource } from "typeorm";
+
+export default new DataSource({
+  type: 'postgres',
+  host: 'localhost',
+  port: 5432,
+  username: 'postgres',
+  password: 'pass123',
+  database: 'postgres',
+  entities: ['dist/**/*.entity.js'],
+  migrations: ['dist/migrations/*.js'],
+})
+```
+
+typeorm migrations need to work on compiled files  
+which Nest.js will put in dist folder
+
+create migration
+```bash
+npx typeorm migration:create migrations/CoffeeRefactor
+```
+npx is utility to use npm packages without installing them
+
+changing column name in entity
+when we do it with synchronize flag,
+typeorm will update local database
+but it will not affect production database
+
+btw.
+it will also erase all data in that column
+only after column is removed, typeorm will create new column
+*(again, migrations can help here, because they will preserve data)*
+
+every migraton should have up and down method
+down is important to undo changes in case there are issues
+
+```javascript
+import { MigrationInterface, QueryRunner } from "typeorm";
+
+export class CoffeeRefactor1737146537789 implements MigrationInterface {
+    public async up(queryRunner: QueryRunner): Promise<void> {
+      queryRunner.query(
+        `ALTER TABLE "coffee" RENAME COLUMN "name" TO "title"`
+      )
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+      queryRunner.query(
+        `ALTER TABLE "coffee" RENAME COLUMN "title" TO "name"`
+      )
+    }
+}
+```
+
+before running migrations
+make sure that Nest.JS has build ready
+```bash
+npm run build
+```
+
+run migration
+```bash
+npx typeorm migration:run -d ormconfig.js
+```
+
+with typescript you may need to run this
+to translate into js on the fly
+```bash
+npx typeorm-ts-node-commonjs migration:run -d ormconfig.js
+```
+
+revert migration
+```bash
+npx typeorm migration:revert -d ormconfig.js
+```
+
+detect differences and generate migration file
+it compares @Entity descriptions with state of database
+and creates migration automatically to match entities
+```bash
+npx typeorm migration:generate -d ormconfig.js migrations/SchemaSync
 ```
 
 ## Functional Programming with Javascript v2

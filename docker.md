@@ -270,6 +270,68 @@ no if app is
 yes if  
 - app has over 20 microservices
 
+### 2 Understanding containers
+#### introducing containers
+as microservices become smaller and their numbers grow
+you man not be able to give each its own VM
+
+#### comparison to virtual machines
+allow multiple services on the same host computer
+like VM's but with much less overhead
+
+unline virtual machines
+container runs within host operating system
+but is isolated
+though not as well, as when you run in separate vms
+
+#### comparing overhead
+containers are much lighter
+they don't require additional resource pool
+it's just isolated process
+without overhead
+
+many applications in same vm
+often multiple applications are grouped into each VM
+because of VMs overhead
+
+one application per container
+you should never run multi apps in same container
+it makes managing processes way more difficult
+software for containers assumes there is one app
+
+kubernetes provides a way to run applications together
+even though they are in separate containers
+
+#### comparing startup time
+containers start the application faster
+because no additional system processes need to be started
+
+#### why virual machine isolation is stronger
+VM's run "Hypervisors"
+which splits operating systems and their resources
+and applications in VMs make system calls to guest kernel
+
+*(there is also a type of hyervisor that doesn't require host OS)*
+
+kernel isolation (linux kernel vulnerabilities)
+if there is a bug in the kernel
+if kernel is compromised, all containers are at risk
+with kernel breach, containers may be able to see each other
+and one application can read memory of other containers
+
+breach in network stack
+could expose network traffic of other containers
+
+easier to attack
+namespaces, cgroups and otherare big surface for potential attack
+vm's run on "hypervisors" which are designed for minimal attack surface
+
+malware
+malware within a container can expliot shared resources
+to persist or affect the host
+
+#### 2.1.2 Introducing the Docker container platform
+
 
 
 ## Complete Intro to Containers, v2

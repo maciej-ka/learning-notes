@@ -1,5 +1,5 @@
 ## Excerpt from Nest.js fundamentals
-run docker compose in detached mode
+run docker compose in detached mode  
 (in background)
 ```bash
 docker compose up -d
@@ -13,7 +13,7 @@ docker compose up db -d
 ## Kubernetes in action
 https://livebook.manning.com/book/kubernetes-in-action-second-edition/chapter-1/v-14/
 
-### Introducing Kubernetes
+### 1. Introducing Kubernetes
 in greek: person who steers the ship  
 also called Kates, k8s
 
@@ -92,6 +92,12 @@ kubernetes chooses best node to run app
 based on resource requiremenets of application  
 and resource available on each node
 
+when deploying applications  
+you no longer need to think about individual computers  
+they all become single space  
+but still, every application has to be small enough  
+to fit on some machine (called worker node)
+
 Kates can move running apps between nodes  
 you shouldn't even notice that
 
@@ -160,9 +166,9 @@ logging agents
 everything in k8s is represented by an object.  
 you create and retrieve these objects via k8s api  
 several types of objects:  
-- application deployment as whole  
-- running instance of application  
-- service provided by a set of instances to reach single IP  
+- application deployment as whole
+- running instance of application
+- service provided by a set of instances to reach single IP
 and more
 
 defined in json / yaml manifest files
@@ -258,7 +264,7 @@ like: cluster users
 
 #### should you even use kubernetes?
 no if app is  
-- monolith  
+- monolith
 - only few microservices, less than 5
 
 yes if  
@@ -297,8 +303,8 @@ Bare metal makes sense if you are huge corporation, like Microsoft.
 Virtual Machines  
 With virtual machines you can take server and subdivide it.  
 But you need still to  
-- care about updates  
-- care about your own cloud  
+- care about updates
+- care about your own cloud
 - pay for each debian instance running all time
 
 Public VM Cloud  
@@ -408,7 +414,7 @@ we may say we "contained" that process
 
 #### CGroups (controll groups)
 Prevent situation when other process would  
-- eat all of the RAM  
+- eat all of the RAM
 - pin the CPU
 
 cgroups where invented by google  
@@ -447,7 +453,7 @@ change 8262 to your PID number (process id)
 echo 8262 > /sys/fs/cgroup/sandbox/cgroup.proc
 ```
 this will  
-- add 8262 to sandbox  
+- add 8262 to sandbox
 - automatically remove it from root cgroup: /sys/fs/cgroup/cgroup.proc
 
 as long as cgroup has any procs you cannot edit controllers  
@@ -713,10 +719,10 @@ docker restart <name or hash>
 
 #### Dockerfile
 a manifesto of what goes into container  
-- take this image  
-- add these users  
-- copy these files  
-- run this command  
+- take this image
+- add these users
+- copy these files
+- run this command
 you can build your own and run it over and over
 
 name: Dockerfile  
@@ -842,8 +848,8 @@ paths in COPY can be shorter
 
 **ADD**  
 works a bit like COPY but does more  
-- unzips if needed  
-- can add from url  
+- unzips if needed
+- can add from url
 in practice it's not commonly used
 
 **PUBLISH**  
@@ -1066,8 +1072,8 @@ size (two step): 137MB
 
 it's a choice of who do you want to trust  
 (who did better at building secure container)  
-- alpine  
-- google (distroless)  
+- alpine
+- google (distroless)
 - debian (slim)
 
 #### Astro project
@@ -1257,9 +1263,9 @@ compose is also good for CI/CD
 
 Kubernetes:  
 for more complex situations, like:  
-- more than one instance of docker  
-- scale to zero  
-- native (functions running in cluster)  
+- more than one instance of docker
+- scale to zero
+- native (functions running in cluster)
 amazing but also complicated  
 rarelly used by devs for running local
 
@@ -1533,8 +1539,8 @@ internal networking
 
 in the end you will probably use it trough cloud:  
 KS: kubernetes service (KE: engine)  
-- Azure AKS  
-- Amazon EKS (this one is very expensive)  
+- Azure AKS
+- Amazon EKS (this one is very expensive)
 - Google GKE
 
 #### Manage secrets, tools

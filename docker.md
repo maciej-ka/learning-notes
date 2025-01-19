@@ -414,7 +414,7 @@ docker run quay.io/fedora/fedora echo "Hello from Quay.io"
 #### image tags
 like: latest, buster, alpine, 5.0.7-buster...  
 way to have multiple versions of same image under same name  
-each variant has unique tag
+each variant has unique tag  
 *buster is a Debian version from 2022*  
 *alpine is only 6MB!*
 
@@ -431,22 +431,21 @@ will make pull newer version if available
 #### Open Container Initiative, OCI
 born after success of Docker
 
-formed two specifications
-OCI Image Format Specification
+formed two specifications  
+OCI Image Format Specification  
 OCI Runtime Specification
 
-Kubernetest now suports more container runtimes
+Kubernetest now suports more container runtimes  
 using Container Runtime Interface (CRI)
 
-One implementation of CRI is CRI-O
-lightweight alternative to Docker
+One implementation of CRI is CRI-O  
+lightweight alternative to Docker  
 that works with any OCI compliant container runtime
 
-examples of Open Container Initiative, OCI runtimes:
-rkt (pronounced Rocket)
-runC
+examples of Open Container Initiative, OCI runtimes:  
+rkt (pronounced Rocket)  
+runC  
 Kata Containers
-
 
 ## Complete Intro to Containers, v2
 https://frontendmasters.com/workshops/complete-intro-containers-v2/

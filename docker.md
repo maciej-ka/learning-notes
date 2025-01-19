@@ -764,8 +764,32 @@ docker run --net=host --ipc=host --uts=host --pid=host --privileged --security-o
 ```
 -v mounts host root directory to the /host directory in the container
 
+#### Minikube
+Tool maintained by Kubernetes community  
+normally runs k8s in Linux VM
 
+Minikube has an option to run on VM  
+but you need hypervisor like VirtualBox
 
+you then don't need Docker
+
+```bash
+brew install minikube
+minikube start
+minikube status
+minikube stop
+```
+
+to log into minikube and explore it from inside
+```bash
+minikube ssh
+```
+
+while inside, try
+```bash
+ps uax
+docker ps
+```
 
 ## Complete Intro to Containers, v2
 https://frontendmasters.com/workshops/complete-intro-containers-v2/

@@ -585,19 +585,19 @@ docker image prune
 ```
 
 #### Linux Namespaces
-ensure that each process will only see its:
-files, processes and network interface
-feature of linux kernel
+ensure that each process will only see its:  
+files, processes and network interface  
+feature of linux kernel  
 when creating a new process it can be assigned to namespace
 
-there is one namespace for each resource
-mnt: mount points (file systems)
-pid: process id
-net: network devices, ports
-ipc: inter process communication (between processes, message queues, shared memory)
-uts: unix time sharing system, tool for multitasking
-user: users and grups
-time: allows each container to have its own system clock
+there is one namespace for each resource  
+mnt: mount points (file systems)  
+pid: process id  
+net: network devices, ports  
+ipc: inter process communication (between processes, message queues, shared memory)  
+uts: unix time sharing system, tool for multitasking  
+user: users and grups  
+time: allows each container to have its own system clock  
 cgroups: limits in accessing resources
 
 

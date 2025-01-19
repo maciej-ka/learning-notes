@@ -372,7 +372,7 @@ also containerized app built for a specific architecture
 can only run on computers with the same architecture  
 you can't put an application compiled for x86 into container  
 and run it on ARM based computer  
-(you need VM for that)
+*you need VM for that*
 
 #### layers
 container images consist of layers  
@@ -388,6 +388,65 @@ whenever file is modified, its first copied to that top layer
 deleting never reduces size of image  
 when file is deleted, its marked as deleted on top layer  
 but still present in layers below
+
+#### Running container
+`busybox` image: single command that combines echo, ls and gzip  
+it's usefull for small, embedded situations  
+where one command can be smaller than a collection of commands
+
+```bash
+docker run busybox echo "Hello World"
+```
+
+often running is even simpler  
+because you don't have to provide command
+```bash
+docker run redis:alpine
+```
+
+to run an image from different registry  
+*Quay.io is example of another public registry*  
+provide registry with image name
+```bash
+docker run quay.io/fedora/fedora echo "Hello from Quay.io"
+```
+
+#### image tags
+like: latest, buster, alpine, 5.0.7-buster...  
+way to have multiple versions of same image under same name  
+each variant has unique tag
+*buster is a Debian version from 2022*  
+*alpine is only 6MB!*
+
+if you refer to images without explicit tag  
+then special tag `latest` is used
+
+when uploading, authors usually give image a tag  
+and also latest tag is given
+
+however `docker run` will try to use latest from cache  
+so implicitly asking for latest  
+will make pull newer version if available
+
+#### Open Container Initiative, OCI
+born after success of Docker
+
+formed two specifications
+OCI Image Format Specification
+OCI Runtime Specification
+
+Kubernetest now suports more container runtimes
+using Container Runtime Interface (CRI)
+
+One implementation of CRI is CRI-O
+lightweight alternative to Docker
+that works with any OCI compliant container runtime
+
+examples of Open Container Initiative, OCI runtimes:
+rkt (pronounced Rocket)
+runC
+Kata Containers
+
 
 ## Complete Intro to Containers, v2
 https://frontendmasters.com/workshops/complete-intro-containers-v2/

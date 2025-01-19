@@ -707,6 +707,64 @@ either by labels or defining paths
 they allow to access only files and resources  
 which labels match set of policy running application has
 
+### Kubernetes: Deploying your first application
+Setting multi-node Kubernetes cluster isn't simple  
+it requires proper network setup  
+to allow all containers to communicate with each other
+
+installing and managing kubernetes cluster  
+is much more difficult than useing it  
+for that reason there are several ready solutions:  
+GKE: Google Kubernetes Engine  
+EKS: Amazon Elastic Kubernetes Service  
+AKS: Azure Kubernetes Service  
+IBM Cloud Kubernetes Service  
+Alibaba Colud Container Service
+
+there is also an option to setup kubernetes cluster  
+on virtual machines, using `kubeadm` tool
+
+#### Kubernetes cluster in Docker Desktop
+Docker Desktop contains single node Kubernetes cluster  
+you can enable it in the settings  
+it's a easy start, but it may be a older version
+
+Reset Kubernetes Cluster  
+use it whenever you want to remove all objects deployed
+
+enabling "show system containers" will show list of k8s containers:
+```
+k8s_storage-provisioner_storage-provisioner_kube-system_e240b4ec-d2b8-4d53-ae62-8e7288bc02fe_1
+k8s_coredns_coredns-7db6d8ff4d-z4fkt_kube-system_b6eb55f9-0524-4fd6-a1f9-e54854697860_0
+k8s_coredns_coredns-7db6d8ff4d-5ztcj_kube-system_a57f2f36-8095-442b-88ef-1a114990349c_0
+k8s_vpnkit-controller_vpnkit-controller_kube-system_564e1fbf-ddeb-4a8e-aefb-4618d5214fd5_0
+k8s_kube-proxy_kube-proxy-np255_kube-system_9706d181-e312-4f37-bcb1-2142247fd211_0
+k8s_POD_vpnkit-controller_kube-system_564e1fbf-ddeb-4a8e-aefb-4618d5214fd5_0
+k8s_POD_coredns-7db6d8ff4d-5ztcj_kube-system_a57f2f36-8095-442b-88ef-1a114990349c_0
+k8s_POD_kube-proxy-np255_kube-system_9706d181-e312-4f37-bcb1-2142247fd211_0
+k8s_POD_coredns-7db6d8ff4d-z4fkt_kube-system_b6eb55f9-0524-4fd6-a1f9-e54854697860_0
+k8s_POD_storage-provisioner_kube-system_e240b4ec-d2b8-4d53-ae62-8e7288bc02fe_0
+k8s_kube-apiserver_kube-apiserver-docker-desktop_kube-system_3fe11f12ace7990088a27f5ac063bceb_0
+k8s_kube-scheduler_kube-scheduler-docker-desktop_kube-system_aa7bbfbbe0588d06569a828ad4116992_0
+k8s_kube-controller-manager_kube-controller-manager-docker-desktop_kube-system_2d884e49e38d30ded4b72cbfd8a93ca9_0
+k8s_etcd_etcd-docker-desktop_kube-system_3436b10c8a489053c5f3ba0f32b03652_0
+k8s_POD_kube-scheduler-docker-desktop_kube-system_aa7bbfbbe0588d06569a828ad4116992_0
+k8s_POD_kube-controller-manager-docker-desktop_kube-system_2d884e49e38d30ded4b72cbfd8a93ca9_0
+k8s_POD_etcd-docker-desktop_kube-system_3436b10c8a489053c5f3ba0f32b03652_0
+k8s_POD_kube-apiserver-docker-desktop_kube-system_3fe11f12ace7990088a27f5ac063bceb_0
+```
+
+single node cluster:  
+runs both control plane, kubelet and your applications  
+kubelet is a kubernetes agent which manages the node
+
+explore Docker Linux VM
+```bash
+docker run --net=host --ipc=host --uts=host --pid=host --privileged --security-opt=seccomp=unconfined -it --rm -v /:/host alpine chroot /host
+```
+-v mounts host root directory to the /host directory in the container
+
+
 
 
 ## Complete Intro to Containers, v2

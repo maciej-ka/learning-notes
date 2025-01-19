@@ -1,3 +1,13 @@
+### Variance notes
+#### Covariance
+typical OOP situation
+Variable has type Animal, value can be a Cat
+#### Invariance
+has to match exactly
+Variable has type Animal, value can be only exactly Animal
+#### Contravariance
+in function parameters
+
 ## Microfrontends
 Micro Frontends in Action  
 Manning book by Michael Geers  
@@ -336,20 +346,32 @@ a{Click me}
 ```
 
 ### ACID
-Atomicity: all or nothing  
-Consistency  
-Isolation  
-Durability
+coined in 1983
+**Atomicity**
+all or nothing
+**Consistency**
+foreign keys should be valid after operation
+**Isolation**
+long running query should not leak mid-state to pararell quick queries
+**Durability**
+long batch inserts should be restored even if database crashes during run
 
 ### SOLID
-Single Open Liskov Inter-segre Depen-inver  
+coined in 2004
+Single Open Liskov Inter-segre Depen-inver
 https://en.wikipedia.org/wiki/SOLID
-
-**Single-responsibility**: "There should never be more than one reason for a class to change." In other words, every class should have only one responsibility.  
-**Open–closed**: "Software entities ... should be open for extension, but closed for modification."  
-**Liskov substitution**: "Functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it." See also design by contract.  
-**Interface segregation**: "Clients should not be forced to depend upon interfaces that they do not use."  
-**Dependency inversion**: "Depend upon abstractions, [not] concretes."
+**Single-responsibility**
+There should never be more than one reason for a class to change. In other words, every class should have only one responsibility.
+**Open–closed**
+coined in 1988, by Bertrand Meyer
+Software entities ... should be open for extension, but closed for modification.
+**Liskov substitution**
+Functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it. See also design by contract.
+**Interface segregation**
+Clients should not be forced to depend upon interfaces that they do not use.
+Prefer several small interfaces than one big
+**Dependency inversion**
+Depend upon abstractions, [not] concretes.
 
 ### Testing
 https://stevekinney.net/courses/testing  

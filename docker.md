@@ -331,8 +331,23 @@ malware within a container can expliot shared resources
 to persist or affect the host
 
 #### 2.1.2 Introducing the Docker container platform
+docker was first convienent container solution
 
+Docker allows to distribute package via publich repository
 
+image
+something you package you application and its environment
+contains app, whole filesystem and additional metadata
+
+registry
+enables place to store and exchange images
+certain registries are public, while other are private only
+
+container
+an started image
+a normal process running in host operating system
+but isolated
+container is usually resource restricted
 
 ## Complete Intro to Containers, v2
 https://frontendmasters.com/workshops/complete-intro-containers-v2/

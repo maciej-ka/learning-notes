@@ -389,7 +389,7 @@ deleting never reduces size of image
 when file is deleted, its marked as deleted on top layer  
 but still present in layers below
 
-becuse of that it's important that every docker RUN
+becuse of that it's important that every docker RUN  
 will clear any temporary files before it ends
 
 #### Running container
@@ -461,15 +461,15 @@ list images
 docker images
 ```
 
-Build is actually done by Docker Deamon
+Build is actually done by Docker Deamon  
 Docker CLI is just giving instruction to do it
 
-dont' add unnecessary files to build directory
-as they will slow down the build process
+dont' add unnecessary files to build directory  
+as they will slow down the build process  
 especially if Docker deamon is running on remote system
 
 #### image layers
-each individual directive in Dockerfile
+each individual directive in Dockerfile  
 creates a one Docker layer
 
 check image sizes by running
@@ -481,18 +481,18 @@ docker history kiada:latest
 ```bash
 docker run --name kiada-container -p 1234:8080 -d kiada
 ```
---name container name
+--name container name  
 -d detach from console (run in background)
 
 and then visit http://localhost:1234
 
 #### Docker will install VM
-if your container is linux
-but your local machine is macOS or Windows
+if your container is linux  
+but your local machine is macOS or Windows  
 then Docker will install Linux virtual machine
 
 #### list running containers
-prints id, name, image and comamnd it executes
+prints id, name, image and comamnd it executes  
 also shows date created and ports mapping
 ```bash
 docker ps
@@ -503,22 +503,22 @@ to show more about container, use inspect
 docker inspect kiada-container
 ```
 
-container output is stored by Docker in logs
+container output is stored by Docker in logs  
 to access them use logs command
 ```bash
 docker logs kiada-container
 ```
 
 #### distributing container image
-let's push image to public docker hub registry
-you can also use other registries, such as quay.io
+let's push image to public docker hub registry  
+you can also use other registries, such as quay.io  
 or Google Container Registry
 
 #### Docker Hub image naming schema
-before publishing, image has to be re-tagged
+before publishing, image has to be re-tagged  
 according to Docker Hub image naming schema
 
-image tag must include Docker Hub ID
+image tag must include Docker Hub ID  
 which you choose when registering to Docker Hub
 
 give additional tag image
@@ -542,21 +542,21 @@ send container to docker hub
 docker push maciejka/kiada:0.1
 ```
 
-after pushing, image is available to all
+after pushing, image is available to all  
 you can run the image anywhere with command
 ```bash
 docker run --name kiada-container -p 1234:8080 -d maciejka/kiada:0.1
 ```
 
 #### Stopping and deleting container
-first send termination signal to the main process to stop gracefully.
+first send termination signal to the main process to stop gracefully.  
 if process doesn't respond or wait time ends, docker kills it
 ```bash
 docker stop kiada-container
 ```
 
-stopped container still exists
-in case you want to start it again
+stopped container still exists  
+in case you want to start it again  
 see stopped containers
 ```bash
 docker ps -a
@@ -567,8 +567,8 @@ start stopped container
 docker start kiada-container
 ```
 
-remove container
-all content is removed
+remove container  
+all content is removed  
 image is still there
 ```bash
 docker rm kiada-container
@@ -583,6 +583,22 @@ remove all unused images
 ```bash
 docker image prune
 ```
+
+#### Linux Namespaces
+ensure that each process will only see its:
+files, processes and network interface
+feature of linux kernel
+when creating a new process it can be assigned to namespace
+
+there is one namespace for each resource
+mnt: mount points (file systems)
+pid: process id
+net: network devices, ports
+ipc: inter process communication (between processes, message queues, shared memory)
+uts: unix time sharing system, tool for multitasking
+user: users and grups
+time: allows each container to have its own system clock
+cgroups: limits in accessing resources
 
 
 ## Complete Intro to Containers, v2

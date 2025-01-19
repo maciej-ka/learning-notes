@@ -648,6 +648,65 @@ or
 docker run --net=host --ipc=host --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine chroot /host
 ```
 
+#### Linux Control Groups (cgroups)
+limits system resources like CPU, memory, network and disk
+
+without doing anything additional,  
+Docker container has unrestricted access to all CPU of host
+
+limit explictly which cores can be used
+```bash
+docker run --cpuset-cpus="1,2" 
+```
+
+flags to limit availabe CPU time  
+`--cpus`, `--cpu-period`, `--cpu-quota`, `--cpu-shares`  
+allow the container to use only haof of a CPU core
+```bash
+docker run --cpus="0.5"
+```
+
+flags to limit memory  
+`--memory`, `--memory-reservation`, `--kernel-memory`, `--memory-swap`  
+set maximum memory size available in the container to 100MB
+```bash
+docker run --memory="100m"
+```
+
+#### strengthening isolation between containers
+sys-calls enable to load/unload modules from kernel  
+change system time, start a process...
+
+most containers run with sys-call disabled  
+to enable them use `--privileged` flag
+
+if only some sys-calls are needed  
+there is a way to give subset of them  
+linux kernel divides privileges into units caalled capabilities  
+CAP_NET_ADMIN allows network related operations  
+CAP_NET_BIND_SERVICE allows to bind to port numbers less than 1024  
+CAP_SYS_TIME allows to modify system clock
+
+capabilities can be added or removed from container
+
+follow principle of least privilege when runnin containers  
+don't give them any capabilities they don't need
+
+#### Secure Computing Mode, seccomp
+used to give finer control over what sys-calls program can use  
+seccomp definition is a JSON file that lists the system calls  
+that container is allowed to make
+
+and then that file is provided to Docker when container is created
+
+#### AppArmour, SELinux (security enchanced linux)
+More ways to control security  
+both enable to mark files and system resources  
+either by labels or defining paths
+
+they allow to access only files and resources  
+which labels match set of policy running application has
+
 
 
 ## Complete Intro to Containers, v2

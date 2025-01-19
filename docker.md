@@ -509,6 +509,82 @@ to access them use logs command
 docker logs kiada-container
 ```
 
+#### distributing container image
+let's push image to public docker hub registry
+you can also use other registries, such as quay.io
+or Google Container Registry
+
+#### Docker Hub image naming schema
+before publishing, image has to be re-tagged
+according to Docker Hub image naming schema
+
+image tag must include Docker Hub ID
+which you choose when registering to Docker Hub
+
+give additional tag image
+```bash
+docker tag kiada maciejka/kiada:0.1
+```
+
+confirm that it has new name
+```bash
+docker images
+```
+
+#### Pushing to Docker Hub
+before you must log in
+```bash
+docker login -u maciejka docker.io
+```
+
+send container to docker hub
+```bash
+docker push maciejka/kiada:0.1
+```
+
+after pushing, image is available to all
+you can run the image anywhere with command
+```bash
+docker run --name kiada-container -p 1234:8080 -d maciejka/kiada:0.1
+```
+
+#### Stopping and deleting container
+first send termination signal to the main process to stop gracefully.
+if process doesn't respond or wait time ends, docker kills it
+```bash
+docker stop kiada-container
+```
+
+stopped container still exists
+in case you want to start it again
+see stopped containers
+```bash
+docker ps -a
+```
+
+start stopped container
+```bash
+docker start kiada-container
+```
+
+remove container
+all content is removed
+image is still there
+```bash
+docker rm kiada-container
+```
+
+to remove container and image, use `rmi`
+```bash
+docker rmi kiada:latest
+```
+
+remove all unused images
+```bash
+docker image prune
+```
+
+
 ## Complete Intro to Containers, v2
 https://frontendmasters.com/workshops/complete-intro-containers-v2/
 

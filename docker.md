@@ -478,8 +478,36 @@ docker history kiada:latest
 ```
 
 #### running container
+```bash
+docker run --name kiada-container -p 1234:8080 -d kiada
+```
+--name container name
+-d detach from console (run in background)
 
+and then visit http://localhost:1234
 
+#### Docker will install VM
+if your container is linux
+but your local machine is macOS or Windows
+then Docker will install Linux virtual machine
+
+#### list running containers
+prints id, name, image and comamnd it executes
+also shows date created and ports mapping
+```bash
+docker ps
+```
+
+to show more about container, use inspect
+```bash
+docker inspect kiada-container
+```
+
+container output is stored by Docker in logs
+to access them use logs command
+```bash
+docker logs kiada-container
+```
 
 ## Complete Intro to Containers, v2
 https://frontendmasters.com/workshops/complete-intro-containers-v2/

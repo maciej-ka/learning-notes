@@ -595,10 +595,59 @@ mnt: mount points (file systems)
 pid: process id  
 net: network devices, ports  
 ipc: inter process communication (between processes, message queues, shared memory)  
-uts: unix time sharing system, tool for multitasking  
+uts: unix time sharing system, domain name, tool for multitasking  
 user: users and grups  
 time: allows each container to have its own system clock  
 cgroups: limits in accessing resources
+
+each network interface belongs to one network namespace  
+but can be moved from one namespace to another
+
+thanks to namespaces there can be many `eth0` interfaces  
+as long as each is in different namespace  
+(same for localhost `lo`)
+
+by looking at interfaces, container can't tell whether it's in container  
+or runing directly on a bare-metal
+
+there is on default network namespace
+
+#### sharig namespaces
+sometimes you want to share certain resource  
+like domain name or network interface
+
+container is something that runs with namespaces assigned
+
+it's possible to run a "debug container"  
+which will share network of exising container  
+this will allow to debug networking system  
+with tools that may not be available in observed container
+
+#### explore running container
+```bash
+docker exec -it kiada-container bash
+```
+-i run in interactive mod (allows to input commands)  
+-t allocate psudo terminal (allows to have prompt and internal TERM variable that commands expect)
+
+running this command in host OS **will** show contained processess  
+host OS has to be linux  
+although PID number will be different  
+(process can belong to more than one PID namespace)
+```bash
+ps aux | grep app.js
+```
+
+on macOS Docker starts linux virual machine  
+to enter it run
+```bash
+wsl -d docker-desktop
+```
+or
+```bash
+docker run --net=host --ipc=host --uts=host --pid=host -it --security-opt=seccomp=unconfined --privileged --rm -v /:/host alpine chroot /host
+```
+
 
 
 ## Complete Intro to Containers, v2

@@ -389,6 +389,9 @@ deleting never reduces size of image
 when file is deleted, its marked as deleted on top layer  
 but still present in layers below
 
+becuse of that it's important that every docker RUN
+will clear any temporary files before it ends
+
 #### Running container
 `busybox` image: single command that combines echo, ls and gzip  
 it's usefull for small, embedded situations  
@@ -446,6 +449,37 @@ examples of Open Container Initiative, OCI runtimes:
 rkt (pronounced Rocket)  
 runC  
 Kata Containers
+
+#### Building the application
+```bash
+docker build -t kiada:latest .
+```
+-t specifies desired name and tag
+
+list images
+```bash
+docker images
+```
+
+Build is actually done by Docker Deamon
+Docker CLI is just giving instruction to do it
+
+dont' add unnecessary files to build directory
+as they will slow down the build process
+especially if Docker deamon is running on remote system
+
+#### image layers
+each individual directive in Dockerfile
+creates a one Docker layer
+
+check image sizes by running
+```bash
+docker history kiada:latest
+```
+
+#### running container
+
+
 
 ## Complete Intro to Containers, v2
 https://frontendmasters.com/workshops/complete-intro-containers-v2/

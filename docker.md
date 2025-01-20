@@ -765,6 +765,7 @@ docker run --net=host --ipc=host --uts=host --pid=host --privileged --security-o
 -v mounts host root directory to the /host directory in the container
 
 #### Minikube
+safest way if you're new
 Tool maintained by Kubernetes community  
 normally runs k8s in Linux VM
 
@@ -789,6 +790,68 @@ while inside, try
 ```bash
 ps uax
 docker ps
+```
+
+#### Kind
+Kubernetes in Docker
+multi node
+*opposite to Minikube and Docker Desktop which are single node*
+
+kubelet in Kind use CRI-O
+instead of Docker
+
+more complex and similar to real multi node scenario
+but still simple to debug, as all runs on host OS
+where its possible to use tools like Wireshark to debug
+or even browser inside cluster network
+
+nsenter
+tool to run tools in the network of container
+
+install
+```bash
+curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-$(uname)-amd64
+chmod +x ./kind 
+mv ./kind /some-dir-in-your-PATH/kind
+```
+
+start cluster
+```bash
+kind create cluster
+```
+
+kind is single-node by default
+to make it multi-node, create configuration file
+kind-multi-node.yaml
+```yaml
+kind: Cluster
+apiVersion: kind.sigs.k8s.io/v1alpha3
+nodes:
+- role: control-plane
+- role: worker
+- role: worker
+```
+
+start multi-node
+```bash
+kind create cluster --config kind-multi-node.yaml
+```
+
+list nodes, use one of these
+```bash
+kind get nodes
+docker ps
+```
+
+log into cluster nodes
+```bash
+docker exec -it kind-control-plane bash
+```
+
+worker nodes and kubelet use CRI-O
+to interact with it use crictl
+```bash
+crictl ps
 ```
 
 ## Complete Intro to Containers, v2

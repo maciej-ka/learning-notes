@@ -897,6 +897,18 @@ to access worker nodes
 gcloud compute ssh gke-kiada-default-pool-9bba9b18-4glf
 ```
 
+Gcloud
+install / remove components
+```bash
+gcloud components install COMPONENT_ID
+gcloud components remove COMPONENT_ID
+```
+
+update your SDK
+```bash
+gcloud components update
+```
+
 ## Complete Intro to Containers, v2
 https://frontendmasters.com/workshops/complete-intro-containers-v2/
 

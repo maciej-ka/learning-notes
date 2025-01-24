@@ -1,214 +1,5 @@
-## NestJS Docs Crud
-https://docs.nestjs.com/
-
-### Install
-```bash
-npm i -g @nestjs/cli
-nest new project-name
-```
-
-App is organized in  modules.  
-Each defined like this
-
-```typescript
-@Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
-})
-```
-
-Symbol `@` is part of TypeScript decorators.  
-They are functions applied to classes, functions or vars.  
-Often used in dependency injection systems.
-
-#### create app
-and exit with code 1 on error
-```typescript
-const app = await NestFactory.create(AppModule);
-```
-
-throw an error instead
-```typescript
-NestFactory.create(AppModule, { abortOnError: false })
-```
-
-#### express
-is default, but fastify can be also choosen  
-to access underlying platform api, add a type
-
-```typescript
-const app = await NestFactory.create<NestExpressApplication>(AppModule);
-```
-
-#### start
-with babel
-```bash
-npm run start
-```
-
-with swc
-```bash
-npm run start -- -b swc .
-```
-
-to watch changes
-```bash
-npm run start: dev
-```
-
-eslinter and prettier
-```bash
-npm run lint
-npm run format
-```
-
-### controller
-to generate crud controller with validation
-```bash
-nest g resource [name]
-```
-
-to generate only controller
-```bash
-nest g controller [note]
-```
-
-simple example of controller
-```typescript
-@Controller('cats')
-export class CatsController {
-  @Get()
-  findAll() {
-    return 'This action return all cats';
-  }
-}
-```
-
-@Get decorator before `findAll` method  
-tells Nest to create a handler for http requests.  
-route will be `/cats`
-
-@Get('breed') would have path `/cats/breed`
-
-two options for manipulating responses:
-
-#### standard (recommended)
-JSON serialize result of request handler.  
-status always 200, except for POST, which use 201  
-to change this, use @HttpCode on handler level
-```typescript
-import { HttpCode } from @nestjs/common
-@HttpCode(204)
-```
-
-#### library-specific (Express)
-use Express response object  
-can be injectd using @Res() in handler
-
-```typescript
-findAll(@Res() response) {
-  response.status(200).send()
-}
-```
-
-if use of @Res is detected  
-then standard option is disabled  
-and you become responsible for managing the response  
-and using `res.json()` or `res.send()`  
-unless passtrough is used which means standard way is still used
-
-```typescript
-@Res({ passtrough: true })
-```
-
-#### Request object
-```typescript
-findAll(@Req() request: Request)
-```
-consider installing `@types/express`
-
-| decorator               | value                          |
-|-------------------------|--------------------------------|
-| @Request(), @Req()      | req                            |
-| @Response(), @Res()     | res                            |
-| @Next()                 | next                           |
-| @Session()              | req.session                    |
-| @Param(key? :string)    | req.params, req.params[key]    |
-| @Body(key?: string)     | req.body, req.body[key]        |
-| @Query(key?: string)    | req.query, req.query[key]      |
-| @Headers(name?: string) | req.headers, req.headers[name] |
-| @Ip()                   | req.ip                         |
-| @HostParam()            | req.hosts                      |
-
-## Few notes on Express
-Express app is organized in series of middleware  
-each middleware should either:
-
-- call `next()`: go to next middleware
-- call `next(err)`: skip to error handling middleware
-- call `res.send()`: terminate with response
-
-Otherwise request may hang indefinitely
-
-#### Post handler
-
-```typescript
-@Post()
-create() {
-  return 'this action adds a cat';
-}
-```
-
-list of decorators
-```typescript
-@Get()
-@Post()
-@Put()
-@Delete
-@Patch
-@Options
-@Head
-```
-
-this one will handle all of them:
-```typescript
-@All
-```
-
-#### Route wildcards
-can use: `*`, `+`, `?` and `()`
-```typescript
-@Get('ab*cd')
-```
-
-#### Response headers
-```typescript
-@Header('Cache-Control', 'no-store')
-```
-
-#### Redirect
-```typescript
-@Redirect('https://nestjs.com', 301)
-```
-
-returned values will override any arguments of @Rediredt  
-localhost:3000/cats/docs will be redirected to https://docs.nestjs.com  
-localhost:3000/cats/docs?version=5 will be redirected to https://docs.nestjs.com/v5/
-
-```typescript
-@Get('docs')
-@Redirect('https://docs.nestjs.com', 302)
-getDocs(@Query('version') version: string) {
-  if (version && version === '5') {
-    return { url: 'https://docs.nestjs.com/v5/' };
-  }
-}
-```
-
-
-
 ## NestJS Fundamentals
+https://courses.nestjs.com/  
 https://courseflix.net/course/nestjs-fundamentals  
 
 #### Introduction
@@ -975,6 +766,217 @@ and creates migration automatically to match entities
 ```bash
 npx typeorm migration:generate -d ormconfig.js migrations/SchemaSync
 ```
+
+
+## NestJS Docs Crud
+https://docs.nestjs.com/
+
+### Install
+```bash
+npm i -g @nestjs/cli
+nest new project-name
+```
+
+App is organized in  modules.  
+Each defined like this
+
+```typescript
+@Module({
+  imports: [],
+  controllers: [AppController],
+  providers: [AppService],
+})
+```
+
+Symbol `@` is part of TypeScript decorators.  
+They are functions applied to classes, functions or vars.  
+Often used in dependency injection systems.
+
+#### create app
+and exit with code 1 on error
+```typescript
+const app = await NestFactory.create(AppModule);
+```
+
+throw an error instead
+```typescript
+NestFactory.create(AppModule, { abortOnError: false })
+```
+
+#### express
+is default, but fastify can be also choosen  
+to access underlying platform api, add a type
+
+```typescript
+const app = await NestFactory.create<NestExpressApplication>(AppModule);
+```
+
+#### start
+with babel
+```bash
+npm run start
+```
+
+with swc
+```bash
+npm run start -- -b swc .
+```
+
+to watch changes
+```bash
+npm run start: dev
+```
+
+eslinter and prettier
+```bash
+npm run lint
+npm run format
+```
+
+### controller
+to generate crud controller with validation
+```bash
+nest g resource [name]
+```
+
+to generate only controller
+```bash
+nest g controller [note]
+```
+
+simple example of controller
+```typescript
+@Controller('cats')
+export class CatsController {
+  @Get()
+  findAll() {
+    return 'This action return all cats';
+  }
+}
+```
+
+@Get decorator before `findAll` method  
+tells Nest to create a handler for http requests.  
+route will be `/cats`
+
+@Get('breed') would have path `/cats/breed`
+
+two options for manipulating responses:
+
+#### standard (recommended)
+JSON serialize result of request handler.  
+status always 200, except for POST, which use 201  
+to change this, use @HttpCode on handler level
+```typescript
+import { HttpCode } from @nestjs/common
+@HttpCode(204)
+```
+
+#### library-specific (Express)
+use Express response object  
+can be injectd using @Res() in handler
+
+```typescript
+findAll(@Res() response) {
+  response.status(200).send()
+}
+```
+
+if use of @Res is detected  
+then standard option is disabled  
+and you become responsible for managing the response  
+and using `res.json()` or `res.send()`  
+unless passtrough is used which means standard way is still used
+
+```typescript
+@Res({ passtrough: true })
+```
+
+#### Request object
+```typescript
+findAll(@Req() request: Request)
+```
+consider installing `@types/express`
+
+| decorator               | value                          |
+|-------------------------|--------------------------------|
+| @Request(), @Req()      | req                            |
+| @Response(), @Res()     | res                            |
+| @Next()                 | next                           |
+| @Session()              | req.session                    |
+| @Param(key? :string)    | req.params, req.params[key]    |
+| @Body(key?: string)     | req.body, req.body[key]        |
+| @Query(key?: string)    | req.query, req.query[key]      |
+| @Headers(name?: string) | req.headers, req.headers[name] |
+| @Ip()                   | req.ip                         |
+| @HostParam()            | req.hosts                      |
+
+## Few notes on Express
+Express app is organized in series of middleware  
+each middleware should either:
+
+- call `next()`: go to next middleware
+- call `next(err)`: skip to error handling middleware
+- call `res.send()`: terminate with response
+
+Otherwise request may hang indefinitely
+
+#### Post handler
+
+```typescript
+@Post()
+create() {
+  return 'this action adds a cat';
+}
+```
+
+list of decorators
+```typescript
+@Get()
+@Post()
+@Put()
+@Delete
+@Patch
+@Options
+@Head
+```
+
+this one will handle all of them:
+```typescript
+@All
+```
+
+#### Route wildcards
+can use: `*`, `+`, `?` and `()`
+```typescript
+@Get('ab*cd')
+```
+
+#### Response headers
+```typescript
+@Header('Cache-Control', 'no-store')
+```
+
+#### Redirect
+```typescript
+@Redirect('https://nestjs.com', 301)
+```
+
+returned values will override any arguments of @Rediredt  
+localhost:3000/cats/docs will be redirected to https://docs.nestjs.com  
+localhost:3000/cats/docs?version=5 will be redirected to https://docs.nestjs.com/v5/
+
+```typescript
+@Get('docs')
+@Redirect('https://docs.nestjs.com', 302)
+getDocs(@Query('version') version: string) {
+  if (version && version === '5') {
+    return { url: 'https://docs.nestjs.com/v5/' };
+  }
+}
+```
+
+
 
 ## Functional Programming with Javascript v2
 Anjana Vakil  

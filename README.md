@@ -28,6 +28,7 @@ Introduction to C# and .NET, Frontend Masters
 Elixir in action, Manning
 
 [Javascript](./javascript.md)  
+NestJS Fundamentals, courses.nestjs.com
 Functional Programming with Javascript, Frontend Masters
 
 [Linux](./linux.md)

@@ -859,6 +859,7 @@ on start you get 300$ credit
 and Google **does not** charge you automatically after passing limit
 
 interact using cli tool `gcloud`
+https://cloud.google.com/sdk/docs/install
 
 install gcloud tool  
 install / remove components
@@ -921,15 +922,35 @@ as soon as you scale up, all is redeployed
 gcloud container clusters resize kiada --num-nodes 0
 ```
 
+#### Amazon Elastic Kubernetes Service
+First, install `ekstl` command line tool.
+https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html
 
+create cluster
+```bash
+eksctl create cluster --name kiada --region eu-central-1 --nodes 3 --ssh-access
+```
 
+use SSH to connect to nodes
+while inside, list running containers with `docker ps`
 
+#### Deploying from scratch
+Proper management of k8s is difficult.
+but if you want to try, go with `kubeadm` tool.
+Follow [Kubernetes The Hard Way](https://github.com/kelseyhightower/Kubernetes-the-hard-way)
 
+#### Interacting with Kubernetes
+using `kubectl` which talks with Kubernetes API server
+called: kube control, kube-cuddle or kube-c-t-l
 
+```bash
+brew install kubectl
+kubectl --help
+```
 
-
-
-
+set alias
+.bashrc
+`alias k=kubectl`
 
 
 

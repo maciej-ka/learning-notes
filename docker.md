@@ -858,7 +858,7 @@ crictl ps
 on start you get 300$ credit  
 and Google **does not** charge you automatically after passing limit
 
-interact using cli tool `gcloud`
+interact using cli tool `gcloud`  
 https://cloud.google.com/sdk/docs/install
 
 install gcloud tool  
@@ -923,7 +923,7 @@ gcloud container clusters resize kiada --num-nodes 0
 ```
 
 #### Amazon Elastic Kubernetes Service
-First, install `ekstl` command line tool.
+First, install `ekstl` command line tool.  
 https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html
 
 create cluster
@@ -931,16 +931,16 @@ create cluster
 eksctl create cluster --name kiada --region eu-central-1 --nodes 3 --ssh-access
 ```
 
-use SSH to connect to nodes
+use SSH to connect to nodes  
 while inside, list running containers with `docker ps`
 
 #### Deploying from scratch
-Proper management of k8s is difficult.
-but if you want to try, go with `kubeadm` tool.
+Proper management of k8s is difficult.  
+but if you want to try, go with `kubeadm` tool.  
 Follow [Kubernetes The Hard Way](https://github.com/kelseyhightower/Kubernetes-the-hard-way)
 
 #### Interacting with Kubernetes
-using `kubectl` which talks with Kubernetes API server
+using `kubectl` which talks with Kubernetes API server  
 called: kube control, kube-cuddle or kube-c-t-l
 
 ```bash
@@ -948,10 +948,23 @@ brew install kubectl
 kubectl --help
 ```
 
-set alias
-.bashrc
+set alias  
+.bashrc  
 `alias k=kubectl`
 
+#### Configure kubectl to use specific cluster
+`~/.kube/config` file contains configuration of cluster  
+its autocreated by Minikube, GKE and other...  
+when getting invited to new cluster, you will receive such file
+
+point kubectl by exporting env variable
+```bash
+export KUBECONFIG=/path/to/custom/kubeconfig
+```
+
+*(its also possible to use kubectl in more than one context)*
+
+#### Using kubectl
 
 
 ## Complete Intro to Containers, v2

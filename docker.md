@@ -965,6 +965,10 @@ export KUBECONFIG=/path/to/custom/kubeconfig
 *(its also possible to use kubectl in more than one context)*
 
 #### Using kubectl
+check connection to cluster
+```bash
+kubectl couster-info
+```
 
 
 ## Complete Intro to Containers, v2

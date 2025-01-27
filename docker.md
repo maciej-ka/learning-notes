@@ -707,7 +707,7 @@ either by labels or defining paths
 they allow to access only files and resources  
 which labels match set of policy running application has
 
-### Kubernetes: Deploying your first application
+### 3. Kubernetes: Deploying your first application
 Setting multi-node Kubernetes cluster isn't simple  
 it requires proper network setup  
 to allow all containers to communicate with each other
@@ -855,49 +855,12 @@ crictl ps
 ```
 
 #### Google Kubernetes Engine
-on start you get 300$ credit
+on start you get 300$ credit  
 and Google **does not** charge you automatically after passing limit
 
 interact using cli tool `gcloud`
 
-set default zone
-europe-west3 region has three zones
-and create three worker node cluster
-```bash
-gcloud config set compute/zone europe-west3-c
-gcloud container clusters create kiada --num-nodes 3
-```
-
-to create three workers each in different zone
-select whole region as default and one worker
-```bash
-gcloud config set compute/zone europe-west3
-gcloud container clusters create kiada --num-nodes 1
-```
-
-list nodes
-```bash
-gcloud compute instances list
-```
-
-each worker node is a virtual machine that you have to pay for
-to cut costs, scale to zero
-when scaling to zero, none of the objects created is deleted
-as soon as you scale up, all is redeployed
-```bash
-gcloud container clusters resize kiada --size 0
-```
-
-control nodes in GKE are internal to Google
-and are not accessible directly at all
-
-to access worker nodes
-(and then try `docker ps`)
-```bash
-gcloud compute ssh gke-kiada-default-pool-9bba9b18-4glf
-```
-
-Gcloud
+install gcloud tool  
 install / remove components
 ```bash
 gcloud components install COMPONENT_ID
@@ -908,6 +871,67 @@ update your SDK
 ```bash
 gcloud components update
 ```
+
+login, set default zone and project
+```bash
+gcloud init
+```
+
+one region  
+europe-west3
+
+has three avaibility zones  
+europe-west3-a, europe-west3-b, europe-west3-c
+
+to create three nodes in one zone  
+set one of zones as default  
+and create clusters with three workers
+```bash
+gcloud config set compute/zone europe-west3-c
+gcloud container clusters create kiada --num-nodes 3
+```
+
+to create three workers each in different zones  
+select whole region as default  
+and create cluster with one worker
+```bash
+gcloud config set compute/zone europe-west3
+gcloud container clusters create kiada --num-nodes 1
+```
+
+list nodes
+```bash
+gcloud compute instances list
+```
+
+control nodes in GKE are internal to Google  
+and are not accessible directly at all
+
+to access worker nodes  
+(and then try `docker ps`)
+```bash
+gcloud compute ssh gke-kiada-default-pool-9bba9b18-4glf
+```
+
+each worker node is a virtual machine that you have to pay for  
+to cut costs, scale to zero  
+when scaling to zero, none of the objects created is deleted  
+as soon as you scale up, all is redeployed
+```bash
+gcloud container clusters resize kiada --num-nodes 0
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## Complete Intro to Containers, v2
 https://frontendmasters.com/workshops/complete-intro-containers-v2/

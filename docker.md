@@ -825,7 +825,7 @@ to make it multi-node, create configuration file
 kind-multi-node.yaml
 ```yaml
 kind: Cluster
-apiVersion: kind.sigs.k8s.io/v1alpha3
+apiVersion: kind.x-k8s.io/v1alpha4
 nodes:
 - role: control-plane
 - role: worker
@@ -963,12 +963,36 @@ export KUBECONFIG=/path/to/custom/kubeconfig
 ```
 
 *(its also possible to use kubectl in more than one context)*
+```bash
+kubectl cluster-info --context kind-kind
+```
 
 #### Using kubectl
 check connection to cluster
 ```bash
-kubectl couster-info
+kubectl cluster-info
 ```
+
+list nodes
+```bash
+kubectl get nodes
+```
+
+everything in Kubernetes is represented by an object  
+and can be manipulated by API
+
+get more info about node
+or about all nodes
+```bash
+kubectl describe node kind-worker
+kubectl describe node
+```
+
+
+
+
+
+
 
 
 ## Complete Intro to Containers, v2

@@ -981,7 +981,7 @@ kubectl get nodes
 everything in Kubernetes is represented by an object  
 and can be manipulated by API
 
-get more info about node
+get more info about node  
 or about all nodes
 ```bash
 kubectl describe node kind-worker
@@ -989,7 +989,7 @@ kubectl describe node
 ```
 
 #### Web Dashboards
-Not always available.
+Not always available.  
 On Docker Kubernetes there is a bit of [installation](https://livebook.manning.com/book/kubernetes-in-action-second-edition/chapter-3/v-14/210) needed.
 
 ```bash
@@ -1003,12 +1003,12 @@ without a deployment definition (that would be declarative)
 kubectl create deployment kiada --image=maciejka/kiada:0.1
 ```
 
-by default image is pulled from Docker Hub
-but you can also specify image registry
+by default image is pulled from Docker Hub  
+but you can also specify image registry  
 like: `quay.io/maciejka/kiada:0.1`
 
-This creates deployment and stores it in Kubernetes API
-It's a desired state.
+This creates deployment and stores it in Kubernetes API  
+It's a desired state.  
 Kubernetes must now ensure that actual state matches it.
 
 list deployments
@@ -1017,16 +1017,16 @@ kubectl get deployments
 ```
 
 #### pods
-one worker can have many pods
+one worker can have many pods  
 one pod has one IP address and can have many containers
 
-kubectl is all about creating and modifying objects
-there is no list containers
+kubectl is all about creating and modifying objects  
+there is no list containers  
 container is not smallest unit of deployment
 
-pod is group of co-located containers
-group of containers running on same worker node
-and sharing same network namespace (and other linux namespaces)
+pod is group of co-located containers  
+group of containers running on same worker node  
+and sharing same network namespace (and other linux namespaces)  
 which means: network interface, IP, port space
 
 list pods
@@ -1034,7 +1034,7 @@ list pods
 kubectl get pods
 ```
 
-show details of pod
+show details of pod  
 (show it event log like pulling image)
 ```bash
 kubectl describe pod

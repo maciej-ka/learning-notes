@@ -1,3 +1,39 @@
+## NestJS Docs, websockets
+https://docs.nestjs.com/websockets
+
+Nest abstracts implementation details
+same component can run on Http-based api, WebSockets, Microservices
+
+installation
+```bash
+npm i @nestjs/websockets @nestjs/platform-socket.io
+```
+
+#### Gateways
+can be treated as providers
+they can inject through constructor
+and be injected
+
+they are not instantiated
+until referenced in providers of module
+
+@WebSocketGateway
+two WS platforms are supported: `socket.io` and `ws`
+
+| name      | stars | created |
+|-----------|-------|---------|
+| socket.io | 62k   | 2010    |
+| ws        | 22k   | 2011    |
+
+by default same port as http server is used
+to have different or a namespace add argument
+
+```typescript
+@WebSocketGateway(80)
+@WebSocketGateway(80, { namespace: 'events' })
+@WebSocketGateway(81, { transports: ['websocket'] })
+```
+
 ## NestJS Fundamentals
 https://courses.nestjs.com/  
 https://courseflix.net/course/nestjs-fundamentals  
@@ -910,44 +946,6 @@ consider installing `@types/express`
 | @Headers(name?: string) | req.headers, req.headers[name] |
 | @Ip()                   | req.ip                         |
 | @HostParam()            | req.hosts                      |
-
-
-
-## NestJS Docs websocket
-https://docs.nestjs.com/websockets/gateways
-
-Nest abstracts implementation details
-same component can run on Http-based api, WebSockets, Microservices
-
-installation
-```bash
-npm i @nestjs/websockets @nestjs/platform-socket.io
-```
-
-#### Gateways
-can be treated as providers
-they can inject through constructor
-and be injected
-
-they are not instantiated
-until referenced in providers of module
-
-@WebSocketGateway
-two WS platforms are supported: `socket.io` and `ws`
-
-| name      | stars | created |
-|-----------|-------|---------|
-| socket.io | 62k   | 2010    |
-| ws        | 22k   | 2011    |
-
-by default same port as http server is used
-to have different or a namespace add argument
-
-```typescript
-@WebSocketGateway(80)
-@WebSocketGateway(80, { namespace: 'events' })
-@WebSocketGateway(81, { transports: ['websocket'] })
-```
 
 ## Few notes on Express
 Express app is organized in series of middleware  

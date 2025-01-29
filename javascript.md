@@ -1,7 +1,7 @@
 ## NestJS Docs, websockets
 https://docs.nestjs.com/websockets
 
-Nest abstracts implementation details
+Nest abstracts implementation details  
 same component can run on Http-based api, WebSockets, Microservices
 
 installation
@@ -10,14 +10,14 @@ npm i @nestjs/websockets @nestjs/platform-socket.io
 ```
 
 #### Gateways
-can be treated as providers
-they can inject through constructor
+can be treated as providers  
+they can inject through constructor  
 and be injected
 
-they are not instantiated
+they are not instantiated  
 until referenced in providers of module
 
-@WebSocketGateway
+@WebSocketGateway  
 two WS platforms are supported: `socket.io` and `ws`
 
 | name      | stars | created |
@@ -25,7 +25,7 @@ two WS platforms are supported: `socket.io` and `ws`
 | socket.io | 62k   | 2010    |
 | ws        | 22k   | 2011    |
 
-by default same port as http server is used
+by default same port as http server is used  
 to have different or a namespace add argument
 
 ```typescript
@@ -743,17 +743,17 @@ npx typeorm migration:create migrations/CoffeeRefactor
 ```
 npx is utility to use npm packages without installing them
 
-changing column name in entity
-when we do it with synchronize flag,
-typeorm will update local database
+changing column name in entity  
+when we do it with synchronize flag,  
+typeorm will update local database  
 but it will not affect production database
 
-btw.
-it will also erase all data in that column
-only after column is removed, typeorm will create new column
+btw.  
+it will also erase all data in that column  
+only after column is removed, typeorm will create new column  
 *(again, migrations can help here, because they will preserve data)*
 
-every migraton should have up and down method
+every migraton should have up and down method  
 down is important to undo changes in case there are issues
 
 ```javascript
@@ -774,7 +774,7 @@ export class CoffeeRefactor1737146537789 implements MigrationInterface {
 }
 ```
 
-before running migrations
+before running migrations  
 make sure that Nest.JS has build ready
 ```bash
 npm run build
@@ -785,7 +785,7 @@ run migration
 npx typeorm migration:run -d ormconfig.js
 ```
 
-with typescript you may need to run this
+with typescript you may need to run this  
 to translate into js on the fly
 ```bash
 npx typeorm-ts-node-commonjs migration:run -d ormconfig.js
@@ -796,8 +796,8 @@ revert migration
 npx typeorm migration:revert -d ormconfig.js
 ```
 
-detect differences and generate migration file
-it compares @Entity descriptions with state of database
+detect differences and generate migration file  
+it compares @Entity descriptions with state of database  
 and creates migration automatically to match entities
 ```bash
 npx typeorm migration:generate -d ormconfig.js migrations/SchemaSync

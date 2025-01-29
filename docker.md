@@ -1008,6 +1008,7 @@ but you can also specify image registry
 like: `quay.io/maciejka/kiada:0.1`
 
 This creates deployment and stores it in Kubernetes API  
+(it calls POST /deployments)  
 It's a desired state.  
 Kubernetes must now ensure that actual state matches it.
 
@@ -1039,6 +1040,15 @@ show details of pod
 ```bash
 kubectl describe pod
 ```
+
+term scheduler  
+actually it runs immediatelly  
+scheduling in k8s means assigning containers to worker nodes
+
+once pod is assigned to node it's never moved  
+even when it fails, it's recreated on same node
+
+#### exposing app to the world
 
 
 ## Complete Intro to Containers, v2

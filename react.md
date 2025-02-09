@@ -1,4 +1,5 @@
-## React form validation libraries
+React form validation libraries
+===============================
 | Name                                                                        | Stars | Year |
 |-----------------------------------------------------------------------------|-------|------|
 | [React Hook Form](https://github.com/react-hook-form/react-hook-form)       | 42k   | 2019 |
@@ -11,7 +12,8 @@
 | [Informed](https://github.com/teslamotors/informed)                         | 1k    | 2018 |
 | [React Formik](https://github.com/formio/react)                             | 0.3k  | 2015 |
 
-## Headless component libraries
+Headless component libraries
+============================
 | Name                                                                                 | Stars | Year  |
 |--------------------------------------------------------------------------------------|-------|-------|
 | [Headless UI](https://github.com/tailwindlabs/headlessui)                            | 26k   | 2020  |
@@ -24,7 +26,8 @@
 
 *note: Chakra is not headless, it comes with own styled components*
 
-## Introduction to Next.js, v3
+Introduction to Next.js, v3
+===========================
 https://frontendmasters.com/courses/next-js-v3/  
 https://nextjs.org/docs  
 https://scottmoss.notion.site/Intro-to-Next-js-V3-6cefbdba58d94e3897dcb8d7e7fc0337
@@ -133,10 +136,8 @@ but it will not match
 and to fix this, you can do double brackets  
 `/docs/[[...ids]]/`
 
-
-
-
-## Learn Next.js
+Learn Next.js
+=============
 https://nextjs.org/learn/dashboard-app
 
 #### use server
@@ -221,9 +222,8 @@ there is no client side thing taking over
 browser doesn't know there is react component  
 and there is no javascript waiting to hydrate it
 
-
-
-## Complete Intro to React
+Complete Intro to React
+=======================
 https://react-v9.holt.courses/  
 https://github.com/btholt/citr-v9-project
 
@@ -517,7 +517,8 @@ please preload all
 preload and preconnect  
 React 19
 
-## Less common hooks
+Less common hooks
+=================
 not hooks but also  
 `React.Memo`  
 `React.formwardRef`

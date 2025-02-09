@@ -3,7 +3,8 @@
 :map <leader>t
 ```
 
-## Vim Fundamentals
+Vim Fundamentals
+================
 https://frontendmasters.com/courses/vim-fundamentals  
 https://theprimeagen.github.io/vim-fundamentals/
 

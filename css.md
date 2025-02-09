@@ -952,7 +952,8 @@ snap-x, snap-center, snap-mandatory
 add them to layer base  
 also should be possible to use --varname inside []
 
-## Other notes
+Other notes
+===========
 
 #### = Css combinators =
 There are four different combinators in CSS:

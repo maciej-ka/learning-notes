@@ -1,4 +1,5 @@
-## AWS For Front-End Engineers
+AWS For Front-End Engineers
+===========================
 https://frontendmasters.com/courses/aws-v2/  
 https://github.com/stevekinney/aws-v2
 
@@ -532,9 +533,8 @@ HTTP/2: has built in streaming (we will send you everything in a open connection
 Mozilla Observatory: check security of web service  
 - [ ] image resize: is there a service for that?
 
-
-
-## Lambdas, summary with Chatgpt
+Lambdas, summary with Chatgpt
+=============================
 **do aws lambda start a container each time?**  
 No, AWS Lambda does not start a new container each time a function is invoked.  
 Instead, it reuses containers for multiple invocations to optimize performance.  

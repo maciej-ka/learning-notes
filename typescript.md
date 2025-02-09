@@ -264,7 +264,8 @@ class TestClass {
 }
 ```
 
-## TypeScript: From First Steps to Professional
+TypeScript: From First Steps to Professional
+============================================
 Anjana Vakil  
 slides: https://github.com/vakila/typescript-first-steps/tree/gh-pages  
 excercise: https://github.com/vakila/typescript-first-steps/tree/main
@@ -300,9 +301,8 @@ https://github.com/DefinitelyTyped/DefinitelyTyped
 // @ts-ignore
 ```
 
-
-
-## Intermediate Typescript
+Intermediate Typescript
+=======================
 Mike North  
 https://frontendmasters.com/courses/intermediate-typescript-v2/introduction/  
 https://www.typescript-training.com/course/intermediate-v2

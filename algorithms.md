@@ -1,4 +1,5 @@
-## The Last Algorithms Course You'll Need
+The Last Algorithms Course You'll Need
+======================================
 https://frontendmasters.com/courses/algorithms
 
 ### Intro
@@ -112,7 +113,8 @@ for optimalization
 #### Search
 https://frontendmasters.com/courses/algorithms/linear-search-kata-setup/
 
-## Dynamic programming
+Dynamic programming
+===================
 #### Top down
 - will not iterate trough all states  
 - uses recursion and memoization

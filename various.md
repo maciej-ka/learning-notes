@@ -1,4 +1,5 @@
-### Variance notes
+Variance notes
+==============
 #### Covariance
 typical OOP situation
 Variable has type Animal, value can be a Cat
@@ -8,7 +9,8 @@ Variable has type Animal, value can be only exactly Animal
 #### Contravariance
 in function parameters
 
-## Microfrontends
+Microfrontends
+==============
 Micro Frontends in Action  
 Manning book by Michael Geers  
 https://learning.oreilly.com/library/view/micro-frontends-in/9781617296871/
@@ -151,9 +153,8 @@ One solution could be to create a set of allowed techs.
 team is two large big if two pizzas can't feed it  
 (Jeff Bezos)
 
-
-
-## How to Contribute to Open Source (Next.js)
+How to Contribute to Open Source (Next.js)
+==========================================
 https://www.youtube.com/watch?v=cuoNzXFLitc
 
 docs  
@@ -420,7 +421,8 @@ describe.todo
 
 [skipped ...]
 
-## Fudamentals of web performance
+Fudamentals of web performance
+==============================
 https://github.com/toddhgardner/fundametals-of-web-performance
 
 #### perfomance

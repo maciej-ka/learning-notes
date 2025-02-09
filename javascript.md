@@ -1,4 +1,5 @@
-### NestJS architecture and advanced patterns
+NestJS architecture and advanced patterns
+=========================================
 https://courseflix.net/course/nestjs-architecture-and-advanced-patterns
 
 #### Hexagonal architecture in Practice, part 1
@@ -11,7 +12,8 @@ domain
 infrastructure
 presenters
 
-## NestJS Docs, websockets
+NestJS Docs, websockets
+=======================
 https://docs.nestjs.com/websockets
 
 Nest abstracts implementation details  
@@ -47,7 +49,8 @@ to have different or a namespace add argument
 @WebSocketGateway(81, { transports: ['websocket'] })
 ```
 
-## NestJS Fundamentals
+NestJS Fundamentals
+===================
 https://courses.nestjs.com/  
 https://courseflix.net/course/nestjs-fundamentals  
 
@@ -816,8 +819,8 @@ and creates migration automatically to match entities
 npx typeorm migration:generate -d ormconfig.js migrations/SchemaSync
 ```
 
-
-## NestJS Docs Crud
+NestJS Docs Crud
+================
 https://docs.nestjs.com/
 
 ### Install
@@ -960,7 +963,8 @@ consider installing `@types/express`
 | @Ip()                   | req.ip                         |
 | @HostParam()            | req.hosts                      |
 
-## Few notes on Express
+Few notes on Express
+====================
 Express app is organized in series of middleware  
 each middleware should either:
 
@@ -1025,9 +1029,8 @@ getDocs(@Query('version') version: string) {
 }
 ```
 
-
-
-## Functional Programming with Javascript v2
+Functional Programming with Javascript v2
+=========================================
 Anjana Vakil  
 slides: https://observablehq.com/embed/@anjana/what-is-functional-programming  
 excercises: https://functional-first-steps.netlify.app/1-intro/1-overview/
@@ -1116,9 +1119,8 @@ nice thing is that with Immer.js we pretend to work with regular arrays
 another approach  
 here you don't prentend you work with normal arrays
 
-
-
-## Various
+Various
+=======
 ### Discoveries from Stimulus
 #### data attributes
 data-*

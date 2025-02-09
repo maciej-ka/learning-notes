@@ -100,6 +100,7 @@ zakończyć tym, gdzie teraz jestem, moja aktualna sytuacja
 - avoid strong emotions
 
 ### What question to ask on job interview?
+- what tools/practices/approaches things in programming you see value in but think they come with too high price too pay?  
 - what do you think you do differently than most places?  
 - what lead you to decision to open this position?  
 - what would be my first assignment?  
@@ -121,12 +122,11 @@ zakończyć tym, gdzie teraz jestem, moja aktualna sytuacja
 - what opportunities to improve skills will I have in your company?
 
 #### revenge ones:
-I wan't to estimate how much can I grow working next to you on timeless fundamentals  
 - what is covariance/bivariance in typescript? when does it matter? what ts syntax is connected to these concepts?  
 - what's the idea behind red-black trees? where are they used?  
 - what is dynamic programming? would you know the origin of its name? how many types of it you know? what is typical example of applying them?
 
-#### Software Developer Handbook
+#### O'Reilly Software Developer Handbook
 I don't hire people who aren't engaged in what they are doing.  
 If you don't have list of questions lined up for me, all I hear is: you don't want this job.  
 Show interest and initiative. Show that you are already thinking about the job.  

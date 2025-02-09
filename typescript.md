@@ -1,4 +1,26 @@
-## Decorators proposal
+Grab type of properties in React
+================================
+```typescript
+const Button = (props: { label: string; onClick: () => void }) => (
+  <button onClick={props.onClick}>{props.label}</button>
+);
+```
+
+this will grab whole signature of component fuction
+
+```typescript
+typeof Button;
+(props: { label: string; onClick: () => void }) => JSX.Element
+```
+
+this will grab only properties
+```typescript
+React.ComponentProps<typeof Button>
+{ label: string, onClick: () => void }
+```
+
+Decorators proposal
+===================
 https://github.com/tc39/proposal-decorators  
 Stage 3
 
@@ -9,7 +31,8 @@ Can be used to metaprogram
 2. can decorate value with accessor function  
 3. can initialize value
 
-## Decorators digitalocean
+Decorators digitalocean
+=======================
 https://www.digitalocean.com/community/tutorials/how-to-use-decorators-in-typescript
 
 all kinds of decorators

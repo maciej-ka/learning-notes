@@ -1,3 +1,26 @@
+Triple slash directive
+======================
+A TypeScript triple-slash directive is a special kind of single-line comment that contains an XML tag. It acts as a compiler directive, telling TypeScript how to handle a file.
+The syntax always starts with `///` (three forward slashes) and must be at the top of the file (only comments and other triple-slash directives can precede them).
+There are several types of triple-slash directives:
+
+```typescript
+// Includes a reference to another .ts file
+/// <reference path="..." />
+
+// Includes a reference to a type definition package
+/// <reference types="..." />
+
+// Includes a reference to a built-in TypeScript library
+/// <reference lib="..." />
+
+// Sets the module name for AMD modules
+/// <amd-module name="..." />
+
+// Declares a dependency for AMD modules
+/// <amd-dependency path="..." />
+```
+
 Grab type of properties in React
 ================================
 ```typescript

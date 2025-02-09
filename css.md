@@ -1,4 +1,10 @@
-## Tailwind CSS, Frontend Masters
+Keep specificity low
+====================
+`:where()` has zero specificity (whatever is inside it doesn’t affect specificity).
+`:is()` uses the highest specificity of its arguments.
+
+Tailwind CSS, Frontend Masters
+==============================
 https://frontendmasters.com/courses/tailwind-css/  
 https://tailwind-workshop.vercel.app/introduction
 

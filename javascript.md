@@ -1,3 +1,16 @@
+### NestJS architecture and advanced patterns
+https://courseflix.net/course/nestjs-architecture-and-advanced-patterns
+
+#### Hexagonal architecture in Practice, part 1
+nest create app
+and resource alarms
+
+create 4 new folders in alarms directory:
+application
+domain
+infrastructure
+presenters
+
 ## NestJS Docs, websockets
 https://docs.nestjs.com/websockets
 

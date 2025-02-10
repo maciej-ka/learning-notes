@@ -533,6 +533,8 @@ HTTP/2: has built in streaming (we will send you everything in a open connection
 Mozilla Observatory: check security of web service  
 - [ ] image resize: is there a service for that?
 
+
+
 Lambdas, summary with Chatgpt
 =============================
 **do aws lambda start a container each time?**  

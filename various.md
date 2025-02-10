@@ -9,6 +9,8 @@ Variable has type Animal, value can be only exactly Animal
 #### Contravariance
 in function parameters
 
+
+
 Microfrontends
 ==============
 Micro Frontends in Action  
@@ -152,6 +154,8 @@ One solution could be to create a set of allowed techs.
 #### Two pizza rule
 team is two large big if two pizzas can't feed it  
 (Jeff Bezos)
+
+
 
 How to Contribute to Open Source (Next.js)
 ==========================================
@@ -420,6 +424,8 @@ red / green / refactor
 describe.todo
 
 [skipped ...]
+
+
 
 Fudamentals of web performance
 ==============================

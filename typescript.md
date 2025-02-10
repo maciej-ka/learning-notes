@@ -21,6 +21,8 @@ There are several types of triple-slash directives:
 /// <amd-dependency path="..." />
 ```
 
+
+
 Grab type of properties in React
 ================================
 ```typescript
@@ -42,6 +44,8 @@ React.ComponentProps<typeof Button>
 { label: string, onClick: () => void }
 ```
 
+
+
 Decorators proposal
 ===================
 https://github.com/tc39/proposal-decorators  
@@ -53,6 +57,8 @@ Can be used to metaprogram
 1. can replace decorated value with value of same kind. (replace method with method)  
 2. can decorate value with accessor function  
 3. can initialize value
+
+
 
 Decorators digitalocean
 =======================
@@ -264,6 +270,8 @@ class TestClass {
 }
 ```
 
+
+
 TypeScript: From First Steps to Professional
 ============================================
 Anjana Vakil  
@@ -300,6 +308,8 @@ https://github.com/DefinitelyTyped/DefinitelyTyped
 ```javascript
 // @ts-ignore
 ```
+
+
 
 Intermediate Typescript
 =======================

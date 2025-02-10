@@ -1,3 +1,5 @@
+Various
+=======
 #### Show all mappings starting with <leader>t
 ```
 :map <leader>t

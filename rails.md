@@ -529,6 +529,8 @@ app/views/rooms/\_room.html.erb
 </div>
 ```
 
+
+
 Using Rails for API-only Applications
 =====================================
 https://guides.rubyonrails.org/api_app.html
@@ -759,6 +761,8 @@ class ApplicationController < ActionController::API
   self.cache_store = :mem_cache_store
 end
 ```
+
+
 
 Getting Started with Rails
 ==========================

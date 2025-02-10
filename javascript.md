@@ -12,6 +12,8 @@ domain
 infrastructure
 presenters
 
+
+
 NestJS Docs, websockets
 =======================
 https://docs.nestjs.com/websockets
@@ -48,6 +50,8 @@ to have different or a namespace add argument
 @WebSocketGateway(80, { namespace: 'events' })
 @WebSocketGateway(81, { transports: ['websocket'] })
 ```
+
+
 
 NestJS Fundamentals
 ===================
@@ -819,6 +823,8 @@ and creates migration automatically to match entities
 npx typeorm migration:generate -d ormconfig.js migrations/SchemaSync
 ```
 
+
+
 NestJS Docs Crud
 ================
 https://docs.nestjs.com/
@@ -963,6 +969,8 @@ consider installing `@types/express`
 | @Ip()                   | req.ip                         |
 | @HostParam()            | req.hosts                      |
 
+
+
 Few notes on Express
 ====================
 Express app is organized in series of middleware  
@@ -1028,6 +1036,8 @@ getDocs(@Query('version') version: string) {
   }
 }
 ```
+
+
 
 Functional Programming with Javascript v2
 =========================================
@@ -1118,6 +1128,8 @@ nice thing is that with Immer.js we pretend to work with regular arrays
 #### Immutable.js
 another approach  
 here you don't prentend you work with normal arrays
+
+
 
 Various
 =======

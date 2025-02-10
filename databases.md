@@ -40,6 +40,8 @@ General help on psql commands
 \?
 ```
 
+
+
 Complete Intro to Databases
 ===========================
 https://frontendmasters.com/courses/databases/introduction/  
@@ -117,6 +119,8 @@ you have to be more careful
 
 the more discipline you have early  
 the more "queryable" db will be later
+
+
 
 ChatGPT: Mongo overview
 =======================
@@ -209,6 +213,8 @@ MongoDB provides both eventual consistency and strong consistency,
 depending on the configuration
 
 DynamoDB: noSQL database
+
+
 
 Complete Intro to SQLite
 ========================

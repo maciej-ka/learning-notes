@@ -200,6 +200,8 @@ try to act physically or creatively:
 - repair something  
 - build something on web
 
+
+
 Frontend Masters, Software Developer Success
 ============================================
 https://frontendmasters.com/courses/dev-soft-skills/

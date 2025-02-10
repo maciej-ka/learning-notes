@@ -12,6 +12,8 @@ React form validation libraries
 | [Informed](https://github.com/teslamotors/informed)                         | 1k    | 2018 |
 | [React Formik](https://github.com/formio/react)                             | 0.3k  | 2015 |
 
+
+
 Headless component libraries
 ============================
 | Name                                                                                 | Stars | Year  |
@@ -25,6 +27,8 @@ Headless component libraries
 | [Chakra Ark](https://github.com/chakra-ui/ark)                                       | 4k    | 2022  |
 
 *note: Chakra is not headless, it comes with own styled components*
+
+
 
 Introduction to Next.js, v3
 ===========================
@@ -136,6 +140,8 @@ but it will not match
 and to fix this, you can do double brackets  
 `/docs/[[...ids]]/`
 
+
+
 Learn Next.js
 =============
 https://nextjs.org/learn/dashboard-app
@@ -221,6 +227,8 @@ everything is executed on the server
 there is no client side thing taking over  
 browser doesn't know there is react component  
 and there is no javascript waiting to hydrate it
+
+
 
 Complete Intro to React
 =======================
@@ -516,6 +524,8 @@ please preload all
 
 preload and preconnect  
 React 19
+
+
 
 Less common hooks
 =================

@@ -11,6 +11,8 @@ run only one service
 docker compose up db -d
 ```
 
+
+
 Kubernetes in action
 ====================
 https://livebook.manning.com/book/kubernetes-in-action-second-edition/chapter-1/v-14/
@@ -1051,6 +1053,8 @@ once pod is assigned to node it's never moved
 even when it fails, it's recreated on same node
 
 #### exposing app to the world
+
+
 
 Complete Intro to Containers, v2
 ================================

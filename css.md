@@ -3,6 +3,8 @@ Keep specificity low
 `:where()` has zero specificity (whatever is inside it doesn’t affect specificity).
 `:is()` uses the highest specificity of its arguments.
 
+
+
 Tailwind CSS, Frontend Masters
 ==============================
 https://frontendmasters.com/courses/tailwind-css/  
@@ -951,6 +953,8 @@ snap-x, snap-center, snap-mandatory
 #### how to encorporate css variables?
 add them to layer base  
 also should be possible to use --varname inside []
+
+
 
 Other notes
 ===========

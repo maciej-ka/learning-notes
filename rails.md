@@ -1,5 +1,6 @@
 Hotwire Screencast
 ==================
+
 https://d1d6azhz7lc2s3.cloudfront.net/hotwire-screencast.mp4
 
 ### Hotwire stands for "HTML Over The Wire"
@@ -533,6 +534,7 @@ app/views/rooms/\_room.html.erb
 
 Using Rails for API-only Applications
 =====================================
+
 https://guides.rubyonrails.org/api_app.html
 
 ```bash
@@ -766,6 +768,7 @@ end
 
 Getting Started with Rails
 ==========================
+
 https://guides.rubyonrails.org/getting_started.html
 
 ```bash

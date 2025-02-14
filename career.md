@@ -1,5 +1,6 @@
 Personal observations (partially in polish)
 ===========================================
+
 ### Ćwicz Ton (jak głośno)
 #### nie bądź głośny w doborze tematów
 i wątków i wtrętów  
@@ -204,6 +205,7 @@ try to act physically or creatively:
 
 Frontend Masters, Software Developer Success
 ============================================
+
 https://frontendmasters.com/courses/dev-soft-skills/
 
 ### 1. Starting in new project

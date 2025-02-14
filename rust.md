@@ -1,5 +1,6 @@
 The Rust Programming Language  
 ===============================
+
 https://learning.oreilly.com/library/view/the-rust-programming/9781098156817  
 Steve Klabnik and Carol Nichols
 
@@ -378,6 +379,7 @@ Also there is `return` keyword for returning early.
 
 Frontendmasters: Rust for typescript devs
 =========================================
+
 Primeagen  
 https://frontendmasters.com/courses/rust-ts-devs  
 course:  

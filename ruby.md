@@ -176,6 +176,7 @@ fh.close
 
 Ruby changes
 ============
+
 Since you last used Ruby in 2016, the language has undergone significant  
 changes with new features, performance improvements, and adjustments. Here's a  
 summary of some of the most important updates:

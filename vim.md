@@ -1,5 +1,6 @@
 Various
 =======
+
 #### Show all mappings starting with <leader>t
 ```
 :map <leader>t
@@ -7,6 +8,7 @@ Various
 
 Vim Fundamentals
 ================
+
 https://frontendmasters.com/courses/vim-fundamentals  
 https://theprimeagen.github.io/vim-fundamentals/
 

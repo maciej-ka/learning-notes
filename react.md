@@ -1,5 +1,6 @@
 React form validation libraries
 ===============================
+
 | Name                                                                        | Stars | Year |
 |-----------------------------------------------------------------------------|-------|------|
 | [React Hook Form](https://github.com/react-hook-form/react-hook-form)       | 42k   | 2019 |
@@ -16,6 +17,7 @@ React form validation libraries
 
 Headless component libraries
 ============================
+
 | Name                                                                                 | Stars | Year  |
 |--------------------------------------------------------------------------------------|-------|-------|
 | [Headless UI](https://github.com/tailwindlabs/headlessui)                            | 26k   | 2020  |
@@ -32,6 +34,7 @@ Headless component libraries
 
 Introduction to Next.js, v3
 ===========================
+
 https://frontendmasters.com/courses/next-js-v3/  
 https://nextjs.org/docs  
 https://scottmoss.notion.site/Intro-to-Next-js-V3-6cefbdba58d94e3897dcb8d7e7fc0337
@@ -144,6 +147,7 @@ and to fix this, you can do double brackets
 
 Learn Next.js
 =============
+
 https://nextjs.org/learn/dashboard-app
 
 #### use server
@@ -232,6 +236,7 @@ and there is no javascript waiting to hydrate it
 
 Complete Intro to React
 =======================
+
 https://react-v9.holt.courses/  
 https://github.com/btholt/citr-v9-project
 
@@ -529,6 +534,7 @@ React 19
 
 Less common hooks
 =================
+
 not hooks but also  
 `React.Memo`  
 `React.formwardRef`

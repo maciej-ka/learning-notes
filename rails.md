@@ -1,6 +1,5 @@
-Hotwire Screencast  
+Hotwire Screencast
 ==================
-
 https://d1d6azhz7lc2s3.cloudfront.net/hotwire-screencast.mp4
 
 ### Hotwire stands for "HTML Over The Wire"
@@ -81,7 +80,7 @@ use camelCase for name
 ```
 
 target can be not input, as long as:  
-- it has `value` property  
+- it has `value` property
 - it has `select()` method
 
 ```javascript
@@ -124,15 +123,15 @@ is same as
 <button data-action="click->clipboard#copy">
 ```
 
-| element           | default action |  
-|-------------------|----------------|  
-| a                 | click          |  
-| button            | click          |  
-| details           | toggle         |  
-| form              | submit         |  
-| input             | input          |  
-| input type=submit | click          |  
-| select            | change         |  
+| element           | default action |
+|-------------------|----------------|
+| a                 | click          |
+| button            | click          |
+| details           | toggle         |
+| form              | submit         |
+| input             | input          |
+| input type=submit | click          |
+| select            | change         |
 | textarea          | input          |
 
 ### prevent default
@@ -178,10 +177,10 @@ html/css
 
 ### lifecycle methods
 
-| method       | when                                        |  
-|--------------|---------------------------------------------|  
-| initialize() | once ever                                   |  
-| connect()    | anytime controller is connected to DOM      |  
+| method       | when                                        |
+|--------------|---------------------------------------------|
+| initialize() | once ever                                   |
+| connect()    | anytime controller is connected to DOM      |
 | disconnect() | anytime controller is disconnected from DOM |
 
 ### state values
@@ -211,7 +210,7 @@ export default class extends Controller {
   showCurrentSlide() {
     this.slideTargets.forEach((element, index) => {
       element.hidden = index !== this.indexValue
-    }) 
+    })
   }
 ```
 
@@ -227,8 +226,8 @@ myNameValueChanged() { ... }
 #### default values
 
 ```javascript
-static values = { 
-  index: Number, 
+static values = {
+  index: Number,
   effect: { type: String, default: "kenburns" }
 }
 ```
@@ -291,9 +290,9 @@ Rails will auto load all controllers from
 `app/javascript/controllers`
 
 #### naming
-| controller file name          | identifier       |  
-|-------------------------------|------------------|  
-| date_picker_controller.js     | date-picker      |  
+| controller file name          | identifier       |
+|-------------------------------|------------------|
+| date_picker_controller.js     | date-picker      |
 | users/list_item_controller.js | users--list-item |
 
 ### Hotwire
@@ -462,7 +461,7 @@ app/models/message.rb
 after_create_commit -> { broadcast_append_to room }
 ```
 
-### connect console to shared adapter 
+### connect console to shared adapter
 uncomment in Gemfile
 ```gemfile
 gem "redis", ">= 4.0.1"
@@ -532,16 +531,15 @@ app/views/rooms/\_room.html.erb
 
 
 
-Using Rails for API-only Applications  
+Using Rails for API-only Applications
 =====================================
-
 https://guides.rubyonrails.org/api_app.html
 
 ```bash
 rails new my_api --api
 ```
 this will:  
-- set ActionController::API as base of controller  
+- set ActionController::API as base of controller
   (not ActionController::Base)  
 - configure generators to skip generating view, helpers and assets
 
@@ -616,7 +614,7 @@ normally cache works per client basis
 
 #### public mode:
 Will cache full response in Rack::Cache per URL key:  
-- cache response  
+- cache response
 - and Last-Modified
 
 ```ruby
@@ -766,9 +764,8 @@ end
 
 
 
-Getting Started with Rails  
+Getting Started with Rails
 ==========================
-
 https://guides.rubyonrails.org/getting_started.html
 
 ```bash
@@ -833,7 +830,7 @@ end
 
 #### strong typing
 way to have:  
-- handy construction of value hash from form  
+- handy construction of value hash from form
 - security that users will not add extra fields
 
 ```ruby
@@ -1204,14 +1201,14 @@ popular authentication add-on:
 
 Devise  
 https://github.com/heartcombo/devise  
-- full featured  
-- out of box  
-- provides set structure and conventions  
-- built-in views  
-- some modularity (choose features)  
+- full featured
+- out of box
+- provides set structure and conventions
+- built-in views
+- some modularity (choose features)
 Authlogic  
 https://github.com/binarylogic/authlogic  
-- more a toolkit  
-- more flexible  
-- no built-in views  
+- more a toolkit
+- more flexible
+- no built-in views
 - less popular

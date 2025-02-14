@@ -1,6 +1,5 @@
-PSQL cheatsheet  
+PSQL cheatsheet
 ===============
-
 Start
 ```bash
 psql -U postgres
@@ -43,9 +42,8 @@ General help on psql commands
 
 
 
-Complete Intro to Databases  
+Complete Intro to Databases
 ===========================
-
 https://frontendmasters.com/courses/databases/introduction/  
 https://btholt.github.io/complete-intro-to-databases/
 
@@ -124,9 +122,8 @@ the more "queryable" db will be later
 
 
 
-ChatGPT: Mongo overview  
+ChatGPT: Mongo overview
 =======================
-
 #### how mongo data is organized?
 database  
 collection  
@@ -219,9 +216,8 @@ DynamoDB: noSQL database
 
 
 
-Complete Intro to SQLite  
+Complete Intro to SQLite
 ========================
-
 https://frontendmasters.com/courses/sqlite/  
 Frontend Masters, Brian Holt  
 Complete intro to SQLite
@@ -241,12 +237,12 @@ so he wrote alternative "Fossil"
 
 SQLite is most used database ever  
 on every  
-- android  
-- iphone  
-- mac  
-- all browsers  
-- skype  
-- itunes  
+- android
+- iphone
+- mac
+- all browsers
+- skype
+- itunes
 - dropbox client
 
 #### What SQLite is
@@ -990,8 +986,8 @@ there is a lag, usually 200ms
 ### libSQL
 separate version of sqlite3  
 open source and opening contributions  
-- libSQL works as a server, more similar to Postgres  
-- it has user management  
+- libSQL works as a server, more similar to Postgres
+- it has user management
 - libSQL works over HTTP (there is client in javascript)
 
 after running libSQL deamon it opens a port  
@@ -1042,9 +1038,9 @@ const rep = await db.sync();
 there is a way to run sqlite in web assembly wasm
 
 when localfirst is NOT good idea:  
-- if you need to be consistient on data all the time (not eventually consistient)  
-- it's more indirect and complicated setup  
-- requires more discipline how you structure data (divide db into shards, you cannot share everything)  
+- if you need to be consistient on data all the time (not eventually consistient)
+- it's more indirect and complicated setup
+- requires more discipline how you structure data (divide db into shards, you cannot share everything)
 - you can target only devices that can run wasm
 
 #### Postgres

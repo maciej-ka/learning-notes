@@ -1,6 +1,5 @@
-The Rust Programming Language  
+The Rust Programming Language
 ===============================
-
 https://learning.oreilly.com/library/view/the-rust-programming/9781098156817  
 Steve Klabnik and Carol Nichols
 
@@ -303,7 +302,7 @@ which can change size
 
 #### Out of bounds
 in runtime, when trying to access out of bounds  
-program will panic with error  
+program will panic with error
 ```
 index out of bounds: the len is 3 but the index is 4
 ```
@@ -377,9 +376,8 @@ Also there is `return` keyword for returning early.
 
 
 
-Frontendmasters: Rust for typescript devs  
+Frontendmasters: Rust for typescript devs
 =========================================
-
 Primeagen  
 https://frontendmasters.com/courses/rust-ts-devs  
 course:  

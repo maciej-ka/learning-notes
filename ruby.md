@@ -1,6 +1,5 @@
-Well grounded rubyist  
+Well grounded rubyist
 =====================
-
 ### Running
 ```bash
 ruby 01-celcius.rb
@@ -129,7 +128,7 @@ require_relative 'lib/file'
 relative to path of file in which it's called
 
 generally require / load:  
-- execute when encountered, not earlier  
+- execute when encountered, not earlier
 - can be conditional, can have a dynamic string
 
 #### $: load path
@@ -174,9 +173,8 @@ fh.close
 
 
 
-Ruby changes  
+Ruby changes
 ============
-
 Since you last used Ruby in 2016, the language has undergone significant  
 changes with new features, performance improvements, and adjustments. Here's a  
 summary of some of the most important updates:

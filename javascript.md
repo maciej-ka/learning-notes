@@ -1,6 +1,5 @@
-Double tilde operator  
+Double tilde operator
 =====================
-
 Removes the decimal portion of the division result.
 ```javascript
 console.log(~~4.7);  // Output: 4
@@ -16,9 +15,8 @@ It is a quick way to truncate a floating-point number.
 It is more performant than Math.floor(), Math.trunc(), or parseInt().
 
 
-NestJS architecture and advanced patterns  
+NestJS architecture and advanced patterns
 =========================================
-
 https://courseflix.net/course/nestjs-architecture-and-advanced-patterns
 
 #### Hexagonal architecture in Practice, part 1
@@ -33,9 +31,8 @@ presenters
 
 
 
-NestJS Docs, websockets  
+NestJS Docs, websockets
 =======================
-
 https://docs.nestjs.com/websockets
 
 Nest abstracts implementation details  
@@ -73,11 +70,10 @@ to have different or a namespace add argument
 
 
 
-NestJS Fundamentals  
+NestJS Fundamentals
 ===================
-
 https://courses.nestjs.com/  
-https://courseflix.net/course/nestjs-fundamentals  
+https://courseflix.net/course/nestjs-fundamentals
 
 #### Introduction
 Framework around `Node.js`  
@@ -297,7 +293,7 @@ fields inside `@Module` decorator
 `controllers`: api routes this module instantiates  
 `providers`: services that need to be instantiated  
 `exports`: we list providers that should be available together with this module  
-`imports`: list other modules that this module requires  
+`imports`: list other modules that this module requires
 
 generating new module will also create directory  
 if it doesn't exist already
@@ -846,9 +842,8 @@ npx typeorm migration:generate -d ormconfig.js migrations/SchemaSync
 
 
 
-NestJS Docs Crud  
+NestJS Docs Crud
 ================
-
 https://docs.nestjs.com/
 
 ### Install
@@ -993,9 +988,8 @@ consider installing `@types/express`
 
 
 
-Few notes on Express  
+Few notes on Express
 ====================
-
 Express app is organized in series of middleware  
 each middleware should either:
 
@@ -1062,9 +1056,8 @@ getDocs(@Query('version') version: string) {
 
 
 
-Functional Programming with Javascript v2  
+Functional Programming with Javascript v2
 =========================================
-
 Anjana Vakil  
 slides: https://observablehq.com/embed/@anjana/what-is-functional-programming  
 excercises: https://functional-first-steps.netlify.app/1-intro/1-overview/
@@ -1155,9 +1148,8 @@ here you don't prentend you work with normal arrays
 
 
 
-Various  
+Various
 =======
-
 ### Discoveries from Stimulus
 #### data attributes
 data-*
@@ -1208,7 +1200,7 @@ ReactDOM.hydrate(<App name="MyApp"/>,
 React expects that the rendered content is identical between the server and the client
 
 ### Backbone
-- model, (rest) collection, view  
+- model, (rest) collection, view
 - designed to be used with REST API
 
 ### Promises
@@ -1255,54 +1247,54 @@ console.log(gen.next().value)
 ```
 
 ### Core Web Vitals
-- is a set of metrics that measure real-world user experience for:  
-  - loading performance  
-  - visual stability of the page.  
-  - interactivity  
-    - Chrome usage data shows that 90% of a user's time on a page is spent after it load  
-    - INP is a metric that assesses a page's overall responsiveness to user  
+- is a set of metrics that measure real-world user experience for:
+  - loading performance
+  - visual stability of the page.
+  - interactivity
+    - Chrome usage data shows that 90% of a user's time on a page is spent after it load
+    - INP is a metric that assesses a page's overall responsiveness to user
       interactions by observing the latency of all click, tap, and keyboard  
       interactions that occur throughout the lifespan of a user's visit to a page  
-- ogłoszono, że Core Web Vitals staną się pełnoprawnym czynnikiem rankingowym 2021  
-- First Input Delay  
-- Interaction to Next Paint  
-- Cumulative Layout Shift  
-- Largest Contentful Paint  
+- ogłoszono, że Core Web Vitals staną się pełnoprawnym czynnikiem rankingowym 2021
+- First Input Delay
+- Interaction to Next Paint
+- Cumulative Layout Shift
+- Largest Contentful Paint
 - Contributed to Google Lighthouse
 
 ### Google Search API Leak 2024
 *we don't know the weights of components*  
-- PageRank_NS (nearest seed)  
-  - clustering of topics  
-  - Understanding PageRank_NS presents an opportunity to create more focused  
+- PageRank_NS (nearest seed)
+  - clustering of topics
+  - Understanding PageRank_NS presents an opportunity to create more focused
     and interconnected content structures. For example, if you run a blog  
     focusing on “healthy snacks,” be sure your content is interlinked and  
     relevant to your other subtopics like “nutrition” and “meals on the go” to  
     benefit from PageRank variants  
-- siteAuthority  
-  - powerful signals that Google uses to evaluate the overall quality and  
+- siteAuthority
+  - powerful signals that Google uses to evaluate the overall quality and
     relevance of an entire website, rather than just individual pages.  
-  - Despite Google’s public denials, the leaked documents confirm the existence  
+  - Despite Google’s public denials, the leaked documents confirm the existence
     of a metric called “siteAuthority  
-- Host NSR (Host-Level Site Rank)  
-  - This metric underscores the importance of maintaining high-quality content across all parts of a website.  
-  - Host NSR evaluates the quality and relevance of different site sections  
-- Chrome browsers usage  
-  - Interestingly, the leaked documents also show that Google uses data from Chrome browsers to assess site-wide authority.  
-  - This includes metrics like user engagement and site popularity, which help Google determine a website’s overall quality  
-  - This finding contradicts Google’s previous statements that Chrome data is not used for ranking purposes  
-- NavBoost  
-  - It rewards pages that generate more and better clicks.  
-- NSR (Neural Search Ranking)  
-  - is a critical component of Google’s algorithm that utilizes machine  
+- Host NSR (Host-Level Site Rank)
+  - This metric underscores the importance of maintaining high-quality content across all parts of a website.
+  - Host NSR evaluates the quality and relevance of different site sections
+- Chrome browsers usage
+  - Interestingly, the leaked documents also show that Google uses data from Chrome browsers to assess site-wide authority.
+  - This includes metrics like user engagement and site popularity, which help Google determine a website’s overall quality
+  - This finding contradicts Google’s previous statements that Chrome data is not used for ranking purposes
+- NavBoost
+  - It rewards pages that generate more and better clicks.
+- NSR (Neural Search Ranking)
+  - is a critical component of Google’s algorithm that utilizes machine
     learning to understand the context and relevance of web content.  
-  - simply stuffing an article with keywords is not enough  
-  - If another site publishes a similar article but includes more diverse  
+  - simply stuffing an article with keywords is not enough
+  - If another site publishes a similar article but includes more diverse
     information NSR will likely rank this content higher  
-- Content Update and Freshness  
-  - Regular content updates are crucial for maintaining its relevance and ranking  
-- periodically audit your content and remove outdated or irrelevant articles that do not attract traffic  
-- Tools like Google Search Console can help you identify and (at the time of  
+- Content Update and Freshness
+  - Regular content updates are crucial for maintaining its relevance and ranking
+- periodically audit your content and remove outdated or irrelevant articles that do not attract traffic
+- Tools like Google Search Console can help you identify and (at the time of
   this writing, anyway) disallow harmful links.  
 - The leak confirms that Google does indeed appear to penalize so-called toxic backlinks.
 

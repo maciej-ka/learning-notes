@@ -1,14 +1,14 @@
-Various  
+Various
 =======
-
 #### Show all mappings starting with <leader>t
 ```
 :map <leader>t
 ```
 
-Vim Fundamentals  
-================
 
+
+Vim Fundamentals
+================
 https://frontendmasters.com/courses/vim-fundamentals  
 https://theprimeagen.github.io/vim-fundamentals/
 

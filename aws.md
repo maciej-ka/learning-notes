@@ -1,6 +1,5 @@
-AWS For Front-End Engineers  
+AWS For Front-End Engineers
 ===========================
-
 https://frontendmasters.com/courses/aws-v2/  
 https://github.com/stevekinney/aws-v2
 
@@ -21,20 +20,20 @@ principle of least priviledged user
 
 ### IAM: manage users
 root  
-- setup it as secure as you can  
-- hope to not ever use it again  
+- setup it as secure as you can
+- hope to not ever use it again
 administrative users  
-- the ones to use daily  
+- the ones to use daily
 Administrator  
 - access all but billing (this is left for root)
 
-- [ ] check how it works: IAM > user create > Identity center  
+- [ ] check how it works: IAM > user create > Identity center
   before it was "create IAM user"
 
 create new user:  
-- add to group  
-- copy permissions from another user  
-- attach policies directly  
+- add to group
+- copy permissions from another user
+- attach policies directly
 AdministratorAccess
 
 AdministratorAccess Policy
@@ -60,9 +59,9 @@ in decent company size use groups
 bucket with files  
 infinitely scalable  
 file 0B max 5TB  
-- lifecycle management  
-- versioning  
-- encryption  
+- lifecycle management
+- versioning
+- encryption
 - security
 
 S3 is really a key-value store
@@ -143,8 +142,8 @@ can detect that you host in multiple places
 and when health check is down reroute
 
 Records Type  
-- [ ] NS  
-- [ ] SOA  
+- [ ] NS
+- [ ] SOA
 A - connect to resource (can be aliased to s3 hosted site)
 
 ### Certificates
@@ -167,7 +166,7 @@ handle multiple accounts:
 multiple profiles:  
 https://www.linkedin.com/pulse/aws-cli-multiple-profiles-bachar-hakam/
 
-- [ ] can User have a Policy?  
+- [ ] can User have a Policy?
 - [ ] can Resource have a Policy?
 
 ### Cloudfront
@@ -205,7 +204,7 @@ cloudfront can wrap anything
 s3 bucket,  
 api endpoints  
   hosted on ec2  
-  - [ ] check more about "aws api ec2"  
+  - [ ] check more about "aws api ec2"
   hosted on gateways  
   - [ ] check more about "aws api gateways"
 
@@ -399,8 +398,8 @@ create a user with least permissions possible to deploy
 (other options: self host jenkins, have fun)
 
 create unique policy for CI/CD process  
-- [ ] cloud front: create invalidation  
-- [ ] s3: PutObject, ListBucket  
+- [ ] cloud front: create invalidation
+- [ ] s3: PutObject, ListBucket
 policy name: DeployStaticAssets
 
 ```
@@ -536,9 +535,8 @@ Mozilla Observatory: check security of web service
 
 
 
-Lambdas, summary with Chatgpt  
+Lambdas, summary with Chatgpt
 =============================
-
 **do aws lambda start a container each time?**  
 No, AWS Lambda does not start a new container each time a function is invoked.  
 Instead, it reuses containers for multiple invocations to optimize performance.  

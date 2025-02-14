@@ -1,6 +1,5 @@
-Excerpt from Nest.js fundamentals  
+Excerpt from Nest.js fundamentals
 =================================
-
 run docker compose in detached mode  
 (in background)
 ```bash
@@ -14,9 +13,8 @@ docker compose up db -d
 
 
 
-Kubernetes in action  
+Kubernetes in action
 ====================
-
 https://livebook.manning.com/book/kubernetes-in-action-second-edition/chapter-1/v-14/
 
 ### 1. Introducing Kubernetes
@@ -662,7 +660,7 @@ Docker container has unrestricted access to all CPU of host
 
 limit explictly which cores can be used
 ```bash
-docker run --cpuset-cpus="1,2" 
+docker run --cpuset-cpus="1,2"
 ```
 
 flags to limit availabe CPU time  
@@ -817,7 +815,7 @@ tool to run tools in the network of container
 install
 ```bash
 curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.11.1/kind-$(uname)-amd64
-chmod +x ./kind 
+chmod +x ./kind
 mv ./kind /some-dir-in-your-PATH/kind
 ```
 
@@ -1058,9 +1056,8 @@ even when it fails, it's recreated on same node
 
 
 
-Complete Intro to Containers, v2  
+Complete Intro to Containers, v2
 ================================
-
 https://frontendmasters.com/workshops/complete-intro-containers-v2/
 
 ### 1. Welcome

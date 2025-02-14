@@ -1,6 +1,5 @@
-Personal observations (partially in polish)  
+Personal observations (partially in polish)
 ===========================================
-
 ### Ćwicz Ton (jak głośno)
 #### nie bądź głośny w doborze tematów
 i wątków i wtrętów  
@@ -51,8 +50,8 @@ and sell your story
 don't talk at your audience  
 you want to talk with them  
 you want to get your audience ask questions  
-- he's a lawyer but he's also a wild animal.  
-- what kind of wild animal?  
+- he's a lawyer but he's also a wild animal.
+- what kind of wild animal?
 - I'm glad you asked
 
 why?  
@@ -62,7 +61,7 @@ in things that they initiated
 people are more tuned in  
 because you are answering their question
 
-in game design:   
+in game design:  
 don't always show the players the things  
 you want them to see  
 let your players find them
@@ -79,9 +78,9 @@ bez nalegania na odpowiedź po interview
 bez emaila do pracodawcy
 
 #### różne
-- Ćwicz umiar (odpowiesz na więcej pytań w tym samym czasie)  
-- Potrzebują doświadczonego fachowca. Nie męczącego idealisty, z misją naprawiania świata.  
-- Ubierz się jak programista, nie manager lub sprzedawca  
+- Ćwicz umiar (odpowiesz na więcej pytań w tym samym czasie)
+- Potrzebują doświadczonego fachowca. Nie męczącego idealisty, z misją naprawiania świata.
+- Ubierz się jak programista, nie manager lub sprzedawca
 - Celem rekrutacji jest korzystnie wypełniony formularz, który rekruter wyśle przełożonemu
 
 #### historyjki
@@ -95,37 +94,37 @@ zaadresować największe problemy w ogłoszeniu
 zakończyć tym, gdzie teraz jestem, moja aktualna sytuacja
 
 #### How to respond to "what's your opinion on ..."?
-- in my experience ...  
-- pros and cons  
-- align with company's needs  
-- stay concise  
+- in my experience ...
+- pros and cons
+- align with company's needs
+- stay concise
 - avoid strong emotions
 
 ### What question to ask on job interview?
-- what tools/practices/approaches things in programming you see value in but think they come with too high price too pay?  
-- what do you think you do differently than most places?  
-- what lead you to decision to open this position?  
-- what would be my first assignment?  
-- what is your tech stack?  
-- would it be ok for you if remote also means forrest or travel?  
+- what tools/practices/approaches things in programming you see value in but think they come with too high price too pay?
+- what do you think you do differently than most places?
+- what lead you to decision to open this position?
+- what would be my first assignment?
+- what is your tech stack?
+- would it be ok for you if remote also means forrest or travel?
 - what have you technologically discovered recently
 
 #### nice ones:
-- name up to three books on computer science that had most impact on you  
-- what are your technological goals for next 1-2 years?  
-- what are your business goals for next 1-2 years?  
-- do you have a problem in project that keeps returning?  
-- do you have a long unsolved problem in project?  
-- do you have places in code for which there are libraries, but you develop own solution, perhaps because  
-  - it's a time consuming tool and in long term it's faster that way  
-  - there would be so much customization code that you may write from scratch as well  
-  - customization you need is impossible (library is too limited in some areas)  
-- how many years of experience will have programmers I will work with?  
+- name up to three books on computer science that had most impact on you
+- what are your technological goals for next 1-2 years?
+- what are your business goals for next 1-2 years?
+- do you have a problem in project that keeps returning?
+- do you have a long unsolved problem in project?
+- do you have places in code for which there are libraries, but you develop own solution, perhaps because
+  - it's a time consuming tool and in long term it's faster that way
+  - there would be so much customization code that you may write from scratch as well
+  - customization you need is impossible (library is too limited in some areas)
+- how many years of experience will have programmers I will work with?
 - what opportunities to improve skills will I have in your company?
 
 #### revenge ones:
-- what is covariance/bivariance in typescript? when does it matter? what ts syntax is connected to these concepts?  
-- what's the idea behind red-black trees? where are they used?  
+- what is covariance/bivariance in typescript? when does it matter? what ts syntax is connected to these concepts?
+- what's the idea behind red-black trees? where are they used?
 - what is dynamic programming? would you know the origin of its name? how many types of it you know? what is typical example of applying them?
 
 #### O'Reilly Software Developer Handbook
@@ -136,12 +135,12 @@ Do a research perhaps 1h. What is a product? Is it selling well? What do other p
 Check Linkedin, twitter and google about people and product.
 
 ### Being confident but not arrogant
-- Practice frugality.  
-- Know your strengths and weaknesses.  
-- Track successes and failures.  
-- Be aware of your body language.  
-- Develop good friendships.  
-- Talk less, listen more.  
+- Practice frugality.
+- Know your strengths and weaknesses.
+- Track successes and failures.
+- Be aware of your body language.
+- Develop good friendships.
+- Talk less, listen more.
 - Be mindful of others.
 
 ### Kontroluj mowę ciała
@@ -162,50 +161,49 @@ Need for proving that I can code: urge to jump into coding without plan
 Need to show I work hard: tendency to make solution a hard work, not a smart shortcut
 
 #### live coding general
-- put standing microphone on side, use ear plugs  
-- stop urge to immediatelly start coding  
-- slow down when keyboard, IDE, linux "panic" (they work, it's you)  
-- don't be afraid of errors, don't turn off linter  
-- ... especially after questioning, where you avoid first mistake anwser  
-- play with interactive mode (console, irb)  
-- make a plan using commented steps  
-- think about simpler plan  
-- pogodzić się z góry, że nie utrafi się proporcji między planowaniem a kodowaniem  
+- put standing microphone on side, use ear plugs
+- stop urge to immediatelly start coding
+- slow down when keyboard, IDE, linux "panic" (they work, it's you)
+- don't be afraid of errors, don't turn off linter
+- ... especially after questioning, where you avoid first mistake anwser
+- play with interactive mode (console, irb)
+- make a plan using commented steps
+- think about simpler plan
+- pogodzić się z góry, że nie utrafi się proporcji między planowaniem a kodowaniem
 - implement
 
 #### prepare for interview
-- have a bit of coding before  
-- train string manipulation functions  
-- train speaking and coding  
+- have a bit of coding before
+- train string manipulation functions
+- train speaking and coding
 - have a fast jest setup with a template of generic test
 
 ### Open Source
 find issues to contribute:  
-- introduce and ask on GitHub Discussions  
-- review existing PRs  
-- improve documentations  
-- add tests  
-- use software to find ideas  
-- browse codebase to refactor  
-- update dependencies  
-- propose new features  
-- engage with others  
-- help resolve issues  
-- create faq  
+- introduce and ask on GitHub Discussions
+- review existing PRs
+- improve documentations
+- add tests
+- use software to find ideas
+- browse codebase to refactor
+- update dependencies
+- propose new features
+- engage with others
+- help resolve issues
+- create faq
 - improve build or ci
 
 ### Feeling low?
 try to act physically or creatively:  
-- clean basement  
-- start moving studio out  
-- repair something  
+- clean basement
+- start moving studio out
+- repair something
 - build something on web
 
 
 
-Frontend Masters, Software Developer Success  
+Frontend Masters, Software Developer Success
 ============================================
-
 https://frontendmasters.com/courses/dev-soft-skills/
 
 ### 1. Starting in new project
@@ -221,13 +219,13 @@ read docs
 
 asking questions  
 starting is best moment for asking questions  
-- what are good and bad parts of codebase?  
-- what patterns to follow, which to avoid?  
-- what is PR process like? how many reviewers, what kind of feedback?  
-- what's the pipeline to deployment?  
-- which documentation are reliable, which are stale?  
-- what are partner teams and what they do?  
-- what are coworkers and when to go to them?  
+- what are good and bad parts of codebase?
+- what patterns to follow, which to avoid?
+- what is PR process like? how many reviewers, what kind of feedback?
+- what's the pipeline to deployment?
+- which documentation are reliable, which are stale?
+- what are partner teams and what they do?
+- what are coworkers and when to go to them?
 - expected difficulties or frictions in culture?
 
 #### what is considered quality code?
@@ -247,8 +245,8 @@ test coverage and good tests
 
 #### before adding new features:
 if existing code is really bad:  
-- add tests  
-- refactor  
+- add tests
+- refactor
 - then add
 
 #### tests, TDD
@@ -532,6 +530,6 @@ find a common thing that we both want
 
 
 ### Successess / Failures
-- techniczne przeprowadzenie AEC.View przez 5 lat, aby stale dało się go rozwijać i utrzymać  
+- techniczne przeprowadzenie AEC.View przez 5 lat, aby stale dało się go rozwijać i utrzymać
 - przez 6 lat dwa, nawet trzy projekty równolegle, każdy dostarczony, w jednym leadowanie, w dwóch propozycja przejście na etat do klienta
 

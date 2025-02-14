@@ -1,6 +1,5 @@
-Variance notes  
+Variance notes
 ==============
-
 #### Covariance
 typical OOP situation  
 Variable has type Animal, value can be a Cat  
@@ -12,9 +11,8 @@ in function parameters
 
 
 
-Microfrontends  
+Microfrontends
 ==============
-
 Micro Frontends in Action  
 Manning book by Michael Geers  
 https://learning.oreilly.com/library/view/micro-frontends-in/9781617296871/
@@ -121,7 +119,7 @@ requires prodiding a context
 like selected product
 
 #### Frontend integration techniques
-- Page transitions 
+- Page transitions
 - Composition (of components)
 - Communication (how busket knows to update after button click)
 
@@ -159,9 +157,8 @@ team is two large big if two pizzas can't feed it
 
 
 
-How to Contribute to Open Source (Next.js)  
+How to Contribute to Open Source (Next.js)
 ==========================================
-
 https://www.youtube.com/watch?v=cuoNzXFLitc
 
 docs  
@@ -229,11 +226,11 @@ also its important to have RFC and agreement
 "here is the plan how we are goint to adopt it in repository"
 
 how to make great pull request:  
-- make sure its easy to understand the changes that you made  
+- make sure its easy to understand the changes that you made
 - for larger PRs include screenshots or more details
 
 make it as easy as possible for maintainers to understand:  
-- what you are doing  
+- what you are doing
 - your scope of work
 
 be the first person to review your own PR  
@@ -430,9 +427,8 @@ describe.todo
 
 
 
-Fudamentals of web performance  
+Fudamentals of web performance
 ==============================
-
 https://github.com/toddhgardner/fundametals-of-web-performance
 
 #### perfomance
@@ -529,7 +525,7 @@ html and all known resources have downloaded
 
 problem with both:  
 at 2010 SPA happened (backbone, knockout, jquery ui)  
-- html is empty  
+- html is empty
 - load event is almost immediate
 
 google realized that users will stay on fast page
@@ -668,9 +664,9 @@ stacked tasks
 
 why important?  
 there is main thread, which:  
-- handle user evevcts  
-- does layout  
-- and paint  
+- handle user evevcts
+- does layout
+- and paint
 - run javascript
 
 #### INP Interaction to Next Paint
@@ -682,10 +678,10 @@ again, dependent on user
 (static analysis will not show this good)
 
 what is interaction?  
-- click  
-- drag  
-- touch  
-- keypress  
+- click
+- drag
+- touch
+- keypress
 but not scroll
 
 (A)  
@@ -746,12 +742,12 @@ measuring host and network
 
 what counts?  
 time is counted from click on google results  
-- first some redirects can happen  
-- service worker init  
-- service worker fetch event (fetsh start)  
-- http cache  
-- dns  
-- tcp  
+- first some redirects can happen
+- service worker init
+- service worker fetch event (fetsh start)
+- http cache
+- dns
+- tcp
 - request
 
 good: < 800 ms  
@@ -1047,9 +1043,9 @@ if it takes longer
 (it's artificial pause)
 
 follow your business metrics  
-- bounce rate  
-- session time  
-- add to cart time  
+- bounce rate
+- session time
+- add to cart time
 ... they may corelate to LCP/CLS/INP
 
 #### corelation !== causation
@@ -1588,8 +1584,8 @@ would require self joins in RDBMS
 
 ### Paging problems
 problems with paging based on limit - offset  
-- slow  
-- if data is inserted meanwile, the same row may appear after page change  
+- slow
+- if data is inserted meanwile, the same row may appear after page change
 solution:  
 `WHERE id > last_seen_id ORDER BY id ASC LIMIT 10`
 
@@ -1605,10 +1601,10 @@ Option: handle possibly missing values
 Promise: handle values that are not yet ready
 
 elements of Monad:  
-- wrapper type definition: NumberWithLogs  
-- wrap function (convert unwrapped to wrapped): wrapWithLogs  
+- wrapper type definition: NumberWithLogs
+- wrap function (convert unwrapped to wrapped): wrapWithLogs
   _other names: return, pure, unit_  
-- run function (with transform function): runWithLogs(arg, transform)  
+- run function (with transform function): runWithLogs(arg, transform)
   _other names: bind, flatMap, >>=_  
   transform takes unwrapped as argument and returns wrapped  
   run function unwraps argument
@@ -1622,12 +1618,12 @@ users of monad provide two wrapping methods:
 ### Kubernetes
 #### When docker compose is not enough
 and it's better to use Kubernetes  
-- scaling, distributing workloads  
-- high avaibility even if some nodes fail, self-healing  
-- advanced networking, discovery, load balancing  
-- complex deployments, deployments in specific order  
-- resource management, cpu and memory limits  
-- updates and rollbacks, with zero downtime  
+- scaling, distributing workloads
+- high avaibility even if some nodes fail, self-healing
+- advanced networking, discovery, load balancing
+- complex deployments, deployments in specific order
+- resource management, cpu and memory limits
+- updates and rollbacks, with zero downtime
 - cloud-native integration
 
 #### Cloud native applications

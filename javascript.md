@@ -1,5 +1,6 @@
 Double tilde operator
 =====================
+
 Removes the decimal portion of the division result.
 ```javascript
 console.log(~~4.7);  // Output: 4
@@ -17,6 +18,7 @@ It is more performant than Math.floor(), Math.trunc(), or parseInt().
 
 NestJS architecture and advanced patterns
 =========================================
+
 https://courseflix.net/course/nestjs-architecture-and-advanced-patterns
 
 #### Hexagonal architecture in Practice, part 1
@@ -33,6 +35,7 @@ presenters
 
 NestJS Docs, websockets
 =======================
+
 https://docs.nestjs.com/websockets
 
 Nest abstracts implementation details  
@@ -72,6 +75,7 @@ to have different or a namespace add argument
 
 NestJS Fundamentals
 ===================
+
 https://courses.nestjs.com/  
 https://courseflix.net/course/nestjs-fundamentals  
 
@@ -844,6 +848,7 @@ npx typeorm migration:generate -d ormconfig.js migrations/SchemaSync
 
 NestJS Docs Crud
 ================
+
 https://docs.nestjs.com/
 
 ### Install
@@ -990,6 +995,7 @@ consider installing `@types/express`
 
 Few notes on Express
 ====================
+
 Express app is organized in series of middleware  
 each middleware should either:
 
@@ -1058,6 +1064,7 @@ getDocs(@Query('version') version: string) {
 
 Functional Programming with Javascript v2
 =========================================
+
 Anjana Vakil  
 slides: https://observablehq.com/embed/@anjana/what-is-functional-programming  
 excercises: https://functional-first-steps.netlify.app/1-intro/1-overview/
@@ -1150,6 +1157,7 @@ here you don't prentend you work with normal arrays
 
 Various
 =======
+
 ### Discoveries from Stimulus
 #### data attributes
 data-*

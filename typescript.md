@@ -1,8 +1,8 @@
-Triple slash directive
+Triple slash directive  
 ======================
 
-A TypeScript triple-slash directive is a special kind of single-line comment that contains an XML tag. It acts as a compiler directive, telling TypeScript how to handle a file.
-The syntax always starts with `///` (three forward slashes) and must be at the top of the file (only comments and other triple-slash directives can precede them).
+A TypeScript triple-slash directive is a special kind of single-line comment that contains an XML tag. It acts as a compiler directive, telling TypeScript how to handle a file.  
+The syntax always starts with `///` (three forward slashes) and must be at the top of the file (only comments and other triple-slash directives can precede them).  
 There are several types of triple-slash directives:
 
 ```typescript
@@ -24,7 +24,7 @@ There are several types of triple-slash directives:
 
 
 
-Grab type of properties in React
+Grab type of properties in React  
 ================================
 
 ```typescript
@@ -48,7 +48,7 @@ React.ComponentProps<typeof Button>
 
 
 
-Decorators proposal
+Decorators proposal  
 ===================
 
 https://github.com/tc39/proposal-decorators  
@@ -63,7 +63,7 @@ Can be used to metaprogram
 
 
 
-Decorators digitalocean
+Decorators digitalocean  
 =======================
 
 https://www.digitalocean.com/community/tutorials/how-to-use-decorators-in-typescript
@@ -276,7 +276,7 @@ class TestClass {
 
 
 
-TypeScript: From First Steps to Professional
+TypeScript: From First Steps to Professional  
 ============================================
 
 Anjana Vakil  
@@ -316,7 +316,7 @@ https://github.com/DefinitelyTyped/DefinitelyTyped
 
 
 
-Intermediate Typescript
+Intermediate Typescript  
 =======================
 
 Mike North  

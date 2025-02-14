@@ -1,18 +1,18 @@
-Variance notes
+Variance notes  
 ==============
 
 #### Covariance
-typical OOP situation
-Variable has type Animal, value can be a Cat
+typical OOP situation  
+Variable has type Animal, value can be a Cat  
 #### Invariance
-has to match exactly
-Variable has type Animal, value can be only exactly Animal
+has to match exactly  
+Variable has type Animal, value can be only exactly Animal  
 #### Contravariance
 in function parameters
 
 
 
-Microfrontends
+Microfrontends  
 ==============
 
 Micro Frontends in Action  
@@ -159,7 +159,7 @@ team is two large big if two pizzas can't feed it
 
 
 
-How to Contribute to Open Source (Next.js)
+How to Contribute to Open Source (Next.js)  
 ==========================================
 
 https://www.youtube.com/watch?v=cuoNzXFLitc
@@ -354,31 +354,31 @@ a{Click me}
 ```
 
 ### ACID
-coined in 1983
-**Atomicity**
-all or nothing
-**Consistency**
-foreign keys should be valid after operation
-**Isolation**
-long running query should not leak mid-state to pararell quick queries
-**Durability**
+coined in 1983  
+**Atomicity**  
+all or nothing  
+**Consistency**  
+foreign keys should be valid after operation  
+**Isolation**  
+long running query should not leak mid-state to pararell quick queries  
+**Durability**  
 long batch inserts should be restored even if database crashes during run
 
 ### SOLID
-coined in 2004
-Single Open Liskov Inter-segre Depen-inver
-https://en.wikipedia.org/wiki/SOLID
-**Single-responsibility**
-There should never be more than one reason for a class to change. In other words, every class should have only one responsibility.
-**Open–closed**
-coined in 1988, by Bertrand Meyer
-Software entities ... should be open for extension, but closed for modification.
-**Liskov substitution**
-Functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it. See also design by contract.
-**Interface segregation**
-Clients should not be forced to depend upon interfaces that they do not use.
-Prefer several small interfaces than one big
-**Dependency inversion**
+coined in 2004  
+Single Open Liskov Inter-segre Depen-inver  
+https://en.wikipedia.org/wiki/SOLID  
+**Single-responsibility**  
+There should never be more than one reason for a class to change. In other words, every class should have only one responsibility.  
+**Open–closed**  
+coined in 1988, by Bertrand Meyer  
+Software entities ... should be open for extension, but closed for modification.  
+**Liskov substitution**  
+Functions that use pointers or references to base classes must be able to use objects of derived classes without knowing it. See also design by contract.  
+**Interface segregation**  
+Clients should not be forced to depend upon interfaces that they do not use.  
+Prefer several small interfaces than one big  
+**Dependency inversion**  
 Depend upon abstractions, [not] concretes.
 
 ### Testing
@@ -430,7 +430,7 @@ describe.todo
 
 
 
-Fudamentals of web performance
+Fudamentals of web performance  
 ==============================
 
 https://github.com/toddhgardner/fundametals-of-web-performance

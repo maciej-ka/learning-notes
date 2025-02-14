@@ -1,4 +1,4 @@
-Building APIs with C# and .NET
+Building APIs with C# and .NET  
 ==============================
 
 https://schneidenbach.github.io/building-apis-with-csharp-and-aspnet-core/
@@ -62,7 +62,7 @@ dotnet new webapi -n TheEmployeeAPI
 
 
 
-Introduction to C# and .NET, Spencer Schneidenbach
+Introduction to C# and .NET, Spencer Schneidenbach  
 ==================================================
 
 https://schneidenbach.github.io/intro-to-csharp-and-dotnet-from-beginner-to-professional

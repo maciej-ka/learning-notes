@@ -1,4 +1,4 @@
-Excerpt from Nest.js fundamentals
+Excerpt from Nest.js fundamentals  
 =================================
 
 run docker compose in detached mode  
@@ -14,7 +14,7 @@ docker compose up db -d
 
 
 
-Kubernetes in action
+Kubernetes in action  
 ====================
 
 https://livebook.manning.com/book/kubernetes-in-action-second-edition/chapter-1/v-14/
@@ -1058,7 +1058,7 @@ even when it fails, it's recreated on same node
 
 
 
-Complete Intro to Containers, v2
+Complete Intro to Containers, v2  
 ================================
 
 https://frontendmasters.com/workshops/complete-intro-containers-v2/

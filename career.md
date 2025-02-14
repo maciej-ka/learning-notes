@@ -1,4 +1,4 @@
-Personal observations (partially in polish)
+Personal observations (partially in polish)  
 ===========================================
 
 ### Ćwicz Ton (jak głośno)
@@ -203,7 +203,7 @@ try to act physically or creatively:
 
 
 
-Frontend Masters, Software Developer Success
+Frontend Masters, Software Developer Success  
 ============================================
 
 https://frontendmasters.com/courses/dev-soft-skills/

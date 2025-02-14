@@ -1,4 +1,4 @@
-Well grounded rubyist
+Well grounded rubyist  
 =====================
 
 ### Running
@@ -174,7 +174,7 @@ fh.close
 
 
 
-Ruby changes
+Ruby changes  
 ============
 
 Since you last used Ruby in 2016, the language has undergone significant  

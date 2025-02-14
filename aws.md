@@ -1,4 +1,4 @@
-AWS For Front-End Engineers
+AWS For Front-End Engineers  
 ===========================
 
 https://frontendmasters.com/courses/aws-v2/  
@@ -536,7 +536,7 @@ Mozilla Observatory: check security of web service
 
 
 
-Lambdas, summary with Chatgpt
+Lambdas, summary with Chatgpt  
 =============================
 
 **do aws lambda start a container each time?**  

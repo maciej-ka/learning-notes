@@ -1,4 +1,4 @@
-Double tilde operator
+Double tilde operator  
 =====================
 
 Removes the decimal portion of the division result.
@@ -16,24 +16,24 @@ It is a quick way to truncate a floating-point number.
 It is more performant than Math.floor(), Math.trunc(), or parseInt().
 
 
-NestJS architecture and advanced patterns
+NestJS architecture and advanced patterns  
 =========================================
 
 https://courseflix.net/course/nestjs-architecture-and-advanced-patterns
 
 #### Hexagonal architecture in Practice, part 1
-nest create app
+nest create app  
 and resource alarms
 
-create 4 new folders in alarms directory:
-application
-domain
-infrastructure
+create 4 new folders in alarms directory:  
+application  
+domain  
+infrastructure  
 presenters
 
 
 
-NestJS Docs, websockets
+NestJS Docs, websockets  
 =======================
 
 https://docs.nestjs.com/websockets
@@ -73,7 +73,7 @@ to have different or a namespace add argument
 
 
 
-NestJS Fundamentals
+NestJS Fundamentals  
 ===================
 
 https://courses.nestjs.com/  
@@ -846,7 +846,7 @@ npx typeorm migration:generate -d ormconfig.js migrations/SchemaSync
 
 
 
-NestJS Docs Crud
+NestJS Docs Crud  
 ================
 
 https://docs.nestjs.com/
@@ -993,7 +993,7 @@ consider installing `@types/express`
 
 
 
-Few notes on Express
+Few notes on Express  
 ====================
 
 Express app is organized in series of middleware  
@@ -1062,7 +1062,7 @@ getDocs(@Query('version') version: string) {
 
 
 
-Functional Programming with Javascript v2
+Functional Programming with Javascript v2  
 =========================================
 
 Anjana Vakil  
@@ -1155,7 +1155,7 @@ here you don't prentend you work with normal arrays
 
 
 
-Various
+Various  
 =======
 
 ### Discoveries from Stimulus

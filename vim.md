@@ -1,4 +1,4 @@
-Various
+Various  
 =======
 
 #### Show all mappings starting with <leader>t
@@ -6,7 +6,7 @@ Various
 :map <leader>t
 ```
 
-Vim Fundamentals
+Vim Fundamentals  
 ================
 
 https://frontendmasters.com/courses/vim-fundamentals  

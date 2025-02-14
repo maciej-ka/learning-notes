@@ -377,7 +377,7 @@ Also there is `return` keyword for returning early.
 
 
 
-Frontendmasters: Rust for typescript devs
+Frontendmasters: Rust for typescript devs  
 =========================================
 
 Primeagen  

@@ -1,4 +1,4 @@
-Perl
+Perl  
 ====
 
 test first:
@@ -17,13 +17,13 @@ docker volume ls | grep local | docker volume ls | grep local | perl -lane 'syst
 
 
 
-awk
+awk  
 ===
 
 run some command for each line of input
 
-test it first:
-$2 means content of second word
+test it first:  
+$2 means content of second word  
 (awk splits each line into words by whitespace)
 
 ```bash

@@ -1,4 +1,4 @@
-React form validation libraries
+React form validation libraries  
 ===============================
 
 | Name                                                                        | Stars | Year |
@@ -15,7 +15,7 @@ React form validation libraries
 
 
 
-Headless component libraries
+Headless component libraries  
 ============================
 
 | Name                                                                                 | Stars | Year  |
@@ -32,7 +32,7 @@ Headless component libraries
 
 
 
-Introduction to Next.js, v3
+Introduction to Next.js, v3  
 ===========================
 
 https://frontendmasters.com/courses/next-js-v3/  
@@ -145,7 +145,7 @@ and to fix this, you can do double brackets
 
 
 
-Learn Next.js
+Learn Next.js  
 =============
 
 https://nextjs.org/learn/dashboard-app
@@ -234,7 +234,7 @@ and there is no javascript waiting to hydrate it
 
 
 
-Complete Intro to React
+Complete Intro to React  
 =======================
 
 https://react-v9.holt.courses/  
@@ -532,7 +532,7 @@ React 19
 
 
 
-Less common hooks
+Less common hooks  
 =================
 
 not hooks but also  

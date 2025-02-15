@@ -8,17 +8,24 @@ Division by two, rounded down
 ```
 
 ### ~~ operator
-#### Converts string to number
+#### Convert string to number
 ```javascript
 ~~"412.7" // 412
 ~~"4"     // 4
 ~~"-4"    // -4
 ```
 
-#### Gets floor of decimal
+#### Floor of decimal
 ```javascript
 console.log(~~4.7);  // Output: 4
 console.log(~~-4.7); // Output: -4
+```
+
+#### Convert null or undefined to 0
+```javascript
+~~null      // 0
+~~undefined // 0
+~~{}.foo    // 0
 ```
 
 Works by applying the bitwise NOT (~) operator twice. Since bitwise operators  

@@ -1,6 +1,21 @@
-Double tilde operator
-=====================
-Removes the decimal portion of the division result.
+From Leet Code
+==============
+
+### >> operator
+Division by two, rounded down
+```javascript
+5 >> 1 // 2
+```
+
+### ~~ operator
+#### Converts string to number
+```javascript
+~~"412.7" // 412
+~~"4"     // 4
+~~"-4"    // -4
+```
+
+#### Gets floor of decimal
 ```javascript
 console.log(~~4.7);  // Output: 4
 console.log(~~-4.7); // Output: -4
@@ -11,8 +26,8 @@ only work on integers, JavaScript internally converts the number to a 32-bit
 signed integer.
 
 #### Why to use it
-It is a quick way to truncate a floating-point number.  
 It is more performant than Math.floor(), Math.trunc(), or parseInt().
+
 
 
 NestJS architecture and advanced patterns

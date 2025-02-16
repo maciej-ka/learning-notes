@@ -5,8 +5,15 @@ data (commands) and querying data (queries). The main idea is to use different
 models for reading and writing data to optimize and improve performance,  
 scalability, and maintainability.
 
+used where read and write operations  
+- have very different requirements or
+- where scalability is critical
+
 #### Event Sourcing Integration
 Often paired with Event Sourcing to maintain an immutable log of changes.
+
+#### Query Model
+Provides a read-optimized view of the user's profile (e.g., a denormalized or cached representation).
 
 
 

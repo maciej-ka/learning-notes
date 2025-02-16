@@ -1,3 +1,15 @@
+CQRS (Command Query Responsibility Segregation)
+================================================
+Software architectural pattern that separates the responsibilities of modifying  
+data (commands) and querying data (queries). The main idea is to use different  
+models for reading and writing data to optimize and improve performance,  
+scalability, and maintainability.
+
+#### Event Sourcing Integration
+Often paired with Event Sourcing to maintain an immutable log of changes.
+
+
+
 Variance notes
 ==============
 #### Covariance

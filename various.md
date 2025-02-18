@@ -300,7 +300,106 @@ select color in styles, open color picker
 shows area in color picker where color is accessible  
 this also depends on font size
 
-### NetworkOptimization
+### Network Optimization
+can give you super powers  
+detect that TLS handshake is taking too long
+
+#### Typical flow:
+Step 1:  
+Initial document  
+(trick possible: partial responses)
+
+Step 2:  
+Cricital static assets  
+anything in head tag is marked as critical  
+JS, CSS
+
+Step 3  
+Dependencies of critical assets, static assets JS, CSS
+
+Step 4  
+Additional Resources
+
+#### Http headers
+request / response is just text
+
+It's more  
+CSS -> CSSOM (css object model)  
+HTML -> DOM  
+also include Javascript  
+in the end there is one object model  
+(it's the way render and interpretation works)
+
+#### Gzip vs Brotli
+loseless compression  
+different compression rate, for tradeoff of time  
+Gzip: still most popular  
+Brotli: files will be smaller, compression is slower, decompression is fast  
+bzip2: fast compression, slow decompression  
+xz: is quite slow all time
+
+losely for images  
+there is whole world of image compression options
+
+#### Browser priority
+most pages have more assets to download  
+than browser can download at the same time
+
+preload vs prefetch  
+api's  
+you can tell browser priority
+
+#### preload
+html atrribute `preload`  
+info that resource should be loaded early, as document is loaded
+
+#### prefetch
+prefetch: when you think you know where the next page is going to be  
+prefetch tag, browser will fetch entire thing in anticipation  
+(if not clicked, browser will failback to default page load)  
+benefit is that you will have magical fast changes
+
+some ideas  
+you can try detect idle blocks (with Promise timeout zero)  
+and use that idle time to prefetch more content
+
+#### HTTP/2 vs HTTP/3
+with 3 we though there will be no need to bundle  
+but this is not true, we need to bundle, atm
+
+#### Network tab
+you can see screenshot at each moment of loading  
+sort by time, to find out what loaded the longest  
+sort by size to find out largest element  
+DOMContentLoaded: 6.81s that's a lot to load
+
+remember to turn off:  
+(or use incognito as they will will also reset these)  
+disable cache  
+disabled throttling
+
+#### timing
+at what point request happened  
+also inspect amazing details of request
+
+breakdown details of request time  
+how long it was waiting for server response?
+
+explanation of each possible state of request  
+https://developer.chrome.com/docs/devtools/network/reference/?utm_source=devtools#timing-explanation
+
+#### how 8 works
+1. we take you js  
+2. parse it  
+3. turn into AST  
+4. generate bytecode  
+5. get feedback for speculative optmisations  
+6. optimize and compile (for different targets intel, arm, mips...)
+
+remember that parsing and compiling can take time
+
+
+
 ### Lighthouse Audits
 ### Step-through debugging
 ### Performance Profiling

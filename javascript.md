@@ -172,6 +172,20 @@ export class CreateAlarmCommand {
 }
 ```
 
+after this, we need to make sure that controller  
+which is in presenters layer, will create that CreateAlarmCommand
+
+```typescript
+@Post()
+create(@Body() createAlarmDto: CreateAlarmDto) {
+  return this.alarmsService.create(
+    new CreateAlarmCommand(createAlarmDto.name, createAlarmDto.severity),
+  );
+}
+```
+
+
+
 NestJS Docs, websockets
 =======================
 https://docs.nestjs.com/websockets

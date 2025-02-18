@@ -1,42 +1,3 @@
-From Leet Code
-==============
-
-### >> operator
-Division by two, rounded down
-```javascript
-5 >> 1 // 2
-```
-
-### ~~ operator
-#### Convert string to number
-```javascript
-~~"412.7" // 412
-~~"4"     // 4
-~~"-4"    // -4
-```
-
-#### Floor of decimal
-```javascript
-console.log(~~4.7);  // Output: 4
-console.log(~~-4.7); // Output: -4
-```
-
-#### Convert null or undefined to 0
-```javascript
-~~null      // 0
-~~undefined // 0
-~~{}.foo    // 0
-```
-
-Works by applying the bitwise NOT (~) operator twice. Since bitwise operators  
-only work on integers, JavaScript internally converts the number to a 32-bit  
-signed integer.
-
-#### Why to use it
-It is more performant than Math.floor(), Math.trunc(), or parseInt().
-
-
-
 NestJS Architecture and Advanced patterns
 =========================================
 https://courseflix.net/course/nestjs-architecture-and-advanced-patterns
@@ -183,6 +144,45 @@ create(@Body() createAlarmDto: CreateAlarmDto) {
   );
 }
 ```
+
+
+
+From Leet Code
+==============
+
+### >> operator
+Division by two, rounded down
+```javascript
+5 >> 1 // 2
+```
+
+### ~~ operator
+#### Convert string to number
+```javascript
+~~"412.7" // 412
+~~"4"     // 4
+~~"-4"    // -4
+```
+
+#### Floor of decimal
+```javascript
+console.log(~~4.7);  // Output: 4
+console.log(~~-4.7); // Output: -4
+```
+
+#### Convert null or undefined to 0
+```javascript
+~~null      // 0
+~~undefined // 0
+~~{}.foo    // 0
+```
+
+Works by applying the bitwise NOT (~) operator twice. Since bitwise operators  
+only work on integers, JavaScript internally converts the number to a 32-bit  
+signed integer.
+
+#### Why to use it
+It is more performant than Math.floor(), Math.trunc(), or parseInt().
 
 
 

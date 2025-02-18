@@ -1,3 +1,9 @@
+Introduction to developer tools v3
+==================================
+Frontend Masters, Jon Kuperman
+
+
+
 CQRS (Command Query Responsibility Segregation)
 ================================================
 Software architectural pattern that separates the responsibilities of modifying  

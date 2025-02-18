@@ -80,7 +80,97 @@ high level modules should not depend on low level
 central domain should not depend external systems  
 *(instead both shuold depend on abstractions know as ports)*
 
+in traditional architecture flow is:  
+controllers -> services -> persistence
 
+in hexagonal services are in center  
+controllers -> services <- persistence
+
+### Hexagonal In Practice
+create folders
+
+#### application:
+application layer, manages the flow  
+it will comunicate with database through ports
+
+#### domain:
+domain model, value objects, domain events
+
+#### infrastructure: 
+message brokers, data access components
+
+#### presenters:
+controllers, gateways, user facing elements  
+sometimes called user interface
+
+#### reorganize files
+after `nest g res`  
+into application folder: move alarms service and module  
+into presenters/http: controller and dto  
+*(all of these move with tests)*  
+also remove entities folder
+
+#### add domain files:
+domain/alarm.ts  
+domain/value-obejects/alarm-severity.ts
+
+```typescript
+export class AlarmSeverity {
+  constructor(readonly value: 'critical' | 'high' | 'medium' | 'low') {}
+
+  equals(severity: AlarmSeverity) {
+    return this.value === severity.value;
+  }
+}
+```
+
+#### value objects
+name originates from Domain Driven Design  
+immutable object that describes fragment of domain with no identity
+
+two value objects are equal when they have same value  
+they don't have to be same object
+
+#### create factory
+domain/factories/alarm.factory.ts
+
+```typescript
+import { Injectable } from "@nestjs/common";
+import { randomUUID } from "crypto";
+import { AlarmSeverity } from "../value-objects/alarm-serverity";
+import { Alarm } from "../alarm";
+
+@Injectable()
+export class AlarmFactory  {
+  create(name: string, severity: string) {
+    const alarmId = randomUUID();
+    const alarmSeverity = new AlarmSeverity(severity as AlarmSeverity['value'])
+    return new Alarm(alarmId, name, alarmSeverity)
+  }
+}
+```
+
+#### what about dtos?
+since dtos belong now to the presentation layer  
+they cannot be used by controllers, which are domain layer
+
+we could move them to application layer  
+but they represent data that is sent over the network  
+so its definitely more a user facing, user interface element  
+and they also contain validation rules
+
+we could create new class, Payload or Command  
+or type arguments in controller as any
+
+application/commands/create-alarm.command.ts
+```typescript
+export class CreateAlarmCommand {
+  constructor(
+    public readonly name: string,
+    public readonly severity: string
+  ) {}
+}
+```
 
 NestJS Docs, websockets
 =======================

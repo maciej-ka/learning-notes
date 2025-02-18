@@ -618,11 +618,133 @@ after clicking on element in flame chart
 you get additional information on bottom  
 with a link to a source code
 
+#### General approach
+Am I loosing frames?  
+or in general do I have a problem.
 
+If yes, can I:  
+- avoid some of work
+- move some of work to `requestAnimationFrame` or Css `transform`
+- move some work into web workers
+- or split that work into batches
 
+#### Flame chart
+In flame chart you generally look for largest item on the bottom.  
+Which usuall means place of slowest execution, largest self time.
 
 ### Memory Management
 Detect memory leaks, debug heap.
+
+Can Javascript can have memory leaks.  
+No, because it's garbage collected.  
+Yes, because you may by accident keep some variables.  
+(not allow to free a variable because it still related)
+
+#### Global Variables
+when using old javascript, pre var / const / let
+
+#### Closures
+when function returns another function  
+one of most common memory leak
+
+```javascript
+function createCounter() {
+  const hugeArray = new Array(1000000).fill( 'leaky');
+  let count = 0;
+  return function (increment) {
+    // 'hugeArray' stays alive even though we only need
+    return ++count;
+  }
+}
+const counter = createCounter()
+```
+
+#### Zombie event listeners
+not removing event listeners after they are not needed
+```javascript
+button.addEventListener('click', handleClick);
+```
+
+#### SetInterval
+that was never removed after it's not needed
+
+#### Detached DOM Nodes
+when creating div like `document.createElement('div')`  
+and then adding it to DOM  
+that div is in two places: DOM and in javascript memory as element
+
+#### Finding leak
+It may be relativelly easy to find that there is memory leak  
+but it's still quite hard today to pinpoint lines of code which are reason for it
+
+Browser > More tools > Task Manager > Javascript Memory  
+you can see which tab uses most memory  
+and sort them and leave to keep how they are changing
+
+#### memory checkbox in profiler
+will show JS heap, documents, nodes, listeners, GPU memory  
+on profiler you should see that usage of memory grows and drops  
+ideally after function is done, memory should go down to place before that function started
+
+you don't want to see sawtooth  
+meaning memory usage was only growing  
+and not returing to orignal, low levels, after function calls
+
+### Memory panel
+go to memory, click record  
+this will record snapshot of Heap  
+capture heap snapshot
+
+#### shallow size:
+how much this element occupies right now
+
+#### retained size:
+how much this element occupies plus the graph it retains  
+how much of this element can be freed
+
+stuff in parenthesis is system things  
+that probably cannot be improved  
+so when working with this panel sort by retained size  
+but then look for first item not in parenthesis  
+because this is user area
+
+kicking js to web worker will not help with memory  
+any web worker will still occupy memory and show in this panel
+
+#### mark and sweep
+we mark areas of memory that are used  
+from time to time we sweep memory  
+looking for any 
+
+#### how to work with this panel
+capture heap snapshots twice  
+(with some time between)  
+and then compare them to detect do you have memory leak  
+sort by delta
+
+it will not tell you line of code  
+but you can at least narrow reason to general category:  
+is it listeners, is it heap, is it 
+
+### Experiments
+font editor, you can play with font families and size
+
+### AI innovations
+Console Insigghts  
+AI assistance
+
+#### AI: understand the error
+in console, when there is error, you can ask AI to explain
+
+#### conversation with +
+click to start conversation  
+and ask for something  
+it's very context aware
+
+#### also in performance
+you can right click on element on flame chart  
+click it, start conversation with that item selected  
+and ask something like "why this is slow?"
 
 
 

@@ -262,8 +262,43 @@ vite, typescript, tursor (optmising compiler), web assembly
 devtools try the best to reassemble  
 and tell where does a result line of code come from
 
+### Editing website with chrome devtools
+#### add new style
+click + on styles subtab to add new rule
 
+#### scroll into view
+right click element on dom  
+"Scroll into view"
 
+#### hide and show elements
+press H
+
+also  
+delete / duplicate
+
+#### html breakpoints
+right click on element  
+break on  
+will observe what javascript creates/modifies it  
+what javascript creates this element?  
+you can select to observe:  
+  creation or change in subtree  
+  only changes in attributes  
+  right before remove
+
+#### color picker and color palette
+also change between rbg / hsl / lch / lab  
+also you can see and select from color palletes (like material)  
+also long click on color from pallete to see variants
+
+#### show contrast information
+only works on text elements
+
+go to experiments / anable accesibility AAA  
+select color in styles, open color picker
+
+shows area in color picker where color is accessible  
+this also depends on font size
 
 ### NetworkOptimization
 ### Lighthouse Audits

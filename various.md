@@ -17,54 +17,49 @@ https://web.dev/case-studies/renault
 (just 4 seconds mean drop 50% in conversion)
 
 #### milliseconds make millions
-https://web.dev/case-studies/milliseconds-make-millions
+https://web.dev/case-studies/milliseconds-make-millions  
 0.1s for mobile means conversion difference  
 8.4% in retails   
 10.1% for travel sites
 
 #### Web Vitals
-Speed affects Search Rankings
-LCP: largest contentful paint
-INP: interaction to next paint
+Speed affects Search Rankings  
+LCP: largest contentful paint  
+INP: interaction to next paint  
 CLS: cumulative layout shift
 
-LCP: largest contentful paint
-finds biggest area browser is painting
+LCP: largest contentful paint  
+finds biggest area browser is painting  
 *(it's not so important how quick are you small elements)*
 
-INP: interaction to next paint
-if someone interacts...
+INP: interaction to next paint  
+if someone interacts...  
 how long it takes until next paint finishes
 
-CLS: cumulative layout shift
+CLS: cumulative layout shift  
 how stable is your ui while you load
 
 #### RAIL
 another way to think about performance
 
-Reponse
+Reponse  
 click, zoom
 
-Animation
+Animation  
 how smooth, what is animated
 
-Idle
+Idle  
 how often site hangs that its not interactive
 
-Load
+Load  
 how long it takes to load page and elements
 
 #### Real user performance
-It beneficial to measure Web Vitals yourself
-(you can do it yourself, but better to really measure this)
+It beneficial to measure Web Vitals yourself  
+(you can do it yourself, but better to really measure this)  
 ready tools for that: Sentry, New Relic
 
 you can enable them for all users or for some users
-
-
-
-
-
 
 
 

@@ -37,19 +37,48 @@ It is more performant than Math.floor(), Math.trunc(), or parseInt().
 
 
 
-NestJS architecture and advanced patterns
+NestJS Architecture and Advanced patterns
 =========================================
 https://courseflix.net/course/nestjs-architecture-and-advanced-patterns
 
-#### Hexagonal architecture in Practice, part 1
-nest create app  
-and resource alarms
+#### start new app
+```bash
+nest new nest-advanced
+nest g res alarms
+```
 
-create 4 new folders in alarms directory:  
-application  
-domain  
-infrastructure  
-presenters
+#### layer (n-tier) architecture
+each layer has specific role  
+communication between layers is well defined
+
+presentation: user interactions  
+application: manages flow  
+domain: business rules  
+data access: persistence
+
+nest has three layer architecture by default  
+controllers: user requests handling  
+services: business logic  
+data access: persistence
+
+### Hexagonal Architecture
+also known as "ports and adapters"  
+separates core business logic from external factors  
+(databases, user interfaces, frameworks)
+
+ports  
+interfaces that represent entry-points into application  
+define contract for interaction of domain with external world
+
+adapters  
+implement these port interfaces  
+serve as bridge between domain and external systems  
+translate from language of domain to external systems
+
+dependency inversion  
+high level modules should not depend on low level  
+central domain should not depend external systems  
+*(instead both shuold depend on abstractions know as ports)*
 
 
 

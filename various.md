@@ -61,6 +61,165 @@ ready tools for that: Sentry, New Relic
 
 you can enable them for all users or for some users
 
+### Things that may affect result
+#### Extensions mess page peformance
+test performance in incognito
+or do it with your extensions off
+
+#### pop out devtools
+when devtools are open
+any hidden part is not rendered
+(Chrome is very smart about not rendering anything that is not visible)
+
+### Elements
+DOM, and styles
+styles: they have link to sources
+computed styles: how conflicting styles are computed
+inpect box model: margin, border, padding
+
+a lot in dom is editable by double click
+also right click: edit as html
+
+### Styles
+up/down arrows to increase decrease
+any color has a color picker
+
+:hov
+emulate state of element (like hover)
+
+:cls
+add a class
+
+paintbrush
+emulate dark/light
+
+#### event listeners
+inspect does dom element has any event listeners recorded
+
+### Network
+filter type
+show response
+
+#### hold shift while hovering
+show color on priority
+Green → High priority (e.g., scripts, critical resources)
+Orange → Medium priority (e.g., images, non-critical scripts)
+Red → Low priority (e.g., background tasks, analytics)
+
+#### open Initiator column
+too see which element triggered load of network element
+
+information on bottom
+how many requests
+how large was transfer
+
+why difference transfer/resource:
+cache, also requests also count to transfer
+
+miliseconds
+domcontentloaded: how long to get page parts
+load: how long it took to assemble
+
+colums:
+priority
+what priority browser gave to loading element (highest/lowest ...)
+
+### Peformance
+Shows Web-Vitals
+
+#### peformance record
+to measure performance, click record
+
+usually check main thread
+because this is where you code lives in
+(unless you use workers)
+
+Painting: Time spent drawing pixels to the screen (e.g., drawing layers, applying styles).
+
+System: Time spent outside your page’s control (e.g., browser internals, OS processes).
+system: unavoidable, the way that browser works
+
+Rendering: Time spent calculating styles and layout (e.g., recalculating styles, layout updates).
+rendering: figure out where to paint, 
+
+Scripting: Time spent executing JavaScript (e.g., event handlers, parsing, running JS code).
+
+self time: how long code in function took to finish?
+total time: how long function and its children calls took on call stack took?
+
+if you use 3d, or gpu ...
+three.js
+then GPU will be heavy
+
+### Console
+its full REPL
+```javascript
+document.getElementsByClassName('main-div')
+```
+
+#### special variables
+$0 most recently inspected (in elements tab)
+$1 second most recent inspected
+
+clear / filter
+
+### Sources
+as today most applications have build step
+so this is not so usefull as it was
+
+almost like IDE
+can you save from it?
+
+### Application
+all data stored
+cookies, local storage etc.
+
+inspect and edit
+
+#### clear site data
+gives you fresh state
+
+it doesn't clear workers
+you have to go to worker list and unregister them
+(web workers can be quite sticky)
+
+#### service workers
+here you can simulate offline
+and see the list of workers
+
+#### progressive app
+inspect progressive definitions by checking Manifest
+
+### Memory
+(click record)
+capture heap snapshot
+
+there will be some system
+also go here to check for any WASM
+
+### Lighhouse
+full audit
+
+simulate mobile/desktop
+check categories
+
+### Responsive
+Simulate network devides
+also check network throttling
+
+### Inspecting
+either right click > inspect
+or first click inspect and hover and click on element
+
+
+
+### NetworkOptimization
+### Lighthouse Audits
+### Step-through debugging
+### Performance Profiling
+### Memory Management
+Detect memory leaks, debug heap.
+
 
 
 CQRS (Command Query Responsibility Segregation)

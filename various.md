@@ -63,65 +63,70 @@ you can enable them for all users or for some users
 
 ### Things that may affect result
 #### Extensions mess page peformance
-test performance in incognito
+test performance in incognito  
 or do it with your extensions off
 
 #### pop out devtools
-when devtools are open
-any hidden part is not rendered
+when devtools are open  
+any hidden part is not rendered  
 (Chrome is very smart about not rendering anything that is not visible)
 
 ### Elements
-DOM, and styles
-styles: they have link to sources
-computed styles: how conflicting styles are computed
+DOM, and styles  
+styles: they have link to sources  
+computed styles: how conflicting styles are computed  
 inpect box model: margin, border, padding
 
-a lot in dom is editable by double click
+a lot in dom is editable by double click  
 also right click: edit as html
 
 ### Styles
-up/down arrows to increase decrease
+up/down arrows to increase decrease  
 any color has a color picker
 
-:hov
+:hov  
 emulate state of element (like hover)
 
-:cls
+:cls  
 add a class
 
-paintbrush
+paintbrush  
 emulate dark/light
 
 #### event listeners
 inspect does dom element has any event listeners recorded
 
 ### Network
-filter type
+filter type  
 show response
 
 #### hold shift while hovering
-show color on priority
-Green → High priority (e.g., scripts, critical resources)
-Orange → Medium priority (e.g., images, non-critical scripts)
-Red → Low priority (e.g., background tasks, analytics)
+Show Dependency Chain
+
+When you hold Shift and hover over a request in Chrome  
+DevTools’ Network tab, DevTools highlights the initiator  
+or dependency chain of that request with different  
+colors. In other words, it shows:
+
+Which request triggered the hovered request (its “parent”).  
+Which requests were triggered by the hovered request (its “children”).
 
 #### open Initiator column
 too see which element triggered load of network element
 
-information on bottom
-how many requests
+information on bottom  
+how many requests  
 how large was transfer
 
-why difference transfer/resource:
+why difference transfer/resource:  
 cache, also requests also count to transfer
 
-miliseconds
-domcontentloaded: how long to get page parts
+miliseconds  
+domcontentloaded: how long to get page parts  
 load: how long it took to assemble
 
-colums:
-priority
+colums:  
+priority  
 what priority browser gave to loading element (highest/lowest ...)
 
 ### Peformance
@@ -130,25 +135,25 @@ Shows Web-Vitals
 #### peformance record
 to measure performance, click record
 
-usually check main thread
-because this is where you code lives in
+usually check main thread  
+because this is where you code lives in  
 (unless you use workers)
 
 Painting: Time spent drawing pixels to the screen (e.g., drawing layers, applying styles).
 
-System: Time spent outside your page’s control (e.g., browser internals, OS processes).
+System: Time spent outside your page’s control (e.g., browser internals, OS processes).  
 system: unavoidable, the way that browser works
 
-Rendering: Time spent calculating styles and layout (e.g., recalculating styles, layout updates).
+Rendering: Time spent calculating styles and layout (e.g., recalculating styles, layout updates).  
 rendering: figure out where to paint, 
 
 Scripting: Time spent executing JavaScript (e.g., event handlers, parsing, running JS code).
 
-self time: how long code in function took to finish?
+self time: how long code in function took to finish?  
 total time: how long function and its children calls took on call stack took?
 
-if you use 3d, or gpu ...
-three.js
+if you use 3d, or gpu ...  
+three.js  
 then GPU will be heavy
 
 ### Console
@@ -158,20 +163,20 @@ document.getElementsByClassName('main-div')
 ```
 
 #### special variables
-$0 most recently inspected (in elements tab)
+$0 most recently inspected (in elements tab)  
 $1 second most recent inspected
 
 clear / filter
 
 ### Sources
-as today most applications have build step
+as today most applications have build step  
 so this is not so usefull as it was
 
-almost like IDE
+almost like IDE  
 can you save from it?
 
 ### Application
-all data stored
+all data stored  
 cookies, local storage etc.
 
 inspect and edit
@@ -179,36 +184,36 @@ inspect and edit
 #### clear site data
 gives you fresh state
 
-it doesn't clear workers
-you have to go to worker list and unregister them
+it doesn't clear workers  
+you have to go to worker list and unregister them  
 (web workers can be quite sticky)
 
 #### service workers
-here you can simulate offline
+here you can simulate offline  
 and see the list of workers
 
 #### progressive app
 inspect progressive definitions by checking Manifest
 
 ### Memory
-(click record)
+(click record)  
 capture heap snapshot
 
-there will be some system
+there will be some system  
 also go here to check for any WASM
 
 ### Lighhouse
 full audit
 
-simulate mobile/desktop
+simulate mobile/desktop  
 check categories
 
 ### Responsive
-Simulate network devides
+Simulate network devides  
 also check network throttling
 
 ### Inspecting
-either right click > inspect
+either right click > inspect  
 or first click inspect and hover and click on element
 
 

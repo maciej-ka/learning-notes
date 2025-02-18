@@ -323,11 +323,12 @@ Additional Resources
 #### Http headers
 request / response is just text
 
+#### Calculating render tree
 It's more  
 CSS -> CSSOM (css object model)  
 HTML -> DOM  
 also include Javascript  
-in the end there is one object model  
+in the end there is one render tree  
 (it's the way render and interpretation works)
 
 #### Gzip vs Brotli
@@ -353,11 +354,17 @@ you can tell browser priority
 html atrribute `preload`  
 info that resource should be loaded early, as document is loaded
 
+Tells the browser to fetch a resource with higher priority for the current page.  
+The resource is then used by the page as soon as it’s available (e.g., crucial scripts or CSS).
+
 #### prefetch
 prefetch: when you think you know where the next page is going to be  
 prefetch tag, browser will fetch entire thing in anticipation  
 (if not clicked, browser will failback to default page load)  
 benefit is that you will have magical fast changes
+
+Tells the browser to fetch a resource early (often during idle time) with the expectation it may be needed soon (like in a future navigation).  
+The resource is stored in the browser cache, so if or when the page needs it, it’s already downloaded.
 
 some ideas  
 you can try detect idle blocks (with Promise timeout zero)  
@@ -398,10 +405,80 @@ https://developer.chrome.com/docs/devtools/network/reference/?utm_source=devtool
 
 remember that parsing and compiling can take time
 
+### Lighthouse web Audits
+lighthouse is best introduction to performance metrics  
+best for start
 
+history  
+before lighthouse there was YSlow (spelled "why slow")  
+also google had its own before: PageSpeed Insights (didn't work on localhost)
 
-### Lighthouse Audits
+#### three modes
+on load (will trigger full reload, without cache)  
+what's right now  
+capture selected span, specific moment, action
+
+#### performance
+page load speed  
+metrics: LCP, CLS ...  
+FCP First Contentful Paint  
+TTI time to interactive  
+TBT total blocking time
+
+larger companies develop their own metrics  
+like "time to tweet"   
+how fast is it possible to create a tweet
+
+#### accesibility
+contast  
+keyboard support  
+alt attributes  
+labels on forms
+
+but remember that nothing beats real users  
+and real feedbac on accesibility
+
+#### best practices
+fully use https
+
+"let's encrypt" initiative  
+it's possible to get certificate for free  
+and install it for free
+
+detects that you can use better image format
+
+#### SEO
+meta tags  
+page can be crawled  
+mobile friendliness  
+correct use of http codes
+
+#### Generate report
+Navigation, Desktop, all four scopes
+
+list of suggestions  
+report will have links to documentation  
+explaining why you may need elements
+
+also there is list of additinoal items to test manually
+
+#### LCP
+lighthouse will tell and show screenshot of what element was LCP
+
+#### Unused CSS and Unused JS
+Unused CSS can be used later  
+perhaps it's a css for a modal, that is not displayed on start  
+so don't rush to delete  
+but perhaps this is potential to split resources into bundles  
+and load some parts later
+
+### Coverage (usage coverage)
+one of panel in devtools  
+that will show fragments of JS/CSS that are unused
+
 ### Step-through debugging
+
+
 ### Performance Profiling
 ### Memory Management
 Detect memory leaks, debug heap.

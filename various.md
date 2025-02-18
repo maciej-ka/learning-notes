@@ -582,10 +582,10 @@ but more we get around 10ms
 consider using web worker
 
 #### requestAnimationFrame
-we do reads and writes on dom  
-whenever we change something in dom  
-we invalidate dom  
-and dom cannot be easily sure how elements look anymore
+we do reads and writes on DOM  
+whenever we change something in DOM  
+we invalidate DOM  
+and DOM cannot be easily sure how elements look anymore
 
 this can be solved by batching  
 doing edits in batches
@@ -596,6 +596,15 @@ and I know it will invalidate a lot of caches and calculations
 so do it just before next rerender, just before calculating new frame
 
 *many frameworks will do this for you*
+
+even though your javascript is doing the same work that it was doing before  
+overall browser performance is better that way, because you limit number of times  
+that layout get's trashed and browser saves time on recalculating layout
+
+There was a bug in Safari  
+fixed in 2019  
+where requestAnimationFrame was called after render (not before)  
+which resulted in user changes not visible as expected
 
 #### Css Transforms
 really great for positional stuff  
@@ -696,12 +705,16 @@ this will record snapshot of Heap
 capture heap snapshot
 
 #### shallow size:
-how much this element occupies right now
+The memory consumed by just that single object itself  
+without counting the objects it references.
 
 #### retained size:
-how much this element occupies plus the graph it retains  
-how much of this element can be freed
+The total amount of memory that would be freed  
+if that object were garbage-collected,  
+including its own shallow size  
+plus all other objects that become inaccessible only through it.
 
+#### working with list in memory panel
 stuff in parenthesis is system things  
 that probably cannot be improved  
 so when working with this panel sort by retained size  
@@ -720,7 +733,8 @@ looking for any
 capture heap snapshots twice  
 (with some time between)  
 and then compare them to detect do you have memory leak  
-sort by delta
+change view from Summary to Comparison  
+and sort by delta
 
 it will not tell you line of code  
 but you can at least narrow reason to general category:  

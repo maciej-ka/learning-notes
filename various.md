@@ -216,6 +216,53 @@ also check network throttling
 either right click > inspect  
 or first click inspect and hover and click on element
 
+### Before DevTools
+We just had raw html  
+without color, just as text
+
+and before console there was alert statement  
+(problem is that they only handle primitive types)
+
+history of popular devtools  
+1993 alert and view source  
+1999 console.log  
+2006 firebug starts with DOM inspections  
+2008 google chrome built-in devtools  
+2011 source maps are introduced, allowing developers to debug minified or transpiled code  
+2013 performance panel  
+2017 firefox quantum modern features: grid layout  
+2020 Edge adopts chromium, aligning its developers tools with chrome and making them standard
+
+html source vs DOM  
+elements panel show you this live running, interacting DOM with applied 
+
+DOM viewer  
+https://software.hixie.ch/utilities/js/live-dom-viewer/  
+how text source is changed into tree
+
+### Specificity
+there is sort of a battle between rules  
+specificity is rules of applying and resolving conflicts  
+order: style attribute, id, class (pseudo), elements
+
+devtools help to check  
+why am I seeing this CSS applied?  
+what rules where not applied because of lower specificity  
+it will striketrhough not applied rules
+
+#### how to check in computed styles
+list Computed styles  
+click arrow icon to see where this definition comes from
+
+### source maps
+more and more application that runs is different from source code  
+vite, typescript, tursor (optmising compiler), web assembly  
+... all these create disconnect
+
+devtools try the best to reassemble  
+and tell where does a result line of code come from
+
+
 
 
 ### NetworkOptimization

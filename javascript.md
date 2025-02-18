@@ -27,20 +27,23 @@ also known as "ports and adapters"
 separates core business logic from external factors  
 (databases, user interfaces, frameworks)
 
-ports  
+#### ports
 interfaces that represent entry-points into application  
 define contract for interaction of domain with external world
 
-adapters  
+#### adapters
 implement these port interfaces  
 serve as bridge between domain and external systems  
 translate from language of domain to external systems
 
-dependency inversion  
+adapters usually delegate a lot
+
+#### dependency inversion
 high level modules should not depend on low level  
 central domain should not depend external systems  
 *(instead both shuold depend on abstractions know as ports)*
 
+#### flow
 in traditional architecture flow is:  
 controllers -> services -> persistence
 
@@ -145,10 +148,50 @@ create(@Body() createAlarmDto: CreateAlarmDto) {
 }
 ```
 
+#### ports
+define constract of interaction with external world  
+adapters implement these contacts and serve as translating bridge
+
+/application/ports/alarm.repository.ts
+```typescript
+import { Alarm } from "src/alarms/domain/alarm";
+
+export abstract class AlarmRepository {
+  abstract findAll(): Promise<Alarm[]>
+  abstract save(alarm: Alarm): Promise<Alarm>
+}
+```
+
+*It seems like "domain" center of Hexagonal architecture*
+*is realize in project by:*
+*/domain: entities, value objects, factories*
+*/application: services, commands (dtos replacement), ports*
+
+we use abstract class because they can be injected
+(typescript interfaces are wiped out during transpilation)
+
+#### adapters, persistence
+/infrastructure/persistence/orm/entities/alarm.entity
+```typescript
+import { Column, Entity, PrimaryColumn } from "typeorm";
+
+@Entity('alarms')
+export class AlarmEntity {
+  @PrimaryColumn('uuid')
+  id: string
+
+  @Column()
+  name: string
+
+  @Column()
+  severity: string
+}
+```
 
 
-From Leet Code
-==============
+
+From the Leet Code
+==================
 
 ### >> operator
 Division by two, rounded down

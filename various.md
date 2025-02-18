@@ -1,6 +1,70 @@
 Introduction to developer tools v3
 ==================================
-Frontend Masters, Jon Kuperman
+Frontend Masters, Jon Kuperman  
+https://github.com/jkup/mastering-devtools-static
+
+slides  
+https://docs.google.com/presentation/d/1-rBm6q3vRsI3aEbGoRKP3COedeTW05P-7v_ehRo9R1w/edit#slide=id.p
+
+### Why master Chrome DevTools?
+become web performance export  
+fix really complicated bugs  
+prototype quickly with live editing
+
+### Google Performance Studies
+better LCP directly leads to better conversion rate  
+https://web.dev/case-studies/renault  
+(just 4 seconds mean drop 50% in conversion)
+
+#### milliseconds make millions
+https://web.dev/case-studies/milliseconds-make-millions
+0.1s for mobile means conversion difference  
+8.4% in retails   
+10.1% for travel sites
+
+#### Web Vitals
+Speed affects Search Rankings
+LCP: largest contentful paint
+INP: interaction to next paint
+CLS: cumulative layout shift
+
+LCP: largest contentful paint
+finds biggest area browser is painting
+*(it's not so important how quick are you small elements)*
+
+INP: interaction to next paint
+if someone interacts...
+how long it takes until next paint finishes
+
+CLS: cumulative layout shift
+how stable is your ui while you load
+
+#### RAIL
+another way to think about performance
+
+Reponse
+click, zoom
+
+Animation
+how smooth, what is animated
+
+Idle
+how often site hangs that its not interactive
+
+Load
+how long it takes to load page and elements
+
+#### Real user performance
+It beneficial to measure Web Vitals yourself
+(you can do it yourself, but better to really measure this)
+ready tools for that: Sentry, New Relic
+
+you can enable them for all users or for some users
+
+
+
+
+
 
 
 

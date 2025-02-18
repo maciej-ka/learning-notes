@@ -477,9 +477,150 @@ one of panel in devtools
 that will show fragments of JS/CSS that are unused
 
 ### Step-through debugging
+#### source maps
+generally this is most usable when you have sourcemaps  
+but sometimes on production you may need to use it  
+(in ignore list you can at least add something like: ignore known lib code)
 
+but on production also consider enabling source maps  
+only for short moment, to fix the bug
+
+#### how to use
+stop / start  
+step into: when line calls function, go into that function  
+step over: finish current function, go to parent function on call stack  
+step: step to next line in current function
+
+there is no time travel in debugger  
+you need to refresh
+
+but if you need to time travel ...  
+replay.io  
+will record whole session
+
+#### set up debugger breakpoint
+use file side pane to open file  
+then set trap  
+debugger will show actual values in source when debugging
+
+or use `debugger` statement  
+if you have closed devtools, they will be no-option  
+(lint for them, to not sent them to production)
+
+#### conditional breakpoint
+add expression to check before pausing
+
+#### fetch breakpoint
+stop when app does fetch  
+also possible to make it conditinal  
+like only when url contains certain text
+
+#### watch list
+you can add element or expression to watch  
+click + and define expression to evaluate
+
+#### call stack
+where you are in calls  
+this can be really valuable  
+how did I get to this fragment
+
+#### Scope
+local  
+  what is value of this  
+closure  
+global
+
+#### console.log
+if you can get it in environment with fast response  
+can be still very helpfull then
+
+debuger may be strong when build is slow   
+and you would have to need to wait after every console.log
 
 ### Performance Profiling
+
+#### dropping frames
+when you see red in Performance  
+it means you're loosing frames
+
+javascript thread was so busy  
+that when browser asked for a new frame  
+it didn't get it
+
+perception of time
+
+#### 0 to 16ms
+humans see this as instant  
+you don't need to optimise this any further  
+our app should be able to give one frame per each 16ms
+
+#### 0 to 100ms
+users feel this is immediate but only if it is result of interaction
+
+#### 100ms to 1000ms
+some task is computing, something is happening  
+acceptable for a lot of cases
+
+#### over 1000ms
+user loosing focus
+
+#### Javascript bytes are not same as JPEG bytes
+javascript has download cost  
+then has parse const  
+and then has execution cost
+
+we should overdo cutting bytes of jpeg  
+because in terms of time
+
+#### refresh rate
+monitors refresh 60 times a second  
+*some gamers monitors update up to 240 times a second*
+
+this gives 16.66ms  
+but in reality we don't get all that time  
+but more we get around 10ms  
+consider using web worker
+
+#### requestAnimationFrame
+we do reads and writes on dom  
+whenever we change something in dom  
+we invalidate dom  
+and dom cannot be easily sure how elements look anymore
+
+this can be solved by batching  
+doing edits in batches
+
+#### using requestAnimationFrame
+you can say "I want to change some div size"  
+and I know it will invalidate a lot of caches and calculations  
+so do it just before next rerender, just before calculating new frame
+
+*many frameworks will do this for you*
+
+#### Css Transforms
+really great for positional stuff  
+same thing, you change a lot  
+and to avoid a lot of collsions do it together with repaint
+
+in css this can be done by using translate  
+especially it helps for changing position
+```javascript
+box.style.transform = 'translateX(${xPosition}px)'
+```
+
+#### Execution time in Sources
+once you ran profiler  
+whenever you enter sources there will be additional information presented  
+which will tell how long this function was running for
+
+#### Inspecing elements in flame chart
+after clicking on element in flame chart  
+you get additional information on bottom  
+with a link to a source code
+
+
+
+
 ### Memory Management
 Detect memory leaks, debug heap.
 

@@ -99,11 +99,6 @@ they don't have to be same object
 domain/factories/alarm.factory.ts
 
 ```typescript
-import { Injectable } from "@nestjs/common";
-import { randomUUID } from "crypto";
-import { AlarmSeverity } from "../value-objects/alarm-serverity";
-import { Alarm } from "../alarm";
-
 @Injectable()
 export class AlarmFactory  {
   create(name: string, severity: string) {
@@ -154,27 +149,23 @@ adapters implement these contacts and serve as translating bridge
 
 /application/ports/alarm.repository.ts
 ```typescript
-import { Alarm } from "src/alarms/domain/alarm";
-
 export abstract class AlarmRepository {
   abstract findAll(): Promise<Alarm[]>
   abstract save(alarm: Alarm): Promise<Alarm>
 }
 ```
 
-*It seems like "domain" center of Hexagonal architecture*
-*is realize in project by:*
-*/domain: entities, value objects, factories*
+*It seems like "domain" center of Hexagonal architecture*  
+*is realize in project by:*  
+*/domain: entities, value objects, factories*  
 */application: services, commands (dtos replacement), ports*
 
-we use abstract class because they can be injected
+we use abstract class because they can be injected  
 (typescript interfaces are wiped out during transpilation)
 
-#### adapters, persistence
+#### TypeORM persistence adapter
 /infrastructure/persistence/orm/entities/alarm.entity
 ```typescript
-import { Column, Entity, PrimaryColumn } from "typeorm";
-
 @Entity('alarms')
 export class AlarmEntity {
   @PrimaryColumn('uuid')
@@ -185,6 +176,52 @@ export class AlarmEntity {
 
   @Column()
   severity: string
+}
+```
+
+/infrastructure/persistence/orm/repositories/alarm.repository.ts
+```typescript
+export class OrmAlarmRepository implements AlarmRepository {
+  constructor(
+    @InjectRepository(AlarmEntity)
+    private readonly alarmRepository: Repository<AlarmEntity>,
+  ) {}
+
+  async findAll(): Promise<Alarm[]> {
+    const entities = await this.alarmRepository.find();
+    return entities.map((item) => AlarmMapper.toDomain(item));
+  }
+
+  async save(alarm: Alarm): Promise<Alarm> {
+    const persistenceModel = AlarmMapper.toPersistence(alarm)
+    const entity = await this.alarmRepository.save(persistenceModel);
+    return AlarmMapper.toDomain(entity)
+  }
+}
+```
+
+/infrastructure/persistence/orm/mappers/alarm.mapper.ts
+```typescript
+export class AlarmMapper {
+  static toDomain(alarmEntity: AlarmEntity) {
+    const alarmSeverity = new AlarmSeverity(
+      alarmEntity.severity as "critical" | "high" | "medium" | "low",
+    );
+    const alarmModel = new Alarm(
+      alarmEntity.id,
+      alarmEntity.name,
+      alarmSeverity,
+    );
+    return alarmModel;
+  }
+
+  static toPersistence(alarm: Alarm) {
+    const entity = new AlarmEntity();
+    entity.id = alarm.id;
+    entity.name = alarm.name;
+    entity.severity = alarm.serverity.value;
+    return entity;
+  }
 }
 ```
 

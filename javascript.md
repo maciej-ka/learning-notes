@@ -277,8 +277,132 @@ export class AlarmsInfrastructureModule {
     };
   }
 }
-
 ```
+
+Include InfrastructureModule to be used in domain
+
+#### Use Infrastructure to perform create in Service
+/application/alarms.module.ts
+```typescript
+export class AlarmsModule {
+  static withInfrastructure(infrastructureModule: Type | DynamicModule) {
+    return {
+      module: AlarmsModule,
+      imports: [infrastructureModule]
+    }
+  }
+}
+```
+
+This line allow users of Alarms Module  
+to pass infrastructureModule that they want to use  
+*(it's an example of modules composition pattern)*
+
+this allows to decouple application layer from infrastructure
+
+```typescript
+imports: [infrastructureModule]
+```
+
+Finally, use Repository interface to create  
+also inject alarmRepository into AlarmsService
+
+/application/alarms.service.ts
+```typescript
+@Injectable()
+export class AlarmsService {
+  constructor(
+    private readonly alarmRepository: AlarmRepository,
+    private readonly alarmFactory: AlarmFactory
+  ) {}
+
+  create(createAlarmDto: CreateAlarmCommand) {
+    const alarm = this.alarmFactory.create(
+      createAlarmDto.name,
+      createAlarmDto.severity,
+    )
+    return this.alarmRepository.save(alarm)
+  }
+
+  findAll() {
+    return this.alarmRepository.findAll()
+  }
+}
+```
+
+#### Bootstraping
+Create interface that will represent options  
+that we can use to bootstrap (setup on start) our application
+
+src/common/interfaces/application-bootstrap-options.interface.ts
+```typescript
+export interface ApplicationBootstrapOptions {
+  driver: 'orm' | 'in-memory';
+}
+```
+
+then let's generate new module
+```bash
+nest g mo core
+```
+
+Depending on the driver in bootstrap options  
+we are going to either import typeorm module  
+or not import anything at all.
+
+```typescript
+@Module({})
+export class CoreModule {
+  static forRoot(options: ApplicationBootstrapOptions) {
+    const imports =
+      options.driver === "orm"
+        ? [
+            // hardcoded for simplicity
+            // but generally should be in environment variables
+            TypeOrmModule.forRoot({
+              type: "postgres",
+              host: "localhost",
+              port: 5432,
+              password: "pass123",
+              username: "postgres",
+              autoLoadEntities: true,
+              synchronize: true,
+            }),
+          ]
+        : [];
+
+    return {
+      module: CoreModule,
+      imports,
+    };
+  }
+}
+```
+
+Then make main App Module aware of Bootstrap options.
+
+src/app.module.ts
+```typescript
+@Module({
+  imports: [AlarmsModule, CoreModule],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {
+  static register(options: ApplicationBootstrapOptions) {
+    return {
+      module: AppModule,
+      imports: [
+        CoreModule.forRoot(options),
+        AlarmsModule.withInfrastructure(
+          AlarmsInfrastructureModule.use(options.driver)
+        )
+      ]
+    }
+  }
+}
+```
+
 
 From the Leet Code
 ==================

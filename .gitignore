@@ -1,3 +1,6 @@
 **/
 .DS_Store
 *.wiki
+
+# allow images used in docs
+!assets/

@@ -1,3 +1,26 @@
+Defensive Semicolon
+===================
+As seen in zustand sourcecode:
+
+src/middleware/persist.ts:313
+```typescript
+;(api as StoreApi<S> & StorePersist<S, S>).persist = {
+```
+
+This is used to prevent problems when lines would be joined into one line  
+during minification. It seems to be especially common on lines which start with  
+parenthesis.
+
+```typescript
+a + b
+(c as Api).persist()
+
+// after lines join becomes b() invocation
+a + b(c as Api).persist()
+```
+
+
+
 NestJS Architecture and Advanced patterns
 =========================================
 https://courseflix.net/course/nestjs-architecture-and-advanced-patterns

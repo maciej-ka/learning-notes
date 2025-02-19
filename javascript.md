@@ -248,6 +248,37 @@ export class OrmAlarmPersistenceModule {}
 Create similar `/persistence/in-memory` adapter  
 Including all the same files, but using Javascript Map as a store
 
+#### Define general Infrastructure Module
+Both OrmAlarmsPersistentModule and InMemoryAlarmPersistenceModule  
+export same dependency injection token (token with the same name)  
+which is `AlarmRepository`
+
+Below module definition of Infrastructure Model will select one of them  
+to be used in rest of Nest application when requested.
+
+/infrastructure/persistence/alarms-infrastructure.module.ts
+```typescript
+import { Module } from "@nestjs/common";
+import { InMemoryAlarmPersistenceModule } from "./in-memory/in-memory-persistence.module";
+import { OrmAlarmPersistenceModule } from "./orm/orm-persistence.module";
+
+@Module({})
+export class AlarmsInfrastructureModule {
+  static use(driver: "orm" | "in-memory") {
+    const persistenceModule =
+      driver === "orm"
+        ? OrmAlarmPersistenceModule
+        : InMemoryAlarmPersistenceModule;
+
+    return {
+      module: AlarmsInfrastructureModule,
+      imports: [persistenceModule],
+      exports: [persistenceModule],
+    };
+  }
+}
+
+```
 
 From the Leet Code
 ==================

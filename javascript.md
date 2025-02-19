@@ -384,7 +384,7 @@ Then make main App Module aware of Bootstrap options.
 src/app.module.ts
 ```typescript
 @Module({
-  imports: [AlarmsModule, CoreModule],
+  imports: [CoreModule],
   controllers: [AppController],
   providers: [AppService],
 })
@@ -403,6 +403,18 @@ export class AppModule {
 }
 ```
 
+Finally select used bootstrap options in main.ts
+
+src/main.ts
+```typescript
+async function bootstrap() {
+  const app = await NestFactory.create(
+    AppModule.register({ driver: "in-memory" }),
+  );
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+```
 
 From the Leet Code
 ==================

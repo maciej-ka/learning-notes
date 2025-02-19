@@ -51,6 +51,8 @@ in hexagonal services are in center
 controllers -> services <- persistence
 
 ### Hexagonal In Practice
+![js hexagonal](./assets/js-hexagonal)
+
 create folders
 
 #### application:

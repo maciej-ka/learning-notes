@@ -225,6 +225,28 @@ export class AlarmMapper {
 }
 ```
 
+Create orm persistence module and  
+Instruct NestJS to use OrmAlarmRepository whenever AlarmRepository is requested  
+This is where we actually bind port to adapter
+
+/infrastructure/persistence/orm/orm-persistence.module.ts
+```typescript
+@Module({
+  imports: [TypeOrmModule.forFeature([AlarmEntity])],
+  providers: [
+    {
+      provide: AlarmRepository,
+      useClass: OrmAlarmRepository,
+    }
+  ],
+  exports: [AlarmRepository]
+})
+export class OrmAlarmPersistenceModule {}
+```
+
+#### In memory adapter of AlarmRepository
+Create similar `/persistence/in-memory` adapter  
+Including all the same files, but using Javascript Map as a store
 
 
 From the Leet Code

@@ -441,6 +441,10 @@ but it's on developers to implement this
 
 btw. <dialog> element may have this built in?
 
+Tab trapping is also about not allowing to go out of current webpage  
+and not allow browser to cycle on tabs and header browser elements.  
+Which very likely may be a bad, malicious idea, but it's possible.
+
 #### Aria
 quite robost, has a lot.
 
@@ -476,20 +480,40 @@ way to add label to element that normally, in html standard, is not labellable
 </form>
 ```
 
+in what order they will be read?  
+first label  
+then description
+
 #### Roles, states, properties
 can be applied to any element
 
-Roles  
+#### Roles
+are really important  
+can be applied to any html element  
 define the purpose of an element  
+(can be used to change div into button)  
 `role="button"` for a clickable element  
 `role="alert"` for alerts
 
-States  
+more roles:
+```
+button
+checkbox
+tree
+banner
+aria-autocomplete
+aria-haspopup
+```
+
+Use roles when you want to make a UI custom checkbox  
+but also want it to behave well for screen readers.
+
+#### States
 represent dynamic changes  
 `aria-checked="true"` for a checked checkbox  
 `aria-expanded="false"` for a collapsed menu
 
-Properties  
+#### Properties
 describe attributes that don’t change often  
 `aria-labelledby="label-id"` to associate an element with a label
 

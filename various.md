@@ -356,37 +356,37 @@ Your entire application should be usable with only keyboard
 There should be clear indicator of position user is on page (focus ring)  
 There should be some way to jump in content
 
-(navigation links cannot change order)
-if navigation links are on top of each page
+(navigation links cannot change order)  
+if navigation links are on top of each page  
 they should not change the order between pages
 
 #### keyboard shotcuts
-really fun to build
+really fun to build  
 and fun to use
 
-often there is popup after hitting "?"  or "shift-?"
+often there is popup after hitting "?"  or "shift-?"  
 this is little bit like vim
 
 #### skip links
-big header on top
+big header on top  
 it may have many links
 
-"skip to main content"
-after first reload, first navigation, header will have additional link
-with text "skip to content"
+"skip to main content"  
+after first reload, first navigation, header will have additional link  
+with text "skip to content"  
 make sure it's first link
 
-add it as anchor
-make it visible only on focus state
+add it as anchor  
+make it visible only on focus state  
 and only make it visible when it's focused
 
 #### web rotor
-a way to jump to section of page
-to jump to header
+a way to jump to section of page  
+to jump to header  
 it shows a list of headers and they level
 
 ### Tab navigation
-use tab to go to next
+use tab to go to next  
 shift+tab to go prev
 
 make sure everything is accessible using keyboard
@@ -406,23 +406,23 @@ make element focusable
 <div tabindex="0">I'm focusable<div>
 ```
 
-values:
+values:  
 #### negative:
-should not be reachable by keyboard
+should not be reachable by keyboard  
 (turn off for elements that have it by default)
 
 #### 0
 should be focusable, it's relative order is where it falls in DOM
 
 #### positive
-change order
+change order  
 strong recommendation is to not use them
 
-if you want reader to read aria-role on changing focus with tab
+if you want reader to read aria-role on changing focus with tab  
 also add aria-role
 
 #### remember active element
-Store currently focused element before a page transition
+Store currently focused element before a page transition  
 so you can return to it later
 
 ```javascript
@@ -433,8 +433,8 @@ currentItem.focus()
 ```
 
 #### Tab trapping
-On modal, like log in.
-You would think that then tab should work only in modal area.
+On modal, like log in.  
+You would think that then tab should work only in modal area.  
 (and not greyed area in the background)
 
 but it's on developers to implement this

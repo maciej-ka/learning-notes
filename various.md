@@ -571,7 +571,7 @@ built in to Chrome devtools
 when you want to add check to CI/CD  
 caveat is that good accessibility check always requires some user interaction
 
-#### Lighthouse Ci
+#### Lighthouse CI
 similar to Axe-core  
 and there is also ready workflow  
 easy to add to github CI/CD
@@ -588,6 +588,53 @@ Googlem Material Design
 Adobe React Spectrum  
 ready components  
 that are good for a11y
+
+#### Lighthouse
+you can select only Accesibility checkbox scope on start
+
+#### A11Y conflicts with UI team
+You will be often asked to disable some built-ins.  
+Important part is lead those design discussions into area  
+where you show symphaty, saying this design looks good but  
+here is what we could do, a variant, perhaps different design  
+that will be compliant and match accessibility standards
+
+#### Links
+Web Content Accessibility Guidelines (WCAG)  
+https://www.w3.org/WAI/standards-guidelines/wcag/  
+WebAIM  
+https://webaim.org/  
+Microsoft Inclusive Design  
+https://www.microsoft.com/design/inclusive/  
+event: Global Accessibility Awareness Day  
+https://globalaccessibilityawarenessday.org/  
+Web App Accessibility (feat. React)  
+https://frontendmasters.com/courses/react-accessibility/
+
+#### Neuralink / AI
+New tech is quite fascinating. And People have strong opinions about Neuralink.  
+But at the moment it's still a future technology.
+
+Big talk that is now is about using AI to scan images which not have alt tags.  
+And let the AI add these alt tags.  
+However this can enourage to not give alt tags in the first place.
+
+### How to read any W3C spec
+Outputs by standard bodies  
+Published yearly or every 3 months
+
+You present idea  
+and if there is consensus that it's important
+
+then author is "champion" of that change  
+and describe what it solves  
+how it is meant to be used, what are edge cases
+
+and then at some point champion has to contact  
+with every major browser team (implementor teams)  
+and have a discussion with that team
+
+docs have to describe every part in-depth
 
 
 

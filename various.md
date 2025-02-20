@@ -7,7 +7,7 @@ https://docs.google.com/presentation/d/1Pyht6YgYMUOZxANiohPIqZYAcCwj__ZaVp7yYOfp
 
 ### What is Accessibility
 accessibility  
-a..11..y  
+a..12..y  
 called "ally"
 
 Web page which can be used by people with disabilities.  
@@ -106,9 +106,339 @@ Go to System Settings > Accessibility > VoiceOver
 #### ChromeVox
 https://chromewebstore.google.com/detail/screen-reader/kgejglhpjiefppelpmljglcjbhoiplfn
 
-### Accessibility standard
+### Accessibility standards
+Web Content Accessibility Guidelines WCAG  
+The W3C Web Accessibilty Initiative WAI  
+Accesible Rich Internet Application WAI-ARIA  
+(aria tags)
+
+#### W3C
+World Wide Web Consortium  
+Standards Organization for the World Wide Web  
+Creates the Standards for HTML, CSS and Accessibility  
+easy to contribute to  
+https://www.w3.org/
+
+#### WAI
+Group under W3C  
+Initiative within  
+https://www.w3.org/WAI/
+
+#### WCAG
+Standard  
+offcial standard, published by WAI  
+https://www.w3.org/WAI/standards-guidelines/wcag/
+
+#### ARIA
+for reach web  
+https://www.w3.org/WAI/standards-guidelines/aria/
+
+#### WebAIM
+not a official standars body  
+independent advocacy and training group  
+provides a very nice docs, easy to use, short  
+https://webaim.org/
+
+#### WCAG Conformance LEvels
+A (lowest)  
+AA (this is legally required and not matching can be subject to a fine)  
+AAA  
+https://www.w3.org/WAI/WCAG21/Understanding/conformance#levels
+
+#### WCAG POUR
+Perceivable  
+Operable  
+Understandable  
+Roboust
+
+### Screen Readers
+If someone is using them longer, they are usually set to work way faster  
+then anyone who just started using them
+
+Don't only read but also provide way to jump on website.  
+display all links or headings
+
+Ranking of readers  
+46% JAWS  
+31% NVDA  
+11% VoiceOver (default MacOS)
+
+#### Image Alternative Text
+if reader encourters the image, it reads alt-text  
+otherwise it will use filename  
+which may be a problem if it contains some generated hash
+
+```html
+<img src="..." alt="A puppy in the park">
+```
+common mistake: don't use word "a image of..., image of ..."
+
+somtimes images are abstract  
+in that situation you can ask reader to skip them  
+because they are only pure for decoration
+```html
+<img src="..." alt="">
+```
+
+#### SEO
+For many years SEO recommended to use keywords in alt.  
+Recently it's not used as much, but still may be used.
+
+However, not using proper alts, and using them to boost SEO,  
+and putting some kind of commercial text in them may result in fine.
+
+#### Audio
+Level A needs transcription of any audio provided.  
+And video needs a synchronized captions.
+
 ### Semantic HTML
+They don't have special functionality  
+but have different meaning  
+that is used by screen readers
+```html
+<aside />
+<footer />
+<header />
+```
+
+Some have a lot of built-in functionality  
+in older days it was a lot of work to write some of these with JS  
+like datepicker, colorpicker
+```html
+<button />
+<input />
+<input type="email" />
+<textarea />
+```
+
+#### Common trap
+UI design team doesn't like the look of default ones
+
+#### Reading and navigation order
+should be logical and intuitive
+
+#### Div Soup
+Idea of neglecting semantic HTML  
+And page is only thousands of thousands of div
+
+#### Form Labels
+Without them inputs will be read as   
+"edit text, blank"  
+no way to say what this input is
+
+anipattern: visual only labels  
+using p tag
+
+```html
+<label for="last">Last Name</label>
+<input id="last" type="test" />
+```
+
+#### Implicit form labels
+they just wrapping
+```html
+<label>Last Name
+  <input id="last" type="test" />
+</label>
+```
+
+Labellable elements
+```html
+<button>
+<input>
+<keygen>
+<meter>
+<output>
+<progress>
+<select>
+<textare>
+```
+
+#### aria-label
+similar like label, but this can be used on any element  
+in case of conflict aria-label has preference
+
+#### making a div like button
+screen reader will not know it's clickable  
+you can add a aria role, so screen reader know it clickable
+
+but then still there is problem, that div cannot be accessed by tab  
+so you can give it tabindex
+
+but there is still problem that they cannot be pressed with key  
+so we need to add onkeyup
+
+```html
+<div
+  aria-label="Alert the word hello" tabindex="0" role="button"
+  onclick="alert( 'hello' )"
+  onkeyup="alert( 'hello' )"
+> Click me!
+</div>
+```
+
+In the end it's way user to just use button
+
+#### Div Soup
+it's a mess when you look at source and first you see only divs  
+with web components perhaps you can group divs into some descriptive parts  
+you can do it also with React
+
+but in the end it may be just easier to use semantic
+
+it is still possible to make a11y site  
+using only divs  
+but it's a lot of extra work  
+(like with button example above)
+
+#### Screen reader only content
+is it possible?  
+only screen reader content  
+only display content  
+... generally not
+
+although you can visually hide element  
+(there are many ways to do it)  
+that is on page  
+and that way element will be screen reader only  
+(still, it can be printed)
+
+however it generally bad idea to split audience like this  
+it's not a good direction to make such segments of audience
+
+#### Excercise: 
+turn on screen reader  
+and dim page whole way down
+
+#### Way to hide with CSS
+```css
+.visuallyhidden {
+  position: absolute;
+  left: 0;
+  top: -500px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+```
+
+```html
+<ul>
+  <li><a href="#">Home</a></li>
+  <li><a href="#">About</a></li>
+  <li><a href="#">Contact</a></li>
+</ul>
+```
+this is read as "navigation, 3 items"  
+(that's the reason to use list)
+
 ### Focus management
+"Focus rings"
+
+When keyboard users are tabbing, they need to know where they are.  
+It doesn't have to be hover item, but it has focus style alternative.  
+Some sort of blue border or another indicator what is focused.  
+Visible focus indications are crucial for keyboard users.
+
+at least 2px thick  
+contrast ration min 3:1  
+consider using outline + background change
+
+also consider using subtle animation of focus ring  
+something like "breathing" effect
+
+Is there a rule that focus ring has to be other color than black?  
+you can reuse colors, but it needs 3:1 contrast with adjecent colors  
+so if it's next to black text, it shouldn't be black also
+
+### Keyboard only users
+Your entire application should be usable with only keyboard  
+There should be clear indicator of position user is on page (focus ring)  
+There should be some way to jump in content
+
+(navigation links cannot change order)
+if navigation links are on top of each page
+they should not change the order between pages
+
+#### keyboard shotcuts
+really fun to build
+and fun to use
+
+often there is popup after hitting "?"  or "shift-?"
+this is little bit like vim
+
+#### skip links
+big header on top
+it may have many links
+
+"skip to main content"
+after first reload, first navigation, header will have additional link
+with text "skip to content"
+make sure it's first link
+
+add it as anchor
+make it visible only on focus state
+and only make it visible when it's focused
+
+#### web rotor
+a way to jump to section of page
+to jump to header
+it shows a list of headers and they level
+
+### Tab navigation
+use tab to go to next
+shift+tab to go prev
+
+make sure everything is accessible using keyboard
+
+tabblable elements by default
+```html
+<a>
+<button>
+<input>
+<select>
+<textare>
+<iframe>
+```
+
+make element focusable
+```html
+<div tabindex="0">I'm focusable<div>
+```
+
+values:
+#### negative:
+should not be reachable by keyboard
+(turn off for elements that have it by default)
+
+#### 0
+should be focusable, it's relative order is where it falls in DOM
+
+#### positive
+change order
+strong recommendation is to not use them
+
+if you want reader to read aria-role on changing focus with tab
+also add aria-role
+
+#### remember active element
+Store currently focused element before a page transition
+so you can return to it later
+
+```javascript
+currentItem = document.activeElement
+// open modal
+// then close modal
+currentItem.focus()
+```
+
+#### Tab trapping
+On modal, like log in.
+You would think that then tab should work only in modal area.
+(and not greyed area in the background)
+
+but it's on developers to implement this
+
 ### Accessibility tricks
 ### Color and contrast
 ### tools and testing

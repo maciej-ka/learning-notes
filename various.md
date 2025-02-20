@@ -444,19 +444,19 @@ btw. <dialog> element may have this built in?
 #### Aria
 quite robost, has a lot.
 
-WAI-ARIA vs WCAG
-WCAG sets standard, things need to be logical, visible, etc.
+WAI-ARIA vs WCAG  
+WCAG sets standard, things need to be logical, visible, etc.  
 ARIA provides tools and techniques to match these standards
 
-example:
-WCAG: text and intearctive elements need to differn in contrast
-WAI-ARIA: provides attributes like aria-valuenow, aria-valuemin, aria-valuemax
+example:  
+WCAG: text and intearctive elements need to differn in contrast  
+WAI-ARIA: provides attributes like aria-valuenow, aria-valuemin, aria-valuemax  
 tha help with conveying sliders current value
 
 #### Labels, revisitited
-way to add label to element that normally, in html standard, is not labellable
-`aria-label`
-`aria-labelledby`
+way to add label to element that normally, in html standard, is not labellable  
+`aria-label`  
+`aria-labelledby`  
 `aria-describedby`
 
 ```html
@@ -479,18 +479,18 @@ way to add label to element that normally, in html standard, is not labellable
 #### Roles, states, properties
 can be applied to any element
 
-Roles
-define the purpose of an element
-`role="button"` for a clickable element
+Roles  
+define the purpose of an element  
+`role="button"` for a clickable element  
 `role="alert"` for alerts
 
-States
-represent dynamic changes
-`aria-checked="true"` for a checked checkbox
+States  
+represent dynamic changes  
+`aria-checked="true"` for a checked checkbox  
 `aria-expanded="false"` for a collapsed menu
 
-Properties
-describe attributes that don’t change often
+Properties  
+describe attributes that don’t change often  
 `aria-labelledby="label-id"` to associate an element with a label
 
 #### Aria can be used in CSS
@@ -501,30 +501,37 @@ describe attributes that don’t change often
 ```
 
 #### Aria: Live regions
-When you have very dynamic applications
+When you have very dynamic applications  
 like Uber app
 
-Some of elements require immediate attention
+Some of elements require immediate attention  
 and some are not that vital
 
-like:
-"your driver is here"
+like:  
+"your driver is here"  
 ... this requires attention
 
-"your driver will arive in 15m"
+"your driver will arive in 15m"  
 ... not that important.
 
-Aria provides a way to mark fragments of page.
-They can be applied to dynamicly rendered fragments, in React.
+Aria provides a way to mark fragments of page.  
+They can be applied to dynamicly rendered fragments, in React.  
 and screen reader will read them as they are changed dynamically.
 
-it's up to developer to decide how often change element
+it's up to developer to decide how often change element  
 ... this will trigger screen reader
 
 #### aria-live Politeness levels
-assertive: will interrupth whaterver is happenign
-polite: will let finish whatever is beeing read right now
-off: will not read the update
+`assertive` will interrupth whaterver is happenign  
+`polite` will let finish whatever is beeing read right now  
+`off` will not read the update
+
+be carefull to not conflict assertive  
+they will not be queued
+
+generally use polite  
+and live assertive for only very limited situations  
+that will unlikely colide at the same time
 
 ### Accessibility tricks
 ### Color and contrast

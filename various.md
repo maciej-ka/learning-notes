@@ -533,9 +533,29 @@ generally use polite
 and live assertive for only very limited situations  
 that will unlikely colide at the same time
 
-### Accessibility tricks
 ### Color and contrast
-### tools and testing
+Contrast Checker
+between foreground and background
+
+contrast is also dependent on:
+- font size
+- font weight
+certain colors may not be good for body
+but they will be ok for header
+
+be carefull when using color as the only indicator of information
+provide also icon or perhaps some text label
+
+there are many filters that simulate color impariment
+also consider providing color schemes for imparement
+things like CVD Color Scheme
+
+enable google chrome > experiments > AAA
+then go to devtools and open color picker
+triangle shows area that will be AAA
+
+### Tools and testing
+
 
 
 

@@ -1,7 +1,118 @@
 Web Accessibility, v3
 =====================
 Frontend Masters, Jon Kuperman  
-https://github.com/jkup/learn-a11y
+https://github.com/jkup/learn-a11y  
+slides:  
+https://docs.google.com/presentation/d/1Pyht6YgYMUOZxANiohPIqZYAcCwj__ZaVp7yYOfppkY/edit
+
+### What is Accessibility
+accessibility  
+a..11..y  
+called "ally"
+
+Web page which can be used by people with disabilities.  
+That they can perceive understand navigate and interact with page.  
+That they can fully "contribute" to the web.  
+(not only view or have some minimal way)
+
+#### Similar fields
+Web performance  
+Internationalization  
+UI Design
+
+#### Statistics
+26% of adults have some type of disability  
+2 in 5 adults age 65  
+20% some hearing loss  
+2% visual disability  
+(1 milion in US are legally blind)
+
+You cannot assume that site which sells car is not for blind.  
+Because a lot of them at some point may want to buy car for their kids.
+
+#### Types
+mobility (cannot use mouse)  
+cognitive (information overload)  
+visual  
+hearing
+
+#### Web is already accessible
+(even if your site is not yet)  
+first even web page, from CERN:  
+https://info.cern.ch/hypertext/WWW/TheProject.html
+
+#### Reasons
+Human rights  
+Legal  
+Reaching larger audience  
+Impactful  
+Makes you specialist
+
+### Legal requirements
+#### Fines, suits
+Key laws and standards  
+All government sites have to follow  
+Whirpool was sued  
+Katz's deli 20k$ fined for a11y
+
+#### EU
+has very similar legal requirements  
+and in some parts even some stronger
+
+#### Who is being sued?
+e-commerce  
+finance and banking  
+hospitality and restaurants  
+healhcare
+
+#### How to stay compliant
+follow standars  
+test with real users  
+use automated tools (lighhouse, axe, wave)  
+train team on inclusive design
+
+### Assestive technologies
+cheap UX studes (for a lunch)  
+things that can be very easy and fast with mouse  
+can be very, very hard with tab
+
+#### keyboard only
+sometimes it's preference (vim users)  
+tab / shift tab
+
+head wand and mouth stick  
+eye directed keyboards
+
+most limiting one:  
+single switch  
+you have to stop it at some point  
+(it scrolls rows, then columns of virtual keyboard)
+
+screen readers  
+input is keyboard, output is audio
+
+#### The curb cut effect
+there is assessitive ramp on road  
+but more we investigate usage of it  
+we discover amazing use cases for various people to use them  
+and often it's power users  
+(and ramp on road can be used by family with kid in troller)
+
+### Screen readers
+VoiceOver comes pre-installed on all Mac computers.  
+Press Command + F5 to turn VoiceOver on/off  
+Go to System Settings > Accessibility > VoiceOver
+
+#### ChromeVox
+https://chromewebstore.google.com/detail/screen-reader/kgejglhpjiefppelpmljglcjbhoiplfn
+
+### Accessibility standard
+### Semantic HTML
+### Focus management
+### Accessibility tricks
+### Color and contrast
+### tools and testing
+
 
 
 

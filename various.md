@@ -555,8 +555,39 @@ then go to devtools and open color picker
 triangle shows area that will be AAA
 
 ### Tools and testing
+#### AXE
+DevTools by Deque  
+its free  
+there is premium service with some extras  
+they have good plugin and javascript library
 
+#### Google Lighthouse
+built in to Chrome devtools
 
+#### Wave by WebAIM
+... another option
+
+#### Axe-core by Deque
+when you want to add check to CI/CD  
+caveat is that good accessibility check always requires some user interaction
+
+#### Lighthouse Ci
+similar to Axe-core  
+and there is also ready workflow  
+easy to add to github CI/CD
+
+#### tools
+linters: eslint-plugin-jsx-a11y  
+angular doelyzer  
+eslint-plugin-vuejs-accesibility
+
+#### design system
+Adobe React Spectrum  
+Googlem Material Design
+
+Adobe React Spectrum  
+ready components  
+that are good for a11y
 
 
 

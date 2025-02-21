@@ -441,6 +441,41 @@ async function bootstrap() {
 bootstrap();
 ```
 
+### Onion Architecture
+Similar to Hexagonal in that it:
+- puts domain in the center
+- is good at decoupling
+
+In many cases they are almost identical
+although they are presented using different diagrams
+infrastructure -> application -> domain
+
+flow of dependencies goes from infrastructure to domain
+using DI
+outer layers remain dependent on inner layers
+and inner layers are unaware of outer layers
+
+#### confusion with diagram
+Onion layer lead to a lot of confusion in Software Developer community
+Because on diagram UI and database are positioned in the same layer (infrastructure)
+
+This lead many to wrong conclusion, that Onion is insecure
+because UI directly interact with Database
+but that's simply not true
+
+Diagram is just a visual representation of architecture
+and it doesn't mean that UI can interact with Database directly
+Layers on Onion diagram are not ment to group components,
+but show direction of dependencies
+
+#### vs Hexagonal
+Diagrams and concepts of Hexagonal and Onion are so similar
+that they are generally the same.
+Although there may be applied slightly different in practice.
+Naming conventions and some design decisions are generally the same.
+
+
+
 From the Leet Code
 ==================
 

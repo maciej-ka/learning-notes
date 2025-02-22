@@ -1,3 +1,39 @@
+Emmet
+=====
+https://docs.emmet.io/cheat-sheet/
+
+#### html5 document
+```
+!
+```
+
+#### climb up ^
+```
+div+div>p>span+em^bq
+```
+
+#### grouping: ()
+```
+div>(header>ul>li*2>a)+footer>p
+```
+
+#### *multiplication: \**
+```
+ul>li*5
+```
+
+#### Item numbering: $
+```
+ul>li.item$*5
+```
+
+#### Text: {}
+```
+a{Click me}
+```
+
+
+
 Web Accessibility, v3
 =====================
 Frontend Masters, Jon Kuperman  
@@ -1770,32 +1806,6 @@ which will preview changes but also show how docs will look
 WAT  
 https://www.destroyallsoftware.com/talks/wat  
 https://www.destroyallsoftware.com/screencasts
-
-### Emmet
-#### climb up ^
-```
-div+div>p>span+em^bq
-```
-
-#### grouping: ()
-```
-div>(header>ul>li*2>a)+footer>p
-```
-
-#### *multiplication: \**
-```
-ul>li*5
-```
-
-#### Item numbering: $
-```
-ul>li.item$*5
-```
-
-#### Text: {}
-```
-a{Click me}
-```
 
 ### ACID
 coined in 1983  

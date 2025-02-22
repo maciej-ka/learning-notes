@@ -2,9 +2,12 @@ Emmet
 =====
 https://docs.emmet.io/cheat-sheet/
 
-#### html5 document
+#### html5
+document, link to css, link to js
 ```
 !
+link:css
+script:src
 ```
 
 #### climb up ^

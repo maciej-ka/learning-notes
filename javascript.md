@@ -475,120 +475,120 @@ Although there may be applied slightly different in practice.
 Naming conventions and some design decisions are generally the same.
 
 ### Domain-Driven Desgin
-set of patterns (concepts) and practices
+set of patterns (concepts) and practices  
 approach to developing a software project
 
-concentrate on domain model and logic
+concentrate on domain model and logic  
 Eric Evans: tackling complexity in the heart of software
 
 #### ubiquitous language (wszechobecny)
-structure in our code should match that in business domain
+structure in our code should match that in business domain  
 it's about creating a language that connects implementation to business experts
 
-words and phrases from the business domain are directly used in the code base
-and it's about creating model of that domain
-describing all the objects and interactions between them
+words and phrases from the business domain are directly used in the code base  
+and it's about creating model of that domain  
+describing all the objects and interactions between them  
 using language that is both understood by developers and business experts
 
 #### strategic design process
-to achieve DDD,
-to identify core domain and subdomains:
-1. domain storytelling
-2. event storming
+to achieve DDD,  
+to identify core domain and subdomains:  
+1. domain storytelling  
+2. event storming  
 3. context mapping
 
 #### 1. Domain Storytelling
-What it is:
-Gather domain experts and team members together.
-Let the experts narrate real-world business processes in plain language.
+What it is:  
+Gather domain experts and team members together.  
+Let the experts narrate real-world business processes in plain language.  
 Visually record each “story” (e.g., actors, actions, and work artifacts) to uncover domain terminology and workflows.
 
 #### 2. Event Storming
-What it is:
-A collaborative workshop where participants use sticky notes to model domain events (e.g., “Ticket Issued,” “Payment Received,” etc.).
-The focus is on key events that change the state of the system.
+What it is:  
+A collaborative workshop where participants use sticky notes to model domain events (e.g., “Ticket Issued,” “Payment Received,” etc.).  
+The focus is on key events that change the state of the system.  
 By grouping events, commands, and policies, you discover natural groupings and potential bounded contexts.
 
 #### 3. Context Mapping
-What it is:
-Identify bounded contexts (subdomains) within your larger domain, each with its own model and language.
-Show how these contexts relate (e.g., “Ticketing Context” depends on “Payment Context”).
+What it is:  
+Identify bounded contexts (subdomains) within your larger domain, each with its own model and language.  
+Show how these contexts relate (e.g., “Ticketing Context” depends on “Payment Context”).  
 Defines integration points, ownership of data, and which domain is your “core.”
 
 #### Expressing domain model in the code
-building blocks:
-entities
-value objects
-aggregates
-factories
-repositories
-services
+building blocks:  
+entities  
+value objects  
+aggregates  
+factories  
+repositories  
+services  
 domain events
 
 #### Entity
-unique objects that have identity
-even when values of entity A and B are same
+unique objects that have identity  
+even when values of entity A and B are same  
 entities are not same
 
-they are mutable
-and even if values of entity A change
+they are mutable  
+and even if values of entity A change  
 it's still the same entity
 
 they have lifecycle
 
 #### Value object
-immutable
-don't have unique identifier
+immutable  
+don't have unique identifier  
 they are equal to each other if they have same attributes
 
 #### Aggregate
 cluster of objects treated as a single unit
 
-they ensure that all the objects within aggregate are always
+they ensure that all the objects within aggregate are always  
 in consistient and valid state, that invariants are satisfied
 
-Aggregate represents transactional consistiency boundary.
+Aggregate represents transactional consistiency boundary.  
 Changes in the objects within aggreage should be done in single transaction.
 
 #### Repository
 Are used to persist and retrieve aggregates.
 
-Repository provides abstraction over the database layer.
-They enable to work with aggregates without worrying about 
+Repository provides abstraction over the database layer.  
+They enable to work with aggregates without worrying about   
 underlying database access and storage implementation.
 
 #### Service
-Encapsulate domain logic that doesn't belong to
+Encapsulate domain logic that doesn't belong to  
 any particual entity or value object.
 
 Example: sending emails to users when new alarm is created.
 
-Heavy usage of services is often a signal of a problem.
-That the model itself is "anemic".
-Anemic model is antipattern.
-Meaning: domain doesn't contain any logic (any functions that perform)
+Heavy usage of services is often a signal of a problem.  
+That the model itself is "anemic".  
+Anemic model is antipattern.  
+Meaning: domain doesn't contain any logic (any functions that perform)  
 and is just a bunch of getters and setters.
 
 #### Factory
-Encapsulate creation of complex objects.
-Especially useful if creation of an objects involves:
+Encapsulate creation of complex objects.  
+Especially useful if creation of an objects involves:  
 - complex validation
 - initialization
 - coordination
 of many objects
 
-Factories help to keep domain clean and focus on business logic
+Factories help to keep domain clean and focus on business logic  
 While offloading responsibility of object creatiion to dedicated factory classes.
 
 #### Event
-Communicate and capture domain specific information about actions
+Communicate and capture domain specific information about actions  
 or domain model changes that have happened in the past.
 
-Events play a crucial role in enabling loose coupling,
+Events play a crucial role in enabling loose coupling,  
 scalability and eventual consistiency in distributed systems.
 
-two types of events:
-domain events
+two types of events:  
+domain events  
 integration events.
 
 

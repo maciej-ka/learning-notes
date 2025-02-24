@@ -1,3 +1,45 @@
+Tan Stack Query, React Query
+============================
+https://query.gg/
+
+#### Why React Query
+Why specific piece technology gets popular?  
+it allows devs to stop thinking about the problem  
+by adding a abstraction over it
+
+Components encapsulate both the visual representation  
+as well as state and logic that goes along with it
+
+it's not uncommon to compose and reuse non-visual logic  
+this is a fundamental problem react hookse werer created to solve
+
+just as components enabled to compose and reuse ui  
+hook enabled to compose and reuse non visual logic
+
+how do we fetch data with hooks?  
+none of built in hooks is designed   
+for the most common non ui task: data fetching  
+closest we get is `useEffect` and `useState`
+
+```javascript
+const [id, setId] = React.useState(1)
+const [pokemon, setPokemon] = React.useState(null)
+
+React.useEffect(() => {
+  const handleFetchPokemon = async () => {
+    setPokemon(null)
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+    const json = await res.json()
+    setPokemon(json)
+  }
+  handleFetchPokemon()
+}, [id])
+```
+
+problem with this code is that we are not handling loading or error states  
+leading to cumulative layout shift and on error - infinite loading
+
+
 Defensive Semicolon
 ===================
 As seen in zustand sourcecode:

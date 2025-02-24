@@ -23,7 +23,7 @@ a + b(c as Api).persist()
 
 NestJS Architecture and Advanced patterns
 =========================================
-https://courseflix.net/course/nestjs-architecture-and-advanced-patterns
+https://learn.nestjs.com/p/architecture-and-advanced-patterns
 
 #### start new app
 ```bash
@@ -673,8 +673,7 @@ to have different or a namespace add argument
 
 NestJS Fundamentals
 ===================
-https://courses.nestjs.com/  
-https://courseflix.net/course/nestjs-fundamentals
+https://learn.nestjs.com/p/fundamentals
 
 #### Introduction
 Framework around `Node.js`  

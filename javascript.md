@@ -2,7 +2,7 @@ Tan Stack Query, React Query
 ============================
 https://query.gg/
 
-#### Why React Query
+### Why React Query
 Why specific piece technology gets popular?  
 it allows devs to stop thinking about the problem  
 by adding a abstraction over it
@@ -16,7 +16,7 @@ this is a fundamental problem react hookse werer created to solve
 just as components enabled to compose and reuse ui  
 hook enabled to compose and reuse non visual logic
 
-how do we fetch data with hooks?  
+#### how do we fetch data with hooks?  
 none of built in hooks is designed   
 for the most common non ui task: data fetching  
 closest we get is `useEffect` and `useState`
@@ -36,14 +36,16 @@ React.useEffect(() => {
 }, [id])
 ```
 
-we are not handling loading or error states  
-leading to a cumulative layout shift and infinite loading on error  
-which we could solve by adding more state: `isLoading` and `error`
+#### isLoading and errors
+not handling loading or error states leads to  
+a cumulative layout shift and infinite loading on error  
+which can be solved by adding more state: `isLoading` and `error`
 
-we are also not handling a case, where id changes so fast  
+#### burst of requests
+not handling a case, where id changes so fast  
 that two requests are sent before any result, leading to race condition  
-which we could solve by ignore flag inside cleanup function closure  
-cleanup function is called after each dependencies change
+which can be solved by ignore flag inside cleanup function closure  
+*cleanup function is called after each dependencies change*
 
 ```javascript
 useEffect(() => {
@@ -58,6 +60,59 @@ useEffect(() => {
   }
 })
 ```
+
+all above can be turned into custom hook  
+but it will not handle another problem...
+
+#### data duplication
+request is local to the component  
+if two components make same request, loaders will be independent  
+which can be solved by hoising state and moving it to context  
+it will really complicate code at this point
+
+and using context to share dynamic data leads to a problem  
+context lacks a way to subscribe to a piece of state  
+to not render on changes component doesn't care about
+
+#### mem cache optimization
+if query repeats, server previous response from cache  
+however this needs some way to invalidate that cache
+
+#### two types of state
+pain point is that we're treating asynchronous state  
+as if it were synchronous
+
+#### synchronous state
+client owned  
+instantly avaialble  
+only client can change it  
+goes away after browser is closed
+
+many options to manage:  
+useState, useReducer, Redux, Zustand
+
+#### asynchronous state
+on server  
+not instant  
+many clients can change it  
+stored in database
+
+managed by React Query,  
+
+#### React Query
+it's a library to manage fetched data  
+it's a asynchronous state manager
+
+it's not a fetch library  
+it doesn't do a fetch, it expect's a Promise instead  
+(which most often is a fetch Promise)
+
+- cache
+- offline support
+- cancellation
+- dependent querying
+- paginated queries
+- scroll recovery, infinite scrolling
 
 
 

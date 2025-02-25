@@ -36,8 +36,29 @@ React.useEffect(() => {
 }, [id])
 ```
 
-problem with this code is that we are not handling loading or error states  
-leading to cumulative layout shift and on error - infinite loading
+we are not handling loading or error states  
+leading to a cumulative layout shift and infinite loading on error  
+which we could solve by adding more state: `isLoading` and `error`
+
+we are also not handling a case, where id changes so fast  
+that two requests are sent before any result, leading to race condition  
+which we could solve by ignore flag inside cleanup function closure  
+cleanup function is called after each dependencies change
+
+```javascript
+useEffect(() => {
+  let ignore = false
+  ...
+  if (!ignore) {
+    setPokemon(json)
+  });
+
+  return () => {
+    ignore = true
+  }
+})
+```
+
 
 
 Defensive Semicolon

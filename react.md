@@ -647,6 +647,10 @@ DAL functions can be used by both:
 Server components  
 Server actions
 
+#### implicit / explicit
+for pages you can skip "use server"
+but in other places use explicit
+
 
 
 React form validation libraries

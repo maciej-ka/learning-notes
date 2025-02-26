@@ -151,8 +151,9 @@ export default function Root() {
 }
 ```
 
+#### Why the @tanstack namespace?
 Tanner Linsley, creator of React Query  
-wrote core of React Query in pure vanilla JS  
+wrote a core of React Query in pure vanilla JS  
 and it can be easy used with Angular, Vue, Solid and Svelte
 ```
 @tanstack/react-query
@@ -160,6 +161,9 @@ and it can be easy used with Angular, Vue, Solid and Svelte
 @tanstack/svelte-query
 ...
 ```
+
+there is also `react-query` package  
+but it's only up to version 3
 
 #### Query Client
 contains and manages cache  
@@ -177,14 +181,40 @@ function App () {
 ```
 
 #### Query ClientProvider
-But because it's outside, we need some way to distribute it in application
+But because it's outside, we need some way to distribute it in application  
 So that it can be used in any component.
+
+It uses React Context under the hood  
+not to share state, but as a dependency injection  
+QueryClient never changes
 
 ```javascript
 <QueryClientProvider client={queryClient}>
   <App />
 </QueryClientProvider>
 ```
+
+#### useQuery
+Primary way to interact
+
+```javascript
+const { data } = useQuery({
+  queryKey: ['luckyNumber'],
+  queryFn: () => Promise.resolve(7)
+})
+```
+
+Under the hood it will subscribe to cache.  
+And it will rerender whenever data in cache changes.
+
+#### queryKey
+By default if cache already has data under the key  
+it will return it immediately  
+if not, it will invoke `queryFn`
+
+queryKey must be globally unique  
+queryFn must return a Promise  
+that resolves with data you want to cache
 
 
 

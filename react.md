@@ -253,7 +253,7 @@ it can be slow on Vercel
 when you have houndrets of blog post pages  
 but you are not charged for build time
 
-### Dynamic pages
+#### Dynamic pages
 traditionally...  
 you created forms  
 submitted data to server  
@@ -262,6 +262,7 @@ how to have controlled inputs
 how to call submit and fetch  
 perhaps you did mutation from react query
 
+### Server action
 #### server actions
 new feature, introduced by React  
 isn't stricly part of Next  
@@ -372,6 +373,7 @@ it's a bit confusing that they look like regular functions
 and we will even import them in frontend code  
 but they will leave in separate bundle
 
+### Form connected to server action
 #### useActionState
 instead of typical submit we will use useActionState
 
@@ -473,10 +475,6 @@ submit the form
 you can see that server side is working in logs:  
 POST /signup 200 in 48ms
 
-### Data, Full Route, & Router Caches
-### Dynamic Routes & Deployment
-### API Routes
-### Server Actions
 
 
 

@@ -140,6 +140,15 @@ function App () {
       <ButtonGroup handleSetId={setId} />
     </>
   )
+}
+
+export default function Root() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  )
+}
 ```
 
 Tanner Linsley, creator of React Query  
@@ -152,8 +161,31 @@ and it can be easy used with Angular, Vue, Solid and Svelte
 ...
 ```
 
+#### Query Client
+contains and manages cache  
+which is a location where all data lives  
+its implemented using in memory hash, `new Map()`
 
-Tanstack is
+It's important that a client is created outside  
+of your most parent component, so that your cache is stable  
+even when application rerenders
+```javascript
+const queryClient = new QueryClient()
+
+function App () {
+  ...
+```
+
+#### Query ClientProvider
+But because it's outside, we need some way to distribute it in application
+So that it can be used in any component.
+
+```javascript
+<QueryClientProvider client={queryClient}>
+  <App />
+</QueryClientProvider>
+```
+
 
 
 Defensive Semicolon

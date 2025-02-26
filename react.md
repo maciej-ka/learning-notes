@@ -365,6 +365,113 @@ export const signOut = async () => {
 }
 ```
 
+everything you can do on server side  
+you can do here
+
+it's a bit confusing that they look like regular functions  
+and we will even import them in frontend code  
+but they will leave in separate bundle
+
+#### useActionState
+instead of typical submit we will use useActionState
+
+before, in PHP days  
+form action="...."  
+what is a name of action
+
+Next is using this  
+action name is unique identifier  
+api paths are generated and unique  
+that  unique generated path is used then in action
+
+useActionState will handle sending via http  
+to server action
+
+it will give us:  
+- status of request
+- state of inputs
+[one more here]
+
+#### use client
+it's like saying "this component will have some interactivity"  
+it requires browser  
+if you need something that is not only presentational
+
+you can put server components  
+into client components  
+(its called donut pattern)
+
+#### react query
+since react query expects a promise  
+you can pass server function  
+to react query
+
+#### form in Next that submits to server action
+```typescript
+const initialState: ActionResponse = {
+  success: false,
+  message: '',
+  errors: undefined,
+}
+
+export default function SignUpPage() {
+  const router = useRouter()
+
+  const [state, formAction, isPending] = useActionState<ActionResponse, FormData>(
+    async (prevState: ActionResponse, formData: FormData) => {
+      try {
+        const result = await signUp(formData)
+
+        if (result.success)  {
+          toast.success('Account create succesfully')
+          router.push('/dashboard')
+          // anything here will be unreachable
+        }
+      } catch (err) {
+        return {
+          success: false,
+          message: (err as Error).message || 'An error occurred',
+          errors: undefined,
+        }
+      }
+    }, initialState
+  )
+```
+
+#### form and action
+```javascript
+<Form action={formAction} className="space-y-6">
+```
+
+#### FormData uses name in inputs
+```typescript
+<FormInput
+  id="email"
+  name="email"
+  type="email"
+  autoComplete="email"
+  required
+  disabled={isPending}
+  aria-describedby="email-error"
+  className={state?.errors?.email ? 'border-red-500' : ''}
+/>
+```
+
+name is the way input is mapped to FormData  
+also see, it's not controlled input
+
+perhaps sometimes you need controlled input  
+for input masking  
+there is a way to do it
+
+#### server actions are in React
+Server actions are React thing  
+Next just implemented how it goes through the http
+
+#### test it
+submit the form  
+you can see that server side is working in logs:  
+POST /signup 200 in 48ms
 
 ### Data, Full Route, & Router Caches
 ### Dynamic Routes & Deployment

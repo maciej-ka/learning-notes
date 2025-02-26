@@ -253,6 +253,119 @@ it can be slow on Vercel
 when you have houndrets of blog post pages  
 but you are not charged for build time
 
+### Dynamic pages
+traditionally...  
+you created forms  
+submitted data to server  
+you did it before  
+how to have controlled inputs  
+how to call submit and fetch  
+perhaps you did mutation from react query
+
+#### server actions
+new feature, introduced by React  
+isn't stricly part of Next  
+its stable in React
+
+when you should use server actions?  
+I don't know when you would use traditional server routes
+
+asynchronous function  
+that is called and executed on server  
+but trigger is on client
+
+it's a clean syntax to define api routes  
+there is http request happening  
+but you're not responsible for it
+
+you want to cross network boundry  
+to post something, to get something  
+but not care about http request  
+it's done for you
+
+they have access to headers, cookies
+
+server actions are close to  
+traditional server programming, like:  
+Ruby, PHP, Elixir
+
+#### firebase cloud functions
+serverless functions  
+this is close to api route in Next.js
+
+#### how does it work with Capacitor?
+Capacitor is serving application on local  
+Capacitor has server running in empty shell  
+Next provides you a server part  
+Capacitor will not provide it  
+so you will not have benefit
+
+Capacitor has to add support for it
+
+unless you use something like  
+Expo Router  
+Is first compatipible alternative
+
+#### use server
+many ways to do it  
+we will put it on top  
+in actions/auth.ts  
+will make every exported function a route
+
+http will still happen  
+but you're not responsible for it
+
+because its server  
+you don't have access to window or DOM  
+but you can access things on server  
+like database
+
+when your code gets build  
+compiler will recognize "user server"  
+and will separate them and put into separate bundle
+
+if we don't add use server  
+then functions will be just regular functions  
+and Next will not create routes for them
+
+#### can we define ports
+and direct client (perhaps another client)  
+to use those enabled functions
+
+you could potentially also swap the  
+server side with your custom solution
+
+#### security considerations
+there are some footguns  
+you could expose some server details  
+you have to make sure you use environment variables
+
+but even then it could be possible  
+there is some potentiall case where  
+server actions could leak environment variables  
+to the client
+
+but it's like one case, shoould not happen
+
+#### example of server action
+app/actions/auth.ts
+
+```typescript
+'use server'
+
+export const signOut = async () => {
+  try {
+    await deleteSession()
+  } catch (e) {
+    console.error(e)
+    throw e
+  } finally {
+    redirect('/signin')
+  }
+}
+```
+
+
 ### Data, Full Route, & Router Caches
 ### Dynamic Routes & Deployment
 ### API Routes

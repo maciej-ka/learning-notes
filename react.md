@@ -23,7 +23,107 @@ Connect to db locally
 psql -d next-fundamentals-v4
 ```
 
-### Building the basic layout and first route
+Start from scratch
+```bash
+npx  create-next-app@canary todos
+```
+yes to approuter, for any new project  
+unless you are in legacy pages router
+
+Turbopack:  
+no, because it's incopatible with vercel deployment  
+otherwise its quite cool for local development
+
+Templates:  
+using them may be a problem, because you are not sure, are they up to date
+
+### Project structure and configuration
+#### app folder
+this is folder only for paths and api  
+you can put other things into other places
+
+Next has it's own router that 
+
+With Next.js 13+ you have `/app` folder.  
+special files:
+
+app/page.tsx: defines UI for a route  
+app/layout.tsx: a layout for a route, piece  
+app/loading.txs: loading screen  
+app/error.tsx  
+not-found.txs: UI 404  
+... more (401, template, more errors)
+
+server functions  
+app/api/ API routes for creating endpoints
+
+files not processed by build system  
+app/public
+
+/app/components  
+/app/ui
+
+app/(group)/
+
+other common folders:  
+/lib  
+/styles  
+/hooks  
+/context  
+/types
+
+static routes  
+/settings/page.tsx
+
+dynamic routes: have some params  
+/users/[id]/page.tsx
+
+way to match every route  
+/[...catchAll] will catch every subroute
+```
+app/docs/[...topic]/page.tsx]
+app/docs/[[...topic]]/page.tsx] # will also match that segment missing
+```
+
+#### layout.tsx
+wraps components and never changes  
+they are also nested
+
+layouts inherit other, parent layouts  
+only way to avoid this is to change ancesor  
+
+there is no really way to opt-out from it  
+from using parent layout
+
+#### template.tsx
+use it when content changes  
+when its dependent on state
+
+#### route groups
+when you want to separate pages to use different layouts  
+but you don't want to impact routes (create a new route because of it)  
+/app/(marketing)/layout.tsx  
+/app/(marketing)/about/page.tsx  
+route will be /about,  
+not /marketing/about
+
+use <Link> component  
+it performa prefetching of routes  
+and client side routing  
+without it there will be full page reload
+
+with route groups you have to be carefull  
+because it's possible to have conflict in url
+
+#### default export
+for pages you have to use default export
+
+#### typing
+perhaps { children } should be already typed  
+because developer can assume this will always be good  
+typing framework specific things may be too much  
+and perhaps should be simplified for devs
+
 ### Styling the application
 ### Lunch Break
 ### Data, Full Route, & Router Caches

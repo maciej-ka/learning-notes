@@ -47,39 +47,48 @@ Next has it's own router that
 With Next.js 13+ you have `/app` folder.  
 special files:
 
+```
 app/page.tsx: defines UI for a route  
 app/layout.tsx: a layout for a route, piece  
 app/loading.txs: loading screen  
 app/error.tsx  
 not-found.txs: UI 404  
 ... more (401, template, more errors)
+```
 
 server functions  
+```
 app/api/ API routes for creating endpoints
+```
 
 files not processed by build system  
+```
 app/public
-
-/app/components  
-/app/ui
-
-app/(group)/
+```
 
 other common folders:  
-/lib  
-/styles  
-/hooks  
-/context  
+```
+/app/components  
+/app/ui
+app/lib  
+app/styles  
+app/hooks  
+app/context  
+app/types
 /types
+```
 
-static routes  
+#### static routes  
 /settings/page.tsx
 
-dynamic routes: have some params  
+#### dynamic routes: have some params  
 /users/[id]/page.tsx
 
-way to match every route  
-/[...catchAll] will catch every subroute
+#### catch all
+match every route  
+app/docs/[...catchAll]/page.tsx  
+will catch every subroute docs,  
+like docs/foo docs/foo/bar...
 ```
 app/docs/[...topic]/page.tsx]
 app/docs/[[...topic]]/page.tsx] # will also match that segment missing
@@ -107,7 +116,8 @@ but you don't want to impact routes (create a new route because of it)
 route will be /about,  
 not /marketing/about
 
-use <Link> component  
+#### <Link> component
+use the <Link> component  
 it performa prefetching of routes  
 and client side routing  
 without it there will be full page reload

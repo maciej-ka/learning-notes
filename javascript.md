@@ -114,6 +114,46 @@ it doesn't do a fetch, it expect's a Promise instead
 - paginated queries
 - scroll recovery, infinite scrolling
 
+### Query Fundamentals
+React Query feels like "perfect amount of magic"  
+for handling asynchronous state
+
+```javascript
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+const queryClient = new QueryClient()
+
+function App () {
+  const [id, setId] = React.useState(1)
+  const { data: pokemon, isLoading, error } = useQuery({
+    queryKey: ['pokemon', id],
+    queryFn: () => fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+      .then(res => res.json())
+  })
+
+  return (
+    <>
+      <PokemonCard
+        isLoading={isLoading}
+        data={pokemon}
+        error={error}
+      />
+      <ButtonGroup handleSetId={setId} />
+    </>
+  )
+```
+
+Tanner Linsley, creator of React Query  
+wrote core of React Query in pure vanilla JS  
+and it can be easy used with Angular, Vue, Solid and Svelte
+```
+@tanstack/react-query
+@tanstack/vue-query
+@tanstack/svelte-query
+...
+```
+
+
+Tanstack is
 
 
 Defensive Semicolon

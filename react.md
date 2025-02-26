@@ -419,25 +419,29 @@ const initialState: ActionResponse = {
 export default function SignUpPage() {
   const router = useRouter()
 
-  const [state, formAction, isPending] = useActionState<ActionResponse, FormData>(
-    async (prevState: ActionResponse, formData: FormData) => {
-      try {
-        const result = await signUp(formData)
+  // Use useActionState hook for the form submission action
+  const [state, formAction, isPending] = useActionState<
+    ActionResponse,
+    FormData
+  >(async (prevState: ActionResponse, formData: FormData) => {
+    try {
+      const result = await signUp(formData)
 
-        if (result.success)  {
-          toast.success('Account create succesfully')
-          router.push('/dashboard')
-          // anything here will be unreachable
-        }
-      } catch (err) {
-        return {
-          success: false,
-          message: (err as Error).message || 'An error occurred',
-          errors: undefined,
-        }
+      // Handle successful submission
+      if (result.success) {
+        toast.success('Account created successfully')
+        router.push('/dashboard')
       }
-    }, initialState
-  )
+
+      return result
+    } catch (err) {
+      return {
+        success: false,
+        message: (err as Error).message || 'An error occurred',
+        errors: undefined,
+      }
+    }
+  }, initialState)
 ```
 
 #### form and action

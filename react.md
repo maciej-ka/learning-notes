@@ -264,16 +264,16 @@ perhaps you did mutation from react query
 
 ### Server action
 #### server actions
+asynchronous function  
+that is called and executed on server  
+but trigger is on client
+
 new feature, introduced by React  
 isn't stricly part of Next  
 its stable in React
 
 when you should use server actions?  
 I don't know when you would use traditional server routes
-
-asynchronous function  
-that is called and executed on server  
-but trigger is on client
 
 it's a clean syntax to define api routes  
 there is http request happening  
@@ -293,6 +293,9 @@ Ruby, PHP, Elixir
 we can define them in app/actions/  
 but we can also define them outside app/  
 (because only client routes have to be in app/)
+
+calling a server action is just like if you would make a  
+api route and made a fetch request to it
 
 #### firebase cloud functions
 serverless functions  
@@ -600,6 +603,51 @@ and can be served immediatelly
 also when you have dynamic page,  
 then whole page loads in when async function result is ready  
 whole page waits in such situation
+
+#### Next Suspense alternative
+Alternative Next specific way to wrap route in suspense  
+we could syspense in page or layout  
+but we can also create a file `loading.tsx`
+
+/app/dashboard/lading.tsx
+```typescript
+export default const DashboardLoading = () => {
+  return <DashboardSkeleton />
+}
+```
+
+it will work in the same way as <Suspense>  
+inside page.tsx or layout.tsx
+
+#### Another Suspese
+Wating for current user  
+Here we want to create new form  
+but this form requires us to find out is 
+```typescript
+<Suspense fallback={<div>Loading...</div>}>
+  <NewIssue />
+</Suspense>
+```
+
+#### Suspending vs Caching
+similar to dynamic vs static  
+yes, in regards to how Next.js understands it
+
+suspending you say "I always want this to be calculated"  
+always when I hit page, run that function  
+and never cache
+
+static ... means there will be cache  
+but this cache has expiration levels  
+so they can be cached for some time  
+but after experination that function will be run
+
+#### who can access server helper functions
+DAL functions can be used by both:  
+Server components  
+Server actions
+
+
 
 React form validation libraries
 ===============================

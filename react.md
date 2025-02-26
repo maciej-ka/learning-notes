@@ -574,7 +574,7 @@ import { Suspense } from 'react'
 <Suspense fallback={<DashboardSkeleton />}>{children}</Suspense>
 ```
 
-and children here are a async component
+and children here are a async component  
 defined using asy
 
 app/dashboard/page.tsx
@@ -587,18 +587,18 @@ export default async function DashboardPage() {
 ```
 
 #### Zones
-In Next.js you slice page and layout into zones
+In Next.js you slice page and layout into zones  
 and decide
 
-that some part of layout is dynamic
-it's wrapped by <Suspense>
+that some part of layout is dynamic  
+it's wrapped by <Suspense>  
 and it's waiting for result of calling server action
 
-but everything else in is static
+but everything else in is static  
 and can be served immediatelly
 
-also when you have dynamic page,
-then whole page loads in when async function result is ready
+also when you have dynamic page,  
+then whole page loads in when async function result is ready  
 whole page waits in such situation
 
 React form validation libraries

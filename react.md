@@ -1,7 +1,35 @@
 Introduction to Next.js, v4
 ===========================
-Scott Moss, Frontend Masters
+Scott Moss, Frontend Masters  
+https://github.com/Hendrixer/next.js-fundamentals
 
+### Introduction to Next.js 15
+If React is library  
+Then Next is framework
+
+It's great to build hybrid applications  
+Hybrid: application between static and dynamic
+
+It's possible to achieve all that without Next,  
+But Next will give you a lot for free
+
+Push the database schema
+```bash
+npm run db:push
+```
+
+Connect to db locally  
+```bash
+psql -d next-fundamentals-v4
+```
+
+### Building the basic layout and first route
+### Styling the application
+### Lunch Break
+### Data, Full Route, & Router Caches
+### Dynamic Routes & Deployment
+### API Routes
+### Server Actions
 
 
 

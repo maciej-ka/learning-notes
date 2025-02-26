@@ -290,6 +290,10 @@ server actions are close to
 traditional server programming, like:  
 Ruby, PHP, Elixir
 
+we can define them in app/actions/  
+but we can also define them outside app/  
+(because only client routes have to be in app/)
+
 #### firebase cloud functions
 serverless functions  
 this is close to api route in Next.js
@@ -392,7 +396,6 @@ to server action
 it will give us:  
 - status of request
 - state of inputs
-[one more here]
 
 #### use client
 it's like saying "this component will have some interactivity"  
@@ -479,8 +482,124 @@ submit the form
 you can see that server side is working in logs:  
 POST /signup 200 in 48ms
 
+#### DAL
+Data access layer  
+Used mostly for fetching data
 
+it may be important to NOT put functions like  
+`getUserByEmail` in /app/actions  
+which have 'use server' on top
 
+because otherwise Next.js will create   
+a server route created for them
+
+#### next/headers
+```typescript
+import { cookies } from 'next/headers'
+```
+
+you can use these functions in server actions
+
+#### drizzle usage example
+```typescript
+import { db } from '@/db'
+import { eq } from 'drizzle-orm'
+import { issues, users } from '@/db/schema'
+
+export const getCurrentUser = async () => {
+  const session = await getSession()
+  if (!session) return null
+
+  try {
+    const result = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, session.userId))
+```
+
+#### async component
+Normally you couldn't do 
+```typescript
+default async function DashboardPage() { ... }
+```
+
+but with server components it's really just a function  
+and you can make it async
+
+transition from class components to hooks was rough  
+because before we had components with state  
+and now we had to write them stateless
+
+and now get you can again treat them as state
+
+#### dynamicIO
+experimental flag
+
+With `dynamicIO` enabled, Next.js, by default, will throw an error if a Server  
+Component fetches data _without_ being wrapped in a `<Suspense>` boundary or  
+utilizing the `use cache` directive. To handle dynamic data fetching during  
+development, wrap the component fetching the data in `<Suspense>`. This opts  
+that component out of caching, ensuring you always see the latest data.
+
+caching in pre Next 13 was on by default  
+and many different places, in route, in pages  
+it was in lot of places  
+it was fast  
+but it wasn't liked by devs
+
+so since that you have to tell  
+should it be: dynamic, cached or partial
+
+Next.js new directive  
+"use cache"  
+it's like saying: I want this page to be cached
+
+now you have to explicitly say: cache it or never cache it
+
+#### <Suspense>
+you can stream a component after it has done its asynchronous work
+
+use it to mix static with dynamic component  
+so you can have some parts static and served fast  
+and Suspence will be streamlined later
+
+by default when you are developing, put everything in Suspense  
+and then while developing use cache
+
+#### Suspense example / async component
+app/dashboard/layout.tsx
+```typescript
+import { Suspense } from 'react'
+...
+<Suspense fallback={<DashboardSkeleton />}>{children}</Suspense>
+```
+
+and children here are a async component
+defined using asy
+
+app/dashboard/page.tsx
+```typescript
+import { getIssues } from '@/lib/dal'
+export default async function DashboardPage() {
+  const issues = await getIssues()
+  return (
+    ...
+```
+
+#### Zones
+In Next.js you slice page and layout into zones
+and decide
+
+that some part of layout is dynamic
+it's wrapped by <Suspense>
+and it's waiting for result of calling server action
+
+but everything else in is static
+and can be served immediatelly
+
+also when you have dynamic page,
+then whole page loads in when async function result is ready
+whole page waits in such situation
 
 React form validation libraries
 ===============================

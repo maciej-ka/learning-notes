@@ -31,6 +31,9 @@ yes to approuter, for any new project
 unless you are in legacy pages router
 
 Turbopack:  
+it's a very fast  
+but has compability problems  
+atm it doesn't work with deployed pages (even on vercel)  
 no, because it's incopatible with vercel deployment  
 otherwise its quite cool for local development
 
@@ -135,7 +138,121 @@ typing framework specific things may be too much
 and perhaps should be simplified for devs
 
 ### Styling the application
-### Lunch Break
+What is our "Signed out" experience
+
+Styling  
+there are many ways:
+
+#### Css Modules
+(who uses anymore?)  
+makes the styles local  
+name of a class is then a name of property on styles object  
+it's good aproach, but ... who is actually doing it  
+definetly don't do it in library  
+it's only for application
+```
+/newissue.module.css
+```
+
+#### Global css (great for themes)
+it's great  
+this is where you put variables  
+setup tailwind  
+setup styles that will be same for every page
+
+add some custom styles  
+that are shared across pages  
+but don't abuse it  
+don't put your one component only css here
+
+```css
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+}
+```
+
+#### Tailwind
+just use it  
+even if you hated it, give it a try  
+its going to save you time  
+its good for cmpability  
+and for server classes
+
+#### Shadcn
+... why you would like to copy and paste components  
+if you don't plan to maintain them
+
+but this is great if you want to want small modification  
+also AI is great for it
+
+#### Ark
+Headless component library  
+If you need unstylled components
+
+#### Material UI
+was a big fan of it  
+now hate it  
+it's so much  
+so bloated
+
+we have to give credit for it  
+but too enterprise  
+and if you start to change it too much, it's not material  
+it's too opinionated  
+you may prefer something simpler, different
+
+it was created for people who wanted their app  
+to look like Android app
+
+#### CSS in JS
+Pros and cons  
+for SPA ok  
+doing server components? .... good luck  
+probably its not going to work well
+
+a lot supported:  
+https://nextjs.org/docs/app/building-your-application/styling/css-in-js
+
+```
+ant-design
+chakra-ui
+@fluentui/react-components
+kuma-ui
+@mui/material
+@mui/joy
+pandacss
+styled-jsx
+styled-components
+stylex
+tamagui
+tss-react
+vanilla-extract
+```
+
+hmmm, CSS in JS has material and joy  
+@mui/material  
+@mui/joy
+
+#### CSS preprocessors
+Stylus  
+SASS  
+Less
+
+... again, why?  
+postCSS kind of killed CSS preprocessors
+
+#### use client
+'use client' it's actually a React feature  
+it's not Next  
+it's called directive
+
+#### is building 1000 pages expensive?
+it can be slow on Vercel  
+when you have houndrets of blog post pages  
+but you are not charged for build time
+
 ### Data, Full Route, & Router Caches
 ### Dynamic Routes & Deployment
 ### API Routes

@@ -815,6 +815,95 @@ In build
 o: next to page means it was static, there is nothing dynamic in it  
 f: means page was detected as dynamic
 
+### Api routes
+you may not need them  
+as server actions almost replace them
+
+but there are still use cases to use api routes
+
+Next.js helps to write Api routes  
+They are meant to be run in serverless environment  
+Vercel provides solution to run these serverless functions
+
+And there is a new spec how to write them
+
+where to put them?  
+`app/api`
+
+they are very similar to pages  
+in filesystem as router convention  
+`api/user/route.ts`
+
+this will be created as url: `/api/user`
+
+```typescript
+export const GET = () => {}
+export const POST = () => {}
+```
+
+hello world
+```typescript
+export const GET = (req: NextRequest) => {
+  return NextResponse.json({ data : { message: 'hello' } })
+}
+```
+
+echo
+```typescript
+export const POST = async (req: NextRequest) => {
+  const data = await req.json()
+  return NextResponse.json(data)
+}
+```
+
+access headers
+```typescript
+import { headers } from "next/headers"
+export const POST = async (req: NextRequest) => {
+  const data = (await headers()).get('Authorization')
+  ...
+}
+```
+
+add something like express middleware
+```typescript
+withUser = (handler, async () => {
+  // checks user ...
+
+  if (user) {
+    return handler()
+  }
+})
+```
+
+#### Http request clients
+Insomnia:  
+you have to create account  
+and there is malware in it!
+
+Postman:  
+you have to create account
+
+HttPie:  
+recommended (by Scott Moss)
+
+#### Share code with server actions
+Can we have shared abstractios for server actions  
+and api routes
+
+we can just write a function that wraps some logic  
+and that logic is idependent of server actions  
+and api routes  
+and use it in both places
+
+#### How to develop OpenAPI compatible
+there is no official Next way
+use these packages
+```
+next-swagger-doc
+swawgger-ui-react
+```
+
 
 
 React form validation libraries

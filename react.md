@@ -1045,6 +1045,110 @@ if you interact with database
 or any other service  
 make sure it's http based
 
+### Deploy
+#### deploy early
+usually its good idea on start of project to deploy immediatelly  
+and immediatelly setup CI/CD
+
+because you don't want to debug why it's not deploying  
+(if you do it later)
+
+#### Vercel if free
+you have to have project in github  
+and make sure you're on a main branch
+
+#### Deploy at Vercel
+Go to Vercel > new project  
+framework preset: can detect that it's Next.js  
+customizable:  
+  build command  
+  output directory  
+  install command (apart from npm i)  
+Environment Variable  
+  add DB connection here  
+and just click deploy
+
+#### feature branch
+git checkout `feature/copy`
+
+#### previews: feature branches
+usually you have staging/preproduction/production  
+on Vercel you don't have these
+
+but when you crate branch, there will be preview branch  
+and preview will be deployed and can be inspected  
+preview can be visited
+
+#### preview vercel toolbar
+and there is a way to add comments on pages  
+leave comments like in figma "don't do it"  
+turn on / off feature flags  
+check mobile version fast by QR code
+
+#### CI/CD resolve comments
+if someone will leave comment  
+and it's unresolved, it will not allow to deploy on CI/CD  
+before resolving
+
+#### database branching
+every modern database has branching  
+Neon has it
+
+so that if you have preview deployment  
+it will connect to a branched database  
+db will almost instantly copy production database
+
+preview uses uses a has a production data  
+that is branched from main branch of database
+
+#### Vercel payments
+mostly you have to pay for collaboration:  
+feature flags  
+observability  
+analytics
+
+but there is also  
+integrations platform (marketplace)  
+Neon will automatically update env variables for use with previews
+
+#### Self hosting
+not recommended
+
+Vercel was very expensive  
+billing can change from 10k dollars  
+because of background jobs  
+one person can do something that will make 100 requests  
+and Vercel can assume that this is very high traffic
+
+but now they have "fluid compute"  
+and other flags to cut costs  
+and they are better then Cloudflare
+
+#### middleware
+most alternative hosting recognize that Next is next hot thing  
+and support 
+
+#### Scalling api routes
+Is there a way to scale Next.js?  
+Make api routes run on several instances for uptime?
+
+Thats whole point of Serverless  
+you don't have to think about how to scale vertically  
+and you don't have to think how to scale horizontally  
+serverless scales infinitelly
+
+Serverless can be costly  
+although "fluid compute" can cut cost about 50%  
+and there is a cold start cost
+
+#### Docker
+Vercel doesn't support docker  
+it's not low level hosting
+
+if you want to use something  
+you have to set environment variable for it  
+and make sure that it can work, that it can communicate through HTTP
+
 
 
 React form validation libraries

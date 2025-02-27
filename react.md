@@ -982,17 +982,68 @@ whole this thing is similar to Cloudflare workers
 most of Vercel competitors also support middleware  
 (but it's hard to tell for all of them)
 
-#### Edge Runtime
-very light runtime, slimmed version of Node
-(not created by Vercel)
+### Edge Runtime
+Standard across providers,  
+not Vercel thing  
+nobody owns it  
+runtime specification
 
-you know Browser Js, Node Js
-and it's a new one
-it's very limited
+very light runtime, slimmed version of Node  
+(not created by Vercel)  
+doesn't support all the api's
+
+you know Browser Js, Node Js  
+and it's a new one  
+it's very limited  
 also in what size it is
 
-if you run it on Edge it has to be very small and quick
-memory: limited to 128MB (perhps less)
+if you run it on Edge it has to be very small and quick  
+memory: limited to 128MB (perhps less)  
+time: seconds
+
+use this to be sure you don't use Node specific APIs  
+(it will throw error if you do)
+```typescript
+export const runtime = 'edge'
+```
+
+what works:  
+Subset of Web APIs  
+- `fetch` and Request/Response objects
+- `URLSearchParams` and `URL`
+- `Headers`
+- `TextEncoder` and `TextDecoder`
+- `crypto` (including subtle crypto)
+- `setTimeout` and `setInterval`
+- `atob` and `btoa`
+- `ReadableStream` and `WritableStream`
+- `console` methods
+- `structuredClone`
+
+Special objects provided by Next.js  
+- `NextRequest` and `NextResponse` with enhanced functionality
+- `cookies()` for reading and setting cookies
+- `headers()` for accessing request headers
+- `userAgent()` for client information
+- `geolocation` data via `request.geo`
+
+#### limitations:
+limited api access  
+no native modules (that require compilation)  
+filesystem  
+bundle size limits  
+memory  
+execution time  
+no long-lived connections
+
+#### Edge Config
+Sort of Redis for Edge  
+where you can store your env variables
+
+#### Http based
+if you interact with database  
+or any other service  
+make sure it's http based
 
 
 

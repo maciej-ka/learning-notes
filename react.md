@@ -1235,17 +1235,17 @@ vitest has good development
 jsx and typescript support out of box
 
 ### Final notes
-check / watch:
+check / watch:  
 - fluid compute (on Vercel docs)
 - serverless database (because you cannot have connection in serverless)
   (they are http sitting behind database)
 
-find a project that challenges you
-enought that you have to check some things
+find a project that challenges you  
+enought that you have to check some things  
 (that you don't know all the things)
 
 #### use client in layout
-yes, you can do it
+yes, you can do it  
 reason is providers: they pass state and context
 
 #### donut pattern
@@ -1253,47 +1253,47 @@ Server Component imports the Client Component
 
 ### tools for UI
 #### magic UI
-150+ free and open-source animated components and effects
+150+ free and open-source animated components and effects  
 https://magicui.design/
 
 #### aceternity UI
-Copy paste the most trending components
+Copy paste the most trending components  
 https://ui.aceternity.com/
 
 #### UI verse
-Library of Open-Source UI
-(has good challenges)
+Library of Open-Source UI  
+(has good challenges)  
 https://uiverse.io/
 
 #### 12st.dev
-https://21st.dev/
-perfect UI components
+https://21st.dev/  
+perfect UI components  
 you can copy prompt and insert it into Cursor
 
 #### v0
-https://v0.dev/
-like figma
-but not for production
+https://v0.dev/  
+like figma  
+but not for production  
 take some screenshots, upload them to v0
 
 #### no component library
-with AI you almost don't need component library
-it's too slow
+with AI you almost don't need component library  
+it's too slow  
 use tons of AI tools
 
 ### Tools for background work in serverless
 #### upstash
-https://upstash.com/
-Serverless Data Platform
-Redis, QStash (messaging for serverless), Workflow
+https://upstash.com/  
+Serverless Data Platform  
+Redis, QStash (messaging for serverless), Workflow  
 great for workflows
 
 #### Trigger.dev
-https://trigger.dev/
+https://trigger.dev/  
 Background jobs & AI infrastructure
 
 #### Inngest
-AI and backend workflows, orchestrated at any scale
+AI and backend workflows, orchestrated at any scale  
 if you need to do serverless with background work
 
 #### Neon
@@ -1301,12 +1301,12 @@ I love Neon (Scott Moss)
 
 ### Bonus
 #### SPA like
-set output "static"
+set output "static"  
 it can be hosted anywhere just like CRA would be
 
 #### goal in work
-you want to limit time spent on non business logic
-not spend time on build tools and setup
+you want to limit time spent on non business logic  
+not spend time on build tools and setup  
 lean towards tools that do it well
 
 

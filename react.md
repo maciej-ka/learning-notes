@@ -1149,6 +1149,94 @@ if you want to use something
 you have to set environment variable for it  
 and make sure that it can work, that it can communicate through HTTP
 
+### Testing
+we will use vitest  
+and mock the dom with `JS-DOM`
+
+```bash
+npm install -D vitest @vitejs/plugin-react vite-tsconfig-paths @testing-library/react @testing-library/dom jsdom
+```
+
+- `vitest`: The testing framework
+- `@vitejs/plugin-react`: For React component testing
+- `vite-tsconfig-paths`: For resolving TypeScript paths
+- `@testing-library/react` and `@testing-library/dom`: For testing React components
+- `jsdom`: For simulating a browser environment
+
+#### mjs
+syntax that Node uses  
+to tell the Node that file is new ES modules syntax  
+(it uses `import` not `require`)
+
+#### setup file
+Create a `vitest.config.mjs` file in your project root:
+
+```javascript
+import { defineConfig } from 'vitest/config'
+import react from '@vitejs/plugin-react'
+import tsconfigPaths from 'vite-tsconfig-paths'
+
+export default defineConfig({
+  plugins: [tsconfigPaths(), react()],
+  test: {
+    environment: 'jsdom',
+    include: ['**/*.{test,spec}.{js,jsx,ts,tsx}'],
+    globals: true,
+    setupFiles: ['./vitest.setup.ts'],
+  },
+})
+```
+
+#### mocking
+its generally easy to provide your own mocks  
+for common 
+```typescript
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+    pathname: '/',
+    params: {},
+  }),
+```
+
+#### test
+in page.test.tsx  
+set some mocks  
+then render  
+and test some assertions
+
+```typescript
+// Mock the dependencies (Data Access Layer)
+vi.mock('@/lib/dal', () => ({
+  getIssues: vi.fn(),
+  getCurrentUser: vi.fn(),
+}))
+
+describe('DashboardPage', () => {
+  it('renders the issues list when issues are available', async () => {
+    const mockIssues = [ ... ]
+    vi.mocked(getIssues).mockResolvedValue(mockIssues)
+    render(await DashboardPage())
+    expect(screen.getByText('Issues')).toBeInTheDocument()
+    expect(screen.getAllByText('2 days ago')).toHaveLength(2)
+```
+
+#### vitest / jest
+(also Jasmine, Mocha)  
+they all comed from Ruby  
+and all feel the same
+
+vitest has good development  
+jsx and typescript support out of box
+
+### Final notes
+
+
 
 
 React form validation libraries

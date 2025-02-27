@@ -405,8 +405,8 @@ it's like saying "this component will have some interactivity"
 it requires browser  
 if you need something that is not only presentational
 
-you can put server components  
-into client components  
+you can put client components  
+into server components  
 (its called donut pattern)
 
 #### react query
@@ -924,7 +924,7 @@ some database that can work through HTTP
 http based databases  
 something like Neon
 
-### Middleare
+### Middleware
 something that sits in the middle between request  
 and something that serves response
 
@@ -1248,40 +1248,60 @@ enought that you have to check some things
 yes, you can do it
 reason is providers: they pass state and context
 
-#### donat pattern
-server component on inside
+#### donut pattern
+Server Component imports the Client Component
 
 ### tools for UI
-magic UI
-acceternity UI
-UI verse (has good challenges)
+#### magic UI
+150+ free and open-source animated components and effects
+https://magicui.design/
 
-21fst dot dev
-you can copy prompt and insert i into Cursor
+#### aceternity UI
+Copy paste the most trending components
+https://ui.aceternity.com/
 
-v0 ... like figma, but not for production (take some screens and upload them to v0)
-show screenshot and 
+#### UI verse
+Library of Open-Source UI
+(has good challenges)
+https://uiverse.io/
 
+#### 12st.dev
+https://21st.dev/
+perfect UI components
+you can copy prompt and insert it into Cursor
+
+#### v0
+https://v0.dev/
+like figma
+but not for production
+take some screenshots, upload them to v0
+
+#### no component library
 with AI you almost don't need component library
 it's too slow
-
 use tons of AI tools
 
-upstash
+### Tools for background work in serverless
+#### upstash
+https://upstash.com/
+Serverless Data Platform
+Redis, QStash (messaging for serverless), Workflow
 great for workflows
-great to use with serverless
 
-trigger.dev
-do our background works
+#### Trigger.dev
+https://trigger.dev/
+Background jobs & AI infrastructure
 
-ingest
+#### Inngest
+AI and backend workflows, orchestrated at any scale
 if you need to do serverless with background work
 
-and Neon
+#### Neon
 I love Neon (Scott Moss)
 
+### Bonus
 #### SPA like
-output "static"
+set output "static"
 it can be hosted anywhere just like CRA would be
 
 #### goal in work

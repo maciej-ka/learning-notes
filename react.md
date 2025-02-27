@@ -651,6 +651,25 @@ Server actions
 for pages you can skip "use server"  
 but in other places use explicit
 
+#### Next.js docs
+they are really good
+
+#### get param from route
+in Next 15 params are Promise
+
+```typescript
+const { id } = await params
+```
+
+if you have nested dynamic route, params will be flatten
+
+#### Prisma vs drizzle
+Prisma was great  
+but migrations in it where difficult to do
+
+While in drizzle you can do migrations programatically
+
+
 
 
 React form validation libraries

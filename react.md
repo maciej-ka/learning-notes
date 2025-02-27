@@ -714,6 +714,9 @@ New directive
 "use cache"  
 atm only Next, not React
 
+it can be used only on server side  
+but it can be used in any place of that server side
+
 if you put it on top of layout  
 then whole layout and its children will be cached  
 but this may lead to stale data
@@ -762,6 +765,55 @@ export const createIssue = async (data: IssueData) => {
 
 #### use Cache like tanstack-query
 atm you cannot get as granular with cache as tanstack does allow
+
+#### how to integrate cache with 3rd party tools
+make a server action, that will become a route  
+and that server action only task will be to invalidate cache
+
+### Memoizing
+caching the answer to a function  
+so that when calling function with same arguments  
+you already have ready answer to be reused
+
+#### working only per one request
+what if many places on server call `getCurrentUser`?  
+but in this case you don't want results to leak to other users  
+so memoizing is working only per one request  
+and in scope of that request
+
+wrap whole function in cache function
+
+```typescript
+import { cache } from 'react'
+export const getCurrentUser = cache(async () => {
+  const session = await getSession()
+  // ...
+  return results[0] || null
+}
+```
+
+it should be called memo  
+but function name is actually `cache`  
+so that it's not a third thing in React called memo  
+(useMemo, React.Memo)
+
+#### Strict mode
+by default Next.js  
+will call component twice  
+to help you detect any cyclic state errors in your components
+
+to detect situation where you change a state,  
+which will then trigger effect, which will change state ...
+
+because of these multiple calls, the memoized function (with `cache`)  
+may show multiple times in logs  
+but if you build on production, it will work properly  
+(on production strict mode doesn't render many times)
+
+#### build output, static/dynamic
+In build  
+o: next to page means it was static, there is nothing dynamic in it  
+f: means page was detected as dynamic
 
 
 

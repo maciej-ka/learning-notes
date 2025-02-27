@@ -669,6 +669,99 @@ but migrations in it where difficult to do
 
 While in drizzle you can do migrations programatically
 
+#### server actions middleware
+create HOC for server actions  
+to handle authorization  
+this is good pattern  
+so you don't have to clutter every server action with check  
+that user is authenticated and authorized  
+and returning an error if not
+
+#### useTransition()
+React thing, not Next specific  
+allows to wrap server action  
+and track status of that action  
+and it will not block
+
+```typescript
+startTransition(async () => {
+   const result = awaint deleteIssue(id)
+})
+```
+
+when you need to call server action  
+in response to user interaction  
+like user pressing a button  
+then wrap call to that server action in startTransition
+
+### Caching and Memoizing
+with dynanicIO  
+it's opt-in caching  
+you say how you want to treat dynamic pages
+
+Next will detect, that you have dynamic page  
+if you access any of these  
+- access cookies,
+- query parameters,
+- headers,
+- route parameters
+
+And Next will ask you, how to treat that page  
+how to cache
+
+#### use cache
+New directive  
+"use cache"  
+atm only Next, not React
+
+if you put it on top of layout  
+then whole layout and its children will be cached  
+but this may lead to stale data
+
+so you can put "use cache" in functions  
+not server actions  
+but in places in server components that fetch data
+
+```typescript
+export async function getIssues() {
+  "use cache"
+  try {
+    await mockDelay(1000)
+    const result = await db.query.issues.findMany({
+```
+
+but this will ignore if new issue is added  
+(by default it cache will be forever)
+
+reason it's directive: if it's inside a function  
+Next will detect parameters of function  
+and make a cache be dependent on it
+
+#### expire
+get a reference for snapshot  
+for what was just cached  
+`unstable_cacheTag`  
+(unstable because its canary atm)
+
+```typescript
+export async function getIssues() {
+  "use cache"
+  unstable_cacheTag('issues')
+```
+
+and then revalidate (bust cache)  
+it has to be revalidated on server action
+
+```typescript
+export const createIssue = async (data: IssueData) => {
+  ...
+  revalidateTag('issues')
+  return { success: true, message: 'Issue created successfully' }
+}
+```
+
+#### use Cache like tanstack-query
+atm you cannot get as granular with cache as tanstack does allow
 
 
 

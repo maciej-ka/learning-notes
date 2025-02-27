@@ -897,12 +897,102 @@ and api routes
 and use it in both places
 
 #### How to develop OpenAPI compatible
-there is no official Next way
+there is no official Next way  
 use these packages
 ```
 next-swagger-doc
 swawgger-ui-react
 ```
+
+#### Express like
+there are tools and libraries that people built  
+to make api routes feel like Express
+
+#### few Vercel specific things
+There are some things that are only available  
+when you deploy to Vercel
+
+#### Serverless limitations
+once you're done with request, serverless is done  
+there is no way for background work
+
+database: most dbs have long connection pooling  
+(and you can hit memory issues, pooling database)
+
+so you have to use database that can work well with serverless  
+some database that can work through HTTP  
+http based databases  
+something like Neon
+
+### Middleare
+something that sits in the middle between request  
+and something that serves response
+
+in Next it intercepts requests  
+it runs on the Edge
+
+#### Edge
+programmatic CDN
+
+for some time CDNs where only made to serve static files  
+but now you can compute on them
+
+cases:  
+- A/B testing
+- check authentication
+- redirect (perhaps even serve different version of page by detecting client IP)
+- custom headers
+- rate limit (great to do on Edge, but perhaps not in middleware)
+
+Cludflare started as rate limit (against bot) on CDNs
+
+just create file `middleware.ts` in root of project  
+/middlware.ts
+```typescript
+export function middleware(request: NextRequest) {
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ['/']
+}
+```
+
+example of authorization middleware
+```typescript
+export async function middleware(request: NextRequest) {
+  const authHeader = (await headers()).get('Authorization')
+  if (!authHeader) {
+    return NextResponse.json(
+      { success: false, message: 'Authorization header is required' },
+      { status: 401 }
+    )
+  }
+  return NextResponse.next()
+}
+
+export const config = {
+  matcher: ['/api/:path*']
+}
+```
+
+whole this thing is similar to Cloudflare workers
+
+#### Vercel required?
+most of Vercel competitors also support middleware  
+(but it's hard to tell for all of them)
+
+#### Edge Runtime
+very light runtime, slimmed version of Node
+(not created by Vercel)
+
+you know Browser Js, Node Js
+and it's a new one
+it's very limited
+also in what size it is
+
+if you run it on Edge it has to be very small and quick
+memory: limited to 128MB (perhps less)
 
 
 

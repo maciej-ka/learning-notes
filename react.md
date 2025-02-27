@@ -1235,7 +1235,59 @@ vitest has good development
 jsx and typescript support out of box
 
 ### Final notes
+check / watch:
+- fluid compute (on Vercel docs)
+- serverless database (because you cannot have connection in serverless)
+  (they are http sitting behind database)
 
+find a project that challenges you
+enought that you have to check some things
+(that you don't know all the things)
+
+#### use client in layout
+yes, you can do it
+reason is providers: they pass state and context
+
+#### donat pattern
+server component on inside
+
+### tools for UI
+magic UI
+acceternity UI
+UI verse (has good challenges)
+
+21fst dot dev
+you can copy prompt and insert i into Cursor
+
+v0 ... like figma, but not for production (take some screens and upload them to v0)
+show screenshot and 
+
+with AI you almost don't need component library
+it's too slow
+
+use tons of AI tools
+
+upstash
+great for workflows
+great to use with serverless
+
+trigger.dev
+do our background works
+
+ingest
+if you need to do serverless with background work
+
+and Neon
+I love Neon (Scott Moss)
+
+#### SPA like
+output "static"
+it can be hosted anywhere just like CRA would be
+
+#### goal in work
+you want to limit time spent on non business logic
+not spend time on build tools and setup
+lean towards tools that do it well
 
 
 

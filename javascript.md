@@ -1,3 +1,15 @@
+JS binary operators
+| Operator | Name                  | Example  | Binary Calculation | Result                            |
+|----------|-----------------------|----------|--------------------|-----------------------------------|
+| &        | AND                   | 5 & 1    | 0101 & 0001        | 0001 (1)                          |
+| \|       | OR                    | 5 \|  1  | 0101 \| 0001       | 0101 (5)                          |
+| ^        | XOR                   | 5 ^ 1    | 0101 ^ 0001        | 0100 (4)                          |
+| ~        | NOT                   | ~5       | ~00000101          | 11111010 (-6 in two's complement) |
+| <<       | Left Shift            | 5 << 1   | 0101 << 1          | 1010 (10)                         |
+| >>       | Right Shift           | 5 >> 1   | 0101 >> 1          | 0010 (2)                          |
+| >>>      | Zero-fill Right Shift | -5 >>> 1 | `11111011 >>> 1`   | Fills with 0 instead of sign bit  |
+
+
 Tan Stack Query, React Query
 ============================
 https://query.gg/

@@ -1,3 +1,18 @@
+shadcn/ui primer
+================
+https://ui.shadcn.com/
+
+For Vite, setup requires import alias in tsconfig  
+and in viteconfig.  
+https://ui.shadcn.com/docs/installation/vite
+
+```bash
+npx shadcn@latest init
+npx shadcn@latest add button
+```
+
+
+
 Introduction to Next.js, v4
 ===========================
 Scott Moss, Frontend Masters  

@@ -251,6 +251,37 @@ On change the observer will rerender component.
 This observer is listening for changes in queryKey.  
 Not for changes of whole cache.
 
+### Query lifecycle
+React query is good at making asynchronous code  
+seem to be synchronous.
+
+list media devices:
+```javascript
+const { data: devices } = useQuery({
+  queryKey: ["devices"],
+  queryFn: () => navigator.mediaDevices.enumerateDevices()
+})
+...
+{devices.map(...)}
+```
+
+however this code has a problem,  
+until promise resolves,  
+data will be undefined
+
+for this query has three statuses
+```javascript
+const { data, status } = useQuery({
+...
+"pending"
+"success"
+"error"
+```
+
+or a alternative syntax
+```javascript
+const { data, isPending, isError } = useQuery({
+```
 
 
 

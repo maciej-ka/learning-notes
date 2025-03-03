@@ -1,72 +1,3 @@
-Arrays in Javascript
-====================
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array  
-Arrays are stored as a object with indexes as properties  
-these indexes are strings
-
-#### toString() cooercion
-when calling element arr[index]  
-engine will do implicit index.toString() convertion  
-`arr[2]` is same as `arr["2"]`
-
-```javascript
-arr = [23, 13, 456] // (3) [23, 13, 456]
-arr["2"]            // 456
-arr[2]              // 456
-arr["05"] = "foo"
-arr                 // (3) [23, 13, 456, 05: 'foo']
-```
-
-#### Typed array
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray
-
-faster and better on memory  
-but more restictive
-
-fixed size: length set on creation and cannot change  
-typing: all elements have to be same type  
-fast: use contignous memory making access and iteration faster  
-no push: no array push(), splice() etc, because they have fixed size
-
-```javascript
-let arr = new Int32Array(10);
-arr[0] = 42;
-arr[1] = 100;
-console.log(arr[0]); // 42
-console.log(arr.length); // 10
-```
-
-| Type              | Value Range               | Size in bytes | Web IDL type        |
-|-------------------|---------------------------|---------------|---------------------|
-| Int8Array         | -128 to 127               | 1             | byte                |
-| Uint8Array        | 0 to 255                  | 1             | octet               |
-| Uint8ClampedArray | 0 to 255                  | 1             | octet               |
-| Int16Array        | -32768 to 32767           | 2             | short               |
-| Uint16Array       | 0 to 65535                | 2             | unsigned short      |
-| Int32Array        | -2147483648 to 2147483647 | 4             | long                |
-| Uint32Array       | 0 to 4294967295           | 4             | unsigned long       |
-| Float16Array      | -65504 to 65504           | 2             | N/A                 |
-| Float32Array      | -3.4e38 to 3.4e38         | 4             | unrestricted float  |
-| Float64Array      | -1.8e308 to 1.8e308       | 8             | unrestricted double |
-| BigInt64Array     | -263 to 263 - 1           | 8             | bigint              |
-| BigUint64Array    | 0 to 264 - 1              | 8             | bigint              |
-
-
-
-JS binary operators
-===================
-| Operator | Name                  | Example  | Binary Calculation | Result                            |
-|----------|-----------------------|----------|--------------------|-----------------------------------|
-| &        | AND                   | 5 & 1    | 0101 & 0001        | 0001 (1)                          |
-| \|       | OR                    | 5 \|  1  | 0101 \| 0001       | 0101 (5)                          |
-| ^        | XOR                   | 5 ^ 1    | 0101 ^ 0001        | 0100 (4)                          |
-| ~        | NOT                   | ~5       | ~00000101          | 11111010 (-6 in two's complement) |
-| <<       | Left Shift            | 5 << 1   | 0101 << 1          | 1010 (10)                         |
-| >>       | Right Shift           | 5 >> 1   | 0101 >> 1          | 0010 (2)                          |
-| >>>      | Zero-fill Right Shift | -5 >>> 1 | `11111011 >>> 1`   | Fills with 0 instead of sign bit  |
-
-
-
 Tan Stack Query, React Query
 ============================
 https://query.gg/
@@ -86,7 +17,7 @@ just as components enabled to compose and reuse ui
 hook enabled to compose and reuse non visual logic
 
 #### how do we fetch data with hooks?  
-none of built in hooks is designed   
+none of built-in hooks is designed   
 for the most common non ui task: data fetching  
 closest we get is `useEffect` and `useState`
 
@@ -284,6 +215,111 @@ if not, it will invoke `queryFn`
 queryKey must be globally unique  
 queryFn must return a Promise  
 that resolves with data you want to cache
+
+### deduplication
+Even if this component is used twice  
+in two different places,  
+it will show same result number.
+
+```javascript
+function LuckyNumber() {
+  const { data } = useQuery({
+    queryKey: ['luckyNumber'],
+    queryFn: () => Promise.resolve(Math.random())
+    }
+  })
+}
+```
+
+First invocation of query will populate cache.  
+When it's used again, react query will return cached value immediately  
+without running function again.
+
+When having more components using same query,  
+it makes sense to extract custom hook  
+that will include only that useQuery call.
+
+#### notify react about changes
+Since cache lives outside Component tree  
+how component knows about data changes?
+
+This is done with observer pattern.  
+Components are listeners of cache.
+
+Every time component mounts, it creates observer for each useQuery call.  
+On change the observer will rerender component.  
+This observer is listening for changes in queryKey.  
+Not for changes of whole cache.
+
+
+
+
+Arrays in Javascript
+====================
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array  
+Arrays are stored as a object with indexes as properties  
+these indexes are strings
+
+#### toString() cooercion
+when calling element arr[index]  
+engine will do implicit index.toString() convertion  
+`arr[2]` is same as `arr["2"]`
+
+```javascript
+arr = [23, 13, 456] // (3) [23, 13, 456]
+arr["2"]            // 456
+arr[2]              // 456
+arr["05"] = "foo"
+arr                 // (3) [23, 13, 456, 05: 'foo']
+```
+
+#### Typed array
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray
+
+faster and better on memory  
+but more restictive
+
+fixed size: length set on creation and cannot change  
+typing: all elements have to be same type  
+fast: use contignous memory making access and iteration faster  
+no push: no array push(), splice() etc, because they have fixed size
+
+```javascript
+let arr = new Int32Array(10);
+arr[0] = 42;
+arr[1] = 100;
+console.log(arr[0]); // 42
+console.log(arr.length); // 10
+```
+
+| Type              | Value Range               | Size in bytes | Web IDL type        |
+|-------------------|---------------------------|---------------|---------------------|
+| Int8Array         | -128 to 127               | 1             | byte                |
+| Uint8Array        | 0 to 255                  | 1             | octet               |
+| Uint8ClampedArray | 0 to 255                  | 1             | octet               |
+| Int16Array        | -32768 to 32767           | 2             | short               |
+| Uint16Array       | 0 to 65535                | 2             | unsigned short      |
+| Int32Array        | -2147483648 to 2147483647 | 4             | long                |
+| Uint32Array       | 0 to 4294967295           | 4             | unsigned long       |
+| Float16Array      | -65504 to 65504           | 2             | N/A                 |
+| Float32Array      | -3.4e38 to 3.4e38         | 4             | unrestricted float  |
+| Float64Array      | -1.8e308 to 1.8e308       | 8             | unrestricted double |
+| BigInt64Array     | -263 to 263 - 1           | 8             | bigint              |
+| BigUint64Array    | 0 to 264 - 1              | 8             | bigint              |
+
+
+
+JS binary operators
+===================
+| Operator | Name                  | Example  | Binary Calculation | Result                            |
+|----------|-----------------------|----------|--------------------|-----------------------------------|
+| &        | AND                   | 5 & 1    | 0101 & 0001        | 0001 (1)                          |
+| \|       | OR                    | 5 \|  1  | 0101 \| 0001       | 0101 (5)                          |
+| ^        | XOR                   | 5 ^ 1    | 0101 ^ 0001        | 0100 (4)                          |
+| ~        | NOT                   | ~5       | ~00000101          | 11111010 (-6 in two's complement) |
+| <<       | Left Shift            | 5 << 1   | 0101 << 1          | 1010 (10)                         |
+| >>       | Right Shift           | 5 >> 1   | 0101 >> 1          | 0010 (2)                          |
+| >>>      | Zero-fill Right Shift | -5 >>> 1 | `11111011 >>> 1`   | Fills with 0 instead of sign bit  |
 
 
 

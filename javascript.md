@@ -1,3 +1,24 @@
+Arrays in Javascript
+====================
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array  
+Arrays are stored as a object with indexes as properties  
+these indexes are strings
+
+#### toString() cooercion
+when calling element arr[index]  
+engine will do implicit index.toString() convertion  
+`arr[2]` is same as `arr["2"]`
+
+```javascript
+arr = [23, 13, 456] // (3) [23, 13, 456]
+arr["2"]            // 456
+arr[2]              // 456
+arr["05"] = "foo"
+arr                 // (3) [23, 13, 456, 05: 'foo']
+```
+
+
+
 JS binary operators
 ===================
 | Operator | Name                  | Example  | Binary Calculation | Result                            |

@@ -17,6 +17,40 @@ arr["05"] = "foo"
 arr                 // (3) [23, 13, 456, 05: 'foo']
 ```
 
+#### Typed array
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray
+
+faster and better on memory  
+but more restictive
+
+fixed size: length set on creation and cannot change  
+typing: all elements have to be same type  
+fast: use contignous memory making access and iteration faster  
+no push: no array push(), splice() etc, because they have fixed size
+
+```javascript
+let arr = new Int32Array(10);
+arr[0] = 42;
+arr[1] = 100;
+console.log(arr[0]); // 42
+console.log(arr.length); // 10
+```
+
+| Type              | Value Range               | Size in bytes | Web IDL type        |
+|-------------------|---------------------------|---------------|---------------------|
+| Int8Array         | -128 to 127               | 1             | byte                |
+| Uint8Array        | 0 to 255                  | 1             | octet               |
+| Uint8ClampedArray | 0 to 255                  | 1             | octet               |
+| Int16Array        | -32768 to 32767           | 2             | short               |
+| Uint16Array       | 0 to 65535                | 2             | unsigned short      |
+| Int32Array        | -2147483648 to 2147483647 | 4             | long                |
+| Uint32Array       | 0 to 4294967295           | 4             | unsigned long       |
+| Float16Array      | -65504 to 65504           | 2             | N/A                 |
+| Float32Array      | -3.4e38 to 3.4e38         | 4             | unrestricted float  |
+| Float64Array      | -1.8e308 to 1.8e308       | 8             | unrestricted double |
+| BigInt64Array     | -263 to 263 - 1           | 8             | bigint              |
+| BigUint64Array    | 0 to 264 - 1              | 8             | bigint              |
+
 
 
 JS binary operators

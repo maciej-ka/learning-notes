@@ -1,4 +1,4 @@
-shadcn/ui primer
+shadcn/ui setup
 ================
 https://ui.shadcn.com/
 

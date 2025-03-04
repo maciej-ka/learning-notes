@@ -528,8 +528,3 @@ and take it to manager
 find a common thing that we both want
 
 
-
-### Successess / Failures
-- techniczne przeprowadzenie AEC.View przez 5 lat, aby stale dało się go rozwijać i utrzymać
-- przez 6 lat dwa, nawet trzy projekty równolegle, każdy dostarczony, w jednym leadowanie, w dwóch propozycja przejście na etat do klienta
-

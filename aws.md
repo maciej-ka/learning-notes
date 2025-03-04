@@ -535,7 +535,7 @@ Mozilla Observatory: check security of web service
 
 
 
-Lambdas, summary with Chatgpt
+Lambdas
 =============================
 **do aws lambda start a container each time?**  
 No, AWS Lambda does not start a new container each time a function is invoked.  

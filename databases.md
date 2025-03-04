@@ -122,7 +122,7 @@ the more "queryable" db will be later
 
 
 
-ChatGPT: Mongo overview
+Mongo overview
 =======================
 #### how mongo data is organized?
 database  

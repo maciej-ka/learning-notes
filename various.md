@@ -1484,19 +1484,6 @@ Provides a read-optimized view of the user's profile (e.g., a denormalized or ca
 
 
 
-Variance notes
-==============
-#### Covariance
-typical OOP situation  
-Variable has type Animal, value can be a Cat  
-#### Invariance
-has to match exactly  
-Variable has type Animal, value can be only exactly Animal  
-#### Contravariance
-in function parameters
-
-
-
 Microfrontends
 ==============
 Micro Frontends in Action  
@@ -1535,7 +1522,7 @@ or switch to different tech
 every teamn ships features directly to customer  
 no api or operation teams exist
 
-### Downsides (chat GPT)
+### Downsides
 #### setup and deployment
 more complex setup of a whole application  
 also deployment cycles are more tricky

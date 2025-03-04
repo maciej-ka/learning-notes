@@ -1,3 +1,16 @@
+Variance notes
+==============
+#### Covariance
+typical OOP situation  
+Variable has type Animal, value can be a Cat  
+#### Invariance
+has to match exactly  
+Variable has type Animal, value can be only exactly Animal  
+#### Contravariance
+in function parameters
+
+
+
 Triple slash directive
 ======================
 A TypeScript triple-slash directive is a special kind of single-line comment that contains an XML tag. It acts as a compiler directive, telling TypeScript how to handle a file.  

@@ -43,7 +43,7 @@ Elixir in action, [Manning](https://www.manning.com/books/kubernetes-in-action-s
 
 [Javascript](./javascript.md)  
 ===============================
-Tanstack query course, [Query.gg](https://query.gg/)  
+Tanstack React Query, [Query.gg](https://query.gg/)  
 NestJS Architecture and Advanced patterns, [Nestjs Courses](https://courses.nestjs.com/#architecture)  
 NestJS Fundamentals, [Nest Courses](https://courses.nestjs.com/)  
 NestJS Crud tutorial, [Nest Docs](https://docs.nestjs.com/first-steps)  

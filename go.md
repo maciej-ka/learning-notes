@@ -447,3 +447,57 @@ check capacity
 cap(scores)
 ```
 
+capacity: amount of memory assigned  
+length: amount of items stored
+
+#### iterate over slice or array
+short syntax
+```go
+for index, value := range numbers {
+  fmt.Printf("index %d and value %d\n", index, value)
+}
+```
+
+only value
+```go
+for , value := range numbers {
+  fmt.Printf("index %d and value %d\n", index, value)
+}
+```
+
+### Hash, Map
+```go
+capitalCities := map[string]string{
+  "USA": "Washington D.C.",
+  "India": "New Delhi",
+  "UK": "London",
+}
+fmt.Println(capitalCities["USA"])
+```
+
+#### check that key exists
+```go
+capital, exists := capitalCities["Germany"]
+if exists {
+  fmt.Println("this is the capital", capital)
+} else {
+  fmt.Println("not exists")
+}
+```
+
+#### check that exist
+```go
+capital, exists := capitalCities["Germany"]
+if exists {
+  fmt.Println("this is the capital", capital)
+} else {
+  fmt.Println("not exists")
+}
+```
+
+#### delete from map
+```go
+delete(capitalCities, "UK")
+fmt.Printf("new capital cities %v\n", capitalCities)
+```
+

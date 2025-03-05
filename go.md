@@ -277,7 +277,7 @@ if age >= 18 {
 ```
 
 #### switch
-there is no break
+there is no break  
 it doesn't flow to next case
 
 ```go
@@ -307,7 +307,7 @@ case 3:
 ```go
 for i := 0; i < 5; i++ {
 ```
-  fmt.Println("this is i", i)
+  fmt.Println("this is i", i)  
 }
 
 #### no while
@@ -335,7 +335,7 @@ for {
 ```
 
 ### Arrays and slices
-Arrays cannot change size
+Arrays cannot change size  
 Arrays have to hold values of same type
 
 ```go
@@ -352,7 +352,7 @@ len(numbers)
 numbers[len(number) - 1]
 ```
 
-array with size set on initialization
+array with size set on initialization  
 *not often seen in real code*
 ```go
 numbers := [...]int{10, 20, 30, 40, 50}
@@ -369,19 +369,19 @@ fmt.Printf("this is our matrix %v\n", matrix)
 #### slices
 somthing like dynamic arrays
 
-slice is defined with size
-but if we want to add more elements,
-go compiler will double size every time
+slice is defined with size  
+but if we want to add more elements,  
+go compiler will double size every time  
 when it needs more space
 
-in reallity when more space is needed
+in reallity when more space is needed  
 it will create new array
 
 #### slice of array
-another definition
+another definition  
 a portion of array
 
-it can be also entire array
+it can be also entire array  
 if you want to make it more dynamic
 
 ```go
@@ -396,7 +396,7 @@ allNumbers.append(...)
 ```
 
 #### create new slice
-without array
+without array  
 it will be slower, but can be dynamic
 ```go
 fruits := []string{}

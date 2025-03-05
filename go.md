@@ -719,3 +719,52 @@ package.json equivalent
 
 #### go.sum
 package.lock equivalent
+
+### Add database
+persist data on volume  
+so that data stays even after container is removed
+```yaml
+version: "3.8"
+
+services:
+  db:
+    container_name: "workoutDB"
+    image: postgres:12.4-alpine
+    volumes:
+      - "./database/postgres-data:/var/lib/postgresql/data:rw"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    restart: unless-stopped
+```
+
+add driver
+```bash
+github.com/jackc/pgx/v4/stdlib
+```
+
+#### where to keep passwords
+store AWS secrets  
+Secret Manager
+
+env files seem to be highly dangerous  
+env seem to be good only perhaps on local
+
+#### close connection
+defer  
+will no run this immediatelly  
+but only when function is done
+```go
+defer app.DB.Close()
+```
+
+#### air
+Go doesn't have built in hot reloading  
+hot reloading
+
+#### goose
+package to deal with migrations
+

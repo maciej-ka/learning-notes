@@ -66,7 +66,8 @@ Getting Started with Rails, [Rails Guides](https://guides.rubyonrails.org/gettin
 Introduction to Next.js, [Frontend Masters](https://frontendmasters.com/courses/next-js-v3/)  
 Learn Next.js, [Next.js Docs](https://nextjs.org/docs/app/getting-started)  
 Complete Intro to React, [Frontend Masters](https://frontendmasters.com/courses/complete-react-v9/)  
-Notes on shadcn/ui, form validation, headless components, less common hooks
+Notes on shadcn/ui, form validation, headless components  
+Notes on less common hooks, strict mode
 
 [Ruby](./ruby.md)  
 ===================

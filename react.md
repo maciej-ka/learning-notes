@@ -1,3 +1,18 @@
+Strict mode
+===========
+Stress test components  
+Will stress test application in develop
+
+It will render second time  
+run effects second time  
+and check for deprecated APIs
+
+will uncover:  
+- renders that are not pure
+- incorrectly managed side effects
+
+
+
 shadcn/ui setup
 ================
 https://ui.shadcn.com/
@@ -575,6 +590,9 @@ it's like saying: I want this page to be cached
 now you have to explicitly say: cache it or never cache it
 
 #### <Suspense>
+works with dynamic components  
+(not static)
+
 you can stream a component after it has done its asynchronous work
 
 use it to mix static with dynamic component  

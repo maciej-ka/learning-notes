@@ -1,3 +1,12 @@
+Startup Directories
+===================
+Websites that link startups  
+made for early adopters.
+
+Great place to publish your idea first.
+
+
+
 Emmet
 =====
 https://docs.emmet.io/cheat-sheet/

@@ -705,3 +705,17 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 go run main.go
 curl localhost:8080/health
 ```
+
+#### flag package
+enable to parse flags sent from OS
+
+### Add package
+```bash
+go get -u github.com/go-chi/chi/v5
+```
+
+#### go.mod
+package.json equivalent
+
+#### go.sum
+package.lock equivalent

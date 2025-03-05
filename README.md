@@ -41,6 +41,10 @@ Introduction to C# and .NET, [Frontend Masters](https://frontendmasters.com/cour
 =======================
 Elixir in action, [Manning](https://www.manning.com/books/kubernetes-in-action-second-edition)
 
+[Go](./go.md)
+=============
+Complete go, [Frontend Masters](https://frontendmasters.com/workshops/complete-go/)
+
 [Javascript](./javascript.md)  
 ===============================
 Tanstack React Query, [Query.gg](https://query.gg/)  

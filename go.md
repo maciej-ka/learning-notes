@@ -741,7 +741,13 @@ services:
     restart: unless-stopped
 ```
 
-add driver
+run and inspect
+```bash
+docker compose up --build
+psql -U postgres -h localhost -p 5432
+```
+
+add a driver
 ```bash
 github.com/jackc/pgx/v4/stdlib
 ```
@@ -767,4 +773,30 @@ hot reloading
 
 #### goose
 package to deal with migrations
+
+migration is managing database schema  
+by incremental SQL changes
+
+install  
+both as system command  
+and in project
+```bash
+go install github.com/pressly/goose/v3/cmd/goose@latest
+go get github.com/pressly/goose/v3/cmd/goose@latest
+goose -version
+```
+
+if not found
+```bash
+ls -l ~/go/bin | grep goose
+export PATH=$HOME/go/bin:$PATH
+```
+
+#### define interface
+```go
+type WorkoutStore interface {
+  CreateWorkout(*Workout) (*Workout, error)
+  GetWorkoutByID(id int64) (*Workout, error)
+}
+```
 

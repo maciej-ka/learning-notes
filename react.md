@@ -1918,6 +1918,12 @@ useInsertionEffect is for CSS-in-JS library authors.
 useInsertionEffect allows inserting elements into the DOM before any layout Effects fire.
 
 #### useSyncExternalStore
+Allows to subscribe to state that is managed *outside* of React  
+and trigger a re-render whenever that state changes.
+
+for it to work well, subscribe function has to be stable between renders  
+(otherwise it will trigger rerender each time)
+
 useSyncExternalStore is a React Hook that lets you subscribe to an external store.
 
 ```javascript

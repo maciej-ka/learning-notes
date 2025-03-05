@@ -242,7 +242,6 @@ func Add // this is exported
 func add(a int, b int) int {
   return a + b
 }
-
 ```
 
 there is a way to return more then one value  
@@ -265,3 +264,150 @@ sum, _ := calculateSumAndProduct(10, 10)
 ```
 
 ### Controll Structures
+#### if
+```go
+age := 30
+if age >= 18 {
+  fmt.Println("you are an adult")
+} else if age >= 13 {
+  fmt.Printf("you are a teenager")
+} else {
+  fmt.Printf("you are a child")
+}
+```
+
+#### switch
+there is no break
+it doesn't flow to next case
+
+```go
+day := "Tuesday"
+switch day {
+case "Monday":
+  fmt.Println("start of the week")
+case "Tuesday", "Wednesday", "Thursday":
+  fmt.Println("midweek")
+case "Friday":
+  fmt.Println("TGIF")
+default:
+  fmt.Println("its the weekend")
+}
+```
+
+there is way to implicit ask for fallthrough
+```go
+case 2:
+  fmt.Println("Two")
+  fallthrough
+case 3:
+  fmt.Println("Three") // This will execute because of fallthrough
+```
+
+#### c style for loop
+```go
+for i := 0; i < 5; i++ {
+```
+  fmt.Println("this is i", i)
+}
+
+#### no while
+its simply for loop, with different syntax
+
+```go
+counter := 0
+for counter < 3 {
+  fmt.Println("this is the counter", counter)
+  counter++
+}
+```
+
+#### infinite loop
+```go
+iteration := 0
+for {
+  fmt.Println("iteration is", iteration)
+  iteration++
+  // do something
+  if iteration >= 3 {
+    break
+  }
+}
+```
+
+### Arrays and slices
+Arrays cannot change size
+Arrays have to hold values of same type
+
+```go
+// array of five values, initazed
+numbers := [5]int{10, 20, 30, 40, 50}
+fmt.Printf("this is our array %v\n", numbers)
+
+// still array, but with default values
+numbersEmpty := [5]int{}
+numbers[0]
+len(numbers)
+
+// last element
+numbers[len(number) - 1]
+```
+
+array with size set on initialization
+*not often seen in real code*
+```go
+numbers := [...]int{10, 20, 30, 40, 50}
+```
+
+```go
+matrix := [2][3]int{
+  {1,2,3},
+  {4,5,6},
+}
+fmt.Printf("this is our matrix %v\n", matrix)
+```
+
+#### slices
+somthing like dynamic arrays
+
+slice is defined with size
+but if we want to add more elements,
+go compiler will double size every time
+when it needs more space
+
+in reallity when more space is needed
+it will create new array
+
+#### slice of array
+another definition
+a portion of array
+
+it can be also entire array
+if you want to make it more dynamic
+
+```go
+numbers := [5]int{10, 20, 30, 40, 50}
+allNumbers := numbers[:]
+firstThree := numbers[0:3]
+```
+
+then you can append
+```go
+allNumbers.append(...)
+```
+
+#### create new slice
+without array
+it will be slower, but can be dynamic
+```go
+fruits := []string{}
+
+fruits := []string{"apple", "banana", "strawberry"}
+fmt.Printf("these are our fruits %v\n", fruits)
+```
+
+#### append
+```go
+fruits := []string{"apple", "banana", "strawberry"}
+fruits = append(fruits, "kiwi")
+fmt.Printf("these are our fruits %v\n", fruits)
+```

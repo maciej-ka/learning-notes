@@ -521,9 +521,17 @@ person := Person{Name: "John", Age: 25}
 fmt.Printf("This is our person %v\n", person)
 ```
 
-#### show all fields
+we can skip fields  
+default values will be used
+```go
+person := Person{Name: "John"} // Age is 0
+```
+
+
+#### print with field name
 `+v`
 ```go
+person := Person{Name: "John"}
 fmt.Printf("This is our person %+v\n", person)
 ```
 #### anonymous struct
@@ -537,7 +545,6 @@ employee := struct {
 }
 fmt.Printf("This is our employee %v\n", employee)
 ```
-
 #### passed by value
 structs are by default passed by value
 
@@ -551,5 +558,88 @@ import (
   "reflect"
 )
 fmt.Println(reflect.TypeOf(employee))
+```
+
+#### composed structs
+```go
+type Address struct {
+  Street string
+  City string
+}
+
+type Contact struct {
+  Name string
+  Address Address
+  Phone string
+}
+
+contact := Contact{
+  Name: "Marc",
+  Address: Address{
+    Street: "123 Main street",
+    City: "Anytown",
+  },
+}
+
+fmt.Println("this is contact", contact)
+```
+
+#### send as pointer by reference
+this will not work as expected  
+because struct is passed as value  
+and what is modified is living only in scope of function
+```go
+modifyPersonName(person)
+
+func modifyPersonName(person Person) {
+  person.Name = "Melkey"
+}
+```
+
+here we pass by reference  
+and it will work as expected
+```go
+modifyPersonName(&person)
+
+func modifyPersonName(person *Person) {
+  person.Name = "Melkey"
+}
+```
+
+`*` is operator to dereference a pointer
+
+#### dereference operator *
+get a value
+```go
+x := 20
+prt := &x
+fmt.Printf("value of x: %d and address %p\n", x, prt)
+
+*prt = 30
+fmt.Printf("new value of x: %d and address %p\n", x, prt)
+```
+
+#### make a method on struct
+alternative syntax  
+function name is after the struct
+```go
+func (p *Person) modifyPersonName(name string) {
+  p.Name = name
+  fmt.Println("inside scope", p.Name)
+}
+
+person.modifyPersonName("Maciek")
+```
+
+#### overloading?
+more then one signature for a method  
+same method name, different arity or types  
+not possible
+
+#### public method
+capitalize if you want to enable other packages  
+to call that method
+```go
+func (p *Person) ModifyPersonName(name string) {
 ```
 

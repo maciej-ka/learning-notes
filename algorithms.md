@@ -113,6 +113,52 @@ for optimalization
 #### Search
 https://frontendmasters.com/courses/algorithms/linear-search-kata-setup/
 
+### Priority queue, Heap
+(has two names)
+
+it's a binary tree  
+two types:  
+MaxHeap: top value is the highest  
+MinHeap
+
+on every add and delete  
+we must adjust the tree
+
+     --5--  
+    /     \  
+   7       10  
+  / \     /  \  
+10   8   12  11
+
+#### weak ordering
+they are ordered, but it's not perfect  
+it's not usable when traversing
+
+#### heap condition
+for MaxHeap: every node below me is smaller
+
+#### get median
+there is a trick, using two priority queues  
+(it's mostly just an google interview question)
+
+#### how to add?
+put new element on first available place  
+bubble it up by using swaps with parent  
+until it's smaller then parent
+
+#### delete
+grab top element  
+place in it's place item from bottom, on last stop  
+then bubble down  
+swapping with higher of two childs on each step
+
+#### always complete
+all lines filled always from left to right  
+no empty spaces
+
+#### how to store it?
+how to know where's the free spot on bottom?
+
 
 
 Dynamic programming

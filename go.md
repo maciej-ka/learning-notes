@@ -425,6 +425,8 @@ fruits = append(fruits, moreFruits...)
 fmt.Printf("these are our fruits %v\n", fruits)
 ```
 
+`...` is elypsis
+
 initialize with 3 zero values  
 and capacity 3
 ```go

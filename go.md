@@ -139,11 +139,11 @@ go build -o main main.go
 ./main
 ```
 
-it creates new executable file `main`
-there is flag to say platform linux/mac...
+it creates new executable file `main`  
+there is flag to say platform linux/mac...  
 you can build for different architecture arm/intel...
 
-#### comment, variables
+### Variables
 ```go
 // This is comment
 
@@ -167,8 +167,8 @@ fmt.Printf("this is my city %s\n", city)
 ```
 
 #### declare multi vars at once
-var country, continent string = "USA", "North America"
-fmt.Printf("this is my country %s\n", country)
+var country, continent string = "USA", "North America"  
+fmt.Printf("this is my country %s\n", country)  
 fmt.Printf("this is my continent %s\n", continent)
 
 #### declare multi with different types
@@ -200,7 +200,7 @@ var defaultBool bool // false
 ```
 
 #### no null value
-bool can be only true or false
+bool can be only true or false  
 there is no null
 
 #### constants
@@ -230,8 +230,8 @@ const (
 
 iota is keyword
 
-#### functions
-func keyword
+### Functions
+func keyword  
 to make public: capitalize
 
 ```go
@@ -245,7 +245,7 @@ func add(a int, b int) int {
 
 ```
 
-there is a way to return more then one value
+there is a way to return more then one value  
 and in go errors are values
 
 ```go
@@ -258,8 +258,10 @@ sum, product := calculateSumAndProduct(10, 10)
 fmt.Printf("this is sum: %d, this is product %d", sum, product)
 ```
 
-every return type is first class citizen
+every return type is first class citizen  
 you can omit them
 ```go
 sum, _ := calculateSumAndProduct(10, 10)
 ```
+
+### Controll Structures

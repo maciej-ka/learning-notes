@@ -231,6 +231,8 @@ const (
 iota is keyword
 
 ### Functions
+functions are first class citizens
+
 func keyword  
 to make public: capitalize
 
@@ -645,3 +647,61 @@ to call that method
 func (p *Person) ModifyPersonName(name string) {
 ```
 
+### Errors
+#### nil
+`nil` can be used as a error value
+
+#### panic
+if you cannot handle
+
+```go
+if err != nil {
+  panic(err)
+}
+```
+
+### Simple server
+#### define
+```go
+package main
+
+import (
+  "net/http"
+  "time"
+  "fmt"
+
+  "github.com/maciejka/femProject/internal/app"
+)
+
+func main() {
+  app, err := app.NewApplication()
+  if err != nil {
+    panic(err)
+  }
+
+  app.Logger.Println("we are running our app")
+
+  http.HandleFunc("/health", HealthCheck)
+  server := &http.Server{
+    Addr: ":8080",
+    IdleTimeout: time.Minute,
+    ReadTimeout: 10 * time.Second,
+    WriteTimeout: 30 * time.Second,
+  }
+
+  err = server.ListenAndServe()
+  if err != nil {
+    app.Logger.Fatal(err)
+  }
+}
+
+func HealthCheck(w http.ResponseWriter, r *http.Request) {
+  fmt.Fprintf(w, "Status is available\n")
+}
+```
+
+#### run and test
+```bash
+go run main.go
+curl localhost:8080/health
+```

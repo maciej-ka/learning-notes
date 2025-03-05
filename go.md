@@ -501,3 +501,55 @@ delete(capitalCities, "UK")
 fmt.Printf("new capital cities %v\n", capitalCities)
 ```
 
+### Structs
+datatype that can hold data  
+and you can use that bag and pass it around  
+fields can have different types
+
+```go
+type Person struct {
+  Name string
+  Age int
+}
+```
+
+this will create a new type  
+that we can use when using arrays and etc.
+
+```go
+person := Person{Name: "John", Age: 25}
+fmt.Printf("This is our person %v\n", person)
+```
+
+#### show all fields
+`+v`
+```go
+fmt.Printf("This is our person %+v\n", person)
+```
+#### anonymous struct
+```go
+employee := struct {
+  name string
+  id int
+}{
+  name: "Alice",
+  id: 123,
+}
+fmt.Printf("This is our employee %v\n", employee)
+```
+
+#### passed by value
+structs are by default passed by value
+
+#### reflect
+popular package  
+metaprogramming
+
+```go
+import (
+  "fmt"
+  "reflect"
+)
+fmt.Println(reflect.TypeOf(employee))
+```
+

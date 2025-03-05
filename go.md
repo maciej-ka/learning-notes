@@ -411,3 +411,39 @@ fruits := []string{"apple", "banana", "strawberry"}
 fruits = append(fruits, "kiwi")
 fmt.Printf("these are our fruits %v\n", fruits)
 ```
+
+append more than one element
+```go
+fruits = append(fruits, "mango", "pineapple")
+fmt.Printf("these are our fruits %v\n", fruits)
+```
+
+append another slice
+```go
+moreFruits := []string{"blueberries", "tomato"}
+fruits = append(fruits, moreFruits...)
+fmt.Printf("these are our fruits %v\n", fruits)
+```
+
+initialize with 3 zero values  
+and capacity 3
+```go
+scores := make([]int, 3)
+fmt.Printf("scores %v\n", scores)
+```
+
+initialize with 3 zero values  
+and capacity 5  
+you can add two more items  
+without need to resize  
+(without engine creating a new array)
+```go
+scores := make([]int, 3, 5)
+fmt.Printf("scores with capacity %v\n", scores)
+```
+
+check capacity
+```go
+cap(scores)
+```
+

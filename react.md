@@ -1,3 +1,387 @@
+Tan Stack Query, React Query
+============================
+https://query.gg/
+
+### Why React Query
+Why specific piece technology gets popular?  
+it allows devs to stop thinking about the problem  
+by adding a abstraction over it
+
+Components encapsulate both the visual representation  
+as well as state and logic that goes along with it
+
+it's not uncommon to compose and reuse non-visual logic  
+this is a fundamental problem react hookse werer created to solve
+
+just as components enabled to compose and reuse ui  
+hook enabled to compose and reuse non visual logic
+
+#### how do we fetch data with hooks?  
+none of built-in hooks is designed   
+for the most common non ui task: data fetching  
+closest we get is `useEffect` and `useState`
+
+```javascript
+const [id, setId] = React.useState(1)
+const [pokemon, setPokemon] = React.useState(null)
+
+React.useEffect(() => {
+  const handleFetchPokemon = async () => {
+    setPokemon(null)
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+    const json = await res.json()
+    setPokemon(json)
+  }
+  handleFetchPokemon()
+}, [id])
+```
+
+#### isLoading and errors
+not handling loading or error states leads to  
+a cumulative layout shift and infinite loading on error  
+which can be solved by adding more state: `isLoading` and `error`
+
+#### burst of requests
+not handling a case, where id changes so fast  
+that two requests are sent before any result, leading to race condition  
+which can be solved by ignore flag inside cleanup function closure  
+*cleanup function is called after each dependencies change*
+
+```javascript
+useEffect(() => {
+  let ignore = false
+  ...
+  if (!ignore) {
+    setPokemon(json)
+  });
+
+  return () => {
+    ignore = true
+  }
+})
+```
+
+all above can be turned into custom hook  
+but it will not handle another problem...
+
+#### data duplication
+request is local to the component  
+if two components make same request, loaders will be independent  
+which can be solved by hoising state and moving it to context  
+it will really complicate code at this point
+
+and using context to share dynamic data leads to a problem  
+context lacks a way to subscribe to a piece of state  
+to not render on changes component doesn't care about
+
+#### mem cache optimization
+if query repeats, server previous response from cache  
+however this needs some way to invalidate that cache
+
+#### two types of state
+pain point is that we're treating asynchronous state  
+as if it were synchronous
+
+#### synchronous state
+client owned  
+instantly avaialble  
+only client can change it  
+goes away after browser is closed
+
+many options to manage:  
+useState, useReducer, Redux, Zustand
+
+#### asynchronous state
+on server  
+not instant  
+many clients can change it  
+stored in database
+
+managed by React Query,  
+
+#### React Query
+it's a library to manage fetched data  
+it's a asynchronous state manager
+
+it's not a fetch library  
+it doesn't do a fetch, it expect's a Promise instead  
+(which most often is a fetch Promise)
+
+- cache
+- offline support
+- cancellation
+- dependent querying
+- paginated queries
+- scroll recovery, infinite scrolling
+
+### Query Fundamentals
+React Query feels like "perfect amount of magic"  
+for handling asynchronous state
+
+```javascript
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+const queryClient = new QueryClient()
+
+function App () {
+  const [id, setId] = React.useState(1)
+  const { data: pokemon, isLoading, error } = useQuery({
+    queryKey: ['pokemon', id],
+    queryFn: () => fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
+      .then(res => res.json())
+  })
+
+  return (
+    <>
+      <PokemonCard
+        isLoading={isLoading}
+        data={pokemon}
+        error={error}
+      />
+      <ButtonGroup handleSetId={setId} />
+    </>
+  )
+}
+
+export default function Root() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  )
+}
+```
+
+#### Why the @tanstack namespace?
+Tanner Linsley, creator of React Query  
+wrote a core of React Query in pure vanilla JS  
+and it can be easy used with Angular, Vue, Solid and Svelte
+```
+@tanstack/react-query
+@tanstack/vue-query
+@tanstack/svelte-query
+...
+```
+
+there is also `react-query` package  
+but it's only up to version 3
+
+#### Query Client
+contains and manages cache  
+which is a location where all data lives  
+its implemented using in memory hash, `new Map()`
+
+It's important that a client is created outside  
+of your most parent component, so that your cache is stable  
+even when application rerenders
+```javascript
+const queryClient = new QueryClient()
+
+function App () {
+  ...
+```
+
+#### Query ClientProvider
+But because it's outside, we need some way to distribute it in application  
+So that it can be used in any component.
+
+It uses React Context under the hood  
+not to share state, but as a dependency injection  
+QueryClient never changes
+
+```javascript
+<QueryClientProvider client={queryClient}>
+  <App />
+</QueryClientProvider>
+```
+
+#### useQuery
+Primary way to interact
+
+```javascript
+const { data } = useQuery({
+  queryKey: ['luckyNumber'],
+  queryFn: () => Promise.resolve(7)
+})
+```
+
+Under the hood it will subscribe to cache.  
+And it will rerender whenever data in cache changes.
+
+#### queryKey
+By default if cache already has data under the key  
+it will return it immediately  
+if not, it will invoke `queryFn`
+
+queryKey must be globally unique  
+queryFn must return a Promise  
+that resolves with data you want to cache
+
+### deduplication
+Even if this component is used twice  
+in two different places,  
+it will show same result number.
+
+```javascript
+function LuckyNumber() {
+  const { data } = useQuery({
+    queryKey: ['luckyNumber'],
+    queryFn: () => Promise.resolve(Math.random())
+    }
+  })
+}
+```
+
+First invocation of query will populate cache.  
+When it's used again, react query will return cached value immediately  
+without running function again.
+
+When having more components using same query,  
+it makes sense to extract custom hook  
+that will include only that useQuery call.
+
+#### notify react about changes
+Since cache lives outside Component tree  
+how component knows about data changes?
+
+This is done with observer pattern.  
+Components are listeners of cache.
+
+Every time component mounts, it creates observer for each useQuery call.  
+On change the observer will rerender component.  
+This observer is listening for changes in queryKey.  
+Not for changes of whole cache.
+
+### Query lifecycle
+React query is good at making asynchronous code  
+seem to be synchronous.
+
+list media devices:
+```javascript
+const { data: devices } = useQuery({
+  queryKey: ["devices"],
+  queryFn: () => navigator.mediaDevices.enumerateDevices()
+})
+...
+{devices.map(...)}
+```
+
+however this code has a problem,  
+until promise resolves,  
+data will be undefined
+
+for this query has three statuses
+```javascript
+const { data, status } = useQuery({
+...
+"pending"
+"success"
+"error"
+```
+
+or a alternative syntax
+```javascript
+const { data, isPending, isError } = useQuery({
+```
+
+### DIY React Query
+Simple, naive implementation of QueryClient
+
+```javascript
+const QueryClientContext = React.createContext();
+
+export function QueryClientProvider({ client, children }) {
+  return (
+    <QueryClientContext.Provider value={client}>
+      {children}
+    </QueryClientContext.Provider>
+  );
+}
+
+export function useQuery(options) {
+  const queryClient = React.useContext(QueryClientContext);
+  const observerRef = React.useRef();
+
+  if (!observerRef.current) {
+    observerRef.current = createObserver(queryClient, options);
+  }
+
+  return React.useSyncExternalStore(
+    observerRef.current.subscribe,
+    observerRef.current.getSnapshot
+  );
+}
+
+function hashKey(queryKey) {
+  return JSON.stringify(queryKey)
+}
+
+export function createObserver(queryClient, options) {
+  return {
+    subscribe(notify) {
+      const unsubscribe = queryClient.subscribe(
+        (queryKey) => {
+          if (
+            hashKey(options.queryKey) === hashKey(queryKey)
+          ) {
+            notify();
+          }
+        }
+      );
+
+      queryClient.obtain(options);
+      return unsubscribe;
+    },
+
+    getSnapshot() {
+      return queryClient.get(options.queryKey)
+    }
+  }
+}
+
+export class QueryClient {
+  constructor() {
+    this.cache = new Map()
+    this.listeners = new Set()
+  }
+
+  subscribe(listener) {
+    this.listeners.add(listener)
+    return () => this.listeners.delete(listener)
+  }
+
+  get(queryKey) {
+    const hash = hashKey(queryKey)
+    if (!this.cache.has(hash)) {
+      this.set(queryKey, {
+        status: "pending"
+      })
+    }
+    return this.cache.get(hash)
+  }
+
+  set(queryKey, query) {
+    const hash = hashKey(queryKey)
+    this.cache.set(hash, { ...this.cache.get(hash), ...query })
+    this.listeners.forEach((listener) => listener(queryKey))
+  }
+
+  async obtain({ queryKey, queryFn }) {
+    try {
+      if (!this.get(queryKey).promise) {
+        const promise = queryFn()
+        this.set(queryKey, { promise })
+        const data = await promise
+        this.set(queryKey, { status: "success", data, promise: undefined })
+      }
+    } catch(error) {
+      this.set(queryKey, { status: "error", error, promise: undefined })
+    }
+  }
+}
+```
+
+
+
 Strict mode
 ===========
 Stress test components  

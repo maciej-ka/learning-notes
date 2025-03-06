@@ -1,3 +1,27 @@
+How to not tilt (in poker)
+==========================
+https://youtu.be/Ir8UbLySzYg?si=pOfO2ay50IhX8G8U
+
+#### 1. Vent to yourself.
+Internally, allow yourself for full anger.  
+"This idiot, he normally wouldn't have a chance ..."  
+Say to yourself angry words, quiet, in mind.  
+Moment of internal rage, no limits in words.
+
+#### 2. Focus on present
+Ask yourself, how do you feel.  
+Emotions? anger  
+Physically? Heart beating, feet tapping, sweat
+
+#### 3. New Agy short relax
+Sort of short meditation.  
+Three depth breaths.  
+Perhaps close eyes.
+
+#### 4. Ask, what do you want?
+And how you want to be.  
+Focused, engaged, dominant.
+
 Personal observations (partially in polish)
 ===========================================
 ### Ćwicz Ton (jak głośno)

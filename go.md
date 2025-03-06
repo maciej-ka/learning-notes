@@ -902,3 +902,20 @@ requires another db call
 ```bash
 goose -dir migrations postgres "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable" up
 ```
+
+### Go tools
+Has a bit reputation of being boring.
+
+It's a lot about writing things yourself.  
+And doing it again and again.  
+And not using libraries so much.
+
+That said, things worth considering:
+
+#### Routes
+Chi
+
+#### ORM
+could be usefull
+
+

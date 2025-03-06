@@ -1,41 +1,42 @@
 PSQL cheatsheet
 ===============
-Start
+#### Connect
 ```bash
 psql -U postgres
+psql -U postgres -h localhost -p 5432
 ```
 
-List databases
+#### List databases
 ```
 \l
 ```
 
-Connect to a specific database
+#### Connect to a database
 ```
 \c database-name
 ```
 
-List all from connected database
+#### List all
 ```
 \d
 ```
 
-List tables in the current database
+#### List tables
 ```
 \dt
 ```
 
-List tables from all schemas
+#### List tables from all schemas
 ```
 \dt *.*
 ```
 
-Describe table
+#### Describe table
 ```
 \d table-name
 ```
 
-General help on psql commands
+#### General help
 ```
 \?
 ```

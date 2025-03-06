@@ -804,3 +804,37 @@ type WorkoutStore interface {
 }
 ```
 
+### Testing in Go
+#### Books
+Thorsten Ball books  
+writing a compiler in go  
+writing an interpreter in go
+
+indepth video about testing  
+https://www.youtube.com/watch?v=8hQG7QlcLBk
+
+#### how to test with db
+we will be spinning another database  
+that will be just used for testing  
+it will be only used to test our SQLs
+
+we will never touch that database manually  
+probably its better to have definition in separate compose file
+
+it little blurs difference between unit and integration  
+but we still think about them as unit, because they are not across app
+
+#### mocks?
+goal of writing tests is really check something  
+so there is a place for using mocks  
+but you want to really know, are you doing things correctly
+
+#### workout_store_test.go
+name is important
+
+#### testify
+package  
+stretcher, golden standard to use in go
+```bash
+go get github.com/stretchr/testify
+```

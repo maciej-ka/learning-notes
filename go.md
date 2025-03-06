@@ -838,3 +838,67 @@ stretcher, golden standard to use in go
 ```bash
 go get github.com/stretchr/testify
 ```
+
+### Authorization
+```bash
+go get golang.org/x/crypto/bcrypt
+```
+
+#### OAuth 2.0
+users third party identity provider  
+sign with Google  
+they store every rather you and your system  
+token handshake between your sever and their
+
+a lot of good pros  
+Google and other store a lot for you  
+(you may need to store user settings)
+
+perhaps you may need to store token  
+(short time token which you can exchange for long term token)
+
+super good  
+super fast  
+a lot of libraries
+
+cons:  
+you don't have access to their data  
+you're depenedent on Google, etc.
+
+#### Stateless Token Authentication
+JWT  
+everything is encoded into a token  
+has three parts: encoding info, who signed, signature  
+stored on client side in cookie or store  
+done in memory  
+all information is in token
+
+most probably you will still need additional call to db  
+for information that is a not part of token
+
+pros:  
+you don't need to do lookup
+
+cons:  
+once issued, this cannot be revoked  
+(only way is to revoke signature method)  
+but that will effect everyone
+
+they can be hacked  
+because they are on client side, they can be potentially stolen  
+don't store in it any passwords or anyting
+
+#### Stateful Token Authentication
+token is stored server side  
+in database  
+token table: who it belongs, when it expires  
+our backend has controll over tokens  
+we can easily block a user when we detect some actions from him
+
+cons:  
+requires another db call
+
+#### apply changes in goose
+```bash
+goose -dir migrations postgres "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable" up
+```

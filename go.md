@@ -203,6 +203,10 @@ var defaultBool bool // false
 bool can be only true or false  
 there is no null
 
+you cannot have nil boolean  
+but you can have nil pointer to boolean  
+(and this is the way to achieve that 3rd logic value)
+
 #### constants
 obviously they don change
 

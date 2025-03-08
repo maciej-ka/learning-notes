@@ -151,3 +151,66 @@ to solve it use either of these
 var aThirdPrice = 23.0
 var aThirdPrice: Double = 23
 ```
+
+#### core datatypes
+```swift
+String
+Int
+Double
+Bool
+```
+
+less used
+```swift
+Int32
+Int64
+Int8
+UInt
+Float
+```
+
+#### strings
+always created using double quotes  
+(no option for single quote)
+
+```swift
+print("Hello World")
+```
+
+#### string templates
+```swift
+"The \(price) price is \(otherPrice * 1.1)"
+```
+it will convert to string
+
+#### tuples
+```swift
+let coordinate: (Int, In) = (4, 5)
+coordinate.1
+coordinate.0
+```
+
+don't confuse for coordinate[0] (that would be array)
+
+tuples can have different types
+```swift
+let city: (String, Int) = ("Minneapolis", 420_000)
+print(city.0, city.1)
+```
+
+#### tupes with named segments
+it's not a class, just a tuple
+```swift
+let state: (name: String, population: Int, isNice: Bool)
+state = ("Minnesota", 5_640_000, true)
+```
+
+opposite to object arguments  
+tupes when used as arguments  
+are sent by value (not reference)
+```swift
+func printState(state: (name: String, population: Int, isNice: Bool))
+state = ("Minnesota", 5_640_000, true)
+prinState(state: state)
+```
+

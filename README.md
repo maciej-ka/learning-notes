@@ -83,6 +83,10 @@ Notes on Ruby changes from 2016
 The Rust Programming Language, [No Starch Press](https://nostarch.com/rust-programming-language-2nd-edition)  
 Rust for TypeScript Developers, [Frontend Masters](https://frontendmasters.com/courses/rust-ts-devs/)
 
+[Swift](./swift.md/)  
+======================
+iOS App Development with Swift, [Frontend Masters](https://frontendmasters.com/courses/swift-ios/)
+
 [Typescript](./typescript.md)  
 ===============================
 TypeScript: From First Steps to Professional, [Frontend Masters](https://frontendmasters.com/courses/typescript-v4/)  

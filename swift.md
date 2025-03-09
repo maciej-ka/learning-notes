@@ -3,6 +3,9 @@ iOS App Development with Swift
 https://frontendmasters.com/courses/swift-ios/  
 https://firtman.github.io/intro-swift/lessons/intro-to-the-course/intro
 
+#### also check
+https://docs.swift.org/swift-book/documentation/the-swift-programming-language/
+
 ### Basic Expressions
 Swift looks quite modern
 

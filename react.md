@@ -287,15 +287,7 @@ const { data, isPending, isError } = useQuery({
 Simple, naive implementation of QueryClient
 
 ```javascript
-const QueryClientContext = React.createContext();
-
-export function QueryClientProvider({ client, children }) {
-  return (
-    <QueryClientContext.Provider value={client}>
-      {children}
-    </QueryClientContext.Provider>
-  );
-}
+// ...
 
 export function useQuery(options) {
   const queryClient = React.useContext(QueryClientContext);
@@ -311,76 +303,57 @@ export function useQuery(options) {
   );
 }
 
-function hashKey(queryKey) {
-  return JSON.stringify(queryKey)
+// ...
+```
+
+#### wrapping useQuery with custom hook
+to make things nicer
+
+```javascript
+function useBook() {
+  return useQuery({
+    queryKey: ['book'],
+    queryFn: getData,
+  })
 }
+```
 
-export function createObserver(queryClient, options) {
-  return {
-    subscribe(notify) {
-      const unsubscribe = queryClient.subscribe(
-        (queryKey) => {
-          if (
-            hashKey(options.queryKey) === hashKey(queryKey)
-          ) {
-            notify();
-          }
-        }
-      );
+#### fetching the data
+Promise with failed request still resolves (it doesn't reject).  
+To check did it was success, check `response.ok`
 
-      queryClient.obtain(options);
-      return unsubscribe;
-    },
-
-    getSnapshot() {
-      return queryClient.get(options.queryKey)
-    }
-  }
-}
-
-export class QueryClient {
-  constructor() {
-    this.cache = new Map()
-    this.listeners = new Set()
-  }
-
-  subscribe(listener) {
-    this.listeners.add(listener)
-    return () => this.listeners.delete(listener)
-  }
-
-  get(queryKey) {
-    const hash = hashKey(queryKey)
-    if (!this.cache.has(hash)) {
-      this.set(queryKey, {
-        status: "pending"
-      })
-    }
-    return this.cache.get(hash)
-  }
-
-  set(queryKey, query) {
-    const hash = hashKey(queryKey)
-    this.cache.set(hash, { ...this.cache.get(hash), ...query })
-    this.listeners.forEach((listener) => listener(queryKey))
-  }
-
-  async obtain({ queryKey, queryFn }) {
-    try {
-      if (!this.get(queryKey).promise) {
-        const promise = queryFn()
-        this.set(queryKey, { promise })
-        const data = await promise
-        this.set(queryKey, { status: "success", data, promise: undefined })
+```javascript
+const fetchRepose = async () => {
+  try {
+    const response = await fetch("https://api.github.com/orgs/TanStack/repos")
+      if (response.ok) {
+        const data = await response.json()
+        return data
+      } else {
+        throw new Error(`Request failed with status: ${response.status}`)
       }
-    } catch(error) {
-      this.set(queryKey, { status: "error", error, promise: undefined })
-    }
+  } catch (e) {
+    // handle network errors
   }
 }
 ```
 
-
+In react query, try / catch is not needed.  
+If function will throw error, then status of query will become error.
+```javascript
+function useRepos() {
+  return useQuery({
+    queryKey: ['repos'],
+    queryFn: async () => {
+      const response = await fetch("https://api.github.com/orgs/TanStack/repos")
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`)
+      }
+      return response.json()
+    }
+  })
+}
+```
 
 Strict mode
 ===========

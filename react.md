@@ -355,6 +355,62 @@ function useRepos() {
 }
 ```
 
+#### dynamic queries
+how to rerun query with dynamic part?
+
+one way is to use `refetch` and  
+imperativelly tell to run fetch again
+
+```javascript
+const { data, status, refetch } = useRepos(selection)
+// ...
+
+onChange = {(event) () => {
+  const sort = event.target.value
+  setSelection(sort)
+  refetch()
+}}
+```
+
+better, declarative way, is to do it  
+using cache key, `queryKey`
+
+```javascript
+function useRepos(sort) {
+  return useQuery({
+    queryKey: ['repos', { sort }],
+    queryFn: async () => {
+      const response = await fetch(`https://api.github.com/orgs/TanStack/repos?sort=${sort}`)
+    }
+    if (!response.ok) {
+      throw new Error(`Request failed with status: ${response.status}`)
+    }
+    return response.json()
+  })
+}
+```
+
+this is similar to useEffect dependency array  
+but here you don't have to be worried, that key parts  
+are referentially stable
+
+under the hood, when value of queryKey changes  
+then registered listener changes what it listens too
+
+if the query would return to previous value  
+then because cache is already populated, it will be served  
+immediatelly
+
+#### eslint-plugin-query
+plugin to detect that query has some dynamic parts  
+that are not part of queryKey
+
+```bash
+npm i @tanstack/eslint-plugin/query
+```
+
+
+
 Strict mode
 ===========
 Stress test components  

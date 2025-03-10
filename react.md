@@ -409,6 +409,84 @@ that are not part of queryKey
 npm i @tanstack/eslint-plugin/query
 ```
 
+#### example with book id
+```javascript
+function useBook(bookId) {
+  return useQuery({
+    queryKey: ["book", bookId],
+    queryFn: () => getData(bookId),
+  })
+}
+```
+
+#### tanstack devtools
+https://tanstack.com/query/v4/docs/framework/react/devtools
+
+#### cache invalidation
+"There are only two hard things in Computer Science:  
+cache invalidation and naming things."  
+Phil Karlton
+
+cache invalidation is important  
+if there are many users operating on same data  
+and users keep their browsers open on long sessions.
+
+#### Cache Control
+Often cache is invalidated after some time.  
+This header instructs browser, to not request same url within next 60s.
+
+```
+Respose Cache-Control header "public, max-age=60, s-maxage=60"
+```
+
+#### staleTime
+Similar to maxage concept for react query. Expressed in miliseconds.  
+default staleTime is 0
+
+```javascript
+useQuery({
+  queryKey: ['repos', {sort}],
+  queryFn () => fetchRepos(sort),
+  staleTime: 0
+})
+```
+
+some options
+```javascript
+  staleTime: 60 * 1000 * 60
+  staleTime: Infinity
+```
+
+React Query will response with stalled  
+and retrigger function in the background  
+(idea is that stale data is better then no data)
+
+in general this is called  
+Stale-While-Revalidate (SWR)  
+1. Serve stale (cached) data immediately.  
+2. Trigger a revalidation (fetch) in the background.  
+3. Update the cache with fresh data for the next request.
+
+#### Refetch
+data is requeried when:  
+- key has changed
+- a new observer mounts
+- when window received focus event
+- when device goes online
+
+defaults can be changed:
+
+```javascript
+useQuery({
+  queryKey: ['repos', {sort}],
+  queryFn () => fetchRepos(sort),
+  refetchOnMount: false,
+  refetchOnWindowFocus: false,
+  refetchOnReconnect: false,
+})
+```
+
+
 
 
 Strict mode

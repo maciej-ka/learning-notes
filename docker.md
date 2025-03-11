@@ -560,6 +560,7 @@ kubectl expose deployment nginxsvc --port=80
 kubectl describe svc nginxsvc
 kubectl get svc
 kubectl get endpoints
+kubectl get pods -o wide --selector app=nginxsvc
 ```
 
 services connect to pods by labels  

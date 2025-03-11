@@ -1,6 +1,6 @@
 Kubernetes in 4 Hours
 =====================
-Sander van Vugt, O'reilly
+Sander van Vugt, O'Reilly
 
 Service: exposing to outside  
 Volume: making it persistent
@@ -107,6 +107,83 @@ Rancher
 Red Hat OpenShift (this one has a lot of additions)  
 Google Anthos  
 EKS, AKS, GKS
+
+#### sandbox
+https://learning.oreilly.com/interactive-lab/kubernetes-sandbox/9781492062820/
+
+#### Some commands
+Health Check
+```bash
+kubectl cluster-info
+```
+
+View all nodes
+```bash
+kubectl get nodes
+```
+
+View all pods
+```bash
+kubectl get pods --all-namespaces
+```
+
+View local containers
+```bash
+crictl ps
+```
+
+SSH to the second node
+```bash
+ssh node01
+```
+
+#### How to run
+this will create a website client that allow starting applications
+
+```bash
+minikube dashboard
+```
+
+however in dev-ops, it's more important to do configuration  
+and it's not convienent that individual is doing configuration  
+using the web clients like this one  
+so yaml configuration files are way better
+
+plus icon > create from form > deploy
+
+then you see stats:  
+deployments running: 1  
+pods running 3  
+replica sets running 1
+
+#### Resources Kubernetes uses
+Containers put into Pod  
+Pod: minimal unit K8s works on, but this part is not managed  
+Deployment: contains multiple pods
+
+Kubernetes applications are started in isolated network  
+To access them from external, you need Service
+
+#### Service
+Service: it's a misleading name  
+It has load balancer  
+and it makes your application accessible from outside
+
+#### Ingress
+What makes your http and https applicationis accessible  
+it talks with Services
+
+#### Storage
+PVC: persistent volume claim  
+persistent volume: most typically cloud storage
+
+#### Configuration Storage
+Configuration Map  
+Secret
+
+they contain:  
+configuration files  
+environment files
 
 
 

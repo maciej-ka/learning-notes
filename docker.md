@@ -1,3 +1,84 @@
+Kubernetes in 4 Hours
+=====================
+Sander van Vugt, O'reilly
+
+Service: exposing to outside  
+Volume: making it persistent
+
+#### What is Kubernetes
+Platform for running container-based cloud-native applications.
+
+Cloud are couple of servers  
+that are not really visible for us.  
+Around them you build cloud environment  
+And then you run App on that
+
+You don't run app on specific servers.  
+It's decoupled from details of specific servers.
+
+#### how to decouple?
+This is the goal of Kubernetes.  
+You can run your application.  
+And it will be distributed on cloud.
+
+#### resources
+Kubernetes offers different resources that allow storing infroamtin in the cloud.
+
+#### pod
+adds cloud properties to your containers  
+its a set of properties that you add to container
+
+#### deployment
+on how many pods your app is running
+
+#### scalable
+more or less application instances
+
+#### availability
+when your application crashes  
+kubernetes will restart it  
+will make sure it's running
+
+#### orchestrator
+Kubernetes is orchestrator for containers  
+makes sure that services are where they are required  
+Today it's de-facto standard of orchestrating containers in cloud native environment.
+
+#### Google Borg
+Kubernetes is based on Google tech used in data centers (Borg)  
+Kubernetes is Open Source
+
+#### image
+Archive, that has all dependencies required to run application.  
+They are fetched from registries, online repositories.  
+Same image can be started locally and in cloud.
+
+So you can test it reliably locally, and then push them.  
+And they should behave in the same way.
+
+#### container
+A running image.  
+When it's running, container needs to be managed.
+
+#### container engine
+aka "container runtime"  
+Docker, Podman, Kryo
+
+Kubernetes adds cloud features to containers  
+by managinng them in pod resources.
+
+#### Container needs in Cloud
+all are provided by Kubernetes
+- storage not bound to any specific physical environment
+- cluster of hosts to run containers
+- monitoring and self healing of containers
+- solution for updated without downtime
+- a flexible network that can self extend if that is needed
+
+
+
+
+
 Excerpt from Nest.js fundamentals
 =================================
 run docker compose in detached mode  

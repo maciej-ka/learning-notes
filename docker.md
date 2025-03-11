@@ -731,6 +731,67 @@ ls
 you should be able to see created file
 
 ### Config maps
+When you need to provide configuration
+Somethimes you need more config for preprod than prod
+Then you need replication to pick configuration from some place
+And that's why you use Config maps
+
+Commonly used for env vars
+There are also secrets
+They are not really secret, but more secure
+
+```bash
+kubectl create deploy mynewdb --image=mariadb --replicas=3
+kubectl get pods --selector app=mynewdb
+kubectl create cm mynewdbvars --from-literal=MARIADB_ROOT_PASSWORD=password
+kubectl describe cm mynewdbvars
+kubectl set env --from=configmap/mynewdbvars deploy/mynewdb
+kubectl get all --selector app=mynewdb
+```
+
+in this example `kubectl describe cm mynewdbvars` will show that password
+this is not secure and for that there is better solution
+
+```bash
+kubectl get deployments.app mynewdb -o yaml | less
+```
+
+this will be visible as
+and this definition is flexible
+it tells to find config map with that value
+and if config maps can be just found, it will work
+```yaml
+spec:
+  containers:
+  - env:
+    - name: MARIADB_ROOT_PASSWORD
+      valueFrom:
+        configMapKeyRef:
+          key: MARIADB_ROOT_PASSWORD
+          name: mynewdbvars
+```
+
+### Ingress
+Ingress solves problem of resolving domain name,
+so that kubernetes NodePort can understand what IP is requested.
+
+you need Ingress controll
+without it will not work
+
+```bash
+minikube addons list
+minikube addons enable ingress
+kubectl get pods -n ingress-nginx
+kubectl create ing nginxsvc --rule="myapp.info/=nginxsvc:80"
+kubectl describe ing nginxsvc
+```
+
+add minikube ip to /etc/hosts
+curl myapp.info
+
+recently Ingress has gone to feature freeze
+and prefered recent way is `GateApi`
+(but it's more complicated and will take more time)
 
 
 

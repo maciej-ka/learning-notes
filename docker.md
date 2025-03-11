@@ -444,16 +444,16 @@ get pods
 kubectl get pods
 ```
 
-get pods and namespaces
+get pods and namespaces  
 there you can see dashboard and controll
 ```bash
 kubectl get pods -A
 ```
 
-each application will be installed
+each application will be installed  
 in separate namespace
 
-you can say that namespaces can be used
+you can say that namespaces can be used  
 to create virtual data centers
 
 create a namespace
@@ -480,7 +480,7 @@ as alternative
 kubectl get pods -o yaml
 ```
 
-you can also enter pod directly
+you can also enter pod directly  
 however this is not so usefull
 
 ```bash
@@ -490,10 +490,47 @@ kubectl logs mydb-7c9ddb78dc-bs9qk
 kubectl set env deploy/mydb MARIADB_ROOT_PASSWORD=secret
 ```
 
-Last command will update ubernetes deployment named “mydb”
+Last command will update ubernetes deployment named “mydb”  
 by adding (or updating) the environment variable.
 
 ### Access from outside
+#### External, physical network
+Nodes are connected to external, physical network
+
+#### Cluster network
+but Nodes are also connected to software internal network  
+this one is private
+
+#### Pod network
+This is where your pods will connect to  
+private, internal software network
+
+Some parts of you pod network you want to make visible  
+Pod in pod network have port numbers
+
+#### Sevice resource
+Internal Kubernetes load balancer  
+Connected to cluster network  
+Translates request to Pod network
+
+Service uses ClusterIP
+
+every application should be exposed  
+by it's own Service
+
+#### way to make service accessible
+using Node Port  
+its a Service type with port forwarding
+
+user will access external port  
+it's forwarded to service  
+and that is forwarded to pods
+
+#### Ingress
+most applications today are http/https  
+to make your http apps accessible, use Ingress  
+Ingress is a reverse proxy  
+and it's difectly connected to Services
 
 
 

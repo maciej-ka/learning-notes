@@ -26,7 +26,7 @@ And it will be distributed on cloud.
 #### resources
 Kubernetes offers different resources that allow storing infroamtin in the cloud.
 
-#### pod
+#### Pods
 adds cloud properties to your containers  
 its a set of properties that you add to container
 
@@ -435,6 +435,65 @@ template:
 ```bash
 kubectl scale deploy mynginx --replicas=5
 ```
+
+#### namespaces
+isolated environment for running applications
+
+get pods
+```bash
+kubectl get pods
+```
+
+get pods and namespaces
+there you can see dashboard and controll
+```bash
+kubectl get pods -A
+```
+
+each application will be installed
+in separate namespace
+
+you can say that namespaces can be used
+to create virtual data centers
+
+create a namespace
+```bash
+kubectl create ns secret
+kubectl run secretpod --image=nginx -n secret
+kubectl get pods -n secret
+```
+
+#### troubleshooting
+```bash
+kubectl get all
+```
+look for CrashLoopBackOff
+
+tools to troubleshoot
+```bash
+kubectl explain
+kubectl logs
+```
+
+as alternative
+```bash
+kubectl get pods -o yaml
+```
+
+you can also enter pod directly
+however this is not so usefull
+
+```bash
+kubectl create deploy mydb --image=mariadb --replicas=3
+kubectl describe pod mydb-7c9ddb78dc-bs9qk
+kubectl logs mydb-7c9ddb78dc-bs9qk
+kubectl set env deploy/mydb MARIADB_ROOT_PASSWORD=secret
+```
+
+Last command will update ubernetes deployment named “mydb”
+by adding (or updating) the environment variable.
+
+### Access from outside
 
 
 

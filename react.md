@@ -588,6 +588,32 @@ if (status === "success") {
 }
 ```
 
+#### gcTime
+At some point data is too old even to present it as stale.  
+And if it only grows, at some poit it may lead to memory problems.
+
+React query had built in garbage collection. It's called gcTime.  
+And will clean data that has no observers for 5 minutes.  
+(And listeners are removed when listening component is unmount)
+
+Time is configurable
+```javascript
+function useIssues(search) {
+  return useQuery({
+    queryKey: ['issues', search],
+    queryFn: () => fetchIssues(search),
+    enabled: search !== '',
+    staleTime: 5000, // 5 seconds
+    gcTime: 3000 // 3 seconds
+  })
+}
+```
+
+staleTime vs gcTime  
+stale is when data has observers  
+garbage collection is when data has no observers
+
+
 
 
 Strict mode
@@ -2567,8 +2593,7 @@ function selectTab(nextTab) {
 }
 ```
 
-#### error boundary
-
+#### Error Boundary
 ```javascript
 <ErrorBoundary fallback={<div>...</div>}>
   ...

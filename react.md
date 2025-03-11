@@ -457,7 +457,11 @@ some options
   staleTime: Infinity
 ```
 
-React Query will response with stalled  
+When stale duration is finished,  
+React Query will not trigger function.  
+Only when client asks to refetch.
+
+On request React Query will response with stalled  
 and retrigger function in the background  
 (idea is that stale data is better then no data)
 
@@ -486,6 +490,103 @@ useQuery({
 })
 ```
 
+#### Check is stalled, isStale
+Can be used to show message, that data may have changed  
+and provide a link for user to refetch data.
+
+```javascript
+function useBook(bookId) {
+  return useQuery({
+    queryKey: ["book", { bookId }],
+    queryFn: getData(bookId),
+    staleTime: 5000,
+  })
+}
+
+// ...
+function CheckoutMessage {
+  const { data, status, refetch, isFetching, isStale } = useBook()
+}
+```
+
+#### Not fetching immediatelly
+When you want to delay initial query.  
+Until some data is ready or condition is met.
+
+You may wrap all logic in separate component  
+and render it or not based on condition.
+
+But you may also use `enabled` property,  
+like below, when search phrase is non empty:
+
+```javascript
+function useIssues(search) {
+  return useQuery({
+    querykey: ['issues', search],
+    queryFn: () => fetchIssues(search),
+    enabled: search !== ''
+  })
+}
+```
+
+Query can be only in one of three states  
+and there is no separate for "not enabled yet".  
+So "pending" will be used, because it's a status  
+used when data is not in the cache.
+```javascript
+"pending"
+"success"
+"error"
+```
+
+To show loading indicator for enabled/non-enabled use combination  
+of status and fetchStatus.
+```javascript
+const { data, status, fetchStatus } = useIssues(search)
+// ...
+if (status === 'pending') {
+  if (fetchStatus === 'fetching') {
+    return <div>...</div>
+  }
+}
+```
+
+if status is pending: there is no data in cache  
+and fetchStatus pending: query is being executed  
+... then show loading indicator
+
+#### isLoading
+derrived value for combination of status and fetchStatus above
+
+```javascript
+const { data, isLoading } = useIssues(search)
+// ...
+if (isLoading) {
+  return <div>...</div>
+}
+// ...
+data.items.map(...)
+```
+
+#### handle empty data
+In above example , data will be empty initially.  
+When query was not yet enabled, it's not loading.  
+And the cache is empty.
+
+because of that, you usually have to check for success implicitly
+```javascript
+is (isLoading) {
+  return <div>...</div>
+}
+
+if (status === 'error') {
+  return <div>there was an error</div>
+}
+
+if (status === "success") {
+  // ...
+}
+```
 
 
 

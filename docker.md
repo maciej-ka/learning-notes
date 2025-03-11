@@ -96,6 +96,18 @@ Helm: package manager for Kubernetes
 Prometheus: observability tool (checking what your app is doing)  
 and more ...
 
+#### Kubernetes Distributions Alternatives
+Amazon ECS  
+Docker Swarm  
+Hasicorp Nomad  
+Amazon Fargate
+
+#### Kubernetes Distributions
+Rancher  
+Red Hat OpenShift (this one has a lot of additions)  
+Google Anthos  
+EKS, AKS, GKS
+
 
 
 Excerpt from Nest.js fundamentals

@@ -632,8 +632,8 @@ If additional refetch will happen, when waiting for polling,
 Polling timer will reset.
 
 #### polling until done
-it's possible to set polling to work until condition is met
-and then to stop polling. refetchinterval accepts function
+it's possible to set polling to work until condition is met  
+and then to stop polling. refetchinterval accepts function  
 with query as argument.
 
 ```javascript

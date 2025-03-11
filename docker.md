@@ -16,6 +16,8 @@ And then you run App on that
 You don't run app on specific servers.  
 It's decoupled from details of specific servers.
 
+Cloud native is about decoupling
+
 #### how to decouple?
 This is the goal of Kubernetes.  
 You can run your application.  
@@ -62,20 +64,37 @@ When it's running, container needs to be managed.
 
 #### container engine
 aka "container runtime"  
-Docker, Podman, Kryo
+Docker, Podman, Kryo, Container-d
 
 Kubernetes adds cloud features to containers  
 by managinng them in pod resources.
 
 #### Container needs in Cloud
-all are provided by Kubernetes
+all are provided by Kubernetes  
 - storage not bound to any specific physical environment
 - cluster of hosts to run containers
 - monitoring and self healing of containers
 - solution for updated without downtime
 - a flexible network that can self extend if that is needed
 
+#### Kubernetes host platforms
+- hosted service in public cloud: (azure) AKS, (elastic) EKS, GKE (and many more)
+- on top of physicall cluster (on premise), you take care of your servers
+- all-in-one solution, minikube (good for learning)
 
+#### CNCF, standarization of K8
+Cloud native computing fundation.  
+Part of Linux fundation.  
+Standarization of K8s.  
+Google wanted Kubernetes to be Open Sourced.
+
+https://cncf.io/projects  
+Solutions ready to run  
+like container-d a container runtime
+
+Helm: package manager for Kubernetes  
+Prometheus: observability tool (checking what your app is doing)  
+and more ...
 
 
 

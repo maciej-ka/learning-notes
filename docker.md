@@ -262,7 +262,7 @@ kubectl get all
 #### get api resources
 show 
 ```bash
-kubects api-resources
+kubectl api-resources
 ```
 
 has many apis  
@@ -584,7 +584,7 @@ kubectl edit svc nginxsvc
 ```
 
 change type from ClusterIP to NodePort  
-kubectls edit svc nginxsvc
+kubectl edit svc nginxsvc
 ```
   ports:
   - nodePort: 30782
@@ -607,7 +607,130 @@ kubectl get svc
 80:30782/TCP  
 192.168.49.2
 
-however curl 192.168.49.2:30782 is not working
+visit  
+192.168.49.2:30782
+
+### Storage
+Containers are ephemeral by nature.  
+To prevent data loss, use volume.
+```bash
+kubectl explain pod.spec.volumes
+```
+
+many options  
+we will use emptyDir and hostPath
+
+shared storage between two containers
+```yaml
+volumes: 
+  - name: test
+    emptyDir: {}
+```
+
+and then on each container define
+```yaml
+volumeMounts:
+  - mountPath: /centos1
+    name: test
+```
+
+end for second container
+```yaml
+volumeMounts:
+  - mountPath: /centos2
+    name: test
+```
+
+test that volume is shared
+```bash
+kubectl create -f morevolumes.yaml
+kubectl get pods morevol
+kubectl describe pods morevol | less
+kubectl exec -ti morevol -c centos1 -- touch /centos1/test
+kubectl exec -ti morevol -c centos2 -- ls -l /centos2
+```
+
+#### Persistent storage
+let's say you have preprod and production environment  
+and let's say that you have two solutions for storage
+
+if you wan't to be able to change it automatically  
+then use storage provision  
+StorageClass
+
+pod -> pvc  
+persistent volume claim  
+pvc will talk with StorageClass  
+StorageClass will respond with created persistent volume  
+(that it creates by calling provisioner)
+
+MiniKube also has a storage class  
+so that it can be also used in that dynamic storage
+
+```bash
+kubectl get pvc,pv,storageclass
+```
+
+persistent storage can be only created by yaml file
+(not cli directly)
+pvc.yaml
+```yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+```
+
+run it
+```bash
+kubectl apply -f pvc.yaml
+kubectl get pv
+```
+
+example of client
+pv-pod.yaml
+```yaml
+kind: Pod
+apiVersion: v1
+metadata:
+   name: pv-pod
+spec:
+  volumes:
+    - name: pv-storage
+      persistentVolumeClaim:
+        claimName: pv-claim
+  containers:
+    - name: pv-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: pv-storage
+```
+
+run it
+```bash
+kubectl apply -f pv-pod.yaml
+kubectl exec -it pv-pod -- touch /usr/share/nginx/html/HELLO
+minikube ssh
+cd /tmp
+ls
+cd hostpath-provisioner/default/pv-claim
+ls
+```
+
+you should be able to see created file
+
+### Config maps
 
 
 

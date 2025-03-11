@@ -613,6 +613,41 @@ staleTime vs gcTime
 stale is when data has observers  
 garbage collection is when data has no observers
 
+#### polling
+If you wan't to invoke periodically  
+at specific interval.
+
+Good for scenarios, when data changes often.  
+And you want UI to be up to date as possible.
+
+```javascript
+useQuery({
+  queryKey: ['repos', { sort }],
+  queryFn: () => fetchRepos(sort),
+  refetchInterval: 5000 // 5 seconds
+})
+```
+
+If additional refetch will happen, when waiting for polling,  
+Polling timer will reset.
+
+#### polling until done
+it's possible to set polling to work until condition is met
+and then to stop polling. refetchinterval accepts function
+with query as argument.
+
+```javascript
+useQuery({
+  queryKey: ['repos', { sort }],
+  queryFn: () => fetchRepos(sort),
+  refetchInterval: (query) => {
+    if (query.state.data?.finished) {
+      return false
+    }
+    return 3000 // 3 seconds
+  }
+})
+```
 
 
 

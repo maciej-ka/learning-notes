@@ -502,6 +502,9 @@ but Nodes are also connected to software internal network
 this one is private
 
 #### Pod network
+Pods are connected to pod network  
+it's behind firewall, and cannot be directly accesssed
+
 This is where your pods will connect to  
 private, internal software network
 
@@ -518,6 +521,10 @@ Service uses ClusterIP
 every application should be exposed  
 by it's own Service
 
+As typically multiple instances of pods are started  
+a load balancer is needed to connect incomming user requests  
+to a specific pod
+
 #### way to make service accessible
 using Node Port  
 its a Service type with port forwarding
@@ -527,10 +534,80 @@ it's forwarded to service
 and that is forwarded to pods
 
 #### Ingress
+Additional resource that provides external access to http  
+Using Ingress requires taht Ingress application is installed on cluster  
+(Ingress controll), it's not added by default  
+Different Ingress solutios are provided by Kubernate ecosystem
+
 most applications today are http/https  
 to make your http apps accessible, use Ingress  
 Ingress is a reverse proxy  
 and it's difectly connected to Services
+
+#### Sevice Types
+ClusterIP: default service, accessible only within cluster  
+NodePort: exposes an external port on the cluster nodes (it's quite limited)  
+Ingress: what should be used for http/https
+
+because NodePort is limited, sometimes to get extra options path is  
+Ingress is calling NodePort
+
+#### Create Service, expose app
+```bash
+kubectl create deployment nginxsvc --image=nginx
+kubectl scale deployment nginxsvc --replicas=3
+kubectl expose deployment nginxsvc --port=80
+kubectl describe svc nginxsvc
+kubectl get svc
+kubectl get endpoints
+```
+
+services connect to pods by labels  
+they know what to expose, because both use nginxsvc label
+
+ports visible in kubectl get svc  
+are ClusterIP
+
+#### curl cluster network
+check that cluster network is working  
+but it will be visible from within cluster  
+10.109.249.15 is read from `kubectl get svc`
+
+```bash
+minikube ssh
+curl 10.109.249.15
+```
+
+#### change type of service
+```bash
+kubectl edit svc nginxsvc
+```
+
+change type from ClusterIP to NodePort  
+kubectls edit svc nginxsvc
+```
+  ports:
+  - nodePort: 30782
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: nginxsvc
+  sessionAffinity: None
+  type: NodePort
+```
+
+#### check service port redirect and ip of engine
+*(this is minikube only command)*
+```bash
+minikube ip
+kubectl get svc
+```
+
+80:30782/TCP  
+192.168.49.2
+
+however curl 192.168.49.2:30782 is not working
 
 
 

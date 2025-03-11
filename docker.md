@@ -30,8 +30,53 @@ Kubernetes offers different resources that allow storing infroamtin in the cloud
 adds cloud properties to your containers  
 its a set of properties that you add to container
 
+basic unit in Kubernetes,  
+represents one or more container  
+that share common resource
+
+```bash
+kubectl get pods
+kubectl get pods  -o yaml | less
+```
+
+output part  
+pod can have one  
+or more containers
+```
+  spec:
+    containers:
+    - image: nginx
+      imagePullPolicy: Always
+      name: nginx
+      resources: {}
+      terminationMessagePath: /dev/termination-log
+      terminationMessagePolicy: File
+      volumeMounts:
+      - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+        name: kube-api-access-zrxr5
+        readOnly: true
+```
+
+other interinst parts
+```
+nodeName: minikube
+priority: 0
+```
+
+kubernetes managed pods, not containers
+
 #### deployment
+the application itself  
+a standard entity of Kubernetes  
 on how many pods your app is running
+
+```bash
+kubectl get deploy
+kubectl get deploy myweb -o yaml | less
+```
+
+contains information of number of replicas
+
 
 #### scalable
 more or less application instances
@@ -184,6 +229,212 @@ Secret
 they contain:  
 configuration files  
 environment files
+
+#### Run and deploy with cli
+same as dashboard above
+
+```bash
+kubectl create deploy myweb --image=nginx --replicas=3
+```
+
+#### Managing kubernetes
+cli (kubectl)  
+API (calling rest api of controll plane directly)  
+web dashboard (click ops)
+
+#### kubectl help
+command shell
+
+```bash
+kubectl --help
+kubectl create --help
+kubectl create deployment --help
+kubectl create deployment -h
+```
+
+help has good documentation  
+and usefull examples
+
+#### get
+```bash
+kubectl get all
+```
+#### get api resources
+show 
+```bash
+kubects api-resources
+```
+
+has many apis  
+v1  
+apps/v1
+
+in the beginning you had to run manually pods and replicationcontrollers  
+(it was long time ago, deployments didn't exist then)
+
+api is extenable, for example ippools is api from calico.org  
+you can add new apis
+
+#### How many containers in Pod?
+Usually, by standard there is one container per one pod  
+There are good cases for having more containers close together
+
+#### Deployment
+To run application create deployments
+```bash
+kubectl create deploy mynginx --image=nginx --replicas=3
+```
+deployment adds scalability, protection and zero-downtime upgrades to pods  
+Do not run standalone pods (naked pods)
+
+If you delete pod that is used  
+by deployment, it will be recreated  
+(new pod will be created in its place)  
+because kubernetes thinks: I need three replicas, one is missing
+```bash
+kubectl delete pod myweb-574d7b7f-c55g4
+```
+
+problem with running naked pods  
+is that they are not protected from accidental delete
+```bash
+kubectl run nginx --image=nginx
+kubectl delete pod nginx
+```
+
+```bash
+kubectl get all
+kubectl get pods
+kubectl get all --selector app=mynginx
+```
+
+create few more
+```bash
+kubectl create deploy second --image=nginx --replicas=5
+```
+
+#### labels
+in some situations get all will be too long  
+to be really usable  
+in those cases use labels to subselect
+
+```bash
+kubectl get all --show-labels
+kubectl get all --selector app-myweb
+kubectl
+```
+
+#### describe
+the way to inspect and troubleshoot  
+also the way to see event logs
+
+```bash
+kubectl describe pod myweb-574d7b7f-l6zq2
+```
+
+if you see  
+Exit code: 1  
+then it means it couldn't start
+
+#### logs
+```bash
+kubectl logs mydb
+```
+
+#### using k8s in declarative way
+so far we are typing all the commands  
+but if your project is larger you prefer standarization
+
+#### yaml manifest
+configuration as code  
+defined in yaml manifest  
+write this once and put in github repo
+
+they can get quite complex
+
+to see runinng yaml  
+you can see it with flag
+```bash
+kubectl get pods  -o yaml | less
+```
+
+#### generate yaml manifest
+generate yaml file with dry-run
+```bash
+kubectl create deploy mynginx --image=nginx --dry-run=client -o yaml
+```
+
+and then write it to file
+```bash
+kubectl create deploy mynginx --image=nginx --dry-run=client -o yaml > mynginx.yaml
+```
+
+deployment should have labels  
+labels are quite important in kubernetes
+
+apiVersion: apps/v1  
+at some point we will have v2
+```bash
+kubectl api-resource  | grep -i deploy
+```
+
+#### what is available
+check kubernetes docs  
+https://kubernetes.io/docs/home
+
+or run explain command  
+what can I put in my specification
+```bash
+kubectl explain deploy.spec | less
+```
+
+#### yaml
+in yaml indentation is important
+
+```yaml
+spec:
+  replicas: 1
+  minReadySeconds: 30
+```
+
+#### apply manifest
+```bash
+kubectl apply -f mynginx.yaml
+```
+
+it will check do some resources have to be created  
+or updated, it will report:
+```
+deployment.apps/mynginx created
+deployment.apps/mynginx configured
+```
+
+after you edit manifest, use `kubectl apply`
+
+to remove all connected resources:
+```bash
+kubectl delete -f mynginx.yaml
+```
+
+you can use kubectl create/update  
+but it's better to use apply  
+because you don't have to distinguish is it created
+
+#### add labels to manifest
+to add more labels, go to template section
+```yaml
+template:
+  metadata:
+    creationTimestamp: null
+    labels:
+      app: mynginx
+      time: break
+```
+
+#### scale running app
+```bash
+kubectl scale deploy mynginx --replicas=5
+```
 
 
 

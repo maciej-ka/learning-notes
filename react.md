@@ -649,6 +649,65 @@ useQuery({
 })
 ```
 
+#### show the time data was received
+```javascript
+const { data, dataUpdatedAt, status } = useActivities()
+```
+
+#### dependent queries
+if possible, it's better to query in parallel to minimize time  
+one way to solve this, is to bundle both fetches in one queryFn
+
+```javascript
+function useMovieWithDirectorDetails(title) {
+  return useQuery({
+    queryKey: ['movie', title],
+    queryFn: async () => {
+      const movie = await fetchMovie(title)
+      const director = await fetchDirector(movie.director)
+      return { movie, director }
+    }
+  })
+}
+```
+
+this works but has drawbacks  
+it couples our requests together:  
+- they are cached togeter and will always fetch and refetch together
+- queries will error together
+- no deduplication: if one director is in two movies, it will be queried twice
+
+it's better to split them into two queries  
+and make second on demand:
+
+```javascript
+function useMovie(title) {
+  return useQuery({
+    queryKey: ['movie', title],
+    queryFn: async () => fetchMovie(title),
+  })
+}
+
+function useDirector(id) {
+  return useQuery({
+    queryKey: ['director', id],
+    queryFn: async () => fetchDirector(id),
+    enabled: id !== undefined
+  })
+}
+
+function useMovieWithDirectorDetails(title) {
+  const movie = useMovie(title)
+  const directorId = movie.data?.director
+  const director = useDirector(directorId)
+
+  return {
+    movie,
+    director
+  }
+}
+```
+
 
 
 Strict mode

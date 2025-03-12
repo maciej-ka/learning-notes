@@ -914,17 +914,23 @@ to populate cache with whatever is a result of that initialData
 this often is used with `queryClient.getQueryData(['posts'])`  
 which enables to read data directy from the cache
 
-however, if you would have staleTime and initialData, then  
-react quey will treat that initialData as any other  
-and will not trigger details query when entering single post
-
 ```javascript
 staleTime: 5000
 initialData: () => {
   return queryClient.getQueryData(['posts'])
 ```
 
-To solve this, use placeholderData which is similar to initialData,  
+it may also make sense to reuse another  
+query object maker function if you have one:
+```javascript
+queryClient.getQueryData(booksByAuthorQuery(author).queryKey)
+```
+
+however, if you would have staleTime and initialData, then  
+react quey will treat that initialData as any other  
+and will not trigger details query when entering single post
+
+To solve this, use `placeholderData` which is similar to initialData,  
 but that data is not persisted in the cache. And thanks to that  
 react query will trigger query when moving to detail page.
 

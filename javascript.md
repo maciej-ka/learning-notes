@@ -67,9 +67,13 @@ JS binary operators
 
 #### double tilde truncate
 ```javascript
-console.log(\~\~4.7);  // Output: 4
+~~4.7 // equal to 4
+~~"123" // equal to 123
 ```
-More performant than Math.floor(), Math.trunc(), or parseInt().
+
+Does string/float to int conversion.  
+And it does floor of number.  
+Faster than Math.floor(), Math.trunc(), or parseInt().
 
 
 

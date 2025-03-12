@@ -963,6 +963,57 @@ const { status, data, isPlaceholderData } = usePost(path)
 
 For solid results, combine on hover prefetching with placeholderData.
 
+#### Pagination
+usually: query params: page number and items per page  
+response: page, data, total_pages
+
+```javascript
+export async function fetchRepose(sort, page) {
+  const response = await fetch(
+    `https://api.github.com/orgs/TanStack/repos
+      ?sort=${sort}
+      &page=${page}
+      &per_page=4`
+  )
+  if (!response.ok) {
+    throw new Error(`Request failed with status: ${response.status}`)
+  }
+
+  return response.json()
+}
+
+function useRepose(sort, page) {
+  return useQuery({
+    queryKey: ['repos', { sort, page }],
+    queryFn: () => fetchRepos(sort, page),
+    staleTime: 10 * 1000,
+  })
+}
+
+const { data, status } = useRepos(sort, page)
+```
+
+To show previous page, while waiting for next page use placeholderData.  
+It accepts one argument, which is holding previous value of useQuery.
+
+```javascript
+return useQuery({
+  queryKey: ['repos', { sort, page }],
+  queryFn: () => fetchRepos(sort, page),
+  staleTime: 10 * 1000,
+  placeholderData: (previousData) => {
+    return previousData
+  }
+})
+```
+
+in paging it may be good idea to always prefetch next page
+```javascript
+React.useEffect(() => {
+  queryClient.prefetchQuery(getReposQueryOptions(sort, page + 1))
+}, [sort, page, queryClient])
+```
+
 
 
 Strict mode

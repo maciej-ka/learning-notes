@@ -850,6 +850,113 @@ function useBookDetails(bookId) {
 const { isPending, isError, reviews, book } = useBookDetails(bookId)
 ```
 
+#### Prefetching
+if you have list of blog posts  
+you could try to load blog entry data ahead  
+before user actually clicks on each of elements
+
+when to prefetch?  
+it's tempting to prefetch all, but this can be a big cost  
+instead we will listen to onMouseEnter on link
+
+```jsx
+<a
+  onClick={() => setPath(post.path)}
+  href="#"
+  onMouseEnter={() => {
+    queryClient.prefetchQuery({
+      queryKey: ['posts', post.path],
+      queryFn: () => fetchPost(post.path)
+      staleTime: 5000
+    })
+  }}
+/>
+```
+
+only goal of queryClient.prefetchQuery is to fill cache  
+so it doesn't return any result, just an empty response
+
+because prefetchQuery expects same arguments as useQuery  
+it makes sense to extract object into maker function
+
+```javascript
+function getPostQueryOptions(path) {
+  return {
+    queryKey: ['posts', path],
+    queryFn: () =>  fetchPost(path),
+    staleTime: 5000
+  }
+}
+
+// ...
+queryClient.prefetchQuery(
+  getPostQueryOptions(post.path)
+)
+```
+
+staleTime in prefetch works as usuall  
+so if at the time of mouse hover cache is populated  
+(and it's not stale) then query will be not run at all
+
+without staleTime every hover would trigger fetch  
+as the default staleTime is zero
+
+(and to fetch only if there is no cache, use staleTime: Infinity)
+
+#### placeholderData, initialData
+One query, that is already resolved, may have some part of data  
+that is expected in another query. And having this app loading can be sometimes improved  
+by first using that partial data, while waiting for result of second query
+
+if you provide initialData option, react query will use it  
+to populate cache with whatever is a result of that initialData
+
+this often is used with `queryClient.getQueryData(['posts'])`  
+which enables to read data directy from the cache
+
+however, if you would have staleTime and initialData, then  
+react quey will treat that initialData as any other  
+and will not trigger details query when entering single post
+
+```javascript
+staleTime: 5000
+initialData: () => {
+  return queryClient.getQueryData(['posts'])
+```
+
+To solve this, use placeholderData which is similar to initialData,  
+but that data is not persisted in the cache. And thanks to that  
+react query will trigger query when moving to detail page.
+
+```javascript
+const {status, data} = usePostList()
+
+function usePost(path) {
+  return useQuery({
+    queryKey: ['posts', path],
+    queryFn: () =>  fetchPost(path),
+    staleTime: 5000
+    placeholderData: () => {
+      return queryClient.getQueryData(['posts'])
+      ?.find((post) => post.path === path)
+    }
+  })
+}
+```
+
+to still show loader for the rest of parts (ones without placeholder)  
+use isPlaceholderData, so that you know that real data is not ready yet
+```javascript
+const { status, data, isPlaceholderData } = usePost(path)
+
+{isPlaceholderData
+  ? <div>...</div>
+  : <div dangerouslySetInnerHTML={{__html: html}} />
+}
+```
+
+For solid results, combine on hover prefetching with placeholderData.
+
 
 
 Strict mode

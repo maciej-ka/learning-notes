@@ -65,6 +65,12 @@ JS binary operators
 | >>       | Right Shift           | 5 >> 1   | 0101 >> 1          | 0010 (2)                          |
 | >>>      | Zero-fill Right Shift | -5 >>> 1 | `11111011 >>> 1`   | Fills with 0 instead of sign bit  |
 
+#### double tilde truncate
+```javascript
+console.log(\~\~4.7);  // Output: 4
+```
+More performant than Math.floor(), Math.trunc(), or parseInt().
+
 
 
 Defensive Semicolon

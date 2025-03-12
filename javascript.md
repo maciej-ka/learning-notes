@@ -1,5 +1,41 @@
-Arrays in Javascript
-====================
+From the Leet Code
+==================
+
+### >> operator
+Division by two, rounded down
+```javascript
+5 >> 1 // 2
+```
+
+### ~~ operator
+#### Convert string to number
+```javascript
+~~"412.7" // 412
+~~"4"     // 4
+~~"-4"    // -4
+```
+
+#### Floor of decimal
+```javascript
+console.log(~~4.7);  // Output: 4
+console.log(~~-4.7); // Output: -4
+```
+
+#### Convert null or undefined to 0
+```javascript
+~~null      // 0
+~~undefined // 0
+~~{}.foo    // 0
+```
+
+Works by applying the bitwise NOT (~) operator twice. Since bitwise operators  
+only work on integers, JavaScript internally converts the number to a 32-bit  
+signed integer.
+
+#### Why to use it
+It is more performant than Math.floor(), Math.trunc(), or parseInt().
+
+### Arrays in Javascript
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array  
 Arrays are stored as a object with indexes as properties  
 these indexes are strings
@@ -17,7 +53,7 @@ arr["05"] = "foo"
 arr                 // (3) [23, 13, 456, 05: 'foo']
 ```
 
-#### Typed array
+#### Typed arrays
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray
 
 faster and better on memory  
@@ -51,10 +87,7 @@ console.log(arr.length); // 10
 | BigInt64Array     | -263 to 263 - 1           | 8             | bigint              |
 | BigUint64Array    | 0 to 264 - 1              | 8             | bigint              |
 
-
-
-JS binary operators
-===================
+### JS binary operators
 | Operator | Name                  | Example  | Binary Calculation | Result                            |
 |----------|-----------------------|----------|--------------------|-----------------------------------|
 | &        | AND                   | 5 & 1    | 0101 & 0001        | 0001 (1)                          |
@@ -64,16 +97,6 @@ JS binary operators
 | <<       | Left Shift            | 5 << 1   | 0101 << 1          | 1010 (10)                         |
 | >>       | Right Shift           | 5 >> 1   | 0101 >> 1          | 0010 (2)                          |
 | >>>      | Zero-fill Right Shift | -5 >>> 1 | `11111011 >>> 1`   | Fills with 0 instead of sign bit  |
-
-#### double tilde truncate
-```javascript
-~~4.7 // equal to 4
-~~"123" // equal to 123
-```
-
-Does string/float to int conversion.  
-And it does floor of number.  
-Faster than Math.floor(), Math.trunc(), or parseInt().
 
 
 
@@ -669,45 +692,6 @@ scalability and eventual consistiency in distributed systems.
 two types of events:  
 domain events  
 integration events.
-
-
-
-From the Leet Code
-==================
-
-### >> operator
-Division by two, rounded down
-```javascript
-5 >> 1 // 2
-```
-
-### ~~ operator
-#### Convert string to number
-```javascript
-~~"412.7" // 412
-~~"4"     // 4
-~~"-4"    // -4
-```
-
-#### Floor of decimal
-```javascript
-console.log(~~4.7);  // Output: 4
-console.log(~~-4.7); // Output: -4
-```
-
-#### Convert null or undefined to 0
-```javascript
-~~null      // 0
-~~undefined // 0
-~~{}.foo    // 0
-```
-
-Works by applying the bitwise NOT (~) operator twice. Since bitwise operators  
-only work on integers, JavaScript internally converts the number to a 32-bit  
-signed integer.
-
-#### Why to use it
-It is more performant than Math.floor(), Math.trunc(), or parseInt().
 
 
 

@@ -47,7 +47,6 @@ Complete go, [Frontend Masters](https://frontendmasters.com/workshops/complete-g
 
 [Javascript](./javascript.md)  
 ===============================
-Tanstack React Query, [Query.gg](https://query.gg/)  
 NestJS Architecture and Advanced patterns, [Nestjs Courses](https://courses.nestjs.com/#architecture)  
 NestJS Fundamentals, [Nest Courses](https://courses.nestjs.com/)  
 NestJS Crud tutorial, [Nest Docs](https://docs.nestjs.com/first-steps)  
@@ -67,6 +66,7 @@ Getting Started with Rails, [Rails Guides](https://guides.rubyonrails.org/gettin
 
 [React](./react.md)  
 =====================
+Tanstack React Query, [Query.gg](https://query.gg/)  
 Introduction to Next.js, [Frontend Masters](https://frontendmasters.com/courses/next-js-v3/)  
 Learn Next.js, [Next.js Docs](https://nextjs.org/docs/app/getting-started)  
 Complete Intro to React, [Frontend Masters](https://frontendmasters.com/courses/complete-react-v9/)  

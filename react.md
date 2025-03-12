@@ -323,7 +323,7 @@ Promise with failed request still resolves (it doesn't reject).
 To check did it was success, check `response.ok`
 
 ```javascript
-const fetchRepose = async () => {
+const fetchRepos = async () => {
   try {
     const response = await fetch("https://api.github.com/orgs/TanStack/repos")
       if (response.ok) {
@@ -951,7 +951,7 @@ function usePost(path) {
 ```
 
 to still show loader for the rest of parts (ones without placeholder)  
-use isPlaceholderData, so that you know that real data is not ready yet
+use `isPlaceholderData`, so that you know that real data is not ready yet
 ```javascript
 const { status, data, isPlaceholderData } = usePost(path)
 
@@ -968,7 +968,7 @@ usually: query params: page number and items per page
 response: page, data, total_pages
 
 ```javascript
-export async function fetchRepose(sort, page) {
+export async function fetchRepos(sort, page) {
   const response = await fetch(
     `https://api.github.com/orgs/TanStack/repos
       ?sort=${sort}
@@ -982,7 +982,7 @@ export async function fetchRepose(sort, page) {
   return response.json()
 }
 
-function useRepose(sort, page) {
+function useRepos(sort, page) {
   return useQuery({
     queryKey: ['repos', { sort, page }],
     queryFn: () => fetchRepos(sort, page),
@@ -1016,6 +1016,115 @@ React.useEffect(() => {
   queryClient.prefetchQuery(getReposQueryOptions(sort, page + 1))
 }, [sort, page, queryClient])
 ```
+
+#### Infinite scroll
+for this case, we need a single cache entry  
+that we can append to every time we get new data
+
+Instead of managing the page state in React  
+`useInfiniteQuery` will manage it for you
+
+`queryFn` accepts parameter (always, not only in useInfiniteQuery)  
+called a query function context, which is information about query itself
+
+```javascript
+function usePosts() {
+  return useInfiniteQuery({
+    queryKey: ['posts'],
+    initialPageParam: 1,
+    queryFn: ({ pageParam }) => fetchPosts(pageParam),
+    getNextPageParam: (lastPage, allPages, lastPageParam) => {
+      // to tell that there are no more pages: return undefined
+      if (lastPage.length === 0) { return undefined }
+      return lastPageParam + 1
+    }
+  })
+}
+```
+
+lastPage: data from the last page fetched  
+allPages: all the pages fetched so far  
+lastPageParam: pageParam used to fetch last loaded page
+
+return  
+useQuery: returns data in cache key  
+useInfiniteQuery: return both the data and the page that data is associated with
+
+result looks like this:
+```javascript
+{
+  "data": {
+    "pages": [
+      [ {}, {}, {} ],
+      [ {}, {}, {} ],
+      [ {}, {}, {} ]
+    ],
+    "pageParams": [1, 2, 3]
+  }
+}
+```
+
+if you prefer normal array, use
+```javascript
+data?.pages.flat()
+```
+
+working with infinite scroll in component
+```javascript
+const {
+  status,
+  data,
+  fetchNextPage,
+  isFetchingNextPage,
+  hasNextPage,
+} = usePosts()
+```
+
+potentially you can have infinite queries in both directions
+```javascript
+function usePosts() {
+  return useInfiniteQuery({
+    getNextPageParam: (lastPage, allPages, lastPageParam) => { ... }
+    getPreviousPageParam: (firstPage, allPages, firstPageParam) => {
+      if (firstPageParam <= 1) {
+        return undefined
+      }
+      return firstPageParam - 1
+    }
+  })
+}
+```
+
+detect that scroll is at position that next page should be loaded  
+using @uidotdev/usehooks (https://usehooks.com/)  
+which will detect whenever element with attached ref comes into the view
+
+```javascript
+const [ref, entry] = useIntersectionOberserver();
+
+React.useEffect(() => {
+  if (entry?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+    fetchNextPage()
+  }
+}, [entry?.isIntersecting, hasNextPage, isFetchingNextPage])
+
+{index === page.length - 3 ? <div ref={ref} /> : null }
+```
+
+How does refetching with infinite queries?  
+so that the user sees most actuall data.  
+React Query refetches first page in cache,  
+then get's next page, untill all are refetched.
+
+Infinite query is only one cache entry  
+so while each page is a separate fetch, they form one list
+
+It has to refetch all pages  
+And if we would only refetch some of pages  
+then there would be no guarantee, that list is consistent
+
+this may be a problem for network, so there is a maxPages option  
+which will limit how many pages are kept in cache
 
 
 

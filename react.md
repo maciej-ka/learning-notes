@@ -996,6 +996,9 @@ const { data, status } = useRepos(sort, page)
 To show previous page, while waiting for next page use placeholderData.  
 It accepts one argument, which is holding previous value of useQuery.
 
+If queryKey is dynamic and transition is just happening,  
+it will return data from previous key.
+
 ```javascript
 return useQuery({
   queryKey: ['repos', { sort, page }],

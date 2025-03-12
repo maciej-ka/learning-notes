@@ -708,6 +708,113 @@ function useMovieWithDirectorDetails(title) {
 }
 ```
 
+this will sometimes require checking errors from both queries  
+btw. if we would destructure, then both would be named `isError`
+
+```javascript
+const movie = useMovie(title)
+const director = useDirector(movie.data?.director)
+
+if (movie.isError || director.isError) {
+  return <Error />
+}
+```
+
+#### parallel queries
+the more you can do in parallel, the better  
+if resources have nothing common
+
+at a risk of layout shift, every request can be separate  
+and page could have several loaders
+
+you can couple requests using Promise.all  
+but this will have problems of shared cache between two queries
+
+if you want requests to be cached separately  
+but be able to call them in one hook
+
+`useQueries`  
+gives you flexibility to crate an arbitrary number of queries,  
+all in parallel, and then derive any value you need  
+from all the queries as a whole.
+
+```javascript
+import { useQueries } from '@tanstack/react-query'
+
+function useReposAndMembers() {
+  return useQueries({
+    queries: [
+      {
+        queryKey: ['repos'],
+        queryFn: fetchRepos,
+      },
+      {
+        queryKey: ['members'],
+        queryFn: fetchMembers,
+      }
+    ]
+  })
+}
+
+const [repos, members] = useReposAndMembers()
+{respos.isError ? ...}
+```
+
+check that any is loading
+```javascript
+const areAnyPending = [repos, members].some(
+  (query) => query.status === 'pending'
+)
+```
+
+check that all are loading
+```javascript
+const areAllPending = [repos, members].every(
+  (query) => query.status === 'pending'
+)
+```
+
+number of queries passed to useQueries can be dynamic
+```javascript
+function useIssues(repos) {
+  return useQueries({
+    queries: repos?.map((repo) => ({
+      queryKey: ['repos', repo.name, 'issues'],
+      queryFn: async () => {
+        const issues = await fetchIssues(repo.name)
+        return { repo: repo.name, issues }
+      }
+    })) ?? []
+  })
+}
+
+const issues = useIssues(repos.data)
+const repoIssues = issues.find(
+  query => query.data?.repo === repo.name
+)
+const length = repoIssues?.data.issues.length
+```
+
+combine total number of issues  
+you can use either map and reduce ofer issues  
+or a field in useQueries
+
+```javascript
+function useIssues(repos) {
+  return useQueries({
+    queries: repos?.map((repo) => ({ ... })) ?? []
+    combine: (issues) => {
+      const totalIssues = issues
+        .map(({ data }) => data?.issues.length ?? 0)
+        .reduce((a, b) => a + b, 0)
+      return { issues, totalIssues }
+    }
+  })
+}
+
+const { issues, totalIssues } = useIssues(repos.data)
+```
+
 
 
 Strict mode

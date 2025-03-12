@@ -1031,8 +1031,8 @@ called a query function context, which is information about query itself
 function usePosts() {
   return useInfiniteQuery({
     queryKey: ['posts'],
-    initialPageParam: 1,
     queryFn: ({ pageParam }) => fetchPosts(pageParam),
+    initialPageParam: 1,
     getNextPageParam: (lastPage, allPages, lastPageParam) => {
       // to tell that there are no more pages: return undefined
       if (lastPage.length === 0) { return undefined }
@@ -1045,6 +1045,27 @@ function usePosts() {
 lastPage: data from the last page fetched  
 allPages: all the pages fetched so far  
 lastPageParam: pageParam used to fetch last loaded page
+
+if api endpoint returns
+```javascript
+{
+  activities: Array(10),
+  currentPage: 1,
+  totalPages: 12,
+  totalItems: 116,
+}
+```
+
+then getNextPageParam can look like this:
+```javascript
+getNextPageParam: ({ currentPage, totalPages }) => {
+  const nextPage = currentPage + 1
+  if (nextPage > totalPages) {
+    return undefined
+  }
+  return nextPage
+}
+```
 
 return  
 useQuery: returns data in cache key  
@@ -1109,6 +1130,29 @@ React.useEffect(() => {
 }, [entry?.isIntersecting, hasNextPage, isFetchingNextPage])
 
 {index === page.length - 3 ? <div ref={ref} /> : null }
+```
+
+But more realistic is to have div as a last element on list  
+and some kind of hook like:
+
+```javascript
+const rootRef = React.useRef(null);
+
+const { ref } = useInView({
+  threshold: 0,
+  root: rootRef.current,
+  rootMargin: "40px",
+  onChange: (inView) => {
+    if (inView && gasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }
+});
+
+<ol ref={rootRef}>
+  ...
+  { hasNextPage ? <div ref={ref} : <NoMoreActivities /> }
+</ol>
 ```
 
 How does refetching with infinite queries?  

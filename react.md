@@ -815,6 +815,41 @@ function useIssues(repos) {
 const { issues, totalIssues } = useIssues(repos.data)
 ```
 
+you can also use combine as a convienent place  
+to calculate isPending and isError for all queries
+
+```javascript
+function useBookDetails(bookId) {
+  return useQueries({
+    queries: [
+      {
+        queryKey: ["book", { bookId }],
+        queryFn: () => getBook(bookId),
+      },
+      {
+        queryKey: ["reviews", { bookId }],
+        queryFn: () => getReviewsForBook(bookId),
+      },
+    ],
+
+    combine: (queries) => {
+      const isPending = queriees.some(query => query.status === 'pending')
+      const isError = queriees.some(query => query.status === 'error')
+      conste [book, reviews] = queries.map((query) => query.data)
+
+      return {
+        isPending,
+        isError
+        book,
+        reviews
+      }
+    }
+  })
+}
+
+const { isPending, isError, reviews, book } = useBookDetails(bookId)
+```
+
 
 
 Strict mode

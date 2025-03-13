@@ -505,6 +505,41 @@ export default async function fetchNotes(since) {
 }
 ```
 
+#### calling sever from client
+sometimes you will have to write it traditional way
+create an api and call it from client with useEffect
+
+sometimes you have to make server run again
+by redirecting again to page
+
+#### ractjs tainted
+because it's dangerously easy to leak secrets
+by just adding one line `"use client"`
+
+so to avoid leaking secrets, you can taint some value
+it will make sure that value is never a part of client bundle
+`experimental_taintObjectReference`
+
+#### when Next is recommended
+when client would be calling server often on many small occassions
+then Next.js feature of simplifying server calls will be very helpful
+
+Next.js would not be recommended if you have very client heavy application
+because almost all of it would be "use client"
+
+#### other RSC attempts
+Pheonix live view
+also Laravel
+
+#### excalidraw
+tool to draw https://excalidraw.com/
+
+### Performance Optimizations
+React generally has good performance.
+Please don't preemptively use `useMemo` everywhere.
+This is just wrong. Wait for this to be needed first.
+
+
 
 
 Tan Stack Query, React Query

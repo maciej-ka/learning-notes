@@ -154,8 +154,8 @@ npm create astro@latest
 ```
 
 #### MDX
-https://mdxjs.com/
-A combination of JSX and markdown, that is compiled to JSX
+https://mdxjs.com/  
+A combination of JSX and markdown, that is compiled to JSX  
 Could be used to enrich static site with dynamic elements.
 
 ```mdx
@@ -172,22 +172,163 @@ flood conditions in many of the nearby rivers.
 ```
 
 ### Server Side Rendering
-v5 of this course goes indepth on this topic
+v5 of this course goes indepth on this topic  
 *all the parts of it are still valid*
 
 #### traditional
-user requests app
-gets index.html
-server returns bundle
-browser gets js, executed js
+user requests app  
+server returns bundle  
+browser gets js, executed js  
 user finally sees rendered app
 
-time to interactive
-and time to paint
+time to interactive  
+and time to paint  
 are almost the same moment
 
-#### make it perceivedly better
+#### improve perceived performance
 so that user can see app before its interactive
+
+user requests app  
+server receives request and prerenders first page  
+server returns react bundle and html  
+browser receives prerendered html and js
+
+user first can see app  
+but interactive is later
+
+however, when connection is very fast  
+SSR will be actually slower than  typical client side
+
+also SSR has some problems, google analytics  
+you cannot execute it when on Server, because browser doesn't exist
+
+measure performance:  
+use google chrome dev tools  
+or lighthouse
+
+```bash
+npm i react@19 react-dom@19 fastify @fastify/static vite
+```
+
+server side and hydration  
+are very sensible to whitespace
+
+there is a way to build what we will write here  
+vite --ssr
+
+write app
+
+ssr/App.js
+```javascript
+import { createElement as h, useState } from "react";
+
+function App() {
+  const [count, setCount] = React.useState()
+  return h(
+    "div",
+    null,
+    h("h1", null, "Hellow Frontend Masters"),
+    h("p", null, "this is ssr"),
+    h("button", { onClick: () => setCount(count + 1) }, `Count: ${count}`)
+  );
+}
+
+export default App;
+```
+
+client part  
+this will never execute on server  
+because we will not import it
+
+ssr/Client.js
+```javascript
+import { hydrateRoot } from "react-dom/client"
+import { createElement as h } from "react"
+import App from './App.js'
+
+hydrateRoot(document.getElementById("root"), h(App));
+```
+
+#### renderToString
+Used for hydration.  
+Produces a larger output because it includes extra React-specific attributes  
+(data-reactroot, data-reactid) needed for hydration.
+
+#### renderToStaticMarkup
+is smaller because it omits these attributes, making it ideal for static, non-interactive HTML.
+
+we want to make as concurent as possible  
+to server header immediatelly,  
+so that browser can start to query css  
+that's why we use split
+
+ssr/server.js
+```javascript
+import fastify from "fastify";
+import fastifyStatic from "@fastify/static";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import path, { dirname } from "node:path";
+import { renderToString } from "react-dom/server";
+import { createElement as h } from "react";
+import App from "./App.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const shell = readFileSync(path.join(__dirname, "dist", "index.html"), "utf8");
+
+const app = fastify();
+app.register(fastifyStatic, {
+  root: path.join(__dirname, "dist"),
+  prefix: "/",
+});
+
+const parts = shell.split("<!--ROOT-->");
+app.get("/", (req, reply) => {
+  reply.raw.write(parts[0]);
+  const reactApp = renderToString(h(App));
+  reply.raw.write(reactApp);
+  reply.raw.writ(parts[1]);
+  reply.raw.end();
+});
+
+app.listen({
+  port: 3000
+})
+```
+
+start to get this in background, while still 
+```html
+<script async defer type="module" src="./Client.js"></script>
+```
+
+```bash
+npm run build
+```
+
+#### microfrontend
+when you have multiple islands
+
+### RSC, React server components
+SSR server side is only on first rendering.  
+They are on server only when you ask for page.  
+And once it's shipped, they are done.  
+*you can have both SSR and RSC*
+
+With RSC you can have relation after first page.
+
+A react server component is a component that only reanders on the server.  
+Client never receives that part. You can start to query SQL in them.
+
+RSC will reduce size of javascript bundle sent to client.
+
+
+
+
+
+
+
 
 
 Tan Stack Query, React Query

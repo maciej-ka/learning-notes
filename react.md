@@ -506,39 +506,87 @@ export default async function fetchNotes(since) {
 ```
 
 #### calling sever from client
-sometimes you will have to write it traditional way
+sometimes you will have to write it traditional way  
 create an api and call it from client with useEffect
 
-sometimes you have to make server run again
+sometimes you have to make server run again  
 by redirecting again to page
 
 #### ractjs tainted
-because it's dangerously easy to leak secrets
+because it's dangerously easy to leak secrets  
 by just adding one line `"use client"`
 
-so to avoid leaking secrets, you can taint some value
-it will make sure that value is never a part of client bundle
+so to avoid leaking secrets, you can taint some value  
+it will make sure that value is never a part of client bundle  
 `experimental_taintObjectReference`
 
 #### when Next is recommended
-when client would be calling server often on many small occassions
+when client would be calling server often on many small occassions  
 then Next.js feature of simplifying server calls will be very helpful
 
-Next.js would not be recommended if you have very client heavy application
+Next.js would not be recommended if you have very client heavy application  
 because almost all of it would be "use client"
 
 #### other RSC attempts
-Pheonix live view
+Pheonix live view  
 also Laravel
 
 #### excalidraw
 tool to draw https://excalidraw.com/
 
 ### Performance Optimizations
-React generally has good performance.
-Please don't preemptively use `useMemo` everywhere.
-This is just wrong. Wait for this to be needed first.
+React generally has good performance.  
+Please don't preemptively use `useMemo` everywhere.  
+This is just wrong. Wait for this to be needed first.  
+memo, useMemo, useCallback
 
+#### Jank
+when you scroll down  
+page pauses and then jumps
+
+#### setting html
+watch out for cross site scripting when using this
+```javascript
+dangerouslySetInnerHTML={{ __html: render(options.text) }}
+```
+
+#### memo
+React.memo  
+if my props didn't change, don't rerender me
+
+however, if you send object in props  
+and it's recreated on each parent render,  
+then it will bust that memo, because two objects are never equal  
+(referential equality)
+
+and also when you pass function
+
+#### useMemo
+```javascript
+const options = useMemo(() => ({ text, theme }), [text, theme]);
+```
+
+#### useCallback
+```javascript
+const render = useCallback((text) => marked.parse(text), []);
+```
+
+actually useCallback is implemented using useMemo  
+and is exactly same as:
+```javascript
+const render = useMemo(() => (text) => marked.parse(text), []);
+```
+
+#### problems with overusing
+If you start to overuse `React.memo`, `useMemo` and `useCallback`  
+then you will start to have a problem that some of parts are not refreshing.
+
+And you will have to investigate why that is happening.
+
+#### React compiler
+How compiler works:  
+I don't think this can ever change  
+so I will memoize this for you
 
 
 

@@ -323,9 +323,47 @@ Client never receives that part. You can start to query SQL in them.
 
 RSC will reduce size of javascript bundle sent to client.
 
+controvelsial Next.js decision  
+in Next.js everything is server component by default  
+and to make something client you have to implicitly tell it
 
+you cannot use `useState` in server component
 
+additional cognitive load: am I on server / am I on client?
 
+if you have problems with latency  
+then everytime you interact with client side, there may be request to server  
+and in that scenario latency can be also a problem
+
+RSC remind a lot PHP  
+and a lot of discussion to do or not RSC is  
+should I do application like PHP or SPA
+
+#### server actions
+your app will generate micro APIs, micro endpoints
+
+#### unstable api
+generally don't write RSC by hand  
+but to understand it better we will do  
+but in the end, use RSC by some framework
+
+technically RSC could be integrated in for example Rust app.
+
+today use:  
+Next.js
+
+soon:  
+React Router v7 / Remix  
+TanStack  
+(here not server but client will be default)
+
+both teams said they will support only subset  
+not whole RSC specification
+
+#### Options for OAuth solutions
+Neon Auth  
+Descope  
+Clerk
 
 
 
@@ -3085,6 +3123,7 @@ and there is no javascript waiting to hydrate it
 
 Complete Intro to React
 =======================
+https://frontendmasters.com/courses/complete-react-v9/  
 https://react-v9.holt.courses/  
 https://github.com/btholt/citr-v9-project
 

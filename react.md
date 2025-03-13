@@ -366,6 +366,67 @@ Descope
 Clerk
 
 
+### RSC without Next
+a lot of requirements
+```bash
+npm install @babel/core@7.26.8 @babel/plugin-transform-modules-commonjs@7.26.3 @babel/preset-react@7.26.3 @babel/register@7.25.9 @fastify/static@8.1.0 babel-loader@9.2.1 css-loader@7.1.2 doodle.css@0.0.2 fastify@5.2.1 html-webpack-plugin@5.6.3 nodemon@3.1.9 pino-pretty@13.0.0 promised-sqlite3@2.1.0 react@19.0.0 react-dom@19.0.0 react-server-dom-webpack@19.0.0 sqlite3@5.1.7 style-loader@4.0.0 webpack@5.97.1 webpack-cli@6.0.1
+```
+
+`react-server-dom-webpack`  
+this enables node to be RSC server
+
+webpack works like: if it matches this regexp pattern  
+pass the file through this loader
+
+`new HtmlWebpackPlugin({`  
+plugin that will generate index.html for us
+
+in common.js `__dirname` is provided  
+so you don't have to define it yourself
+
+`"dev:server": "node --watch --conditions react-server server/main"`  
+`--conditions react-server` tells node that this is server  
+conditions is a bit like big if  
+it tells node how to resolve the modules
+
+#### Suspense
+if you wait for some part from server, it enables to show loader
+
+#### Is it server or client component
+Usually top level of your app will be server component.  
+You cannot make server components a children of client components.  
+But you can do opposite.
+
+#### Hooks don't work on server
+If you need hooks, use client
+
+#### "use client"
+it's a directive, same as "use strict" in the old javascript days
+
+#### server components can be async
+this is not possible with client components
+```javascript
+export default async function MyNotes() {
+```
+
+in server components  
+elements in component body will be run just once  
+so you can be less carefull about rendering
+
+#### Server component is API route
+you can think about it that way
+
+this will get markup from server  
+and turn it into component
+
+```javascript
+import { createFromFetch } from "react-server-dom-webpack/client"
+const p = createFromFetch(fetchPromise);
+```
+
+#### flight protocol
+a JSON which defines react components to be used  
+here is a definition of component $1...
 
 
 
@@ -1547,7 +1608,7 @@ It's not a good idea to use PUT in useQuery, because:
 - queries are menat to run multiple times
 - queries should be idempotent
 
-And updates are not idempotent and not free of side effects
+And updates are not idempotent and not free of side effects  
 `useMutation` manages the lifecycle of a mutation, rather then performing mutation
 
 ```javascript

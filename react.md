@@ -1,3 +1,14 @@
+Intermediate React, v6
+======================
+Brian Holt, Frontend Masters  
+https://intermediate-react-v6.holt.courses/
+
+
+
+
+
+
+
 Tan Stack Query, React Query
 ============================
 https://query.gg/
@@ -2444,7 +2455,7 @@ jsx and typescript support out of box
 ### Final notes
 check / watch:  
 - fluid compute (on Vercel docs)
-- serverless database (because you cannot have connection in serverless)
+- serverless database (because you cannot have connection in serverless)  
   (they are http sitting behind database)
 
 find a project that challenges you  

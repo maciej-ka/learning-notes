@@ -1541,6 +1541,40 @@ then there would be no guarantee, that list is consistent
 this may be a problem for network, so there is a maxPages option  
 which will limit how many pages are kept in cache
 
+#### Managing Mutation
+It's not a good idea to use PUT in useQuery, because:
+- queries run immediatelly when component mounts
+- queries are menat to run multiple times
+- queries should be idempotent
+
+And updates are not idempotent and not free of side effects
+`useMutation` manages the lifecycle of a mutation, rather then performing mutation
+
+```javascript
+const { mutate } = useMutation({ mutationFn })
+```
+
+when you will invoke mutate, the react query will trigger mutationFn
+```javascript
+function useUpdateUser(id, newName) {
+  return useQuery({
+    queryKey: ['user', id, newName],
+    queryFn: () => updateUser({ id, newName })
+  })
+}
+
+function useUpdateUser() {
+  return useMutation({
+    mutationFn: updateUser,
+  })
+}
+
+const { mutate } = useUpdateUser()
+<form
+  onSubmit={(event) => {
+  }}
+```
+
 
 
 Strict mode

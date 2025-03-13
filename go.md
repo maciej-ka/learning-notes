@@ -904,7 +904,7 @@ goose -dir migrations postgres "postgres://postgres:postgres@localhost:5432/post
 ```
 
 ### Go tools
-Has a bit reputation of being boring.
+Go has a bit reputation of being boring.
 
 It's a lot about writing things yourself.  
 And doing it again and again.  

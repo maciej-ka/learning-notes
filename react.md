@@ -3,10 +3,191 @@ Intermediate React, v6
 Brian Holt, Frontend Masters  
 https://intermediate-react-v6.holt.courses/
 
+#### Certain features of React require Next.
+Nice part of React is composibility.  
+How you can encapsulate part of app and compose these parts.
 
+#### Ways to write
+Function components:  
+Error Boundaries don't work with these  
+componentDidCatch
 
+Components:  
+Not deprecated, but not advised  
+Usually no one uses these anymore
 
+Create class components:  
+Really old way to write
 
+#### Life hack
+If you need to have good notes on something,  
+that you will refer to in your work,  
+write course about that topic.
+
+#### fnm
+Similar to nvm
+
+#### Cascadia Code
+Free fonts
+
+#### note on AI
+Industry moved so far to moving AI, that perhaps it needs comment.  
+Every line of code in repos is hand written.  
+Apart from seeds initial data
+
+Using a lot of AI and "vibing" can end with high house of cards,  
+with no understanding how things work.
+
+But in the end you are responsible for code you ship,  
+so don't overuse AI
+
+#### replit
+https://replit.com/  
+check it, can be impressive
+
+#### React 19
+A long time comming. Since late 2022.  
+React team makes canary and tests it on Facebook  
+and only when they are confident that it's working, they ship it.
+
+Major change: React Sever Components  
+You need a reason for Sever Components, a problem that they will solve.  
+Because it will complicate some of your things.
+
+### React Render Modes
+four modalities to write React code  
+and they are not exclusive  
+it's more four techniquies
+
+### Client-side React
+you ship bundle to browser, traditional SPA  
+your server does nothing for you  
+this is how we wrote React for long and we will still
+
+### SSG: Static Side Generation
+You can build site and host it on github, without paying for server.  
+Its great for tutorials or anything static.
+
+There are some techniques for static
+
+next.config.js
+```javascript
+const config = {
+  output: "export",
+}
+```
+
+start
+```bash
+npm i react@19 react-dom@19
+```
+
+two ways for package  
+common.js / es modules
+
+package.json
+```json
+"type": "module"
+```
+
+emmet  
+html:5
+
+old way to write React, before jx  
+one benefit it doesn't require building
+
+```javascript
+import { createElement as h } from "react";
+
+function App() {
+  return h(
+    "div",
+    null,
+    h("h1", null, "Hellow Frontend Masters"),
+    h("p", null, "This is SSG")
+  );
+}
+```
+
+Render react files to string and store them in build files.  
+Sort of very simple Astro or custom static site generation.
+
+```javascript
+import { renderToStaticMarkup } from "react-dom/server";
+import { createElement as h} from "react";
+import {
+  readFileSync,
+  writeFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  unlinkSync,
+} from "node:fs";
+import { fileURLToPath } from "node:url";
+import path, { dirname } from "node:path";
+import App from "./App.js"
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const distPath = path.join(__dirname, "dist")
+
+const shell = readFileSync(path.join(__dirname, "index.html"), "utf8")
+
+const app = renderToStaticMarkup(h(App));
+const html = shell.replace("<!-- Root -->", app)
+
+if (!existsSync(distPath)) {
+  mkdirSync(distPath)
+} else {
+  const files = readdirSync(distPath)
+  for (const file of files) {
+    unlinkSync(path.join(distPath, file))
+  }
+}
+
+writeFileSync(path.join(distPath, "index.html"), html);
+```
+
+But in reality use Astro, Next.js, (perhaps Gatsby)
+```bash
+npm create astro@latest
+```
+
+#### MDX
+https://mdxjs.com/
+A combination of JSX and markdown, that is compiled to JSX
+Could be used to enrich static site with dynamic elements.
+
+```mdx
+import {Chart} from './snowfall.js'
+export const year = 2023
+
+# Last year’s snowfall
+
+In {year}, the snowfall was above average.
+It was followed by a warm spring which caused
+flood conditions in many of the nearby rivers.
+
+<Chart color="#fcb32c" year={year} />
+```
+
+### Server Side Rendering
+v5 of this course goes indepth on this topic
+*all the parts of it are still valid*
+
+#### traditional
+user requests app
+gets index.html
+server returns bundle
+browser gets js, executed js
+user finally sees rendered app
+
+time to interactive
+and time to paint
+are almost the same moment
+
+#### make it perceivedly better
+so that user can see app before its interactive
 
 
 Tan Stack Query, React Query

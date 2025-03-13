@@ -425,8 +425,85 @@ const p = createFromFetch(fetchPromise);
 ```
 
 #### flight protocol
+it's a markup sent as JSON  
 a JSON which defines react components to be used  
 here is a definition of component $1...
+
+it's not publicly documented  
+and there is no official documentation on it  
+although it's easy to figure out what is it doing
+
+### RSC with Next.js
+There was no React fullstack framework.  
+Meteor: was kind of first attempt to have server and client code together
+
+two ways to use Next.js:
+
+A) it owns everything  
+a little bit like Rails app  
+its backend and frontend
+
+B) middle end server  
+javascript microservices  
+coalesced into one service  
+not really your backend or frantend
+
+#### Note on Monoliths
+don't decompose everything into microservices too early, start as monolith  
+don't do microservices straight from start
+
+```bash
+npx create-next-app@15.1.7 --js --app --src-dir --turbopack
+```
+
+#### offline first
+RSC cannot go together with offline first
+
+#### mix server and client components
+once you are in client land, everything beneath is client  
+you cannot go away from it (altough there is a hack)
+
+how to load server data into client component  
+you can use useEffect as usuall  
+but there is another way
+
+you can wrap client inside server  
+and just pass any server data in props
+
+src/app/teacher/page.js
+```javascript
+import TeacherClientPage from "./clientPage";
+import fetchNotes from "./fetchNotes";
+
+export default async function TeacherView() {
+  const initialNotes = await fetchNotes();
+  return (
+    <TeacherClientPage initialNotes={initialNotes} fetchNotes={fetchNotes} />
+  );
+}
+```
+
+src/app/teacher/fetchNotes.js
+```javascript
+"use server";
+import { AsyncDatabase } from "promised-sqlite3";
+
+export default async function fetchNotes(since) {
+  const db = await AsyncDatabase.open("./notes.db");
+  let rows;
+  if (since) {
+    rows = await db.all(
+      "SELECT n.id as id, n.note as note, ..."
+      [since]
+    );
+  } else {
+    rows = await db.all(
+      "SELECT n.id as id, n.note as note, ..."
+    );
+  }
+  return rows;
+}
+```
 
 
 

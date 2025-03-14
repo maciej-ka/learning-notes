@@ -624,7 +624,7 @@ then after clicking you have to wait
 even if you know you made mistake
 
 #### transition
-takes adventage of scheduler
+takes adventage of scheduler  
 it enables UI to stay interactive
 
 change 
@@ -657,8 +657,8 @@ async function getNewScore(game) {
 }
 ```
 
-or even better, to avoid race conditions
-although in this case this UI is so small
+or even better, to avoid race conditions  
+although in this case this UI is so small  
 that it probably will never happen
 
 ```javascript
@@ -673,21 +673,72 @@ async function getNewScore(game) {
 }
 ```
 
-what useTransition is doing
+what useTransition is doing  
 it's delegating some of changes to lower priority renders
 
-as effect, the page will stay where it is
+as effect, the page will stay where it is  
 until everything is ready, and only then UI will change
 
-you may have inside of your useTransition some operations
-but then these will be called each time
-no matter did user changed his mind
+you may have inside of your useTransition some operations  
+but then these will be called each time  
+no matter did user changed his mind  
 (because UI itself is ignored if user changed his mind)
 
 ### Optimistic UI update
-when UI reports result of action immediatelly
-even though there is server request in the background
+when UI reports result of action immediatelly  
+even though there is server request in the background  
 and result of that action can be error
+
+on iMessages you get quick "sent"  
+and then status later changes to "delivered"
+
+you can do optimistic without any hooks  
+but we will use adventage of some built ins  
+react has "new" scheduler and reconciler  
+*(they have 7 years)*
+
+with optimistic UI you are most affraid of errors  
+although the built in tool will take care of it
+
+#### useOptimistic
+expects function to reconsile  
+update function
+
+we have to `useTransition` to mark ui update as low priority
+
+```javascript
+const [isPending, startTransition] = useTransition();
+const [optimisticThoughts, addOptimistcThought] = useOptimistic(
+  thoughts,
+  (oldThoughts, newThought) => [newThought, ...oldThoughts]
+)
+
+// function that handles form submit
+startTransition(async () => {
+  addOptimisticThought(`${thought} (Loading…)`);
+  setThought("");
+  const response = await fetch("/thoughts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ thought }),
+  });
+  if (!response.ok) {
+    alert("This thought was not deep enough. Please try again.");
+    return;
+  }
+  const { thoughts: newThoughts } = await response.json();
+  setThoughts(newThoughts);
+});
+
+// UI where we list
+<ul>
+  {optimisticThoughts.map((thought, index) => (
+    <li key={thought}>{thought}</li>
+  ))}
+</ul>
+```
 
 
 

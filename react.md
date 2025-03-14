@@ -740,6 +740,81 @@ startTransition(async () => {
 </ul>
 ```
 
+### deffered
+What if you have something computable expensive  
+you will get JANK
+
+especially if you calculate something on slider change  
+when if user slides, then you run some calculation
+
+you can also use debouncing  
+but this way you are changing UI for all users  
+even if they have performant machine
+
+(btw phone/laptop on low batery is slowing down)
+
+by using deffered you use reconsiler  
+and UI will adopt to what device can handle
+
+this is how you know that value is out of sync
+
+```javascript
+{value !== deferred ? "(Updating)" : ""}
+```
+
+`useDefferedValue`  
+you will mark things as low priority rendering
+
+every rendering in react is high priority  
+and you can manually set selected parts to be low priority
+
+```javascript
+const deferredBlur = useDeferredValue(blur);
+const filterStyle = `blur(${deferredBlur}px)`;
+
+<Slider
+  value={blur}
+  deferred={deferredBlur}
+  onChange={(e) => setBlur(e.target.value)}
+  name="Blur"
+/>
+
+export default function Slider({
+  value,
+  deferred,
+  onChange,
+  name,
+  max
+}) {
+  return (
+    <li className="slider">
+      <label htmlFor={name}>
+        {name}
+        {value !== deferred ? "(Updating)" : ""}
+      </label>
+      <input
+        type="range"
+        id={name}
+        name={name}
+        min="0"
+        max={max}
+        value={value}
+        onChange={onChange}
+      />
+      <output htmlFor="name">
+        Actual Value: {value} | Deferred Value: {deferred}
+      </output>
+    </li>
+  )
+}
+```
+
+#### more hooks
+these hooks are not for app developers  
+but there are for framework builders  
+useLayoutEffect  
+useInsertionEffect
+
 
 
 Tan Stack Query, React Query

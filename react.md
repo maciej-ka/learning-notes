@@ -815,6 +815,49 @@ but there are for framework builders
 useLayoutEffect  
 useInsertionEffect
 
+### other topics
+#### client heavy framework
+if you have have client heavy app  
+and want a fullstack framework  
+then don't go to Next, but 
+
+React Router v7  
+Remix  
+Tanstack Start
+
+#### self hosting Next
+it's doable  
+it's not harder to host than any other Node service  
+plenty of people do it  
+just run it as Node server
+
+you loose a bit of extras
+
+#### useTransition and test
+don't test React itself  
+test what user expects  
+test user experience, not the way React was written
+
+#### recrutation tip
+built some project
+
+and go so in depth in it  
+have a fun with it  
+be excited about it, go really depth  
+be passionate about that project  
+... that it will impress recruiter
+
+if you have this,  
+then you don't even have to match tech stack  
+at company which hires you
+
+recrutation at top tech: 600 CV
+narrowed to 30 interviews
+
+#### fulltext search in static app
+there are plenty of libraries  
+elastic search or pine cone or just postgres
+
 
 
 Tan Stack Query, React Query

@@ -588,6 +588,107 @@ How compiler works:
 I don't think this can ever change  
 so I will memoize this for you
 
+### Transitions
+they change perceived speed
+
+I will do something large, like change pages  
+but will keep UI responsive
+
+You are on banking page,  
+you click something accidental  
+and you want to change but UI doesn't allow you
+
+#### redirect in vite
+vite.config.js
+```javascript
+export default defineConfig({
+  server: {
+    proxy: {
+      "/score": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+    },
+  },
+  plugins: [react()],
+});
+```
+
+#### without transition
+you make user wait for all data  
+and only then you show them a page
+
+when you change game to game 5  
+and it takes 5 seconds  
+then after clicking you have to wait  
+even if you know you made mistake
+
+#### transition
+takes adventage of scheduler
+it enables UI to stay interactive
+
+change 
+
+src/App.jsx
+```javascript
+const [isPending, setIsPending] = useState(true);
+
+async function getNewScore(game) {
+  setIsPending(true);
+  setGame(game);
+  const newScore = await getScore(game);
+  setScore(newScore);
+  setIsPending(false);
+}
+```
+
+to
+
+src/App.jsx
+```javascript
+const [isPending, startTransition] = useTransition(true);
+
+async function getNewScore(game) {
+  setGame(game);
+  startTransition(async () => {
+    const newScore = await getScore(game);
+    setScore(newScore);
+  })
+}
+```
+
+or even better, to avoid race conditions
+although in this case this UI is so small
+that it probably will never happen
+
+```javascript
+async function getNewScore(game) {
+  setGame(game);
+  startTransition(async () => {
+    const newScore = await getScore(game);
+    startTransition(() => {
+      setScore(newScore);
+    })
+  })
+}
+```
+
+what useTransition is doing
+it's delegating some of changes to lower priority renders
+
+as effect, the page will stay where it is
+until everything is ready, and only then UI will change
+
+you may have inside of your useTransition some operations
+but then these will be called each time
+no matter did user changed his mind
+(because UI itself is ignored if user changed his mind)
+
+### Optimistic UI update
+when UI reports result of action immediatelly
+even though there is server request in the background
+and result of that action can be error
+
 
 
 Tan Stack Query, React Query

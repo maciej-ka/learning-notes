@@ -1529,4 +1529,78 @@ function usePost() {
 }
 ```
 
+#### Managing Query Keys
+As the application grow complexity around managing queryKeys will grow.  
+You will have keys definied in different files of your application.  
+And there is a risk of having problems with typos.
+
+One approach is query key factories.
+
+```javascript
+export const todoKeys = {
+  allLists: () => ['todos', 'list'],
+  list: (sort) => ['todos', 'list', { sort }],
+}
+```
+
+or even:
+
+```javascript
+export const todoKeys = {
+  all: () => ['todos'],
+  allLists: () => [...todoKeys.all(), 'list'],
+  list: (sort) => [...todoKeys.all(), 'list', { sort }],
+}
+```
+
+Create one factory per feature.  
+Have all queryKeys in that factory start with the same prefix,  
+which is usually the name of the feature.
+
+#### Query Factories
+One step more abstract than Query Key factories.
+
+```javascript
+export const todoQueries = {
+  all: () => ['todos'],
+  allLists: () => [...todoQueries.all(), 'list'],
+  list: (sort) => ({
+    queryKey: [...todoQueries.all(), 'list', { sort }],
+    queryFn: () =>  fetchTodos(sort),
+    staleTime: 5 * 1000,
+  }),
+  allDetails: () => [...todoQueries.all(), 'detail'],
+  detail: (id) => ({
+    queryKey: [...todoQueries.allDetails(), id],
+    queryFn: () => fetchTodo(id),
+    staleTime: 5 * 1000
+  })
+}
+```
+
+and the when using, it's possible to compose these options  
+with custom options per each query
+
+```javascript
+const { data } = useQuery({
+  ...todoQueries.list(sort),
+  refetchInterval: 10 * 1000,
+})
+```
+
+Consider always returning object from Query Factory  
+This makes composition longer, but it's easier to work  
+with such a consistent api
+
+```javascript
+export const todoQueries = {
+  all: () => ({ 
+    queryKey: ['todos'] 
+  }),
+  allLists: () => ({
+    queryKey: [...todoQueries.all().queryKey, 'list'],
+  }),
+  // ...
+}
+```
 

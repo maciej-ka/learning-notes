@@ -1172,7 +1172,18 @@ this may be a problem for network, so there is a maxPages option
 which will limit how many pages are kept in cache
 
 #### Managing Mutation
-It's not a good idea to use PUT in useQuery, because:
+It's possible to make a mutation in useQuery,
+
+```javascript
+function useUpdateUser(id, newName) {
+  return useQuery({
+    queryKey: ['user', id, newName],
+    queryFn: () => updateUser({ id, newName })
+  })
+}
+```
+
+But it's not a good idea to have mutation in useQuery, because:
 - queries run immediatelly when component mounts
 - queries are menat to run multiple times
 - queries should be idempotent
@@ -1186,25 +1197,160 @@ const { mutate } = useMutation({ mutationFn })
 
 when you will invoke mutate, the react query will trigger mutationFn
 ```javascript
-function useUpdateUser(id, newName) {
-  return useQuery({
-    queryKey: ['user', id, newName],
-    queryFn: () => updateUser({ id, newName })
-  })
-}
-
 function useUpdateUser() {
   return useMutation({
     mutationFn: updateUser,
+    onSuccess: (result) => {
+      alert(`name udpate to ${result.name}`)
+    },
   })
 }
 
-const { mutate } = useUpdateUser()
+const { mutate, status } = useUpdateUser()
 <form
   onSubmit={(event) => {
-  }}
-/>
+    event.preventDefault()
+    const newName = new FormData(event.currentTarget).get('name')
+    mutate({ id, newName }, {
+      onSuccess: () => event.currentTarget.reset()
+    })
+  }}>
+  
+  <button type="submit" disabled={status === "pending"}>
+    {status === "pending" ? "..." : "Update"}
+  </button>
+</form>
 ```
+
+What's the benefit of using `useMutation`?  
+It manages the lifecycle of a mutation  
+rather than directly perfomring the mutation itself.
+
+when you invoke mutation, you get `status`
+```
+"idle"
+"pending"
+"success"
+"error"
+```
+
+both mutate and useMutate accepts callbacks,  
+like `onSuccess`
+
+#### Updating cache after mutation
+Updating cache after mutation is done
+
+This can be done imperatively like this:
+```javascript
+function useUpdateUser() {
+  return useMutation({
+    mutationFn: updateUser,
+    onSuccess: (newUser) => {
+      queryClient.setQueryData(['user', newUser.id], newUser)
+    }
+  })
+}
+```
+
+setQueryData accepts function as a second argument  
+that can be used to merge old data with changes
+
+```javascript
+queryClient.setQueryData(
+  ['user', newUser.id],
+  (previousUser) => previousUser
+    ? ({ ...previousUser, name: newName })
+    : previousUser
+)
+```
+
+Immutability in state update of `setQueryData`:  
+it's important that you return new object  
+even if it's the same object as before.
+
+Otherwise React Query will not be able to detect change  
+and notify listeners
+
+#### Updating multiple cache keys after mutation
+When having one list with sort key, like  
+you would have same list in few cache keys.
+
+```javascript
+['todos', 'list', { sort: 'id' }]
+['todos', 'list', { sort: 'date' }]
+['todos', 'list', { sort: 'title' }]
+```
+
+and to update each of these, (while still keeping sort)  
+would be a lot of work, beucase it would require  
+adding an element to list and then sorting.
+
+
+in such scenario it's often better not to update manually,  
+but instead invalidate cache keys
+
+invalidation
+- refetches all active queries (ones that have observer)
+- marks the remaining queries as stale
+
+```javascript
+function useAddTodo() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: addTodo,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ['todos', 'list']
+      })
+    }
+  })
+}
+```
+
+In above code `invalidateQueries` will return Promise  
+and onSuccess in useMutation has a behaviour  
+that if it receives promise, it will wait for it to resolve  
+before marking mutation as success.
+
+Thanks to this, UI will not flash.
+
+Additional fetches are obvious costcompared to local modification.  
+However, they result in way simpler code and are aligned principle  
+that after server state has changed, it's usually good idea to verify  
+that you have latest data in the cache.
+
+#### force also stalled to be refetched
+```javascript
+queryClient.invalidateQueries({
+  queryKey: ['todos', 'list'],
+  refetchType: 'all'
+})
+```
+
+other options:  
+last one allows to write custom matcher  
+that will decide which query key to invalidate
+
+```javascript
+stale: true
+type: 'active'
+predicate: (query) => query.queryKey[1] === 'detail'
+```
+
+#### fuzzy match
+single call to invalidateQueries will invalidate several cache keys
+```javascript
+queryKey: ['todos', 'list'],
+```
+
+will match all cache keys that start with these keys
+```javascript
+['todos', 'list', { sort: 'id' }]
+['todos', 'list', { sort: 'date' }]
+['todos', 'list', { sort: 'title' }]
+```
+
+for that reason organize your keys from generic to specific
 
 
 
@@ -2061,7 +2207,7 @@ if you have this,
 then you don't even have to match tech stack  
 at company which hires you
 
-recrutation at top tech: 600 CV
+recrutation at top tech: 600 CV  
 narrowed to 30 interviews
 
 #### fulltext search in static app

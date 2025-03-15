@@ -1720,7 +1720,76 @@ const { data, refetch } = useQuery({
 })
 ```
 
-#### tracked properties
+#### Tracked properties / custom getters
 Despite that React Query keeps `data` references stable  
 it has more fields, that are changing, like `fetchStatus`
+
+Result object from React Query has custom getters.  
+This allows to track which fields have bee accessed.  
+And rerender component only when those fields change.
+
+So if object doesn't read from `fetchStatus`,  
+then it will not be rerendered when that part of result changes.
+
+When you invoke useQuery, don't use rest operator.  
+Because this way all the getters will be triggered.  
+And you will not get any of benefits of not rerendering when not needed to.
+
+```javascript
+const { data, ...rest } = useQuery({ queryKey, queryFn })
+```
+
+this can be also automatically deteced by eslint plugin
+```bash
+npm i -D @tanstack/eslint-plugin-query
+```
+
+#### Refetch signals / Abort controller
+React Query will only refetch based on signals from the data user.
+
+Signal is another name for using getters,  
+to wrap values to detect what is accessed.
+
+When having not debounced query,  
+you will create request and cache entry for each phrase  
+even though user is only interested in the last one.
+
+This may be ok, and you may like this approach.  
+But if you want to save on resources, there is option to use Abort Controller.
+
+```javascript
+function useIssues(search) {
+  return useQuery({
+    queryKey: ['issues', search],
+
+    queryFn: async ({ signal }) => {
+      const searchParams = new URLSearchParams()
+      searchParams.append('q', `${search} is:issue repo:TanStack/query`)
+      const url = `https://api.github.com/search/issues?${searchParams}`
+
+      const response = await fetch(url, { signal })
+
+      if (!response.ok) {
+        throw new Error('fetch failed')
+      }
+      return response.json()
+    }
+  })
+}
+```
+
+When queryFn is invoked, React Query will pass a signal to it.  
+This signal originates from new instance of AbortController, React Query will make.  
+And if the queryKey will become unused, React Query will immediatelly abort request.
+
+Under the hood it works something like this:
+
+```javascript
+const controller = new AbortController();
+const signal = controller.signal;
+fetch('https://jsonplaceholder.typicode.com/todos/1', { signal }).then(...)
+
+controller.abort(); // Immediately abort the request
+```
+
 

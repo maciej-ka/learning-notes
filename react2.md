@@ -1471,4 +1471,62 @@ onMutate: () => {
 }
 ```
 
+### Customizing Defaults
+Change and set any option that can be sent do query.  
+Any options in each query instance override these defaults.
+
+```javascript
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTile: 10 * 1000
+    }
+  }
+})
+```
+
+Or set defaults only for some fuzzy matched.
+
+```javascript
+queryClient.setQueryDefaults(
+  ['todos', 'detail'],
+  { staleTile: 10 * 1000 }
+)
+```
+
+Every option can have a default, even queryFn.  
+But apart from queryKey.
+
+This allows for a bit of metaprogramming.  
+This works, because queryFn receives options object  
+from React Query, and in those options there is queryKey.
+
+```javascript
+queryClient.setQueryDefaults(['posts'], {
+  queryFn: async ({ queryKey }) => {
+    const baseUrl = '/api/'
+    const slug = queryKey.join('/')
+    const response = await fetch(baseUrl + slug)
+
+    if (!response.ok) {
+      throw new Error('fetch failed')
+    }
+
+    return response.json()
+  },
+})
+
+function usePostList() {
+  return useQuery({
+    queryKey: ['posts']
+  })
+}
+
+function usePost() {
+  return useQuery({
+    queryKey: ['posts', path]
+  })
+}
+```
+
 

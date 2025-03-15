@@ -1604,3 +1604,123 @@ export const todoQueries = {
 }
 ```
 
+### Performance Optimizations
+When it comes to rendering, it's usually a good idea to find ways  
+to make the components render faster rather then render less.
+
+React works like this: whenever component react state change,  
+it will be marked as dirty and rerendered on next occasion,  
+and also all its children will be rerendered.
+
+Regardless of do these children accept any props.
+
+#### React.memo
+A higher order component.  
+Used to render only when props change.  
+comparison is done using `Object.is` equality operator
+
+#### Object.is
+close to `===` with two differences:
+
+```javascript
+Object.is(NaN, NaN) // true
+NaN === NaN         // false
+
+Object.is(0, -0)    // false
+0 === -0            // true
+```
+
+not so close to == becuase `Object.is` doesn't coerce sides.  
+(== does apply various coercions if sides are not the same type)
+
+#### One complement
+Javascript uses it, because there you have 0 and -0  
+Negative number is done by inverting all the bits of positive
+
+#### Two's complement
+Invert all bits and add one  
+Also same as having top power be the only one with minus
+
+```
+2**-4 2**3 2**2 2**1 2**0
+```
+
+#### Referential equality
+If one of props is object and it is passed as prop  
+it is compared by location in memory.
+
+And even if the object has same values as another  
+but it is recreated, separate object, then Object.is will be false.
+
+#### useMemo, useCallback
+these are solution to referential equality problems  
+`useMemo` lets you cache object  
+`useCallback` lets you cache function
+
+#### useQuery referential equality
+useQuery will create a new object every time  
+to solve this performance problem, we can use one of two solutions:
+
+#### Structural Sharing
+React Query will check is the result of queryFn different from what it has in cache.  
+And only then it will it will replace data with new object.
+
+because of that, it's safe to use data object with  
+React.memo and in dependency arrays.
+
+#### Obervers
+Glue between Query Cache and React component.  
+They live outside React component tree.  
+They are defined by object given as useQuery attribute.
+
+Even though React Query is smart to check did the data really change.  
+It doesn't know which parts of data are really used by component.
+
+And becuse of that, if there is a part of data that is changing always  
+then even if it's not used, it will trigger rerender each time:
+
+```javascript
+const { data, refetch } = useQuery({
+  queryKey: ["user"],
+  queryFn: () => {
+    return Promise.resolve({
+      name: "Dominik",
+      updatedAt: Date.now()
+    })
+  }
+})
+```
+
+to fix this, use additional property `select`  
+in which you tell which fields of data are used  
+and observer only subscribes for changes in these fields
+
+it get data from query function  
+and returns value passed to the component
+
+```javascript
+const { data, refetch } = useQuery({
+  // ...
+  select: (data) => ({ name: data.name }),
+})
+```
+
+React Query will try to keep references stable
+
+React Query will check result of select by value.  
+For react query content of the data is what matters, not reference.  
+So the referential equality here is not a problem.
+
+if select function is expensive  
+it's possible to wrap it in useCallback
+```javascript
+const { data, refetch } = useQuery({
+  // ...
+  select: React.useCallback(expensiveTransformation, [])
+})
+```
+
+#### tracked properties
+Despite that React Query keeps `data` references stable  
+it has more fields, that are changing, like `fetchStatus`
+

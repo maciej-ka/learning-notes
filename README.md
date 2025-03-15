@@ -64,15 +64,18 @@ Hotwire, Turbo, Stimulus, [Hotwire Screencast](https://d1d6azhz7lc2s3.cloudfront
 Using Rails for API-only Applications, [Rails Guides](https://guides.rubyonrails.org/api_app.html)  
 Getting Started with Rails, [Rails Guides](https://guides.rubyonrails.org/getting_started.html)
 
-[React 1](./react1.md)  
+[React Part 1](./react1.md)  
 =====================
 Intermediate React, [Frontend Masters](https://frontendmasters.com/workshops/intermediate-react-v6/)  
-Tanstack React Query, [Query.gg](https://query.gg/)  
 Introduction to Next.js, [Frontend Masters](https://frontendmasters.com/courses/next-js-v3/)  
 Learn Next.js, [Next.js Docs](https://nextjs.org/docs/app/getting-started)  
 Complete Intro to React, [Frontend Masters](https://frontendmasters.com/courses/complete-react-v9/)  
 Notes on shadcn/ui, form validation, headless components  
 Notes on less common hooks, strict mode
+
+[React Part 2](./react2.md)  
+=====================
+Tanstack React Query, [Query.gg](https://query.gg/)  
 
 [Ruby](./ruby.md)  
 ===================

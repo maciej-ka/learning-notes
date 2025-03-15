@@ -1,865 +1,3 @@
-Intermediate React, v6
-======================
-Brian Holt, Frontend Masters  
-https://intermediate-react-v6.holt.courses/
-
-#### Certain features of React require Next.
-Nice part of React is composibility.  
-How you can encapsulate part of app and compose these parts.
-
-#### Ways to write
-Function components:  
-Error Boundaries don't work with these  
-componentDidCatch
-
-Components:  
-Not deprecated, but not advised  
-Usually no one uses these anymore
-
-Create class components:  
-Really old way to write
-
-#### Life hack
-If you need to have good notes on something,  
-that you will refer to in your work,  
-write course about that topic.
-
-#### fnm
-Similar to nvm
-
-#### Cascadia Code
-Free fonts
-
-#### note on AI
-Industry moved so far to moving AI, that perhaps it needs comment.  
-Every line of code in repos is hand written.  
-Apart from seeds initial data
-
-Using a lot of AI and "vibing" can end with high house of cards,  
-with no understanding how things work.
-
-But in the end you are responsible for code you ship,  
-so don't overuse AI
-
-#### replit
-https://replit.com/  
-check it, can be impressive
-
-#### React 19
-A long time comming. Since late 2022.  
-React team makes canary and tests it on Facebook  
-and only when they are confident that it's working, they ship it.
-
-Major change: React Sever Components  
-You need a reason for Sever Components, a problem that they will solve.  
-Because it will complicate some of your things.
-
-### React Render Modes
-four modalities to write React code  
-and they are not exclusive  
-it's more four techniquies
-
-### Client-side React
-you ship bundle to browser, traditional SPA  
-your server does nothing for you  
-this is how we wrote React for long and we will still
-
-### SSG: Static Side Generation
-You can build site and host it on github, without paying for server.  
-Its great for tutorials or anything static.
-
-There are some techniques for static
-
-next.config.js
-```javascript
-const config = {
-  output: "export",
-}
-```
-
-start
-```bash
-npm i react@19 react-dom@19
-```
-
-two ways for package  
-common.js / es modules
-
-package.json
-```json
-"type": "module"
-```
-
-emmet  
-html:5
-
-old way to write React, before jx  
-one benefit it doesn't require building
-
-```javascript
-import { createElement as h } from "react";
-
-function App() {
-  return h(
-    "div",
-    null,
-    h("h1", null, "Hellow Frontend Masters"),
-    h("p", null, "This is SSG")
-  );
-}
-```
-
-Render react files to string and store them in build files.  
-Sort of very simple Astro or custom static site generation.
-
-```javascript
-import { renderToStaticMarkup } from "react-dom/server";
-import { createElement as h} from "react";
-import {
-  readFileSync,
-  writeFileSync,
-  existsSync,
-  mkdirSync,
-  readdirSync,
-  unlinkSync,
-} from "node:fs";
-import { fileURLToPath } from "node:url";
-import path, { dirname } from "node:path";
-import App from "./App.js"
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const distPath = path.join(__dirname, "dist")
-
-const shell = readFileSync(path.join(__dirname, "index.html"), "utf8")
-
-const app = renderToStaticMarkup(h(App));
-const html = shell.replace("<!-- Root -->", app)
-
-if (!existsSync(distPath)) {
-  mkdirSync(distPath)
-} else {
-  const files = readdirSync(distPath)
-  for (const file of files) {
-    unlinkSync(path.join(distPath, file))
-  }
-}
-
-writeFileSync(path.join(distPath, "index.html"), html);
-```
-
-But in reality use Astro, Next.js, (perhaps Gatsby)
-```bash
-npm create astro@latest
-```
-
-#### MDX
-https://mdxjs.com/  
-A combination of JSX and markdown, that is compiled to JSX  
-Could be used to enrich static site with dynamic elements.
-
-```mdx
-import {Chart} from './snowfall.js'
-export const year = 2023
-
-# Last year’s snowfall
-
-In {year}, the snowfall was above average.
-It was followed by a warm spring which caused
-flood conditions in many of the nearby rivers.
-
-<Chart color="#fcb32c" year={year} />
-```
-
-### Server Side Rendering
-v5 of this course goes indepth on this topic  
-*all the parts of it are still valid*
-
-#### traditional
-user requests app  
-server returns bundle  
-browser gets js, executed js  
-user finally sees rendered app
-
-time to interactive  
-and time to paint  
-are almost the same moment
-
-#### improve perceived performance
-so that user can see app before its interactive
-
-user requests app  
-server receives request and prerenders first page  
-server returns react bundle and html  
-browser receives prerendered html and js
-
-user first can see app  
-but interactive is later
-
-however, when connection is very fast  
-SSR will be actually slower than  typical client side
-
-also SSR has some problems, google analytics  
-you cannot execute it when on Server, because browser doesn't exist
-
-measure performance:  
-use google chrome dev tools  
-or lighthouse
-
-```bash
-npm i react@19 react-dom@19 fastify @fastify/static vite
-```
-
-server side and hydration  
-are very sensible to whitespace
-
-there is a way to build what we will write here  
-vite --ssr
-
-write app
-
-ssr/App.js
-```javascript
-import { createElement as h, useState } from "react";
-
-function App() {
-  const [count, setCount] = React.useState()
-  return h(
-    "div",
-    null,
-    h("h1", null, "Hellow Frontend Masters"),
-    h("p", null, "this is ssr"),
-    h("button", { onClick: () => setCount(count + 1) }, `Count: ${count}`)
-  );
-}
-
-export default App;
-```
-
-client part  
-this will never execute on server  
-because we will not import it
-
-ssr/Client.js
-```javascript
-import { hydrateRoot } from "react-dom/client"
-import { createElement as h } from "react"
-import App from './App.js'
-
-hydrateRoot(document.getElementById("root"), h(App));
-```
-
-#### renderToString
-Used for hydration.  
-Produces a larger output because it includes extra React-specific attributes  
-(data-reactroot, data-reactid) needed for hydration.
-
-#### renderToStaticMarkup
-is smaller because it omits these attributes, making it ideal for static, non-interactive HTML.
-
-we want to make as concurent as possible  
-to server header immediatelly,  
-so that browser can start to query css  
-that's why we use split
-
-ssr/server.js
-```javascript
-import fastify from "fastify";
-import fastifyStatic from "@fastify/static";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
-import path, { dirname } from "node:path";
-import { renderToString } from "react-dom/server";
-import { createElement as h } from "react";
-import App from "./App.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const shell = readFileSync(path.join(__dirname, "dist", "index.html"), "utf8");
-
-const app = fastify();
-app.register(fastifyStatic, {
-  root: path.join(__dirname, "dist"),
-  prefix: "/",
-});
-
-const parts = shell.split("<!--ROOT-->");
-app.get("/", (req, reply) => {
-  reply.raw.write(parts[0]);
-  const reactApp = renderToString(h(App));
-  reply.raw.write(reactApp);
-  reply.raw.writ(parts[1]);
-  reply.raw.end();
-});
-
-app.listen({
-  port: 3000
-})
-```
-
-start to get this in background, while still 
-```html
-<script async defer type="module" src="./Client.js"></script>
-```
-
-```bash
-npm run build
-```
-
-#### microfrontend
-when you have multiple islands
-
-### RSC, React server components
-SSR server side is only on first rendering.  
-They are on server only when you ask for page.  
-And once it's shipped, they are done.  
-*you can have both SSR and RSC*
-
-With RSC you can have relation after first page.
-
-A react server component is a component that only reanders on the server.  
-Client never receives that part. You can start to query SQL in them.
-
-RSC will reduce size of javascript bundle sent to client.
-
-controvelsial Next.js decision  
-in Next.js everything is server component by default  
-and to make something client you have to implicitly tell it
-
-you cannot use `useState` in server component
-
-additional cognitive load: am I on server / am I on client?
-
-if you have problems with latency  
-then everytime you interact with client side, there may be request to server  
-and in that scenario latency can be also a problem
-
-RSC remind a lot PHP  
-and a lot of discussion to do or not RSC is  
-should I do application like PHP or SPA
-
-#### server actions
-your app will generate micro APIs, micro endpoints
-
-#### unstable api
-generally don't write RSC by hand  
-but to understand it better we will do  
-but in the end, use RSC by some framework
-
-technically RSC could be integrated in for example Rust app.
-
-today use:  
-Next.js
-
-soon:  
-React Router v7 / Remix  
-TanStack  
-(here not server but client will be default)
-
-both teams said they will support only subset  
-not whole RSC specification
-
-#### Options for OAuth solutions
-Neon Auth  
-Descope  
-Clerk
-
-
-### RSC without Next
-a lot of requirements
-```bash
-npm install @babel/core@7.26.8 @babel/plugin-transform-modules-commonjs@7.26.3 @babel/preset-react@7.26.3 @babel/register@7.25.9 @fastify/static@8.1.0 babel-loader@9.2.1 css-loader@7.1.2 doodle.css@0.0.2 fastify@5.2.1 html-webpack-plugin@5.6.3 nodemon@3.1.9 pino-pretty@13.0.0 promised-sqlite3@2.1.0 react@19.0.0 react-dom@19.0.0 react-server-dom-webpack@19.0.0 sqlite3@5.1.7 style-loader@4.0.0 webpack@5.97.1 webpack-cli@6.0.1
-```
-
-`react-server-dom-webpack`  
-this enables node to be RSC server
-
-webpack works like: if it matches this regexp pattern  
-pass the file through this loader
-
-`new HtmlWebpackPlugin({`  
-plugin that will generate index.html for us
-
-in common.js `__dirname` is provided  
-so you don't have to define it yourself
-
-`"dev:server": "node --watch --conditions react-server server/main"`  
-`--conditions react-server` tells node that this is server  
-conditions is a bit like big if  
-it tells node how to resolve the modules
-
-#### Suspense
-if you wait for some part from server, it enables to show loader
-
-#### Is it server or client component
-Usually top level of your app will be server component.  
-You cannot make server components a children of client components.  
-But you can do opposite.
-
-#### Hooks don't work on server
-If you need hooks, use client
-
-#### "use client"
-it's a directive, same as "use strict" in the old javascript days
-
-#### server components can be async
-this is not possible with client components
-```javascript
-export default async function MyNotes() {
-```
-
-in server components  
-elements in component body will be run just once  
-so you can be less carefull about rendering
-
-#### Server component is API route
-you can think about it that way
-
-this will get markup from server  
-and turn it into component
-
-```javascript
-import { createFromFetch } from "react-server-dom-webpack/client"
-const p = createFromFetch(fetchPromise);
-```
-
-#### flight protocol
-it's a markup sent as JSON  
-a JSON which defines react components to be used  
-here is a definition of component $1...
-
-it's not publicly documented  
-and there is no official documentation on it  
-although it's easy to figure out what is it doing
-
-### RSC with Next.js
-There was no React fullstack framework.  
-Meteor: was kind of first attempt to have server and client code together
-
-two ways to use Next.js:
-
-A) it owns everything  
-a little bit like Rails app  
-its backend and frontend
-
-B) middle end server  
-javascript microservices  
-coalesced into one service  
-not really your backend or frantend
-
-#### Note on Monoliths
-don't decompose everything into microservices too early, start as monolith  
-don't do microservices straight from start
-
-```bash
-npx create-next-app@15.1.7 --js --app --src-dir --turbopack
-```
-
-#### offline first
-RSC cannot go together with offline first
-
-#### mix server and client components
-once you are in client land, everything beneath is client  
-you cannot go away from it (altough there is a hack)
-
-how to load server data into client component  
-you can use useEffect as usuall  
-but there is another way
-
-you can wrap client inside server  
-and just pass any server data in props
-
-src/app/teacher/page.js
-```javascript
-import TeacherClientPage from "./clientPage";
-import fetchNotes from "./fetchNotes";
-
-export default async function TeacherView() {
-  const initialNotes = await fetchNotes();
-  return (
-    <TeacherClientPage initialNotes={initialNotes} fetchNotes={fetchNotes} />
-  );
-}
-```
-
-src/app/teacher/fetchNotes.js
-```javascript
-"use server";
-import { AsyncDatabase } from "promised-sqlite3";
-
-export default async function fetchNotes(since) {
-  const db = await AsyncDatabase.open("./notes.db");
-  let rows;
-  if (since) {
-    rows = await db.all(
-      "SELECT n.id as id, n.note as note, ..."
-      [since]
-    );
-  } else {
-    rows = await db.all(
-      "SELECT n.id as id, n.note as note, ..."
-    );
-  }
-  return rows;
-}
-```
-
-#### calling sever from client
-sometimes you will have to write it traditional way  
-create an api and call it from client with useEffect
-
-sometimes you have to make server run again  
-by redirecting again to page
-
-#### ractjs tainted
-because it's dangerously easy to leak secrets  
-by just adding one line `"use client"`
-
-so to avoid leaking secrets, you can taint some value  
-it will make sure that value is never a part of client bundle  
-`experimental_taintObjectReference`
-
-#### when Next is recommended
-when client would be calling server often on many small occassions  
-then Next.js feature of simplifying server calls will be very helpful
-
-Next.js would not be recommended if you have very client heavy application  
-because almost all of it would be "use client"
-
-#### other RSC attempts
-Pheonix live view  
-also Laravel
-
-#### excalidraw
-tool to draw https://excalidraw.com/
-
-### Performance Optimizations
-React generally has good performance.  
-Please don't preemptively use `useMemo` everywhere.  
-This is just wrong. Wait for this to be needed first.  
-memo, useMemo, useCallback
-
-#### Jank
-when you scroll down  
-page pauses and then jumps
-
-#### setting html
-watch out for cross site scripting when using this
-```javascript
-dangerouslySetInnerHTML={{ __html: render(options.text) }}
-```
-
-#### memo
-React.memo  
-if my props didn't change, don't rerender me
-
-however, if you send object in props  
-and it's recreated on each parent render,  
-then it will bust that memo, because two objects are never equal  
-(referential equality)
-
-and also when you pass function
-
-#### useMemo
-```javascript
-const options = useMemo(() => ({ text, theme }), [text, theme]);
-```
-
-#### useCallback
-```javascript
-const render = useCallback((text) => marked.parse(text), []);
-```
-
-actually useCallback is implemented using useMemo  
-and is exactly same as:
-```javascript
-const render = useMemo(() => (text) => marked.parse(text), []);
-```
-
-#### problems with overusing
-If you start to overuse `React.memo`, `useMemo` and `useCallback`  
-then you will start to have a problem that some of parts are not refreshing.
-
-And you will have to investigate why that is happening.
-
-#### React compiler
-How compiler works:  
-I don't think this can ever change  
-so I will memoize this for you
-
-### Transitions
-they change perceived speed
-
-I will do something large, like change pages  
-but will keep UI responsive
-
-You are on banking page,  
-you click something accidental  
-and you want to change but UI doesn't allow you
-
-#### redirect in vite
-vite.config.js
-```javascript
-export default defineConfig({
-  server: {
-    proxy: {
-      "/score": {
-        target: "http://localhost:3000",
-        changeOrigin: true,
-      },
-    },
-  },
-  plugins: [react()],
-});
-```
-
-#### without transition
-you make user wait for all data  
-and only then you show them a page
-
-when you change game to game 5  
-and it takes 5 seconds  
-then after clicking you have to wait  
-even if you know you made mistake
-
-#### transition
-takes adventage of scheduler  
-it enables UI to stay interactive
-
-change 
-
-src/App.jsx
-```javascript
-const [isPending, setIsPending] = useState(true);
-
-async function getNewScore(game) {
-  setIsPending(true);
-  setGame(game);
-  const newScore = await getScore(game);
-  setScore(newScore);
-  setIsPending(false);
-}
-```
-
-to
-
-src/App.jsx
-```javascript
-const [isPending, startTransition] = useTransition(true);
-
-async function getNewScore(game) {
-  setGame(game);
-  startTransition(async () => {
-    const newScore = await getScore(game);
-    setScore(newScore);
-  })
-}
-```
-
-or even better, to avoid race conditions  
-although in this case this UI is so small  
-that it probably will never happen
-
-```javascript
-async function getNewScore(game) {
-  setGame(game);
-  startTransition(async () => {
-    const newScore = await getScore(game);
-    startTransition(() => {
-      setScore(newScore);
-    })
-  })
-}
-```
-
-what useTransition is doing  
-it's delegating some of changes to lower priority renders
-
-as effect, the page will stay where it is  
-until everything is ready, and only then UI will change
-
-you may have inside of your useTransition some operations  
-but then these will be called each time  
-no matter did user changed his mind  
-(because UI itself is ignored if user changed his mind)
-
-### Optimistic UI update
-when UI reports result of action immediatelly  
-even though there is server request in the background  
-and result of that action can be error
-
-on iMessages you get quick "sent"  
-and then status later changes to "delivered"
-
-you can do optimistic without any hooks  
-but we will use adventage of some built ins  
-react has "new" scheduler and reconciler  
-*(they have 7 years)*
-
-with optimistic UI you are most affraid of errors  
-although the built in tool will take care of it
-
-#### useOptimistic
-expects function to reconsile  
-update function
-
-we have to `useTransition` to mark ui update as low priority
-
-```javascript
-const [isPending, startTransition] = useTransition();
-const [optimisticThoughts, addOptimistcThought] = useOptimistic(
-  thoughts,
-  (oldThoughts, newThought) => [newThought, ...oldThoughts]
-)
-
-// function that handles form submit
-startTransition(async () => {
-  addOptimisticThought(`${thought} (Loading…)`);
-  setThought("");
-  const response = await fetch("/thoughts", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ thought }),
-  });
-  if (!response.ok) {
-    alert("This thought was not deep enough. Please try again.");
-    return;
-  }
-  const { thoughts: newThoughts } = await response.json();
-  setThoughts(newThoughts);
-});
-
-// UI where we list
-<ul>
-  {optimisticThoughts.map((thought, index) => (
-    <li key={thought}>{thought}</li>
-  ))}
-</ul>
-```
-
-### deffered
-What if you have something computable expensive  
-you will get JANK
-
-especially if you calculate something on slider change  
-when if user slides, then you run some calculation
-
-you can also use debouncing  
-but this way you are changing UI for all users  
-even if they have performant machine
-
-(btw phone/laptop on low batery is slowing down)
-
-by using deffered you use reconsiler  
-and UI will adopt to what device can handle
-
-this is how you know that value is out of sync
-
-```javascript
-{value !== deferred ? "(Updating)" : ""}
-```
-
-`useDefferedValue`  
-you will mark things as low priority rendering
-
-every rendering in react is high priority  
-and you can manually set selected parts to be low priority
-
-```javascript
-const deferredBlur = useDeferredValue(blur);
-const filterStyle = `blur(${deferredBlur}px)`;
-
-<Slider
-  value={blur}
-  deferred={deferredBlur}
-  onChange={(e) => setBlur(e.target.value)}
-  name="Blur"
-/>
-
-export default function Slider({
-  value,
-  deferred,
-  onChange,
-  name,
-  max
-}) {
-  return (
-    <li className="slider">
-      <label htmlFor={name}>
-        {name}
-        {value !== deferred ? "(Updating)" : ""}
-      </label>
-      <input
-        type="range"
-        id={name}
-        name={name}
-        min="0"
-        max={max}
-        value={value}
-        onChange={onChange}
-      />
-      <output htmlFor="name">
-        Actual Value: {value} | Deferred Value: {deferred}
-      </output>
-    </li>
-  )
-}
-```
-
-#### more hooks
-these hooks are not for app developers  
-but there are for framework builders  
-useLayoutEffect  
-useInsertionEffect
-
-### other topics
-#### client heavy framework
-if you have have client heavy app  
-and want a fullstack framework  
-then don't go to Next, but 
-
-React Router v7  
-Remix  
-Tanstack Start
-
-#### self hosting Next
-it's doable  
-it's not harder to host than any other Node service  
-plenty of people do it  
-just run it as Node server
-
-you loose a bit of extras
-
-#### useTransition and test
-don't test React itself  
-test what user expects  
-test user experience, not the way React was written
-
-#### recrutation tip
-built some project
-
-and go so in depth in it  
-have a fun with it  
-be excited about it, go really depth  
-be passionate about that project  
-... that it will impress recruiter
-
-if you have this,  
-then you don't even have to match tech stack  
-at company which hires you
-
-recrutation at top tech: 600 CV
-narrowed to 30 interviews
-
-#### fulltext search in static app
-there are plenty of libraries  
-elastic search or pine cone or just postgres
-
-
-
 Tan Stack Query, React Query
 ============================
 https://query.gg/
@@ -1040,6 +178,7 @@ const queryClient = new QueryClient()
 
 function App () {
   ...
+}
 ```
 
 #### Query ClientProvider
@@ -1133,8 +272,7 @@ data will be undefined
 
 for this query has three statuses
 ```javascript
-const { data, status } = useQuery({
-...
+const { data, status } = useQuery({...})
 "pending"
 "success"
 "error"
@@ -1142,7 +280,7 @@ const { data, status } = useQuery({
 
 or a alternative syntax
 ```javascript
-const { data, isPending, isError } = useQuery({
+const { data, isPending, isError } = useQuery({...})
 ```
 
 ### DIY React Query
@@ -1780,6 +918,7 @@ which enables to read data directy from the cache
 staleTime: 5000
 initialData: () => {
   return queryClient.getQueryData(['posts'])
+}
 ```
 
 it may also make sense to reuse another  
@@ -2013,7 +1152,7 @@ const { ref } = useInView({
 
 <ol ref={rootRef}>
   ...
-  { hasNextPage ? <div ref={ref} : <NoMoreActivities /> }
+  { hasNextPage ? <div ref={ref}> : <NoMoreActivities /> }
 </ol>
 ```
 
@@ -2064,7 +1203,870 @@ const { mutate } = useUpdateUser()
 <form
   onSubmit={(event) => {
   }}
+/>
 ```
+
+
+
+Intermediate React, v6
+======================
+Brian Holt, Frontend Masters  
+https://intermediate-react-v6.holt.courses/
+
+#### Certain features of React require Next.
+Nice part of React is composibility.  
+How you can encapsulate part of app and compose these parts.
+
+#### Ways to write
+Function components:  
+Error Boundaries don't work with these  
+componentDidCatch
+
+Components:  
+Not deprecated, but not advised  
+Usually no one uses these anymore
+
+Create class components:  
+Really old way to write
+
+#### Life hack
+If you need to have good notes on something,  
+that you will refer to in your work,  
+write course about that topic.
+
+#### fnm
+Similar to nvm
+
+#### Cascadia Code
+Free fonts
+
+#### note on AI
+Industry moved so far to moving AI, that perhaps it needs comment.  
+Every line of code in repos is hand written.  
+Apart from seeds initial data
+
+Using a lot of AI and "vibing" can end with high house of cards,  
+with no understanding how things work.
+
+But in the end you are responsible for code you ship,  
+so don't overuse AI
+
+#### replit
+https://replit.com/  
+check it, can be impressive
+
+#### React 19
+A long time comming. Since late 2022.  
+React team makes canary and tests it on Facebook  
+and only when they are confident that it's working, they ship it.
+
+Major change: React Sever Components  
+You need a reason for Sever Components, a problem that they will solve.  
+Because it will complicate some of your things.
+
+### React Render Modes
+four modalities to write React code  
+and they are not exclusive  
+it's more four techniquies
+
+### Client-side React
+you ship bundle to browser, traditional SPA  
+your server does nothing for you  
+this is how we wrote React for long and we will still
+
+### SSG: Static Side Generation
+You can build site and host it on github, without paying for server.  
+Its great for tutorials or anything static.
+
+There are some techniques for static
+
+next.config.js
+```javascript
+const config = {
+  output: "export",
+}
+```
+
+start
+```bash
+npm i react@19 react-dom@19
+```
+
+two ways for package  
+common.js / es modules
+
+package.json
+```json
+"type": "module"
+```
+
+emmet  
+html:5
+
+old way to write React, before jx  
+one benefit it doesn't require building
+
+```javascript
+import { createElement as h } from "react";
+
+function App() {
+  return h(
+    "div",
+    null,
+    h("h1", null, "Hellow Frontend Masters"),
+    h("p", null, "This is SSG")
+  );
+}
+```
+
+Render react files to string and store them in build files.  
+Sort of very simple Astro or custom static site generation.
+
+```javascript
+import { renderToStaticMarkup } from "react-dom/server";
+import { createElement as h} from "react";
+import {
+  readFileSync,
+  writeFileSync,
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  unlinkSync,
+} from "node:fs";
+import { fileURLToPath } from "node:url";
+import path, { dirname } from "node:path";
+import App from "./App.js"
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const distPath = path.join(__dirname, "dist")
+
+const shell = readFileSync(path.join(__dirname, "index.html"), "utf8")
+
+const app = renderToStaticMarkup(h(App));
+const html = shell.replace("<!-- Root -->", app)
+
+if (!existsSync(distPath)) {
+  mkdirSync(distPath)
+} else {
+  const files = readdirSync(distPath)
+  for (const file of files) {
+    unlinkSync(path.join(distPath, file))
+  }
+}
+
+writeFileSync(path.join(distPath, "index.html"), html);
+```
+
+But in reality use Astro, Next.js, (perhaps Gatsby)
+```bash
+npm create astro@latest
+```
+
+#### MDX
+https://mdxjs.com/  
+A combination of JSX and markdown, that is compiled to JSX  
+Could be used to enrich static site with dynamic elements.
+
+```mdx
+import {Chart} from './snowfall.js'
+export const year = 2023
+
+# Last year’s snowfall
+
+In {year}, the snowfall was above average.
+It was followed by a warm spring which caused
+flood conditions in many of the nearby rivers.
+
+<Chart color="#fcb32c" year={year} />
+```
+
+### Server Side Rendering
+v5 of this course goes indepth on this topic  
+*all the parts of it are still valid*
+
+#### traditional
+user requests app  
+server returns bundle  
+browser gets js, executed js  
+user finally sees rendered app
+
+time to interactive  
+and time to paint  
+are almost the same moment
+
+#### improve perceived performance
+so that user can see app before its interactive
+
+user requests app  
+server receives request and prerenders first page  
+server returns react bundle and html  
+browser receives prerendered html and js
+
+user first can see app  
+but interactive is later
+
+however, when connection is very fast  
+SSR will be actually slower than  typical client side
+
+also SSR has some problems, google analytics  
+you cannot execute it when on Server, because browser doesn't exist
+
+measure performance:  
+use google chrome dev tools  
+or lighthouse
+
+```bash
+npm i react@19 react-dom@19 fastify @fastify/static vite
+```
+
+server side and hydration  
+are very sensible to whitespace
+
+there is a way to build what we will write here  
+vite --ssr
+
+write app
+
+ssr/App.js
+```javascript
+import { createElement as h, useState } from "react";
+
+function App() {
+  const [count, setCount] = React.useState()
+  return h(
+    "div",
+    null,
+    h("h1", null, "Hellow Frontend Masters"),
+    h("p", null, "this is ssr"),
+    h("button", { onClick: () => setCount(count + 1) }, `Count: ${count}`)
+  );
+}
+
+export default App;
+```
+
+client part  
+this will never execute on server  
+because we will not import it
+
+ssr/Client.js
+```javascript
+import { hydrateRoot } from "react-dom/client"
+import { createElement as h } from "react"
+import App from './App.js'
+
+hydrateRoot(document.getElementById("root"), h(App));
+```
+
+#### renderToString
+Used for hydration.  
+Produces a larger output because it includes extra React-specific attributes  
+(data-reactroot, data-reactid) needed for hydration.
+
+#### renderToStaticMarkup
+is smaller because it omits these attributes, making it ideal for static, non-interactive HTML.
+
+we want to make as concurent as possible  
+to server header immediatelly,  
+so that browser can start to query css  
+that's why we use split
+
+ssr/server.js
+```javascript
+import fastify from "fastify";
+import fastifyStatic from "@fastify/static";
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import path, { dirname } from "node:path";
+import { renderToString } from "react-dom/server";
+import { createElement as h } from "react";
+import App from "./App.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const shell = readFileSync(path.join(__dirname, "dist", "index.html"), "utf8");
+
+const app = fastify();
+app.register(fastifyStatic, {
+  root: path.join(__dirname, "dist"),
+  prefix: "/",
+});
+
+const parts = shell.split("<!--ROOT-->");
+app.get("/", (req, reply) => {
+  reply.raw.write(parts[0]);
+  const reactApp = renderToString(h(App));
+  reply.raw.write(reactApp);
+  reply.raw.writ(parts[1]);
+  reply.raw.end();
+});
+
+app.listen({
+  port: 3000
+})
+```
+
+start to get this in background, while still 
+```html
+<script async defer type="module" src="./Client.js"></script>
+```
+
+```bash
+npm run build
+```
+
+#### microfrontend
+when you have multiple islands
+
+### RSC, React server components
+SSR server side is only on first rendering.  
+They are on server only when you ask for page.  
+And once it's shipped, they are done.  
+*you can have both SSR and RSC*
+
+With RSC you can have relation after first page.
+
+A react server component is a component that only reanders on the server.  
+Client never receives that part. You can start to query SQL in them.
+
+RSC will reduce size of javascript bundle sent to client.
+
+controvelsial Next.js decision  
+in Next.js everything is server component by default  
+and to make something client you have to implicitly tell it
+
+you cannot use `useState` in server component
+
+additional cognitive load: am I on server / am I on client?
+
+if you have problems with latency  
+then everytime you interact with client side, there may be request to server  
+and in that scenario latency can be also a problem
+
+RSC remind a lot PHP  
+and a lot of discussion to do or not RSC is  
+should I do application like PHP or SPA
+
+#### server actions
+your app will generate micro APIs, micro endpoints
+
+#### unstable api
+generally don't write RSC by hand  
+but to understand it better we will do  
+but in the end, use RSC by some framework
+
+technically RSC could be integrated in for example Rust app.
+
+today use:  
+Next.js
+
+soon:  
+React Router v7 / Remix  
+TanStack  
+(here not server but client will be default)
+
+both teams said they will support only subset  
+not whole RSC specification
+
+#### Options for OAuth solutions
+Neon Auth  
+Descope  
+Clerk
+
+
+### RSC without Next
+a lot of requirements
+```bash
+npm install @babel/core@7.26.8 @babel/plugin-transform-modules-commonjs@7.26.3 @babel/preset-react@7.26.3 @babel/register@7.25.9 @fastify/static@8.1.0 babel-loader@9.2.1 css-loader@7.1.2 doodle.css@0.0.2 fastify@5.2.1 html-webpack-plugin@5.6.3 nodemon@3.1.9 pino-pretty@13.0.0 promised-sqlite3@2.1.0 react@19.0.0 react-dom@19.0.0 react-server-dom-webpack@19.0.0 sqlite3@5.1.7 style-loader@4.0.0 webpack@5.97.1 webpack-cli@6.0.1
+```
+
+`react-server-dom-webpack`  
+this enables node to be RSC server
+
+webpack works like: if it matches this regexp pattern  
+pass the file through this loader
+
+`new HtmlWebpackPlugin({`  
+plugin that will generate index.html for us
+
+in common.js `__dirname` is provided  
+so you don't have to define it yourself
+
+`"dev:server": "node --watch --conditions react-server server/main"`  
+`--conditions react-server` tells node that this is server  
+conditions is a bit like big if  
+it tells node how to resolve the modules
+
+#### Suspense
+if you wait for some part from server, it enables to show loader
+
+#### Is it server or client component
+Usually top level of your app will be server component.  
+You cannot make server components a children of client components.  
+But you can do opposite.
+
+#### Hooks don't work on server
+If you need hooks, use client
+
+#### "use client"
+it's a directive, same as "use strict" in the old javascript days
+
+#### server components can be async
+this is not possible with client components
+```javascript
+export default async function MyNotes() {}
+```
+
+in server components  
+elements in component body will be run just once  
+so you can be less carefull about rendering
+
+#### Server component is API route
+you can think about it that way
+
+this will get markup from server  
+and turn it into component
+
+```javascript
+import { createFromFetch } from "react-server-dom-webpack/client"
+const p = createFromFetch(fetchPromise);
+```
+
+#### flight protocol
+it's a markup sent as JSON  
+a JSON which defines react components to be used  
+here is a definition of component $1...
+
+it's not publicly documented  
+and there is no official documentation on it  
+although it's easy to figure out what is it doing
+
+### RSC with Next.js
+There was no React fullstack framework.  
+Meteor: was kind of first attempt to have server and client code together
+
+two ways to use Next.js:
+
+A) it owns everything  
+a little bit like Rails app  
+its backend and frontend
+
+B) middle end server  
+javascript microservices  
+coalesced into one service  
+not really your backend or frantend
+
+#### Note on Monoliths
+don't decompose everything into microservices too early, start as monolith  
+don't do microservices straight from start
+
+```bash
+npx create-next-app@15.1.7 --js --app --src-dir --turbopack
+```
+
+#### offline first
+RSC cannot go together with offline first
+
+#### mix server and client components
+once you are in client land, everything beneath is client  
+you cannot go away from it (altough there is a hack)
+
+how to load server data into client component  
+you can use useEffect as usuall  
+but there is another way
+
+you can wrap client inside server  
+and just pass any server data in props
+
+src/app/teacher/page.js
+```javascript
+import TeacherClientPage from "./clientPage";
+import fetchNotes from "./fetchNotes";
+
+export default async function TeacherView() {
+  const initialNotes = await fetchNotes();
+  return (
+    <TeacherClientPage initialNotes={initialNotes} fetchNotes={fetchNotes} />
+  );
+}
+```
+
+src/app/teacher/fetchNotes.js
+```javascript
+"use server";
+import { AsyncDatabase } from "promised-sqlite3";
+
+export default async function fetchNotes(since) {
+  const db = await AsyncDatabase.open("./notes.db");
+  let rows;
+  if (since) {
+    rows = await db.all(
+      "SELECT n.id as id, n.note as note, ..."
+      [since]
+    );
+  } else {
+    rows = await db.all(
+      "SELECT n.id as id, n.note as note, ..."
+    );
+  }
+  return rows;
+}
+```
+
+#### calling sever from client
+sometimes you will have to write it traditional way  
+create an api and call it from client with useEffect
+
+sometimes you have to make server run again  
+by redirecting again to page
+
+#### ractjs tainted
+because it's dangerously easy to leak secrets  
+by just adding one line `"use client"`
+
+so to avoid leaking secrets, you can taint some value  
+it will make sure that value is never a part of client bundle  
+`experimental_taintObjectReference`
+
+#### when Next is recommended
+when client would be calling server often on many small occassions  
+then Next.js feature of simplifying server calls will be very helpful
+
+Next.js would not be recommended if you have very client heavy application  
+because almost all of it would be "use client"
+
+#### other RSC attempts
+Pheonix live view  
+also Laravel
+
+#### excalidraw
+tool to draw https://excalidraw.com/
+
+### Performance Optimizations
+React generally has good performance.  
+Please don't preemptively use `useMemo` everywhere.  
+This is just wrong. Wait for this to be needed first.  
+memo, useMemo, useCallback
+
+#### Jank
+when you scroll down  
+page pauses and then jumps
+
+#### setting html
+watch out for cross site scripting when using this
+```javascript
+dangerouslySetInnerHTML={{ __html: render(options.text) }}
+```
+
+#### memo
+React.memo  
+if my props didn't change, don't rerender me
+
+however, if you send object in props  
+and it's recreated on each parent render,  
+then it will bust that memo, because two objects are never equal  
+(referential equality)
+
+and also when you pass function
+
+#### useMemo
+```javascript
+const options = useMemo(() => ({ text, theme }), [text, theme]);
+```
+
+#### useCallback
+```javascript
+const render = useCallback((text) => marked.parse(text), []);
+```
+
+actually useCallback is implemented using useMemo  
+and is exactly same as:
+```javascript
+const render = useMemo(() => (text) => marked.parse(text), []);
+```
+
+#### problems with overusing
+If you start to overuse `React.memo`, `useMemo` and `useCallback`  
+then you will start to have a problem that some of parts are not refreshing.
+
+And you will have to investigate why that is happening.
+
+#### React compiler
+How compiler works:  
+I don't think this can ever change  
+so I will memoize this for you
+
+### Transitions
+they change perceived speed
+
+I will do something large, like change pages  
+but will keep UI responsive
+
+You are on banking page,  
+you click something accidental  
+and you want to change but UI doesn't allow you
+
+#### redirect in vite
+vite.config.js
+```javascript
+export default defineConfig({
+  server: {
+    proxy: {
+      "/score": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+    },
+  },
+  plugins: [react()],
+});
+```
+
+#### without transition
+you make user wait for all data  
+and only then you show them a page
+
+when you change game to game 5  
+and it takes 5 seconds  
+then after clicking you have to wait  
+even if you know you made mistake
+
+#### transition
+takes adventage of scheduler  
+it enables UI to stay interactive
+
+change 
+
+src/App.jsx
+```javascript
+const [isPending, setIsPending] = useState(true);
+
+async function getNewScore(game) {
+  setIsPending(true);
+  setGame(game);
+  const newScore = await getScore(game);
+  setScore(newScore);
+  setIsPending(false);
+}
+```
+
+to
+
+src/App.jsx
+```javascript
+const [isPending, startTransition] = useTransition(true);
+
+async function getNewScore(game) {
+  setGame(game);
+  startTransition(async () => {
+    const newScore = await getScore(game);
+    setScore(newScore);
+  })
+}
+```
+
+or even better, to avoid race conditions  
+although in this case this UI is so small  
+that it probably will never happen
+
+```javascript
+async function getNewScore(game) {
+  setGame(game);
+  startTransition(async () => {
+    const newScore = await getScore(game);
+    startTransition(() => {
+      setScore(newScore);
+    })
+  })
+}
+```
+
+what useTransition is doing  
+it's delegating some of changes to lower priority renders
+
+as effect, the page will stay where it is  
+until everything is ready, and only then UI will change
+
+you may have inside of your useTransition some operations  
+but then these will be called each time  
+no matter did user changed his mind  
+(because UI itself is ignored if user changed his mind)
+
+### Optimistic UI update
+when UI reports result of action immediatelly  
+even though there is server request in the background  
+and result of that action can be error
+
+on iMessages you get quick "sent"  
+and then status later changes to "delivered"
+
+you can do optimistic without any hooks  
+but we will use adventage of some built ins  
+react has "new" scheduler and reconciler  
+*(they have 7 years)*
+
+with optimistic UI you are most affraid of errors  
+although the built in tool will take care of it
+
+#### useOptimistic
+expects function to reconsile  
+update function
+
+we have to `useTransition` to mark ui update as low priority
+
+```javascript
+const [isPending, startTransition] = useTransition();
+const [optimisticThoughts, addOptimistcThought] = useOptimistic(
+  thoughts,
+  (oldThoughts, newThought) => [newThought, ...oldThoughts]
+)
+
+// function that handles form submit
+startTransition(async () => {
+  addOptimisticThought(`${thought} (Loading…)`);
+  setThought("");
+  const response = await fetch("/thoughts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ thought }),
+  });
+  if (!response.ok) {
+    alert("This thought was not deep enough. Please try again.");
+    return;
+  }
+  const { thoughts: newThoughts } = await response.json();
+  setThoughts(newThoughts);
+});
+
+// UI where we list
+<ul>
+  {optimisticThoughts.map((thought, index) => (
+    <li key={thought}>{thought}</li>
+  ))}
+</ul>
+```
+
+### deffered
+What if you have something computable expensive  
+you will get JANK
+
+especially if you calculate something on slider change  
+when if user slides, then you run some calculation
+
+you can also use debouncing  
+but this way you are changing UI for all users  
+even if they have performant machine
+
+(btw phone/laptop on low batery is slowing down)
+
+by using deffered you use reconsiler  
+and UI will adopt to what device can handle
+
+this is how you know that value is out of sync
+
+```javascript
+{value !== deferred ? "(Updating)" : ""}
+```
+
+`useDefferedValue`  
+you will mark things as low priority rendering
+
+every rendering in react is high priority  
+and you can manually set selected parts to be low priority
+
+```javascript
+const deferredBlur = useDeferredValue(blur);
+const filterStyle = `blur(${deferredBlur}px)`;
+
+<Slider
+  value={blur}
+  deferred={deferredBlur}
+  onChange={(e) => setBlur(e.target.value)}
+  name="Blur"
+/>
+
+export default function Slider({
+  value,
+  deferred,
+  onChange,
+  name,
+  max
+}) {
+  return (
+    <li className="slider">
+      <label htmlFor={name}>
+        {name}
+        {value !== deferred ? "(Updating)" : ""}
+      </label>
+      <input
+        type="range"
+        id={name}
+        name={name}
+        min="0"
+        max={max}
+        value={value}
+        onChange={onChange}
+      />
+      <output htmlFor="name">
+        Actual Value: {value} | Deferred Value: {deferred}
+      </output>
+    </li>
+  )
+}
+```
+
+#### more hooks
+these hooks are not for app developers  
+but there are for framework builders  
+useLayoutEffect  
+useInsertionEffect
+
+### other topics
+#### client heavy framework
+if you have have client heavy app  
+and want a fullstack framework  
+then don't go to Next, but 
+
+React Router v7  
+Remix  
+Tanstack Start
+
+#### self hosting Next
+it's doable  
+it's not harder to host than any other Node service  
+plenty of people do it  
+just run it as Node server
+
+you loose a bit of extras
+
+#### useTransition and test
+don't test React itself  
+test what user expects  
+test user experience, not the way React was written
+
+#### recrutation tip
+built some project
+
+and go so in depth in it  
+have a fun with it  
+be excited about it, go really depth  
+be passionate about that project  
+... that it will impress recruiter
+
+if you have this,  
+then you don't even have to match tech stack  
+at company which hires you
+
+recrutation at top tech: 600 CV
+narrowed to 30 interviews
+
+#### fulltext search in static app
+there are plenty of libraries  
+elastic search or pine cone or just postgres
 
 
 
@@ -2552,7 +2554,7 @@ export default function SignUpPage() {
 
 #### form and action
 ```javascript
-<Form action={formAction} className="space-y-6">
+<Form action={formAction} className="space-y-6"></Form>
 ```
 
 #### FormData uses name in inputs
@@ -2618,6 +2620,8 @@ export const getCurrentUser = async () => {
       .select()
       .from(users)
       .where(eq(users.id, session.userId))
+  }
+}
 ```
 
 #### async component
@@ -3571,7 +3575,7 @@ it's possible to have it directly in form action:
     'use server';
     await signOut();
   }}
->
+></form>
 ```
 
 #### Open Graph metadata
@@ -3731,7 +3735,7 @@ const Pizza = (props) => {
   ])
 }
 
-...
+// ...
 React.createElement("h1", {}, "PadreGino's"),
 React.createElement(Pizza, { name: "Pepperoni", description: "Peperroni, mozarella cheese" }),
 React.createElement(Pizza, { name: "Americano", description: "French fries and hot dogs" }),
@@ -3889,7 +3893,7 @@ export default function Order () {}
 will display little better in stack  
 then:
 ```javascript
-const Pizza = (props) => {
+const Pizza = (props) => {}
 ```
 
 two-way binding  
@@ -3961,10 +3965,11 @@ it's a way to enable imperative api
 ```javascript
 MessagesDisplay = React.forwardRef(MessagesDisplay)
 function MessageDisplay({messages}, ref) { ...
-React.useImperativeHandle(ref, () => ({
-  scrollToTop: () => { ... }
-  scrollToBottom: () => { ... }
-}))
+  React.useImperativeHandle(ref, () => ({
+    scrollToTop: () => { ... }
+    scrollToBottom: () => { ... }
+  }))
+}
 ```
 
 for most cases declarative api would be better

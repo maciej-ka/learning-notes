@@ -72,20 +72,22 @@ console.log(arr[0]); // 42
 console.log(arr.length); // 10
 ```
 
-| Type              | Value Range               | Size in bytes | Web IDL type        |
-|-------------------|---------------------------|---------------|---------------------|
-| Int8Array         | -128 to 127               | 1             | byte                |
-| Uint8Array        | 0 to 255                  | 1             | octet               |
-| Uint8ClampedArray | 0 to 255                  | 1             | octet               |
-| Int16Array        | -32768 to 32767           | 2             | short               |
-| Uint16Array       | 0 to 65535                | 2             | unsigned short      |
-| Int32Array        | -2147483648 to 2147483647 | 4             | long                |
-| Uint32Array       | 0 to 4294967295           | 4             | unsigned long       |
-| Float16Array      | -65504 to 65504           | 2             | N/A                 |
-| Float32Array      | -3.4e38 to 3.4e38         | 4             | unrestricted float  |
-| Float64Array      | -1.8e308 to 1.8e308       | 8             | unrestricted double |
-| BigInt64Array     | -263 to 263 - 1           | 8             | bigint              |
-| BigUint64Array    | 0 to 264 - 1              | 8             | bigint              |
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Typed_arrays
+
+| Type              | Value Range                     | Size in bytes | Web IDL type        |
+|-------------------|---------------------------------|---------------|---------------------|
+| Int8Array         | -128 to 127                     | 1             | byte                |
+| Uint8Array        | 0 to 255                        | 1             | octet               |
+| Uint8ClampedArray | 0 to 255                        | 1             | octet               |
+| Int16Array        | -32_768 to 32_767               | 2             | short               |
+| Uint16Array       | 0 to 65535                      | 2             | unsigned short      |
+| Int32Array        | -2_147_483_648 to 2_147_483_647 | 4             | long                |
+| Uint32Array       | 0 to 4_294_967_295              | 4             | unsigned long       |
+| Float16Array      | -65_504 to 65_504               | 2             | N/A                 |
+| Float32Array      | -3.4e38 to 3.4e38               | 4             | unrestricted float  |
+| Float64Array      | -1.8e308 to 1.8e308             | 8             | unrestricted double |
+| BigInt64Array     | -2**63 to 2**63 - 1             | 8             | bigint              |
+| BigUint64Array    | 0 to 2**64 - 1                  | 8             | bigint              |
 
 ### JS binary operators
 | Operator | Name                  | Example  | Binary Calculation | Result                            |
@@ -1858,7 +1860,7 @@ event listeners to the existing markup.
 
 Used in index.js instead of first render
 ```javascript
-ReactDOM.hydrate(<App name="MyApp"/>,
+ReactDOM.hydrate(<App name="MyApp"/>),
 ```
 React expects that the rendered content is identical between the server and the client
 

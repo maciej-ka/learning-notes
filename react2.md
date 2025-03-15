@@ -1380,9 +1380,10 @@ function useToggleTodo(id, sort) {
   
   return useMutation({
     mutationFn: () => toggleTodo(id),
-    onMutate: () => {
+    onMutate: async () => {
       // this is so that if by chance there is refresh
       // then it will not override our optimistic update
+      // this is also the only reason why onMutate is async
       await queryClient.cancelQueries({
         queryKey: ['todos', 'list', { sort }]
       })
@@ -1406,7 +1407,7 @@ function useToggleTodo(id, sort) {
       }
     },
     
-    onError: (error, variables, rollback) => {
+    onError: (_error, _variables, rollback) => {
       rollback?.()
     },
     
@@ -1418,6 +1419,9 @@ function useToggleTodo(id, sort) {
   })
 }
 ```
+
+it would be possible to write generic function  
+to abstract some parts of this big useMutation code
 
 for easy rollback in case of error  
 we are creating a snapshot of state
@@ -1434,7 +1438,7 @@ and that return will be available as third argument in all other callbacks
 (named rollback here)
 
 ```javascript
-onError: (error, variables, rollback) => {}
+onError: (_error, _variables, rollback) => {}
 ```
 
 `onSettled` will be run always as last, after all callbacks  
@@ -1449,5 +1453,22 @@ optimistic updates are usually the way to go.
 rollback?.()
 ```
 
+#### more than one cache key to snapshot
+
+```javascript
+onMutate: () => {
+  // ...
+  const snapshot = {
+    myBooks: queryClient.getQueryData(["books", "my-books"]),
+    bookDetails: queryClient.getQueryData(["books", "detail", book.id]),
+  }
+  
+  // ...
+  return () => {
+    queryClient.setQueryData(["books", "my-books"], snapshot.myBooks);
+    queryClient.setQueryData(["books", "detail", book.id], snapshot.bookDetail);
+  }
+}
+```
 
 

@@ -1462,7 +1462,7 @@ onMutate: () => {
     myBooks: queryClient.getQueryData(["books", "my-books"]),
     bookDetails: queryClient.getQueryData(["books", "detail", book.id]),
   }
-  
+
   // ...
   return () => {
     queryClient.setQueryData(["books", "my-books"], snapshot.myBooks);

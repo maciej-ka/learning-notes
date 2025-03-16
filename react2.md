@@ -2054,3 +2054,124 @@ Tradeoffs:
 - performance cost
 - expensife for large responses
 
+#### Offline support
+In case of offline event, React Query will pause queries.  
+When the device comes back online, queries will resume.
+
+```javascript
+const { data, status, fetchStatus } = useRepos()
+const offline = fetchStatus === "paused"
+```
+
+Tanstack React Query dev tools have button to simulate offline.
+
+query, when offline will return
+
+```json
+{
+  "status": "pending",
+  "data": undefined,
+  "fetchStatus": "paused"
+}
+```
+
+`status` is information about cache key  
+`fetchStatus` will return fetch function
+
+Generally for loading spinners use `isPending` or `status === "pending"`  
+as this is correct way to measure, that cache key is empty.
+
+`isLoading` has a different meaning, it denotes that fetch is happening  
+and in case of offline, isLoading will be false, even if cache is empty
+
+```javascript
+const isLoading = status === "pending" && fetchStatus === "fetching"
+```
+
+If device goes offline after it filled cache,  
+Users will be still able to see cached data.  
+And when device restores connection, react query will refetch.
+
+NetworkMode, setting that controls React Query in offline.
+
+**"online"**  
+Default value, pause the query and not attempt to execute queryFn.  
+sometimes queryFn is a promise which doesn't require network.
+
+**"always"**  
+Always execute query, regardless of network status.  
+It will automatically set refetchOnReconnect to false.
+
+```javascript
+const { data } = useQuery({
+  queryKey: ['luckyNumber'],
+  queryFn: () => Promise.resolve(7),
+  networkMode: 'always'
+  // refetchOnReconnect: false
+})
+```
+
+**"offlineFirst"**  
+Initial query will be always fired, once.  
+Potential retries are paused if the first failed because of network.
+
+It's good setting for whenever you have additional cache layer  
+between api and React Query. Good example is browser cache.
+
+api response header like this:  
+`cache-control: public, max-age=60, s-maxage=60`  
+will instruct browser to cache for 60 seconds  
+to take advantage of this, change networkMode to "offlineFirst"
+
+#### Offline mutations
+Becuase mutations have side effects on server.  
+we have to be more carefull, how we deal with them, when device reconnects.
+
+React Query will store them in queue.  
+And on reconnect, they will be sent in same order.
+
+This part of useMutation can make UI jump a little  
+when going back to online, because it will invalidate cache  
+after each mutation, which will show states in between mutations  
+(of clicking checkboxes on todo list)
+
+```javascript
+onSettled: () => {
+  return queryClient.invalidateQueries({
+    queryKey: ['todos', 'list']
+  })
+}
+```
+
+to property handle mutation queue in this case,  
+it's better to invalidate only once, after all mutations in queue are done
+
+```javascript
+onSettled: () => {
+  if (queryClient.isMutating() === 1) {
+    return queryClient.invalidateQueries({
+      queryKey: ['todos', 'list']
+    })
+  }
+}
+```
+
+isMutating will return count of how many mutations of query are running  
+however this will not work propery when in queue are many different mutations  
+(comming from different queries)
+
+because of that it's better to check mutations count for that key
+
+```javascript
+onSettled: () => {
+  if (queryClient.isMutating({ mutationKey: ['todos', 'list'] }) === 1) {
+    return queryClient.invalidateQueries({
+      queryKey: ['todos', 'list']
+    })
+  }
+}
+```
+
+networkMode works both for queries and mutations.  
+and default "online" setting will not send mutation  
+unless there is network connection (it will put mutation onto queue instead)

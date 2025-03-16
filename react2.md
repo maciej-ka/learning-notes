@@ -1792,4 +1792,203 @@ fetch('https://jsonplaceholder.typicode.com/todos/1', { signal }).then(...)
 controller.abort(); // Immediately abort the request
 ```
 
+#### Error handling
+Status error is when inside queryFn:
+- there is throw
+- promise was rejected
 
+For that reason, it's not good idea to handle error
+inside the queryFn with try catch.
+
+```javascript
+queryFn: async () => {
+  try {
+    // ...
+  } catch (e) {
+    console.log("Error: ", e)
+  }
+}
+```
+
+#### Auto retrying
+Unless you rethrow the error, React Query will not know
+that the query had a problem. It's status will be incorrect.
+And it will not be able to retry the query.
+
+By default, if query fails, React Query will retry it 3 times.
+Delaying each retry by exponentially growing delay (staring with 1s)
+
+both are configurable
+delay five times, with 5s
+
+```javascript
+const reposeQuery = useQuery({
+  queryKey: ['repos'],
+  queryFn: fetchRepos,
+  retry: 5,
+  retryDelay: 5000,
+})
+```
+
+they can be also defined with functions
+
+```javascript
+const reposQuery = useQuery({
+  // ...
+  retry: (failureCount, error) => {},
+  retryDelay: (failureCount, error) => {}
+)}
+```
+
+While query is retring, it stays in pending status.
+
+It's possible to inspect failures.
+(both values will be reset on successfull response).
+
+```javascript
+const { failureCount, failureReason } = reposQuery()
+```
+
+#### Graceful error handling
+One way is to check the status for error:
+
+```javascript
+const { status, data, error } = reposQuery()
+
+if (status === "error") {
+  return <em>There was an error fetching the data, {error.message}</em>
+}
+```
+
+What if you want to have higher level error handler?
+Potentially you can use error boundaries.
+
+```javascript
+import { ErrorBoundary } from 'react-error-boundary'
+
+function Fallback({ error }) {
+  return <p>Error: { error.message }</p>
+}
+
+<ErrorBoundary FallbackComponent={Fallback}>
+  <TodoList />
+</ErrorBoundary>
+```
+
+However they will only work during rendering.
+And running queries doesn't happen when rendering.
+
+To solve this, use throwOnError
+
+```javascript
+function useTodos() {
+  return useQuery({
+    queryKey: ['todos', 'list'],
+    queryFn: fetchTodos,
+    retryDelay: 1000,
+    throwOnError: true
+  })
+}
+```
+
+For more control, throwOnError can also be a function.
+If that function returns true, error will be thrown to ErrorBoundary.
+
+```javascript
+throwOnError: (error, query) => {}
+```
+
+For example, it usually doesn't make sense to report error
+when background refetch failed (so there is still some data to be presented).
+This is potentially good candidate for defaultOption in new `QueryClient`.
+
+```javascript
+throwOnError: (error, query) => {
+  return typeof query.state.data === 'undefined'
+  // or only report 500 errors
+  return error.status >= 500
+}
+```
+
+#### UI for Query retry
+To stop showing error failback, use resetErrorBoundary
+And to retry query, we will use QueryErrorResetBoundary,
+which is coming from React Query, which when renders
+receives a callback to retry query, that we pass to ErrorBoundary
+
+```javascript
+import { ErrorBoundary } from 'react-error-boundary'
+
+function Fallback({ error, resetErrorBoundary }) {
+  return (
+  <>
+    <p>Error: { error.message }</p>
+    <button onClick={resetErrorBoundary}>
+      Try again
+    </button>
+  </>
+  )
+}
+
+
+<QueryErrorResetBoundary>
+  {({ reset }) => (
+    <ErrorBoundary 
+      onReset={reset}
+      FallbackComponent={Fallback}
+    >
+      <TodoList />
+    </ErrorBoundary>
+  )}
+</QueryErrorResetBoundary>
+```
+
+#### Showing a toast error
+In that case ErrorBoundary is not appropriate,
+because we don't want to show a Fallback UI.
+
+To do it, we can initialize QueryClient with custom cache
+that will display a toast whenever one of queries ends with error.
+
+```javascript
+import toast, { Toaster } from 'react-hot-toast'
+import { QueryClient, QueryCache, QueryCilentProvider } from '@tanstack/react-query'
+
+const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error) => {
+      toast.error(error.message)
+    }
+  })
+})
+
+export default function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TodoList />
+      <Toaster />
+    </QueryClientProvider>
+  )
+}
+```
+
+if you need opinionated default, here is a proposition:
+
+```javascript
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      throwOnError: (error, query) => {
+        return typeof query.state.data === 'undefined'
+      }
+    }
+  },
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      if (typeof query.state.data !== 'undefined') {
+        toast.error(error.message)
+      }
+    }
+  })
+})
+```

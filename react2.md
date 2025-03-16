@@ -1992,3 +1992,65 @@ const queryClient = new QueryClient({
   })
 })
 ```
+
+#### Validating Query Data
+We can validate to some degree with typescript.
+
+```javascript
+function getGreetings(input: ReadonlyArray<{ name: string }>) {
+  // ...
+}
+```
+
+But this will not work, if server isn't provided by us.  
+Actually number one reason of bugs may be misalignment between shape of data  
+developer expects and the one that server actually responds with.
+
+Validation  
+Somehow server response is similar to form user input.  
+Both are untrusted sources of data that we need to handle with care.
+
+Zod
+
+```bash
+npm install zod
+```
+
+Let's you define the expected shape of a response  
+and validate the response against a schema.
+
+Define schema and use it to check response.
+
+```javascript
+import { z } from 'zod'
+
+const pokemonSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  sprites: z.object({
+    front_default: z.string().url()
+  }).optional(),
+})
+
+async function fetchPokemon(id) {
+  const url = `http://pokeapi.co/api/v2/pokemon/${id}`
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error('fetch failed')
+  }
+  const data = await response.json()
+  return pokemonSchema.parse(data)
+}
+```
+
+Zod will strip all fields that are present in data  
+but are not defined in schema.
+
+And it Throws errors when data doesn't match.  
+Which works great with React Query,  
+because it will then go to error state.
+
+Tradeoffs:
+- performance cost
+- expensife for large responses
+

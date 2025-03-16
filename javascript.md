@@ -74,20 +74,35 @@ console.log(arr.length); // 10
 
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Typed_arrays
 
-| Type              | Value Range                     | Size in bytes | Web IDL type        |
-|-------------------|---------------------------------|---------------|---------------------|
-| Int8Array         | -128 to 127                     | 1             | byte                |
-| Uint8Array        | 0 to 255                        | 1             | octet               |
-| Uint8ClampedArray | 0 to 255                        | 1             | octet               |
-| Int16Array        | -32_768 to 32_767               | 2             | short               |
-| Uint16Array       | 0 to 65535                      | 2             | unsigned short      |
-| Int32Array        | -2_147_483_648 to 2_147_483_647 | 4             | long                |
-| Uint32Array       | 0 to 4_294_967_295              | 4             | unsigned long       |
-| Float16Array      | -65_504 to 65_504               | 2             | N/A                 |
-| Float32Array      | -3.4e38 to 3.4e38               | 4             | unrestricted float  |
-| Float64Array      | -1.8e308 to 1.8e308             | 8             | unrestricted double |
-| BigInt64Array     | -2**63 to 2**63 - 1             | 8             | bigint              |
-| BigUint64Array    | 0 to 2**64 - 1                  | 8             | bigint              |
+| Type              | Aprox range | bytes |
+|-------------------|-------------|-------|
+| Uint8Array        | 0 to 255    | 1     |
+| Uint8ClampedArray | 0 to 255    | 1     |
+| Uint16Array       | 0 to 6e4    | 2     |
+| Uint32Array       | 0 to 4e9    | 4     |
+| BigUint64Array    | 0 to 1e19   | 8     |
+
+| Type          | Aprox range   | bytes |
+|---------------|---------------|-------|
+| Int8Array     | -128 to 127   | 1     |
+| Int16Array    | -3e4 to 3e4   | 2     |
+| Int32Array    | -2e9 to 2e9   | 4     |
+| BigInt64Array | -9e18 to 9e18 | 8     |
+
+| Type         | Aprox range     | bytes |
+|--------------|-----------------|-------|
+| Float16Array | -6e4 to 6e4     | 2     |
+| Float32Array | -3e38 to 3e38   | 4     |
+| Float64Array | -1e308 to 1e308 | 8     |
+
+to check precise size calculate 2 to power of bites
+```
+2**8 = 256
+2**16 = 65536
+2**32 = 4294967296 = 4.2e9
+2**64 = 18446744073709552000 = 1.8e19
+```
+
 
 ### JS binary operators
 | Operator | Name                  | Example  | Binary Calculation | Result                            |
@@ -678,7 +693,7 @@ Encapsulate creation of complex objects.
 Especially useful if creation of an objects involves:  
 - complex validation
 - initialization
-- coordination
+- coordination  
 of many objects
 
 Factories help to keep domain clean and focus on business logic  
@@ -1917,7 +1932,7 @@ console.log(gen.next().value)
   - visual stability of the page.
   - interactivity
     - Chrome usage data shows that 90% of a user's time on a page is spent after it load
-    - INP is a metric that assesses a page's overall responsiveness to user
+    - INP is a metric that assesses a page's overall responsiveness to user  
       interactions by observing the latency of all click, tap, and keyboard  
       interactions that occur throughout the lifespan of a user's visit to a page  
 - ogłoszono, że Core Web Vitals staną się pełnoprawnym czynnikiem rankingowym 2021
@@ -1931,15 +1946,15 @@ console.log(gen.next().value)
 *we don't know the weights of components*  
 - PageRank_NS (nearest seed)
   - clustering of topics
-  - Understanding PageRank_NS presents an opportunity to create more focused
+  - Understanding PageRank_NS presents an opportunity to create more focused  
     and interconnected content structures. For example, if you run a blog  
     focusing on “healthy snacks,” be sure your content is interlinked and  
     relevant to your other subtopics like “nutrition” and “meals on the go” to  
     benefit from PageRank variants  
 - siteAuthority
-  - powerful signals that Google uses to evaluate the overall quality and
+  - powerful signals that Google uses to evaluate the overall quality and  
     relevance of an entire website, rather than just individual pages.  
-  - Despite Google’s public denials, the leaked documents confirm the existence
+  - Despite Google’s public denials, the leaked documents confirm the existence  
     of a metric called “siteAuthority  
 - Host NSR (Host-Level Site Rank)
   - This metric underscores the importance of maintaining high-quality content across all parts of a website.
@@ -1951,15 +1966,15 @@ console.log(gen.next().value)
 - NavBoost
   - It rewards pages that generate more and better clicks.
 - NSR (Neural Search Ranking)
-  - is a critical component of Google’s algorithm that utilizes machine
+  - is a critical component of Google’s algorithm that utilizes machine  
     learning to understand the context and relevance of web content.  
   - simply stuffing an article with keywords is not enough
-  - If another site publishes a similar article but includes more diverse
+  - If another site publishes a similar article but includes more diverse  
     information NSR will likely rank this content higher  
 - Content Update and Freshness
   - Regular content updates are crucial for maintaining its relevance and ranking
 - periodically audit your content and remove outdated or irrelevant articles that do not attract traffic
-- Tools like Google Search Console can help you identify and (at the time of
+- Tools like Google Search Console can help you identify and (at the time of  
   this writing, anyway) disallow harmful links.  
 - The leak confirms that Google does indeed appear to penalize so-called toxic backlinks.
 

@@ -157,7 +157,26 @@ all lines filled always from left to right
 no empty spaces
 
 #### how to store it?
-how to know where's the free spot on bottom?
+in array that represents graph
+[5, 7, 10, 10, 8, 12, 11]
+
+#### go to children
+for each node i, it's children are:
+2i + 1
+2i + 2
+
+#### go to parent
+(i - 1) / 2
+or with bitshift
+(i - 1) >> 1
+
+#### updating in heap
+it requires a map of value -> index
+I'm 17, where am I?
+
+we will need to bubble me up or down,
+because I will become 25
+
 
 
 

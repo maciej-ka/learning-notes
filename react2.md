@@ -1797,7 +1797,7 @@ Status error is when inside queryFn:
 - there is throw
 - promise was rejected
 
-For that reason, it's not good idea to handle error
+For that reason, it's not good idea to handle error  
 inside the queryFn with try catch.
 
 ```javascript
@@ -1811,14 +1811,14 @@ queryFn: async () => {
 ```
 
 #### Auto retrying
-Unless you rethrow the error, React Query will not know
-that the query had a problem. It's status will be incorrect.
+Unless you rethrow the error, React Query will not know  
+that the query had a problem. It's status will be incorrect.  
 And it will not be able to retry the query.
 
-By default, if query fails, React Query will retry it 3 times.
+By default, if query fails, React Query will retry it 3 times.  
 Delaying each retry by exponentially growing delay (staring with 1s)
 
-both are configurable
+both are configurable  
 delay five times, with 5s
 
 ```javascript
@@ -1842,7 +1842,7 @@ const reposQuery = useQuery({
 
 While query is retring, it stays in pending status.
 
-It's possible to inspect failures.
+It's possible to inspect failures.  
 (both values will be reset on successfull response).
 
 ```javascript
@@ -1860,7 +1860,7 @@ if (status === "error") {
 }
 ```
 
-What if you want to have higher level error handler?
+What if you want to have higher level error handler?  
 Potentially you can use error boundaries.
 
 ```javascript
@@ -1875,7 +1875,7 @@ function Fallback({ error }) {
 </ErrorBoundary>
 ```
 
-However they will only work during rendering.
+However they will only work during rendering.  
 And running queries doesn't happen when rendering.
 
 To solve this, use throwOnError
@@ -1891,15 +1891,15 @@ function useTodos() {
 }
 ```
 
-For more control, throwOnError can also be a function.
+For more control, throwOnError can also be a function.  
 If that function returns true, error will be thrown to ErrorBoundary.
 
 ```javascript
 throwOnError: (error, query) => {}
 ```
 
-For example, it usually doesn't make sense to report error
-when background refetch failed (so there is still some data to be presented).
+For example, it usually doesn't make sense to report error  
+when background refetch failed (so there is still some data to be presented).  
 This is potentially good candidate for defaultOption in new `QueryClient`.
 
 ```javascript
@@ -1911,9 +1911,9 @@ throwOnError: (error, query) => {
 ```
 
 #### UI for Query retry
-To stop showing error failback, use resetErrorBoundary
-And to retry query, we will use QueryErrorResetBoundary,
-which is coming from React Query, which when renders
+To stop showing error failback, use resetErrorBoundary  
+And to retry query, we will use QueryErrorResetBoundary,  
+which is coming from React Query, which when renders  
 receives a callback to retry query, that we pass to ErrorBoundary
 
 ```javascript
@@ -1944,10 +1944,10 @@ function Fallback({ error, resetErrorBoundary }) {
 ```
 
 #### Showing a toast error
-In that case ErrorBoundary is not appropriate,
+In that case ErrorBoundary is not appropriate,  
 because we don't want to show a Fallback UI.
 
-To do it, we can initialize QueryClient with custom cache
+To do it, we can initialize QueryClient with custom cache  
 that will display a toast whenever one of queries ends with error.
 
 ```javascript

@@ -1,6 +1,13 @@
 From the Leet Code
 ==================
 
+#### >> and ~~ limitation
+like all bitwise operators, they will convert to32 bit int  
+so it cannot be used for numbers higher than:
+```
+2**32 = 4294967296 = 4.2e9
+```
+
 ### >> operator
 Division by two, rounded down
 ```javascript
@@ -103,7 +110,6 @@ to check precise size calculate 2 to power of bites
 2**64 = 18446744073709552000 = 1.8e19
 ```
 
-
 ### JS binary operators
 | Operator | Name                  | Example  | Binary Calculation | Result                            |
 |----------|-----------------------|----------|--------------------|-----------------------------------|
@@ -115,6 +121,8 @@ to check precise size calculate 2 to power of bites
 | >>       | Right Shift           | 5 >> 1   | 0101 >> 1          | 0010 (2)                          |
 | >>>      | Zero-fill Right Shift | -5 >>> 1 | `11111011 >>> 1`   | Fills with 0 instead of sign bit  |
 
+All of them use 32 bit uint  
+So if number is higher, it will be limited
 
 
 Defensive Semicolon

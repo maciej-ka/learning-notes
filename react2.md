@@ -2535,3 +2535,302 @@ $.widget("custom.useQuery", {
 })
 ```
 
+#### Testing Queries and Mutations
+The more your tests behave like your actual users,
+the more confidence they can give you.
+
+That's why it's important to test the right things.
+And while it's tempting to test useQuery hooks in isolation,
+that would be too removed from how our users use the app.
+
+Intead test the components that use these hooks.
+This way you test the actual behaviour, not implementation detail.
+
+One difficulty in tests will be missing queryClient.
+For that reason in app we should use QueryClientProvider
+instead of just accessing created queryClient directly.
+This way we have a way to swap queryClient to a test one.
+(as useQueryClient will get nearest one)
+
+QueryClient has some default options that are not suitable for tests.
+That's a reason why in app it's better, when possible, to use global
+defaultOptions in QueryClient, not settings per useQuery,
+as these cannot be so easily changed in test.
+
+E2E tests require a dedicated database, which will reset after each test.
+Which is slow, costly and gets complex to manage as the app grows.
+
+For that reason we often mock api responses.
+Recommended tool: mock service worker
+
+```bash
+npm install msw@latest --save-dev
+```
+
+It uses web workers to intercept web requests
+and returns a mocked response.
+It works in browser and Node.
+
+```javascript
+import { render } from "@testing-library/react"
+import { Blog } from "./Blog"
+import { setupServer } from "msw/node"
+
+// provide mocked apis using mocked service workers
+const server = setupServer(
+  // mock list
+  rest.get("*/api/articles", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        {
+          id: 1,
+          title: "1st Post",
+          description: "This is the first post",
+          path: "/first/post"
+        },
+        {
+          id: 2,
+          title: "2nd Post",
+          description: "This is the second post",
+          path: "/second/post",
+        },
+      ])
+    )
+  }),
+
+  // mock detail route
+  rest.get("*/api/articles/first/post", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        id: 1,
+        title: "1st Post",
+        body_markdown: "First post body",
+        path: "/first/post",
+      })
+    )
+  })
+)
+
+// solve a problem of missing queryClient
+function renderWithClient(ui) {
+  // default settings are more useful for users, not tests
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+      },
+    },
+  })
+
+  return render(
+    <QueryClientProvider client={testQueryClient}>
+      {ui}
+    </QueryClientProvider>
+  )
+}
+
+describe("Blog", () => {
+  // handle api mocks
+  beforeAll(() => server.listen())
+  afterEach(() => server.resetHandlers())
+  afterEach(() => server.close())
+
+  test("successful Query", async () => {
+    const rendered = renderWithClient(<Blog />)
+    expect(await rendered.findByText("...")).toBeInTheDocument()
+    fireEvent.click(await rendered.findByRole("link", { name: "1st Post" }))
+
+    expect(await rendered.findByText("...")).toBeInTheDocument()
+    expect(await rendered.findByRole("heading", { name: "1st Post" })).toBeInTheDocument()
+    expect(await rendered.findByText("First post body")).toBeInTheDocument()
+  })
+
+  test("error on PostList", async () => {
+    server.use(
+      // override list api mock for this test only
+      rest.get("*/api/articles", (req, res, ctx) => {
+        return res(ctx.status(500))
+      })
+    )
+
+    const rendered = renderWithClient(<Blog />)
+    expect(await rendered.findByText("...")).toBeInTheDocument()
+    // since we turned off retries in react query
+    // this should be visible immediatelly
+    expect(await rendered.findByText(/Error fetching data/)).toBeInTheDocument()
+  })
+})
+```
+
+#### Mocking non web queries
+there are three possible approaches
+
+#### A: Monkey patch api
+You can replace in test what original api does
+
+```javascript
+const original = global.navigator.mediaDevices?.enumerateDevices
+
+describe("Blog", () => {
+  afterEach(() => {
+    Object.defineProperty(glabal.navigator, "mediaDevices", {
+      value: {
+        enumerateDevices: original,
+      }
+    })
+  })
+
+  test("successful query", async () => {
+    Object.defineProperty(global.navigator, "mediaDevices", {
+      configurable: true,
+      value: {
+        enumerateDevices: () => 
+          Promise.resolve([
+            { deviceId: "id1", label: "label1" },
+            { deviceId: "id2", label: "label2" },
+          ]),
+      }
+    })
+    // ...
+  })
+})
+```
+
+#### B: prefill query cache
+Or you can fill the query cache upfront with test data
+and set a high stale time so that refetches don't occur
+
+However this way you will not detect
+that there is something wrong in your queryFn
+
+And query will never be in a pending state,
+so it will be impossible to test that loaders are presented.
+
+Cache needs to prefilled before first render
+
+```javascript
+function renderWithClient(ui, data = []) {
+  const testQueryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        staleTime: Infinity,
+      },
+    },
+  })
+
+  data.forEach(([queryKey, data]) => {
+    testQueryClient.setQueryData(queryKey, data)
+  })
+
+  return render(
+    <QueryClientProvider client={testQueryClient}>
+      {ui}
+    </QueryClientProvider>
+  )
+}
+
+describe("Blog", () => {
+  test("successful query", async () => {
+    const rendered  = renderWithClient(<MediaDevices />, [
+      [
+        ["mediaDevices"],
+        [
+          { deviceId: "id1", label: "label1" },
+          { deviceId: "id2", label: "label2" },
+        ],
+      ],
+    ])
+    expect(await rendered.findByText("You have 2 media devices")).toBeInTheDocument()
+  })
+})
+```
+
+#### C: mock useQuery
+Not recommended, but possible as last resort solution.
+Exact solution depends on test framework
+
+You have to mock only useQuery,
+but keep rest of React Query unchanged.
+
+```javascript
+jest.mock("@tanstack/react-query", () => {
+  return {
+    // require rest of react query, apart from useQuery
+    // like the ClientQuery itself
+    ...jest.requireActual("@tanstack/react-query"),
+    useQuery: () => {
+      return {
+        status: "success",
+        data: [
+          { deviceId: "id1", label: "label1" },
+          { deviceId: "id2", label: "label2" },
+        ],
+      };
+    },
+  };
+});
+```
+
+#### Testing mutations
+In general behaves similar like testing queries.
+
+However one challange is that some of static mocks, like list,
+will not reflect mutation making changes.
+
+To solve this, we can use one time mocks in test bodies.
+Msw package provides an option for that, in `res.once`
+
+
+```javascript
+const server = setupServer(
+  rest.get("/todos/list", (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        { id: "1", title: "Learn JavaScript", done: true },
+        { id: "2", title: "Go shopping", done: false },
+      ])
+    )
+  }),
+
+  // mock mutation
+  rest.post("/todos/add", (req, res, ctx) => {
+    const { name } = req.body
+    return res(
+      ctx.status(200),
+      ctx.json({ id: "3", title: name, done: false })
+    )
+  }),
+)
+
+describe("Blog", () => {
+  test("successful mutation", async () => {
+    const rendered  = renderWithClient(<TodoList />)
+    expect(await rendered.findByText("...")).toBeInTheDocument()
+    expect(await rendered.findByText(/learn javascript/i)).toBeInTheDocument()
+    expect(await rendered.findByText(/go shopping/i)).toBeInTheDocument()
+
+    const input = rendered.getByRole("textbox", { name: /add:/i })
+    fireEvent.change(input, { target: { value: "Learn TypeScript" } })
+    server.use(
+      rest.get("/todos/list", (req, res, ctx) => {
+        // provide one time mock to emulate changed list
+        return res.once(
+          ctx.status(200),
+          ctx.json([
+            { id: "1", title: "Learn JavaScript", done: true },
+            { id: "2", title: "Go shopping", done: false },
+            { id: "3", title: "Learn TypeScript", done: false },
+          ])
+        )
+      })
+    )
+    fireEvent.submit(input)
+    expect(await rendered.findByText(/learn typescript/i)).toBeInTheDocument()
+  })
+})
+```
+

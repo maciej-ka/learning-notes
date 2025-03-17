@@ -2175,3 +2175,295 @@ onSettled: () => {
 networkMode works both for queries and mutations.  
 and default "online" setting will not send mutation  
 unless there is network connection (it will put mutation onto queue instead)
+
+#### Persisiting Queries and Mutations
+React Query cache is short lived and is gone when:
+- page is reloaded
+- user goes to another webpage
+- user closes the tab
+
+Persisters: Feature of React Query.  
+Optional plugins that will take data from cache  
+and store it in more permanent location.
+
+`@tanstack/query-sync-storage-persister`  
+If selected storage is synchronous, like localStorage
+
+`@tanstack/query-sync-storage-persister`  
+Storage api asynchronous, like index db
+
+To use it just change QueryClientProvider  
+with a PersistQueryClientProvider
+
+```javascript
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
+
+const queryClient = new QueryClient()
+const persister = createSyncStoragePersister({
+  storage: window.localStorage
+})
+
+export default function App() {
+  return (
+    <PersistQueryClientProvider
+      client={ queryClient }
+      persistOptions={{ persister }}
+    >
+      // ...
+    </PersistQueryClientProvider>
+  )
+}
+```
+
+#### Select which queries to persist
+Sometimes you want to select which queries to store.  
+For example sensitive user information may not be persisted.  
+To controll that, use dehydrateOptions shouldDehydrateQuery.  
+It's a function you define, which when returns true, then query will be persisted.
+
+```javascript
+<PersistQueryClientProvider
+  client={ queryClient }
+  persistOptions={{ 
+    persister,
+    dehydrateOptions: {
+      shouldDehydrateQuery: (query) => {
+        if (query.queryKey[0] === "posts") {
+          return true
+        }
+        return false
+      }
+    }
+  }}
+>
+   // ...
+</PersistQueryClientProvider>
+```
+
+This may be also good occasion to use query meta fields.  
+Which are kind of tags/labels.
+
+```javascript
+function usePostList() {
+  return useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    staleTime: 5000,
+    meta: {
+      persist: true
+    }
+  })
+}
+
+// ...
+shouldDehydrateQuery: (query) => {
+  return query.meta.persist === true
+}
+```
+
+If you don't want to persist queries that fail,  
+you can either check manually for query status.  
+Or use defaultShouldDehydrateQuery
+
+```javascript
+import { defaultShouldDehydrateQuery } from '@tanstack/react-query'
+
+// ...
+shouldDehydrateQuery: (query) => {
+  return defaultShouldDehydrateQuery(query) && query.meta.persist === true
+}
+```
+
+#### Experimental per query persistence
+This API is likely to change. It doesn't require setting up persistence globally.  
+With this you can skip `shouldDehydrateQuery` and even `PersistQueryClientProvider`.  
+Just define persistence on per query basis.
+
+```javascript
+import { experimental_createPersister } from '@tanstack/react-query-persist-client'
+
+function usePostList() {
+  return useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts,
+    staleTime: 5000,
+    persister: experimental_createPersister({
+      storage: localStorage
+    })
+  })
+}
+```
+
+#### Watch out for garbage collector.  
+Generally when you want to persist, you want for longer time.  
+But persister is connected to React Query cache.  
+And if unused query is garbage collected, it will remove it from persistence too.
+
+To avoid this problem, use higher gcTime.  
+And align it with maxAge setting in Persister, which has a default of 24 hours.
+
+Generally gcTime should be equal or greater than maxAge  
+to avoid your queries being garbate collected  
+and removed from the storage too early.
+
+```javascript
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: 1000 * 60 * 60 * 12 // 12 hours
+    }
+  }
+})
+
+export default function App() {
+  return (
+    <PersistQueryClientProvider
+      client={ queryClient }
+      persistOptions={{ 
+        persister,
+        maxAge: 1000 * 60 * 60 * 12, // 12 hours
+        dehydrateOptions: {
+          shouldDehydrateQuery: (query) => {
+            return defaultShouldDehydrateQuery(query) &&
+              query.meta.persist === true
+          }
+        }
+      }}
+    >
+      // ...
+    </PersistQueryClientProvider>
+  )
+}
+```
+
+#### Handle errors of persisting  
+One common problem is that persistence has it's limits.  
+For example, localStorage has around 5MB size limit.  
+(after that there will be an error about exceeding the quota)
+
+Persister on error will retry attempt. And to control that behaviour  
+define retry function, that when returns undefined, will ask persister to give up.
+
+Limit storage only to most recent queries:
+
+```javascript
+const persister = createSyncStoragePersister({
+  storage: window.localStorage,
+  retry: ({ persistedClient, error, errorCount }) => {
+    const sortedQueries = [
+      ...persistedClient.clientState.queries
+    ].sort((a, b) => b.state.dataUpdatedAt - a.state.dataUpdatedAt) 
+
+    const newestQuery = sortedQueries[0]
+
+    // abort if retry didn't work or there is no Query
+    if (!newestQuery || errorCount > 1) {
+      return undefined
+    }
+
+    return {
+      ...persistedClient,
+      clientState: {
+        ...persistedClient.clientState,
+        queries: [newestQuery],
+      },
+    }
+  }
+})
+```
+
+Or even better, use one of predefined strategies.
+
+```javascript
+import { removeOldestQuery } from '@tanstack/react-query-persist-client'
+
+const persister = createSyncStoragePersister({
+  storage: window.localStorage,
+  retry: removeOldestQuery,
+})
+```
+
+#### Not yet restored on initial load
+
+Even though data is persisted, because it's outside of React  
+(and also because it could be async),  
+on the initial load, the data will not be present.
+
+There is an option to delay render until data is ready.
+
+```javascript
+import { useIsRestoring } from '@tanstack/react-query'
+
+export function PersistGate({ children, fallback = null }) {
+  const isRestoring = useIsRestoring()
+  return isRestoring ? fallback : children
+}
+
+export default function App() {
+  return (
+    <PersistQueryClientProvider
+      client={ queryClient }
+      persistOptions={{ persister }}>
+      <PersistGate fallback="...">
+        <Blog />
+      </PersistGate>
+    </PersistQueryClientProvider>
+  )
+}
+```
+
+But better, by default React Query will render your app as usual,  
+but will not run any queries until data is restored from persistend.
+
+During that waiting for persistence restore, status will be:
+```javascript
+{
+  status: "pending",
+  fetchStatus: "idle",
+}
+```
+
+After restore, queries will run like normal.  
+And if data is stale, it will be refetched in the background.
+
+#### Persisting Mutations
+For example, user writes a long blog post in your app and battery dies.
+
+By default persister works for both mutations and queries.  
+If only user saved his work, which then created a mutation,  
+then that mutation will be stored in persistence.
+
+Only bit that is left to write is to tell React Query  
+to restore mutations after user revisits the app.
+
+Restoration process will take place immediately before the app renders.  
+Because of that, it didn't yet run through all useMutation,  
+and as a result, it doesn't know which mutation function is behind which key.
+
+By setting default mutation functions, restore can work immediately on start.
+
+```javascript
+import { addPost } from './api'
+
+queryClient.setMutationDefaults(['posts'], {
+  mutationFn: addPost
+})
+```
+
+And we also need to tell React Query  
+to resume any mutations that occured while network was away.  
+For that define `onSuccess` callback which is called after restoration is done.
+
+```javascript
+<PersistQueryClientProvider
+  client={ queryClient }
+  persistOptions={{ persister }}
+  onSuccess={() => {
+    return queryClient.resumePausedMutations()
+  }}
+>
+```
+
+as a bonus, because resumePausedMutations return a promise,  
+this will ensure that all queries stay paused until resuming is done.

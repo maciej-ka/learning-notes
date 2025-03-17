@@ -1,3 +1,299 @@
+Comparing Software Architectures
+================================
+with Jacqui Read
+
+scalability: ability to react to changing usage/traffic  
+elasticity: ability to fast react to changing usage/traffic
+
+In architecture Why is more important then How
+
+### Architecture Decision Records, ADR
+example  
+https://github.com/TheKataLog/ArchColider/blob/master/4.ADRs/001%20We%20are%20using%20ADR%20(template).md
+
+#### Title
+short noun phrase  
+#### Status
+draft, decided, superseded  
+#### Context
+what decision need to be made, why and in what environment  
+#### (optional) Evaluation Criteria
+archtecture characteristics, constraints  
+#### (optional) Options
+outlines the options considered, scoring  
+#### Decision
+decision and justification, the why  
+#### Consequences
+trade-offs and impact of decision  
+positive: if any  
+negative: if any  
+risks: if any  
+bonus features: if any  
+#### (optional) Consulations
+record input into the decision
+
+tools for drawing  
+https://draw.io/  
+https://miro.com/  
+visio
+
+Software Architecture Process is definetly not linear
+
+#### 2020 O'Reilly Software Architecture Kata
+https://github.com/TheKataLog  
+https://github.com/TheKataLog/Myagis-Forests  
+https://github.com/TheKataLog/Jaikaturi  
+https://github.com/TheKataLog/Jedis  
+https://github.com/TheKataLog/ArchColider
+
+
+
+Martin Fowler Microservices
+===========================
+https://martinfowler.com/articles/microservices.html
+
+What traditional problems Microservices solve:
+- difficult big deployments of whole service
+- having replacable/upgradeable/scrappable components
+- costly coordination of teams (UI/backend services/db)
+- scalability
+
+At a cost of:
+- more needed and more difficult monitorng and logging
+- problems with data consistency
+- more error handling of supplier services
+- uncertanity of system behaviour after change in one service
+
+#### Monoliths
+Monolithic applications can be successful, but
+
+Changes are tied together:  
+a change made to a small part of the application,  
+requires the entire monolith to be rebuilt and deployed.
+
+Scaling requires scaling of the entire application  
+rather than parts of it that require greater resource.
+
+Btw. Microservice style roots go back at least  
+to the design principles of Unix.
+
+#### Microservices
+No formal definition,  
+Few common characteristics for architectures that fit the label.
+
+#### Componentization via Services
+For as long as we've been involved in the software industry,  
+there's been a desire to build systems by plugging together components,  
+much in the way we see things are made in the physical world. 
+
+Component is a unit of software  
+that is independently replaceable and upgradeable
+
+Library: components that are linked into a program  
+and called using in-memory function calls
+
+Services out-of-process components who communicate  
+with a mechanism such as a web service request
+
+One main reason for using services as components (rather than libraries)  
+is that services are independently deployable.
+
+Some changes will change service interfaces resulting in some coordination,  
+but the aim of a good microservice architecture is to minimize these  
+through cohesive service boundaries.
+
+Using services as components leads to more explicit component interface.  
+Most languages do not have a good mechanism for defining an explicit Published Interface.  
+Often it's only documentation and discipline that prevents clients breaking encapsulation,  
+leading to overly-tight coupling between components.
+
+Using services like this does have downsides.  
+Remote calls are more expensive than in-process calls,  
+and thus remote APIs need to be coarser-grained,  
+which is often more awkward to use.
+
+Service may consist of multiple processes  
+that will always be developed and deployed together,  
+such as an application process  
+and a database that's only used by that service.
+
+#### Organized around Business Capabilities
+Any organization that designs a system (defined broadly)  
+will produce a design whose structure is a copy  
+of the organization's communication structure.
+
+Traditional siload functional teams (DBAs, middleware, UI)  
+will lead to silod application architectures
+
+In microservices teams are crossfunctional  
+and they are organised around business capabilities
+
+Monoliths can also be modularized around business capabilities,  
+although that's not the common case. It requires more discipline.  
+Usually it ends with having too many small contexts.  
+And it's take self discipline to not cross module borders.
+
+#### Products not Projects
+Traditionally software on completion was handed over to a maintenance  
+and the project team that built it is disbanded.
+
+In microservices it's more "you build, you run it".  
+Devs have day-to-day contact with how their software behaves in production  
+and a contact with their users, as they take some of the support burden.
+
+It's also possible with monoliths,  
+but the smaller granularity of services can make it easier.
+
+Amazon build it /run it: teams are responsible  
+for all aspects of the software they build  
+including operating the software 24/7
+
+Netflix is another organisation that has adopted this ethos  
+Being woken up at 3am every night is certainly a powerful incentive  
+to focus on quality when writing your code.
+
+#### Smart endpoints and dumb pipes
+Traditionally there were sophisticated facilities for  
+message routing, choreography, transformation, and applying business rules.
+
+In microservices applications aim to be as decoupled and as cohesive as possible  
+They act as Unix filters: receiving a request, applying logic, producing a response.  
+And also they act similar to world wide web principles.
+
+These are choreographed using simple RESTish protocols  
+rather than complex protocols like WS-Choreography  
+or BPEL or orchestration by a central tool.
+
+The two protocols used most commonly are  
+HTTP request-response with resource API's  
+and lightweight messaging
+
+The infrastructure chosen is typically dumb  
+simple implementations such as RabbitMQ or ZeroMQ  
+don't do much more than provide a reliable asynchronous fabri
+
+In a monolith, the components are communicating through function calls.  
+The biggest issue in converting to microservices is changing the communication pattern.  
+A naive conversion from method calls to RPC leads to chatty, unperformant solution.  
+Instead you need to replace the fine-grained communication with a coarser-grained approach.
+
+“Coarse-grained” here means designing fewer, bigger calls  
+that carry more data or perform a broader set of operations each time  
+rather than many small, “chatty” calls.
+
+In microservices, this helps avoid performance issues that arise  
+when replacing simple in-process method calls with network-based requests.
+
+Coarse-grained interface typically bundles related actions or data  
+into one request to reduce overhead.
+
+#### Decentralized Governance
+traditionally: standardise on single technology platforms.  
+monolith: using the right tool for the job.
+
+Of course, just because you can do something, doesn't mean you should  
+but partitioning your system in this way means you have the option.
+
+#### Decentralized Data Management
+One data, like "user" can mean different things to parts of system.  
+There is a natural correlation between service and DDD context boundaries.
+
+Microservices also decentralize data storage decisions.  
+Microservices prefer letting each service manage its own database.  
+(also called polyglot persistence)
+
+Monolithic applications prefer a single logical database for persistant data.
+
+Distributed transactions are notoriously difficult to implement  
+microservice architectures emphasize transactionless coordination between services,  
+with explicit recognition that consistency may only be eventual consistency  
+and problems are dealt with by compensating operations.
+
+Managing inconsistencies this way is a challenge for many dev teams,  
+but it often matches business practice which handle a degree of inconsistency  
+in order to respond quickly to demand.  
+While having some reversal process to deal with mistakes
+
+#### Infrastructure Automation
+Infrastructure automation evolved enormously over last few years  
+the cloud and AWS in particular has reduced complexity  
+of building, deploying and operating microservices.
+
+Basic pipeline CI/CD:  
+compile, unit and functional test (dev env)  
+acceptance test (on build machine)  
+integration test (integration env)  
+user acceptance test (UAT env)  
+performance test (performance env)  
+deploy to production
+
+#### Design for failure
+Microservice app need to tolerate the failure of services.  
+Any service call could fail due to unavailability,  
+the client has to respond to this as gracefully as possible.
+
+This is a disadvantage compared to a monolithic design  
+as it introduces additional complexity to handle it.
+
+Teams constantly reflect on how service failures affect users.  
+Netflix's Simian Army induces failures of services and datacenters  
+to test both the application's resilience and monitoring.
+
+Since fail can be any time, it's important to quick detect failures  
+and, if possible, automatically restore service.  
+A lot of emphasis is on real-time monitoring of the application
+
+Microservice preference towards choreography and event collaboration  
+leads to emergent behavior. Emergent behavior can sometimes be a bad thing.  
+Monitoring is vital to spot bad emergent behavior quickly so it can be fixed.
+
+Monoliths can be built to be as transparent as a microservice.  
+The difference is that you absolutely need to know  
+when services running in different processes are disconnected.  
+With libraries this transparency is less likely to be useful.
+
+Microservice teams expect to see sophisticated monitoring and logging setups
+
+#### Evolutionary Design
+Microservice practitioners, usually come from an evolutionary design background  
+and see service decomposition as a further tool to enable application developers  
+to control changes in their application without slowing down change.
+
+How to break a software system into components?  
+The key property of a component is independent replacement and upgradeability.
+
+We look for points where we can imagine rewriting a component  
+without affecting its collaborators.
+
+Sometimes there is expectance that some services will be scrapped  
+rather then evolved in the longer term.
+
+The Guardian website is a good example of monolith evolved to a microservice.  
+Monolith still is the core of the website, but they prefer to add new features  
+by building microservices that use the monolith's API.
+
+This is particularly handy for features that are inherently temporary  
+such as specialized pages to handle a sporting event.  
+A part of the website can quickly be put together  
+and removed once the event is over.
+
+We've seen similar approaches at a financial institution  
+where new services are added for a market opportunity  
+and discarded after a few months or even weeks.
+
+You want to keep things that change at the same time in the same module.  
+If you find yourself repeatedly changing two services together,  
+that's a sign that they should be merged.
+
+You have to worry about changes in service breaking its consumers.  
+The traditional integration approach is to use versioning,  
+in the microservice world is to only use versioning as a last resort.
+
+We can avoid a lot of versioning by designing services  
+to be as tolerant as possible to changes in their suppliers.
+
+
+
 Startup Directories
 ===================
 Websites that link startups  
@@ -611,7 +907,7 @@ between foreground and background
 
 contrast is also dependent on:  
 - font size
-- font weight
+- font weight  
 certain colors may not be good for body  
 but they will be ok for header
 
@@ -2137,7 +2433,7 @@ what is interaction?
 - click
 - drag
 - touch
-- keypress
+- keypress  
 but not scroll
 
 (A)  
@@ -2501,7 +2797,7 @@ if it takes longer
 follow your business metrics  
 - bounce rate
 - session time
-- add to cart time
+- add to cart time  
 ... they may corelate to LCP/CLS/INP
 
 #### corelation !== causation
@@ -3041,7 +3337,7 @@ would require self joins in RDBMS
 ### Paging problems
 problems with paging based on limit - offset  
 - slow
-- if data is inserted meanwile, the same row may appear after page change
+- if data is inserted meanwile, the same row may appear after page change  
 solution:  
 `WHERE id > last_seen_id ORDER BY id ASC LIMIT 10`
 
@@ -3058,9 +3354,9 @@ Promise: handle values that are not yet ready
 
 elements of Monad:  
 - wrapper type definition: NumberWithLogs
-- wrap function (convert unwrapped to wrapped): wrapWithLogs
+- wrap function (convert unwrapped to wrapped): wrapWithLogs  
   _other names: return, pure, unit_  
-- run function (with transform function): runWithLogs(arg, transform)
+- run function (with transform function): runWithLogs(arg, transform)  
   _other names: bind, flatMap, >>=_  
   transform takes unwrapped as argument and returns wrapped  
   run function unwraps argument

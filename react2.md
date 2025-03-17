@@ -2463,7 +2463,75 @@ For that define `onSuccess` callback which is called after restoration is done.
     return queryClient.resumePausedMutations()
   }}
 >
+  // ...
+</PersistQueryClientProvider>
 ```
 
 as a bonus, because resumePausedMutations return a promise,  
 this will ensure that all queries stay paused until resuming is done.
+
+#### Building an Adapter
+React Query has a core part "Tanstack Query"  
+And thin adapters to React, Angular, Solid, Svelte and Vue
+
+They share similar principles:
+- Observers are glue between components and React Query cache.
+- and Observers subscribe to selected part of cache
+- adapters ensure DOM update happens when change occurs
+
+In React this is done by rendering whole component.  
+In solid this is by fine grained reactivity.
+
+Let's write adapter for jQuery
+
+```javascript
+npm install @tanstack-query-core
+```
+
+Adapter is actually quite easy to write
+
+```javascript
+import { QueryObserver } from "@tanstack/query-core"
+
+$.widget("custom.useQuery", {
+  _create() {
+    // needed for persistence
+    // React Query will handle that it's called multiple times.
+    this.options.queryClient.mount()
+
+    // pass options to observer
+    this._observer = new QueryObserver(
+      this.options.queryClient,
+      this.options.queryOptions
+    );
+
+    // react to data change
+    this._unsubscribe = this._observer.subscribe(() => {
+      const result = this._observer.getCurrentResult();
+      // enable tracking of which properties are used
+      // to not update when part of data changes that is not used
+      this._trigger(
+        "update",
+        null,
+        this._observer.trackResult(result)
+      );
+    });
+  },
+
+  // enable options to change dynamically
+  _setOptions(key, value) {
+    this._super(key, value);
+
+    if (key === "queryOptions") {
+      this._observer.setOptions(value);
+    }
+  },
+
+  // unregister listener when not needed
+  _destroy() {
+    this.options.queryClient.unmount()
+    this._unsubscribe()
+  }
+})
+```
+

@@ -2536,39 +2536,39 @@ $.widget("custom.useQuery", {
 ```
 
 #### Testing Queries and Mutations
-The more your tests behave like your actual users,
+The more your tests behave like your actual users,  
 the more confidence they can give you.
 
-That's why it's important to test the right things.
-And while it's tempting to test useQuery hooks in isolation,
+That's why it's important to test the right things.  
+And while it's tempting to test useQuery hooks in isolation,  
 that would be too removed from how our users use the app.
 
-Intead test the components that use these hooks.
+Intead test the components that use these hooks.  
 This way you test the actual behaviour, not implementation detail.
 
-One difficulty in tests will be missing queryClient.
-For that reason in app we should use QueryClientProvider
-instead of just accessing created queryClient directly.
-This way we have a way to swap queryClient to a test one.
+One difficulty in tests will be missing queryClient.  
+For that reason in app we should use QueryClientProvider  
+instead of just accessing created queryClient directly.  
+This way we have a way to swap queryClient to a test one.  
 (as useQueryClient will get nearest one)
 
-QueryClient has some default options that are not suitable for tests.
-That's a reason why in app it's better, when possible, to use global
-defaultOptions in QueryClient, not settings per useQuery,
+QueryClient has some default options that are not suitable for tests.  
+That's a reason why in app it's better, when possible, to use global  
+defaultOptions in QueryClient, not settings per useQuery,  
 as these cannot be so easily changed in test.
 
-E2E tests require a dedicated database, which will reset after each test.
+E2E tests require a dedicated database, which will reset after each test.  
 Which is slow, costly and gets complex to manage as the app grows.
 
-For that reason we often mock api responses.
+For that reason we often mock api responses.  
 Recommended tool: mock service worker
 
 ```bash
 npm install msw@latest --save-dev
 ```
 
-It uses web workers to intercept web requests
-and returns a mocked response.
+It uses web workers to intercept web requests  
+and returns a mocked response.  
 It works in browser and Node.
 
 ```javascript
@@ -2699,13 +2699,13 @@ describe("Blog", () => {
 ```
 
 #### B: prefill query cache
-Or you can fill the query cache upfront with test data
+Or you can fill the query cache upfront with test data  
 and set a high stale time so that refetches don't occur
 
-However this way you will not detect
+However this way you will not detect  
 that there is something wrong in your queryFn
 
-And query will never be in a pending state,
+And query will never be in a pending state,  
 so it will be impossible to test that loaders are presented.
 
 Cache needs to prefilled before first render
@@ -2749,10 +2749,10 @@ describe("Blog", () => {
 ```
 
 #### C: mock useQuery
-Not recommended, but possible as last resort solution.
+Not recommended, but possible as last resort solution.  
 Exact solution depends on test framework
 
-You have to mock only useQuery,
+You have to mock only useQuery,  
 but keep rest of React Query unchanged.
 
 ```javascript
@@ -2777,10 +2777,10 @@ jest.mock("@tanstack/react-query", () => {
 #### Testing mutations
 In general behaves similar like testing queries.
 
-However one challange is that some of static mocks, like list,
+However one challange is that some of static mocks, like list,  
 will not reflect mutation making changes.
 
-To solve this, we can use one time mocks in test bodies.
+To solve this, we can use one time mocks in test bodies.  
 Msw package provides an option for that, in `res.once`
 
 

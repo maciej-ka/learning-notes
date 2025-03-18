@@ -51,6 +51,27 @@ common case: started web server and want to add npm package
 there is option for copilot suggestions in terminal  
 Copilot > Terminal Inline Chat
 
+#### Rename
+F2  
+there is also option to rename file and update imports
+
+#### Github extension
+There is a star icon, which can suggest name of commit  
+You can have multiple repositories in one vscode project  
+And there is a option too see git history of file.
+
+Gitlens: extension  
+it does a not of things  
+it will enable git blame visible next to file content
+
+but this is bad idea, because often  
+someone just moved some fragments  
+and he will be visible in history as author
+
+#### multiple cursors
+hold option and click on several places in editor
+
+
 
 
 Comparing Software Architectures

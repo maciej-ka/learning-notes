@@ -98,6 +98,49 @@ attributes
 ul>li*3>a[href="https://example.com"][title="Visit Example"]{Link $}
 ```
 
+[missed a bit of recording]  
+[part 2, extensions, compare chatbots...]
+
+### Extensions
+#### AI Toolkit:
+it has a long list of models to choose from  
+and option to compare side by side different models
+
+#### some other
+Pretty Typescript Errors  
+Git Graph: nice visualisation of github branches  
+Quokka.js: set values in comments and see results of lines  
+vitest, jest  
+liveserver  
+vscode pets
+
+there is option to install extension  
+and to not have them too many, disable them  
+and enable them only per workspace
+
+### Settings
+`cmd ,`  
+Some of the settings are possible to change  
+only via JSON (open user settings JSON)
+
+some of interesting ones:  
+what default filetype should be new empty file
+
+associations: file extensions that you want  
+to be treated as something else
+
+code actions on save  
+organize imports, sort imports, fix eslint, prettier
+
+setting sync: you have to log in with github  
+and you can send your settings to cloud  
+(also you can sync UI state)
+
+profile settings: when you have several roles  
+and you want to have several user profiles  
+with different extensions and separate snippets
+
+
 
 Comparing Software Architectures
 ================================

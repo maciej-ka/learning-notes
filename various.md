@@ -4,7 +4,7 @@ with Steve Kinney
 https://stevekinney.net/courses/visual-studio-code
 
 #### Steve Kinney quote
-When I was younger, I wanted everyone to write the code as I did
+When I was younger, I wanted everyone to write the code as I did  
 When I got older, I relaxed
 
 #### Why power user
@@ -150,11 +150,11 @@ with different extensions and separate snippets
 
 ### Snippets
 In vscode you can have filters in snippets,  
-like change input $1 to pascal case.
+like change input $1 to pascal case.  
 they are defined using json
 
 And you can have some variables,  
-like ${CLIPBOARD}, ${TM_FILEPATH}, ${USERNAME}
+like ${CLIPBOARD}, ${TM_FILEPATH}, ${USERNAME}  
 ${TM_SELECTED_TEXT}
 
 In combination, you can create react component  
@@ -167,12 +167,12 @@ Can copilot take snippet as a starting point?
 It doesn't, but perhaps this is good idea.
 
 ### Tasks
-if you go to terminal to run something
+if you go to terminal to run something  
 in vscode it's a candidate for a task
 
 they are defined using json
 
-thay are especially good when you want
+thay are especially good when you want  
 to start serveral servers at once
 
 ### Debugger
@@ -187,14 +187,14 @@ run and debug or create launch json file
 }
 ```
 
-you can add debuggers
-built in ones: node, chrome, edge
+you can add debuggers  
+built in ones: node, chrome, edge  
 you can also debug in chrome
 
 you can hook in to running web app
 
-debug console
-allows you to type expressions at the breakpoint
+debug console  
+allows you to type expressions at the breakpoint  
 there is also option to assign and change values in debug console
 
 ```
@@ -222,24 +222,24 @@ and then configure attach
 ```
 
 #### workspaces
-when you have two repositories
+when you have two repositories  
 one for backend, one for frontend
 
-and you want to create a project
-.code-workspace, that will act
+and you want to create a project  
+.code-workspace, that will act  
 as if these two were together
 
-but in the end ...
-why would you need more than one repo
+but in the end ...  
+why would you need more than one repo  
 use monorepo
 
 #### microfrontends
-you end with separate versions of React
-and you will try to create one cohesive UX experience
+you end with separate versions of React  
+and you will try to create one cohesive UX experience  
 this will be probably impossible
 
-Module Federation allows each microfrontend 
-to share and load code from one another at runtime
+Module Federation allows each microfrontend   
+to share and load code from one another at runtime  
 without forcing everything to be bundled together
 
 It's achieved using ModuleFederationPlugin in webpack

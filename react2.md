@@ -1152,7 +1152,7 @@ const { ref } = useInView({
 
 <ol ref={rootRef}>
   ...
-  { hasNextPage ? <div ref={ref}> : <NoMoreActivities /> }
+  { hasNextPage ? <div ref={ref} /> : <NoMoreActivities /> }
 </ol>
 ```
 
@@ -1171,7 +1171,7 @@ then there would be no guarantee, that list is consistent
 this may be a problem for network, so there is a maxPages option  
 which will limit how many pages are kept in cache
 
-#### Managing Mutation
+### Managing Mutation
 It's possible to make a mutation in useQuery,
 
 ```javascript
@@ -1792,7 +1792,7 @@ fetch('https://jsonplaceholder.typicode.com/todos/1', { signal }).then(...)
 controller.abort(); // Immediately abort the request
 ```
 
-#### Error handling
+### Error handling
 Status error is when inside queryFn:
 - there is throw
 - promise was rejected
@@ -1993,7 +1993,7 @@ const queryClient = new QueryClient({
 })
 ```
 
-#### Validating Query Data
+### Validating Query Data
 We can validate to some degree with typescript.
 
 ```javascript
@@ -2010,7 +2010,7 @@ Validation
 Somehow server response is similar to form user input.  
 Both are untrusted sources of data that we need to handle with care.
 
-Zod
+#### Zod
 
 ```bash
 npm install zod
@@ -2054,7 +2054,7 @@ Tradeoffs:
 - performance cost
 - expensife for large responses
 
-#### Offline support
+### Offline support
 In case of offline event, React Query will pause queries.  
 When the device comes back online, queries will resume.
 
@@ -2176,7 +2176,7 @@ networkMode works both for queries and mutations.
 and default "online" setting will not send mutation  
 unless there is network connection (it will put mutation onto queue instead)
 
-#### Persisiting Queries and Mutations
+### Persisiting Queries and Mutations
 React Query cache is short lived and is gone when:
 - page is reloaded
 - user goes to another webpage
@@ -2470,7 +2470,7 @@ For that define `onSuccess` callback which is called after restoration is done.
 as a bonus, because resumePausedMutations return a promise,  
 this will ensure that all queries stay paused until resuming is done.
 
-#### Building an Adapter
+### Building an Adapter
 React Query has a core part "Tanstack Query"  
 And thin adapters to React, Angular, Solid, Svelte and Vue
 
@@ -2535,7 +2535,7 @@ $.widget("custom.useQuery", {
 })
 ```
 
-#### Testing Queries and Mutations
+### Testing Queries and Mutations
 The more your tests behave like your actual users,  
 the more confidence they can give you.
 
@@ -2834,3 +2834,167 @@ describe("Blog", () => {
 })
 ```
 
+### Working with Suspense
+So far we waited for data by checking status or isLoading:
+
+```javascript
+if (isLoading)  { ... }
+if (status === "pending")  { ... }
+```
+
+This works well, but it's coupled with individual query and component.
+
+When working in a component based architectrure,
+use a higher level loading handler to manage loading states
+that can occur anywhere in your app.
+
+Suspense can help with that.
+
+It allows to create higher level loading boundaries.
+It's a React component that allows to coordinate
+loading states for asynchronous operations.
+
+Suspense is to loading states,
+as ErrorBoundray is to errors.
+
+```javascript
+<Suspense fallback={<Loading />}>
+  <Repos />
+</Suspense>
+```
+
+React will NOT automatically trigger Suspense
+for all async operations like the ones seen in
+the event handlers or useEffect.
+
+because of that we need to use `useSuspenseQuery`
+
+```javascript
+import * as React from "react"
+import { AppErrorBoundary } from './AppErrorBoundary'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { fetchRepoData } from './api'
+
+function useRepoData(name) {
+  return useSuspenseQuery({
+    queryKey: ['repoData', name],
+    queryFn: () => fetchRepoData(name),
+  })
+}
+
+function Repo({ name }) {
+  const { data } = useRepoData(name)
+
+  return (
+    <>
+      <h1>{data.name}</h1>
+      <p>{data.desciption}</p>
+      <strong>{data.subscribers_count}</strong>{" "}
+      <strong>{data.stargazers_count}</strong>{" "}
+      <strong>{data.forks_count}</strong>
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <AppErrorBoundary>
+      <React.Suspense fallback={<p>...</p>}>
+        <Repo name="tanstack/query" />
+        <Repo name="tanstack/table" />
+        <Repo name="tanstack/router" />
+      </React.Suspense>
+    </AppErrorBoundary>
+  )
+}
+```
+
+With useSuspenseQuery, it’s as if you’re handing
+the async lifecycle management over to React itself.
+
+When using useSuspenseQuery, React will see the Promise
+and show the Promise until the Promise resolves.
+If it rejects, it will forward error to nearest error boundary.
+
+Having unified way to handle loading states
+can simplify a lot, especially as your application grows.
+Repo component doesn't have to check for status or isLoading
+Suspense guarantees that children will have async data they need.
+
+You can place many Suspense at different levels
+and place many children component inside them.
+Just like ErrorBoundaries.
+
+#### useQuery vs useSuspenseQuery
+Suspended guarantees children of Suspense will have needed data
+Because of that, useSuspenseQuery:
+- does not support enabled property
+- does not support placeholderData
+
+#### Unified fallback
+When Suspense has many children,
+it will show failback until all finish loading
+
+To change this, we can put each component in separate Suspense
+
+```javascript
+<React.Suspense fallback={<p>loading query...</p>}>
+  <Repo name="tanstack/query" />
+</React.Suspense>
+<React.Suspense fallback={<p>loading table...</p>}>
+  <Repo name="tanstack/table" />
+</React.Suspense>
+<React.Suspense fallback={<p>loading router...</p>}>
+  <Repo name="tanstack/router" />
+</React.Suspense>
+```
+
+#### Serial vs Parallel suspended queries
+when having more than one useSuspenseQuery next to each other
+they will NOT be run in parallel, they will run in serial.
+
+This is beneficial, when you have two queries in on component
+one dependent on result of another. In that scenario just place
+those two queries next to each other.
+
+```javascript
+function useMilestone(id) {
+  return useSuspenseQuery({
+    queryKey: ['milestones', id],
+    queryFn: async () => fetchMilestone(id),
+  })
+}
+
+function useUserDetails(username) {
+  return useSuspenseQuery({
+    queryKey: ['userDetails', username],
+    queryFn: async () => fetchUserDetails(username),
+  })
+}
+
+function useMilestoneWithUserDetails(id) {
+  const milestone = useMilestone(id)
+  const usernmae = milestone.data.creator.login
+  const userDetails = useUserDetails(username)
+
+  return {
+    milestone,
+    userDetails
+  }
+}
+
+function MilestoneInfo({ id }) {
+  const { milestone, userDetails } = useMilestoneWithUserDetails(id)
+  return (
+    <p>
+      Milestone { milestone.data.title } was created by { userDetails.data.username }
+    </p>
+  )
+}
+```
+
+to fire multiple suspense Queries in parallel.
+use another hook `useSuspenseQueries`
+
+#### Show previous data when loading
+Since we don't 

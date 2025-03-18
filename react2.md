@@ -401,7 +401,7 @@ then registered listener changes what it listens too
 
 if the query would return to previous value  
 then because cache is already populated, it will be served  
-immediatelly
+immediately
 
 #### eslint-plugin-query
 plugin to detect that query has some dynamic parts  
@@ -511,7 +511,7 @@ function CheckoutMessage {
 }
 ```
 
-#### Not fetching immediatelly
+#### Not fetching immediately
 When you want to delay initial query.  
 Until some data is ready or condition is met.
 
@@ -1186,7 +1186,7 @@ function useUpdateUser(id, newName) {
 ```
 
 But it's not a good idea to have mutation in useQuery, because:
-- queries run immediatelly when component mounts
+- queries run immediately when component mounts
 - queries are menat to run multiple times
 - queries should be idempotent
 
@@ -1782,7 +1782,7 @@ function useIssues(search) {
 
 When queryFn is invoked, React Query will pass a signal to it.  
 This signal originates from new instance of AbortController, React Query will make.  
-And if the queryKey will become unused, React Query will immediatelly abort request.
+And if the queryKey will become unused, React Query will immediately abort request.
 
 Under the hood it works something like this:
 
@@ -2660,7 +2660,7 @@ describe("Blog", () => {
     const rendered = renderWithClient(<Blog />)
     expect(await rendered.findByText("...")).toBeInTheDocument()
     // since we turned off retries in react query
-    // this should be visible immediatelly
+    // this should be visible immediately
     expect(await rendered.findByText(/Error fetching data/)).toBeInTheDocument()
   })
 })
@@ -3310,10 +3310,10 @@ users can see static content earlier.
 
 Let's say we have Navbar and Footer components,  
 which don't depend on repo data. So it would be good,  
-if user could see the Navbar and Footer immediatelly  
+if user could see the Navbar and Footer immediately  
 and not wait for Repo data to be prepared and shown.
 
-Let's show what can be shown immediatelly,  
+Let's show what can be shown immediately,  
 and stream the rest as it becomes available.
 
 For that to be possible:  
@@ -3407,9 +3407,9 @@ This is important, because instead of creating new Promise,
 React will reuse Promise that was created on the server,  
 making the data available as soon as possible.
 
-How this is possible?
-Promise Serialization Abstraction
-React introduces a mechanism to represent the "state"of a promise
+How this is possible?  
+Promise Serialization Abstraction  
+React introduces a mechanism to represent the "state"of a promise  
 rather than the promise itself. This representation includes:
 - A unique identifier for the promise
 - The current state (pending/fulfilled/rejected)
@@ -3478,4 +3478,77 @@ export default function Repo({ initialData }) {
     </>
   )
 }
+```
+
+#### Websockets
+Solve a problem of listening for real time data.  
+Otherwise app would have to do polling, keep requesting.  
+Even if there wasn't an update.
+
+React query has two mechanisms for keeping data fresh:  
+stale time and invalidateQuery.  
+But they both will give estimate of data.
+
+If you have real time app, where users can interact  
+and all of them should be able to see result of interaction  
+you want to see changes immediately, not after some time.
+
+Websocketes  
+enable to create a long running connection to the server  
+allowing both the client and server to send messages  
+to each other at any time.
+
+Managing WebSocket server can be hard.  
+Unless you are really into that topic,  
+use library like `socket.io`  
+or a service like: Pusher, PubNub, Twilio
+
+how to make React Query work with websockets?
+
+Two strategies  
+A. Send the data directly over the WebSocket  
+and then process using queryCient.setQueryData
+
+B. Send a message telling the client refetch  
+and then use queryClient.invalidateQueries
+
+example of B
+
+```javascript
+import * as React from "react"
+import { useQueryClient } from "@tanstack/react-query"
+
+export default function useWebsocketQueryInvalidate() {
+  const queryClient = useQueryClient()
+
+  // setting subscription is a side effect
+  React.useEffect(() => {
+    const handleMessage = (event) => {
+      const queryKey = JSON.parse(event.data)
+      queryClient.invalidateQueries(queryKey)
+    }
+
+    // setup websocket subscription
+    const ws = new WebSocket("wss://echo.websocket.org/")
+    ws.addEventListener("message", handleMessage)
+
+    return () => {
+      ws.removeEventListener("message", handleMessage)
+      ws.close()
+    }
+  }, [queryClient])
+}
+```
+
+if you want to only rely on websocket for updates  
+set staleTime to infinity
+
+```javascript
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+    },
+  },
+})
 ```

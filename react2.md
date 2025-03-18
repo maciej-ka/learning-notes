@@ -3407,6 +3407,14 @@ This is important, because instead of creating new Promise,
 React will reuse Promise that was created on the server,  
 making the data available as soon as possible.
 
+How this is possible?
+Promise Serialization Abstraction
+React introduces a mechanism to represent the "state"of a promise
+rather than the promise itself. This representation includes:
+- A unique identifier for the promise
+- The current state (pending/fulfilled/rejected)
+- The result/error (when available)
+
 #### Next.js experimental SSR
 Steaming is a pain to set up.
 

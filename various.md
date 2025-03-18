@@ -1,3 +1,58 @@
+Become a VSCode Power User!
+===========================
+with Steve Kinney  
+https://stevekinney.net/courses/visual-studio-code
+
+Good cook knows his tools incredibly well, misen-place...  
+The goal is to get so good at using our tools  
+that we can focus on the problem solving without distraction.
+
+#### command panel
+`shift command p`  
+there is command to "install code command in your PATH"
+
+using command panel is a good way  
+to check what is keyboard shortcut
+
+#### keybindings
+https://stevekinney.net/courses/visual-studio-code/keybindings  
+there is a way to edit keybindings in JSON file  
+this seems to be better then GUI for keybindings
+
+in GUI there is an option of "when",  
+which will limit situations when keybinding will work  
+you can say "only when I edit javascript file"  
+or "only when I'm in terminal"
+
+to narrow down, what is "when" in fragment of editor  
+open developer tools, go to console  
+command prompt (shift+cmd+p) select "Inspect Context Keys"  
+and then in console you will see list of values used in "when"
+
+#### mutli command shortkeys
+Can you have one keystroke, which will run several commands?  
+not by the default, but there is extension for that multi command  
+https://marketplace.visualstudio.com/items?itemName=ryuta46.multi-command
+
+#### VsCode is an electron app
+you can toggle chrome developer tools
+
+#### You can host your app as a VScode extension
+:D  
+you don't have to setup Electron  
+and pay for web server
+
+#### Terminal
+you can split them  
+whole split group is called "terminal group"  
+you can open new terminal groups,  
+common case: started web server and want to add npm package
+
+there is option for copilot suggestions in terminal  
+Copilot > Terminal Inline Chat
+
+
+
 Comparing Software Architectures
 ================================
 with Jacqui Read
@@ -3254,7 +3309,9 @@ document.body.addEventListener("click", async (evt) => {
         el.textContent = "Add to Cart";
         el.removeAttribute("disabled");
       }, 1500);
-    )}
+   })
+  }
+})
 ```
 
 ### Standish report

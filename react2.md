@@ -3296,3 +3296,178 @@ export default async function Home() {
   )
 }
 ```
+
+#### Streaming SSR
+React, from version 18, supports stream server rendering  
+and partial hydration.
+
+It means React can create partial html on the server,  
+and stream the rest to the client as it becomes available.
+
+Client can start hydrating and showing parts of application  
+as soon as they become available. This process ensures that  
+users can see static content earlier.
+
+Let's say we have Navbar and Footer components,  
+which don't depend on repo data. So it would be good,  
+if user could see the Navbar and Footer immediatelly  
+and not wait for Repo data to be prepared and shown.
+
+Let's show what can be shown immediatelly,  
+and stream the rest as it becomes available.
+
+For that to be possible:  
+We cannot await prefetchQuery.  
+We switch to useSuspenseQuery and wrap  
+component in it's own Suspense boundary.  
+And we want to send queries that are pending.
+
+By default React Query will only deyhdrate  
+queries that are in success state. We can change this  
+in defaultOptions of the React Client.
+
+```javascript
+import * as React from 'react'
+import { QueryClient, dehydrate, HydrationBoundary, defaultShouldDehydrateQuery } from '@tanstack/react-query'
+import { fetchRepoData } from './api'
+import Repo from './Repo'
+import Navbar from './Navbar'
+import Footer from './Footer'
+import RepoSkeleton from './RepoSkeleton'
+
+export default async function Home() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      dehydrate: {
+        shouldDehydrateQuery: (query) =>
+          defaultShouldDehydrateQuery(query) ||
+          query.state.status === "pending",
+      },
+    }
+  })
+
+  queryClient.prefetchQuery({
+    queryKey: ["repoData"],
+    queryFn: fetchRepoData,
+    staleTime: 10 * 1000,
+  })
+
+  return (
+    <main>
+      <Navbar />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <React.Suspense fallback={<RepoSkeleton />}>
+          <Repo />
+        </React.Suspense>
+      </HydrationBoundary>
+      <Footer />
+    </main>
+  )
+}
+```
+
+And the code for the Repo component, looks like this:  
+notice, we switched to useSuspenseQuery
+
+```javascript
+import { useQuery } from '@tanstack/react-query'
+import { fetchRepoData } from './api'
+
+export default function Repo({ initialData }) {
+  const { data } = useSuspenseQuery({
+    queryKey: ['repoData'],
+    queryFn: fetchRepoData,
+    staleTime: 10 * 1000,
+  })
+
+  return (
+    <>
+      <h1>{data.name}</h1>
+      <p>{data.description}</p>
+      <strong>{data.subscribers_count}</strong>{" "}
+      <strong>{data.stargazers_count}</strong>{" "}
+      <strong>{data.forks_count}</strong>
+    </>
+  )
+}
+```
+
+With all that React will immediately render Navbar and Footer  
+while the Repo is waiting for data, and then it will be  
+added to the client, with React Query cache populated.
+
+Suspense is actually suspending rendering.
+
+The biggest difference is that before server awaited fetch  
+so that React Query cache would be initialized with data.  
+And now, React Query is initialized with Promise,  
+that will resolve with the data.
+
+This is important, because instead of creating new Promise,  
+React will reuse Promise that was created on the server,  
+making the data available as soon as possible.
+
+#### Next.js experimental SSR
+Steaming is a pain to set up.
+
+```bash
+npm install @tanstack/react-query-next-experimental
+```
+Plugin for React Query that allows to use useSuspenseQuery  
+in client components, without worrying how data is transfered  
+from the server to the client. It allows to get rid of dehyrate  
+and hydration boundary.
+
+to use it, render ReactQueryStreamedHydration as a child  
+of QueryClientProvider
+
+```javascript
+'use client'
+
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryStreamedHydration } from '@tanstack/react-query-next-experimental'
+
+export default function Providers({ children }) {
+  const queryClientRef = React.useRef()
+
+  if (!queryClientRef.current) {
+    queryClientRef.current = new QueryClient()
+  }
+
+  return (
+    <QueryClientProvider client={queryClientRef.current}>
+      <ReactQueryStreamedHydration>
+        {children}
+      </ReactQueryStreamedHydration>
+    </QueryClientProvider>
+  )
+}
+```
+
+With this you can use useSuspenseQuery and data will  
+automatically land in the cache of React Query on the client.
+
+```javascript
+'use client'
+
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { fetchRepoData } from './api'
+
+export default function Repo({ initialData }) {
+  const { data } = useSuspenseQuery({
+    queryKey: ['repoData'],
+    queryFn: fetchRepoData,
+    staleTime: 10 * 1000,
+  })
+
+  return (
+    <>
+      <h1>{data.name}</h1>
+      <p>{data.description}</p>
+      <strong>{data.subscribers_count}</strong>{" "}
+      <strong>{data.stargazers_count}</strong>{" "}
+      <strong>{data.forks_count}</strong>
+    </>
+  )
+}
+```

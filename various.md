@@ -273,6 +273,37 @@ apart from definitions of what to run,
 and on what exact version,  
 you can define vscode extensions for the project
 
+### Build your own extension
+#### Yeoman
+tool to fast setup skeleton of project
+
+```bash
+npm install -g yo generator-code
+yo code
+```
+
+extensions have their package.json  
+a important part of that is declaration of  
+what this extesion contributes to (like "themes")
+
+to publish extension, use `@vscode/vsce`  
+it works very similar to npm:  
+you need to create account, build and publish
+
+with extension  
+you can hook into any place of vscode  
+you can even communicate with coopilot  
+although documentation on that is not very good
+
+how to show UI in vscode extansion  
+with html file  
+it has to be self contained  
+it cannot access any resources over the web  
+(you can bundle framework inside)
+
+your file will receive css variables  
+so you can reuse colors from current theme
+
 
 
 Comparing Software Architectures

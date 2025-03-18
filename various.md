@@ -3,9 +3,17 @@ Become a VSCode Power User!
 with Steve Kinney  
 https://stevekinney.net/courses/visual-studio-code
 
+#### Steve Kinney quote
+When I was younger, I wanted everyone to write the code as I did
+When I got older, I relaxed
+
+#### Why power user
 Good cook knows his tools incredibly well, misen-place...  
 The goal is to get so good at using our tools  
 that we can focus on the problem solving without distraction.
+
+#### 5000 port
+vscode uses 5000 port to run
 
 #### command panel
 `shift command p`  
@@ -143,6 +151,7 @@ with different extensions and separate snippets
 ### Snippets
 In vscode you can have filters in snippets,  
 like change input $1 to pascal case.
+they are defined using json
 
 And you can have some variables,  
 like ${CLIPBOARD}, ${TM_FILEPATH}, ${USERNAME}
@@ -156,6 +165,97 @@ you can invoke one snippet from another
 
 Can copilot take snippet as a starting point?  
 It doesn't, but perhaps this is good idea.
+
+### Tasks
+if you go to terminal to run something
+in vscode it's a candidate for a task
+
+they are defined using json
+
+thay are especially good when you want
+to start serveral servers at once
+
+### Debugger
+run and debug or create launch json file
+
+```json
+{
+  "type": "npm",
+  "script": "dev",
+  "problemMatcher": [],
+  "label": "Start Vite"
+}
+```
+
+you can add debuggers
+built in ones: node, chrome, edge
+you can also debug in chrome
+
+you can hook in to running web app
+
+debug console
+allows you to type expressions at the breakpoint
+there is also option to assign and change values in debug console
+
+```
+title = "Play video game"
+```
+
+conditional breakpoints
+
+connect to running app, and break on first line
+
+```bash
+node --inspect-brk app.js
+```
+
+and then configure attach
+
+```json
+{
+	"type": "node",
+	"request": "attach",
+	"name": "Attach to Node",
+	"address": "localhost",
+	"port": 9229
+}
+```
+
+#### workspaces
+when you have two repositories
+one for backend, one for frontend
+
+and you want to create a project
+.code-workspace, that will act
+as if these two were together
+
+but in the end ...
+why would you need more than one repo
+use monorepo
+
+#### microfrontends
+you end with separate versions of React
+and you will try to create one cohesive UX experience
+this will be probably impossible
+
+Module Federation allows each microfrontend 
+to share and load code from one another at runtime
+without forcing everything to be bundled together
+
+It's achieved using ModuleFederationPlugin in webpack
+```javascript
+plugins: [
+  new ModuleFederationPlugin({
+    name: "host",
+    remotes: {
+      remoteApp: "remoteApp@http://localhost:3001/remoteEntry.js",
+    },
+    shared: ["react", "react-dom"],
+  }),
+],
+```
+
+
 
 
 

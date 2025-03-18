@@ -22,6 +22,13 @@ typically devolved into spaghetti like mutations
 that were both hard to predict and keep track of
 
 Backbone had just 2000 lines of code.  
+unopinionated and minimal  
 It allowed to decouple application state from the DOM.  
 Instead of living in the DOM, backbone state lived in its models.  
-All the views that cared about that state, rerendered on change.
+All the views that cared about that state, rerendered on change.  
+its render function was something for users to override
+
+Angular  
+opinionated and not minimal  
+Misko presentation barefoot  
+idea was: what if html would be more powerful

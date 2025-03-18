@@ -2835,6 +2835,12 @@ describe("Blog", () => {
 ```
 
 ### Working with Suspense
+#### React Suspense
+Enables us to write components that don't need to handle
+their own loading or error states, but is at its best
+when used in combination with server side rendering
+
+#### useSuspenseQuery
 So far we waited for data by checking status or isLoading:
 
 ```javascript
@@ -2997,4 +3003,98 @@ to fire multiple suspense Queries in parallel.
 use another hook `useSuspenseQueries`
 
 #### Show previous data when loading
-Since we don't 
+Since in useSuspenseQuery we don't have placeholderData
+for same effect we have to use pure React.
+
+How to show previous data while waiting for async data?
+React transitions are made for that.
+
+While a transition is in progress, React will show the previous data
+instead of unmounting and showing the Suspense fallback.
+
+Basic usage is
+
+```javascript
+const [isPreviousData, startTransition] = React.useTransition()
+
+<button
+  onClick={() => {
+    startTransition(() => {
+      setPage((p) => p - 1)
+    })
+  }}
+>
+  Previous
+</button>
+```
+
+And full example of usage, on example of paging
+where while waiting for next page we show previous,
+looks like:
+
+```javascript
+import * as React from "react"
+import AppErrorBoundary from './AppErrorBoundary'
+import Repos from './Repos'
+
+export default function App() {
+  return (
+    <AppErrorBoundary>
+      <React.Suspense fallback={<p>...</p>}>
+        <div id="app">
+          <Repos />
+        </div>
+      </React.Suspense>
+    </AppErrorBoundary>
+  )
+}
+
+function useRepos(sort, page) {
+  return useSuspenseQuery({
+    queryKey: ['repos', { sort, page }],
+    queryFn: () => fetchRepos(sort, page),
+  })
+}
+
+function RepoList({ sort, page, setPage }) {
+  const { data } = useRepos(sort, page)
+  const [isPreviousData, startTransition] = React.useTransition()
+
+  return (
+    <div>
+      <ul style={{ opacity: isPreviousData ? 0.5 : 1 }}>
+        {data.map((repo) => 
+          <li key={repo.id}>{repo.full_name}</li>
+        )}
+      </ul>
+
+      <div>
+        <button
+          onClick={() => {
+            startTransition(() => {
+              setPage((p) => p - 1)
+            })
+          }}
+          disabled={isPreviousData || page === 1}
+        >
+          Previous
+        </button>
+
+        <span>Page {page}</span>
+
+        <button
+          onClick={() => {
+            startTransition(() => {
+              setPage((p) => p + 1)
+            })
+          }}
+          disabled={isPreviousData || page === 1}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  )
+}
+```
+

@@ -44,4 +44,14 @@ but also model changed when the view changed
 this was hard to follow, but also expensive  
 as Angular had scan you app looking for state changes.
 
-
+#### Other
+there were way more post jQuery frameworks
+they all had models, that were kept in sync with the view
+canjs
+stapes.js
+batman.js
+knockout
+soma.js
+Spine.js
+Chaplin
+Knockback.js

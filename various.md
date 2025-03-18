@@ -255,7 +255,23 @@ plugins: [
 ],
 ```
 
+### Dev containers
+You can configure remote environment.  
+Codespaces. But you have to keep running it.
 
+It's especially suited for situations,  
+where you're doing server code  
+and you need to be using precise node version.
+
+Also when you need to spin up couple of things.  
+And want a consistent environment for devs to work.  
+But it comes at a price of complexity.
+
+devcontainer.json
+
+apart from definitions of what to run,  
+and on what exact version,  
+you can define vscode extensions for the project
 
 
 

@@ -52,7 +52,7 @@ there is option for copilot suggestions in terminal
 Copilot > Terminal Inline Chat
 
 #### Rename
-F2  
+`F2`  
 there is also option to rename file and update imports
 
 #### Github extension
@@ -71,7 +71,32 @@ and he will be visible in history as author
 #### multiple cursors
 hold option and click on several places in editor
 
+`shift option mousedrag`  
+select a block of text and have multiple cursors
 
+#### refactor
+there is an option to extract function to a new file
+
+#### html, jsx, emmet
+```
+div>ul>li*3
+.modal>h2+p
+html:5
+div.container>img.logo[src="logo.png"]+p
+(header>h1)+(main>section*3)+(footer>p)
+a{Click me}
+script:src
+```
+
+sibling multiplication with dynamic text
+```
+ul>li.item${Item $}*5
+```
+
+attributes
+```
+ul>li*3>a[href="https://example.com"][title="Visit Example"]{Link $}
+```
 
 
 Comparing Software Architectures

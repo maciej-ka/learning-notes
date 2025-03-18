@@ -140,6 +140,23 @@ profile settings: when you have several roles
 and you want to have several user profiles  
 with different extensions and separate snippets
 
+### Snippets
+In vscode you can have filters in snippets,  
+like change input $1 to pascal case.
+
+And you can have some variables,  
+like ${CLIPBOARD}, ${TM_FILEPATH}, ${USERNAME}
+${TM_SELECTED_TEXT}
+
+In combination, you can create react component  
+skeleton, from just filename.
+
+you can invoke one snippet from another  
+(nested snippets)
+
+Can copilot take snippet as a starting point?  
+It doesn't, but perhaps this is good idea.
+
 
 
 Comparing Software Architectures

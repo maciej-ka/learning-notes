@@ -2,4 +2,26 @@ React.gg, master modern React
 =============================
 https://react.gg/
 
+### Why React
+React was not well received when it was created.
 
+"It would be nice to see a list of reasons to chose this over Angular"  
+"I think Web Components is landing soon"  
+"Every example is 100 times the code I would write in straight html"  
+"Do templates have to live inside the application logic? It's poor decision"  
+"Tis is terrible, so did we really not lear naything from PHP days?"  
+"I really hate the embedded XML in javascript code"  
+"Seems a child of PHP and Angular"
+
+At that time jQuery, Backbone and Angular dominated.
+
+With jQuery the state of your application lived inside DOM.  
+However, relying on shared mutable state was also its biggest problem.  
+What started as a simple way to update DOM tree,  
+typically devolved into spaghetti like mutations  
+that were both hard to predict and keep track of
+
+Backbone had just 2000 lines of code.  
+It allowed to decouple application state from the DOM.  
+Instead of living in the DOM, backbone state lived in its models.  
+All the views that cared about that state, rerendered on change.

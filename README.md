@@ -77,6 +77,10 @@ Notes on less common hooks, strict mode
 =====================
 Tanstack React Query, [Query.gg](https://query.gg/)  
 
+[React Part 3](./react3.md)  
+=====================
+Master modern React, [React.gg](https://react.gg/)  
+
 [Ruby](./ruby.md)  
 ===================
 Well Grounded Rubyist, [Manning](https://www.manning.com/books/the-well-grounded-rubyist-third-edition)  

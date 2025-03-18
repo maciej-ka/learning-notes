@@ -2,6 +2,8 @@ Tan Stack Query, React Query
 ============================
 https://query.gg/
 
+React Query is data synchronization library.
+
 ### Why React Query
 Why specific piece technology gets popular?  
 it allows devs to stop thinking about the problem  
@@ -2836,8 +2838,8 @@ describe("Blog", () => {
 
 ### Working with Suspense
 #### React Suspense
-Enables us to write components that don't need to handle
-their own loading or error states, but is at its best
+Enables us to write components that don't need to handle  
+their own loading or error states, but is at its best  
 when used in combination with server side rendering
 
 #### useSuspenseQuery
@@ -2850,17 +2852,17 @@ if (status === "pending")  { ... }
 
 This works well, but it's coupled with individual query and component.
 
-When working in a component based architectrure,
-use a higher level loading handler to manage loading states
+When working in a component based architectrure,  
+use a higher level loading handler to manage loading states  
 that can occur anywhere in your app.
 
 Suspense can help with that.
 
-It allows to create higher level loading boundaries.
-It's a React component that allows to coordinate
+It allows to create higher level loading boundaries.  
+It's a React component that allows to coordinate  
 loading states for asynchronous operations.
 
-Suspense is to loading states,
+Suspense is to loading states,  
 as ErrorBoundray is to errors.
 
 ```javascript
@@ -2869,8 +2871,8 @@ as ErrorBoundray is to errors.
 </Suspense>
 ```
 
-React will NOT automatically trigger Suspense
-for all async operations like the ones seen in
+React will NOT automatically trigger Suspense  
+for all async operations like the ones seen in  
 the event handlers or useEffect.
 
 because of that we need to use `useSuspenseQuery`
@@ -2915,30 +2917,30 @@ export default function App() {
 }
 ```
 
-With useSuspenseQuery, it’s as if you’re handing
+With useSuspenseQuery, it’s as if you’re handing  
 the async lifecycle management over to React itself.
 
-When using useSuspenseQuery, React will see the Promise
-and show the Promise until the Promise resolves.
+When using useSuspenseQuery, React will see the Promise  
+and show the Promise until the Promise resolves.  
 If it rejects, it will forward error to nearest error boundary.
 
-Having unified way to handle loading states
-can simplify a lot, especially as your application grows.
-Repo component doesn't have to check for status or isLoading
+Having unified way to handle loading states  
+can simplify a lot, especially as your application grows.  
+Repo component doesn't have to check for status or isLoading  
 Suspense guarantees that children will have async data they need.
 
-You can place many Suspense at different levels
-and place many children component inside them.
+You can place many Suspense at different levels  
+and place many children component inside them.  
 Just like ErrorBoundaries.
 
 #### useQuery vs useSuspenseQuery
-Suspended guarantees children of Suspense will have needed data
+Suspended guarantees children of Suspense will have needed data  
 Because of that, useSuspenseQuery:
 - does not support enabled property
 - does not support placeholderData
 
 #### Unified fallback
-When Suspense has many children,
+When Suspense has many children,  
 it will show failback until all finish loading
 
 To change this, we can put each component in separate Suspense
@@ -2956,11 +2958,11 @@ To change this, we can put each component in separate Suspense
 ```
 
 #### Serial vs Parallel suspended queries
-when having more than one useSuspenseQuery next to each other
+when having more than one useSuspenseQuery next to each other  
 they will NOT be run in parallel, they will run in serial.
 
-This is beneficial, when you have two queries in on component
-one dependent on result of another. In that scenario just place
+This is beneficial, when you have two queries in on component  
+one dependent on result of another. In that scenario just place  
 those two queries next to each other.
 
 ```javascript
@@ -2999,17 +3001,17 @@ function MilestoneInfo({ id }) {
 }
 ```
 
-to fire multiple suspense Queries in parallel.
+to fire multiple suspense Queries in parallel.  
 use another hook `useSuspenseQueries`
 
 #### Show previous data when loading
-Since in useSuspenseQuery we don't have placeholderData
+Since in useSuspenseQuery we don't have placeholderData  
 for same effect we have to use pure React.
 
-How to show previous data while waiting for async data?
+How to show previous data while waiting for async data?  
 React transitions are made for that.
 
-While a transition is in progress, React will show the previous data
+While a transition is in progress, React will show the previous data  
 instead of unmounting and showing the Suspense fallback.
 
 Basic usage is
@@ -3028,8 +3030,8 @@ const [isPreviousData, startTransition] = React.useTransition()
 </button>
 ```
 
-And full example of usage, on example of paging
-where while waiting for next page we show previous,
+And full example of usage, on example of paging  
+where while waiting for next page we show previous,  
 looks like:
 
 ```javascript
@@ -3098,3 +3100,199 @@ function RepoList({ sort, page, setPage }) {
 }
 ```
 
+### Server Side Rendering
+How the useQuery behaves on the server side?
+
+In traditional React App, server sends small html page  
+with a script tag, which will be responsible for rendering  
+the entire web page.
+
+Lately the pendulum has been swinging back to server side,  
+with server being also responsible for rendering initial html.
+
+This can work with any SSR,  
+although we will use Next.js
+
+### Server Components
+new architecture that allows fetching data  
+inside async Server Components
+
+This will render on the server, fetch some data  
+either during build time or when page is requested,  
+and then send html to the browser.
+
+#### SSG with initialData
+```javascript
+import { fetchRepoData } from './api'
+
+export default async function Home() {
+  const data = await fetchRepoData();
+
+  return (
+    <main>
+      <h1>{data.name}</h1>
+      <p>{data.description}</p>
+      <strong>{data.subscribers_count}</strong>{" "}
+      <strong>{data.stargazers_count}</strong>{" "}
+      <strong>{data.forks_count}</strong>
+    </main>
+  )
+}
+```
+
+If your app needs interactivity,  
+you can throw client components
+
+React Query is a data synchronization library.  
+In combination with SSR it will allow for fast page load  
+and a great client UX (retry, stale, persist, etc.)
+
+We will wrap our App inside Providers component
+
+When using with SSR Client side, make sure that  
+queryClient is created inside the component,  
+to make sure that data is not shared between different users  
+and requests.
+
+And to not reacreate that ReactQuery on each render,  
+but it into ref
+
+```javascript
+'use client'
+
+import * as React from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+
+export default function Providers({ children }) {
+  const queryClientRef = React.useRef();
+
+  if (!queryClientRef.current) {
+    queryClient.current = new QueryClient()
+  }
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      {children}
+    </QueryClientProvider>
+  );
+}
+```
+
+We will get data in server component and pass it  
+to presentation and cache using `initialData` option
+
+Here is server side, that passess data
+
+```javascript
+import { fetchRepoData } from './api'
+
+export default async function Home() {
+  const data = await fetchRepoData();
+
+  return (
+    <main>
+      <Repo initialData={data} />
+    </main>
+  )
+}
+```
+
+And the presentation component:
+
+```javascript
+import { useQuery } from '@tanstack/react-query'
+import { fetchRepoData } from './api'
+
+export default function Repo({ initialData }) {
+  const { data } = useQuery({
+    queryKey: ['repoData'],
+    queryFn: fetchRepoData,
+    staleTime: 10 * 1000,
+    initialData,
+  })
+
+  return (
+    <>
+      <h1>{data.name}</h1>
+      <p>{data.description}</p>
+      <strong>{data.subscribers_count}</strong>{" "}
+      <strong>{data.stargazers_count}</strong>{" "}
+      <strong>{data.forks_count}</strong>
+    </>
+  )
+}
+```
+
+With this combination you get all the benefits  
+of the client side useQuery, with initial speed of SSR
+
+#### SSR with hydrate
+However initialData works well for static site generation  
+which are pages created at a build time, usually named SSG.  
+But not for pages that are dynamically rendered.
+
+Because in those cases, initialData will be only respected  
+when the query client entry is created.
+
+It's little bit like `useState(initialData)`,  
+where initialData is only read once, and later if its value changes  
+it affects nothing, as at that point it's no longer in use.
+
+#### Send whole cache to client
+What if instead of fetching on the server,  
+and sending that data to the client,  
+we fetch on the server, add it to the cache  
+and then send whole cache to client
+
+we need to figure out how to serialize whole cache  
+so it can be sent trough the wire  
+and then hydrate cache when react takes over on the client
+
+ReactQuery comes with two api for that.
+
+Instead of just fetching data  
+and awaiting it in our server component,  
+we will create query client on the server  
+and fetch all the data through it.
+
+Because server components never rerender,  
+we don't need to worry about query client being recreated.
+
+To populate React Query cache on the server side,  
+we will use prefetching.
+
+To serialize data, we will use ReactQuery dehydrate.  
+And to deserialize: HydrationBoundary
+
+HydrationBoundary will take the state it receives  
+and put it into the client React Query cache.  
+The difference is that it will do it also  
+on subsequent revalidations.
+
+Every client component that uses repoData query  
+will always have access to latest data,  
+no matter did that happen on server or client.
+
+```javascript
+import { QueryClient, dehydrate, HydrationBoundary } from '@tanstack/react-query'
+import { fetchRepoData } from './api'
+import Repo from './Repo'
+
+export default async function Home() {
+  const queryClient = new QueryClient()
+
+  await queryClient.prefetchQuery({
+    queryKey: ["repoData"],
+    queryFn: fetchRepoData,
+    staleTime: 10 * 1000,
+  })
+
+  return (
+    <main>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <Repo />
+      </HydrationBoundary>
+    </main>
+  )
+}
+```

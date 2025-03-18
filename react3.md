@@ -15,12 +15,14 @@ React was not well received when it was created.
 
 At that time jQuery, Backbone and Angular dominated.
 
+#### jQuery
 With jQuery the state of your application lived inside DOM.  
 However, relying on shared mutable state was also its biggest problem.  
 What started as a simple way to update DOM tree,  
 typically devolved into spaghetti like mutations  
 that were both hard to predict and keep track of
 
+#### Backbone
 Backbone had just 2000 lines of code.  
 unopinionated and minimal  
 It allowed to decouple application state from the DOM.  
@@ -28,7 +30,18 @@ Instead of living in the DOM, backbone state lived in its models.
 All the views that cared about that state, rerendered on change.  
 its render function was something for users to override
 
-Angular  
+#### Angular
 opinionated and not minimal  
 Misko presentation barefoot  
-idea was: what if html would be more powerful
+idea was: what if html would be more powerful  
+it was a true framework  
+and it fitted well backend developers  
+who were given task to work on frontend
+
+Problem was: Angular loved two way data binding  
+view was updated when the model changed  
+but also model changed when the view changed  
+this was hard to follow, but also expensive  
+as Angular had scan you app looking for state changes.
+
+

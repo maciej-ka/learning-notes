@@ -943,6 +943,44 @@ class ProductionConfigService {}
 })
 ```
 
+#### Factory Patterns
+Create value in a dynamic way, using factory function.
+
+```typescript
+// coffees.module.ts
+@Module({
+  // ...
+  { provide: COFFEE_BRANDS, useFactory: () => ['buddy brew', 'nescafe'] },
+})
+```
+
+Factory method can inject and use other providers
+
+```typescript
+// coffees.module.ts
+
+@Injectable()
+export class CoffeeBrandsFactory {
+  create() {
+    return ['buddy brew', 'nescafe'];
+  }
+}
+
+@Module({
+  // ...
+  providers: [
+    CoffeeBrandsFactory,
+    {
+      provide: COFFEE_BRANDS,
+      useFactory: (brandsFactory: CoffeeBrandsFactory) => brandsFactory.create(),
+      inject: [CoffeeBrandsFactory],
+    },
+  ],
+})
+```
+
+
+
 
 
 From the Leet Code

@@ -783,12 +783,12 @@ There are three steps required for DI to happen:
 
 By default, providers have singleton scope.
 
-Nest instantiates controller
-it looks are there dependencies needed
-Nest performs lookup of CoffeesService token, to get class
+Nest instantiates controller  
+it looks are there dependencies needed  
+Nest performs lookup of CoffeesService token, to get class  
 it will create it or get the already created one (since it's a singleton)
 
-It all happens during application bootstrapping
+It all happens during application bootstrapping  
 When there is a graph of dependencies, they are resolved from the bottom
 
 This syntax
@@ -797,7 +797,7 @@ This syntax
 providers: [CoffeesService]
 ```
 
-Is a shortcut when token name is same as class
+Is a shortcut when token name is same as class  
 Here, a `provide` is a token
 
 ```javascript
@@ -817,8 +817,8 @@ nest g mo coffee-rating
 nest g s coffee-rating
 ```
 
-CofeeRating needs CoffeesService to fetch data
-however it belongs to another module.
+CofeeRating needs CoffeesService to fetch data  
+however it belongs to another module.  
 To reach it, import that module into new module.
 
 ```typescript
@@ -833,7 +833,6 @@ If we request CoffeesService now in a new module,
 
 ```typescript
 //coffee-rating.service.ts
-@Injectable()
 export class CoffeeRatingService {
   constructor(private readonly coffeesService: CoffeesService) {}
 }
@@ -846,16 +845,101 @@ Please make sure that the argument CoffeesService at index [0]
 is available in the CoffeeRatingModule context.
 ```
 
-This is because all tokens are encapsulated
+This is because all tokens are encapsulated  
 and to be accessible from outside, we have to export them.
 
 ```typescript
 //coffees.module.ts
 @Module({
-  imports: [TypeOrmModule.forFeature([Coffee, Flavor, Event])],
-  controllers: [CoffeesController],
+  // ...
   providers: [CoffeesService],
   exports: [CoffeesService]
+})
+```
+
+#### Custom Providers
+Instead of Nest instantiating provider for us,  
+we will provide custom provider.
+
+This can be useful:
+- to reuse same class in second dependency
+- in testing, to provide mocked version
+- dynamically resolve dependency on base of some condition
+
+#### Value based Providers
+`useValue`
+
+Used to inject constant value.  
+When adding external library to nest container.  
+Also useful for mocking.
+
+To mock CoffeesService in tests
+
+```typescript
+//coffees.module.ts
+class MockCoffeesService {}
+@Module({
+  providers: [{ provide: CoffeesService, useValue: new MockCoffeesService() }],
+})
+```
+
+#### Non class based Provider Tokens
+Use string or symbol as a token
+
+```typescript
+//coffees.module.ts
+@Module({
+  // ...
+  providers: [
+    { provide: 'COFFEE_BRANDS', useValue: ['buddy brew', 'nescafe'] },
+  ],
+})
+```
+
+On client side, short way of requesting dependency works only  
+when the token is defined using a class name.
+
+For non class name tokens, use @Inject
+
+```typescript
+//coffees.service.ts
+export class CoffeesService {
+  constructor(
+    @Inject('COFFEE_BRANDS') coffeeBrands: string[]
+  ) {}
+}
+```
+
+consider defining name of string token, COFFEE_BRANDS  
+in a separate file and giving that token name a const value
+
+```typescript
+// coffees.constants.ts
+export const COFFEE_BRANDS = "COFFEE_BRANDS"
+```
+
+#### Dynamically select a class, Class Providers
+If we have a abstract ConfigService class.  
+And we have an environment variable  
+that will decide on concrete implementation.
+
+```typescript
+// coffees.module.ts
+
+class ConfigService {}
+class DevelopmentConfigService {}
+class ProductionConfigService {}
+
+@Module({
+  // ...
+  providers: [
+    {
+      provide: ConfigService,
+      useClass: process.env.NODE_ENV === 'development'
+          ? DevelopmentConfigService
+          : ProductionConfigService,
+    }
+  ]
 })
 ```
 

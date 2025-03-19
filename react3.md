@@ -45,13 +45,42 @@ this was hard to follow, but also expensive
 as Angular had scan you app looking for state changes.
 
 #### Other
-there were way more post jQuery frameworks
-they all had models, that were kept in sync with the view
-canjs
-stapes.js
-batman.js
-knockout
-soma.js
-Spine.js
-Chaplin
+There were way more post jQuery frameworks  
+they all had models, that were kept in sync with the view  
+canjs  
+stapes.js  
+batman.js  
+knockout  
+soma.js  
+Spine.js  
+Chaplin  
 Knockback.js
+
+#### React
+React went with easy approach of not mutating at all.  
+After each change it blows view away and renders it from scratch.  
+To do it with performance, it built virtual DOM  
+and rendered only parts that changed.
+
+No data binding  
+No explicit DOM operations.  
+No model dirty checking
+
+React simplified approach, by making view a function of the state.  
+This is simple, because its declarative.  
+Every place data is displayed is guaranteed to be up to date.
+
+Innovation was that you could compose components,  
+just as you can compose the functions.
+
+Before React, imperative approach was:
+
+```javascript
+const btn = document.getElementById('btn')
+btn.addEventListener('click', () => {
+  btn.classList.toggle('highligh')
+  btn.innerText === 'Add Highlight'
+    ? btn.innerText = 'Remove Highlight'
+    : btn.innerText = 'Add Highlight'
+})
+```

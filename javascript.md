@@ -1,764 +1,3 @@
-From the Leet Code
-==================
-
-#### >> and ~~ limitation
-like all bitwise operators, they will convert to32 bit int  
-so it cannot be used for numbers higher than:
-```
-2**32 = 4294967296 = 4.2e9
-```
-
-### >> operator
-Division by two, rounded down
-```javascript
-5 >> 1 // 2
-```
-
-### ~~ operator
-#### Convert string to number
-```javascript
-~~"412.7" // 412
-~~"4"     // 4
-~~"-4"    // -4
-```
-
-#### Floor of decimal
-```javascript
-console.log(~~4.7);  // Output: 4
-console.log(~~-4.7); // Output: -4
-```
-
-#### Convert null or undefined to 0
-```javascript
-~~null      // 0
-~~undefined // 0
-~~{}.foo    // 0
-```
-
-Works by applying the bitwise NOT (~) operator twice. Since bitwise operators  
-only work on integers, JavaScript internally converts the number to a 32-bit  
-signed integer.
-
-#### Why to use it
-It is more performant than Math.floor(), Math.trunc(), or parseInt().
-
-### Arrays in Javascript
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array  
-Arrays are stored as a object with indexes as properties  
-these indexes are strings
-
-#### toString() cooercion
-when calling element arr[index]  
-engine will do implicit index.toString() convertion  
-`arr[2]` is same as `arr["2"]`
-
-```javascript
-arr = [23, 13, 456] // (3) [23, 13, 456]
-arr["2"]            // 456
-arr[2]              // 456
-arr["05"] = "foo"
-arr                 // (3) [23, 13, 456, 05: 'foo']
-```
-
-#### Typed arrays
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray
-
-faster and better on memory  
-but more restictive
-
-fixed size: length set on creation and cannot change  
-typing: all elements have to be same type  
-fast: use contignous memory making access and iteration faster  
-no push: no array push(), splice() etc, because they have fixed size
-
-```javascript
-let arr = new Int32Array(10);
-arr[0] = 42;
-arr[1] = 100;
-console.log(arr[0]); // 42
-console.log(arr.length); // 10
-```
-
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Typed_arrays
-
-| Type              | Aprox range | bytes |
-|-------------------|-------------|-------|
-| Uint8Array        | 0 to 255    | 1     |
-| Uint8ClampedArray | 0 to 255    | 1     |
-| Uint16Array       | 0 to 6e4    | 2     |
-| Uint32Array       | 0 to 4e9    | 4     |
-| BigUint64Array    | 0 to 1e19   | 8     |
-
-| Type          | Aprox range   | bytes |
-|---------------|---------------|-------|
-| Int8Array     | -128 to 127   | 1     |
-| Int16Array    | -3e4 to 3e4   | 2     |
-| Int32Array    | -2e9 to 2e9   | 4     |
-| BigInt64Array | -9e18 to 9e18 | 8     |
-
-| Type         | Aprox range     | bytes |
-|--------------|-----------------|-------|
-| Float16Array | -6e4 to 6e4     | 2     |
-| Float32Array | -3e38 to 3e38   | 4     |
-| Float64Array | -1e308 to 1e308 | 8     |
-
-to check precise size calculate 2 to power of bites
-```
-2**8 = 256
-2**16 = 65536
-2**32 = 4294967296 = 4.2e9
-2**64 = 18446744073709552000 = 1.8e19
-```
-
-### JS binary operators
-| Operator | Name                  | Example  | Binary Calculation | Result                            |
-|----------|-----------------------|----------|--------------------|-----------------------------------|
-| &        | AND                   | 5 & 1    | 0101 & 0001        | 0001 (1)                          |
-| \|       | OR                    | 5 \|  1  | 0101 \| 0001       | 0101 (5)                          |
-| ^        | XOR                   | 5 ^ 1    | 0101 ^ 0001        | 0100 (4)                          |
-| ~        | NOT                   | ~5       | ~00000101          | 11111010 (-6 in two's complement) |
-| <<       | Left Shift            | 5 << 1   | 0101 << 1          | 1010 (10)                         |
-| >>       | Right Shift           | 5 >> 1   | 0101 >> 1          | 0010 (2)                          |
-| >>>      | Zero-fill Right Shift | -5 >>> 1 | `11111011 >>> 1`   | Fills with 0 instead of sign bit  |
-
-All of them use 32 bit uint  
-So if number is higher, it will be limited
-
-
-Defensive Semicolon
-===================
-As seen in zustand sourcecode:
-
-src/middleware/persist.ts:313
-```typescript
-;(api as StoreApi<S> & StorePersist<S, S>).persist = {
-```
-
-This is used to prevent problems when lines would be joined into one line  
-during minification. It seems to be especially common on lines which start with  
-parenthesis.
-
-```typescript
-a + b
-(c as Api).persist()
-
-// after lines join becomes b() invocation
-a + b(c as Api).persist()
-```
-
-
-
-NestJS Architecture and Advanced patterns
-=========================================
-https://learn.nestjs.com/p/architecture-and-advanced-patterns
-
-#### start new app
-```bash
-nest new nest-advanced
-nest g res alarms
-```
-
-#### layer (n-tier) architecture
-each layer has specific role  
-communication between layers is well defined
-
-presentation: user interactions  
-application: manages flow  
-domain: business rules  
-data access: persistence
-
-nest has three layer architecture by default  
-controllers: user requests handling  
-services: business logic  
-data access: persistence
-
-### Hexagonal Architecture
-also known as "ports and adapters"  
-separates core business logic from external factors  
-(databases, user interfaces, frameworks)
-
-#### ports
-interfaces that represent entry-points into application  
-define contract for interaction of domain with external world
-
-#### adapters
-implement these port interfaces  
-serve as bridge between domain and external systems  
-translate from language of domain to external systems
-
-adapters usually delegate a lot
-
-#### dependency inversion
-high level modules should not depend on low level  
-central domain should not depend external systems  
-*(instead both shuold depend on abstractions know as ports)*
-
-#### flow
-in traditional architecture flow is:  
-controllers -> services -> persistence
-
-in hexagonal services are in center  
-controllers -> services <- persistence
-
-### Hexagonal In Practice
-![js hexagonal](./assets/js-hexagonal.png)
-
-create folders
-
-#### application:
-application layer, manages the flow  
-it will comunicate with database through ports
-
-#### domain:
-domain model, value objects, domain events
-
-#### infrastructure: 
-message brokers, data access components
-
-#### presenters:
-controllers, gateways, user facing elements  
-sometimes called user interface
-
-#### reorganize files
-after `nest g res`  
-into application folder: move alarms service and module  
-into presenters/http: controller and dto  
-*(all of these move with tests)*  
-also remove entities folder
-
-#### add domain files:
-domain/alarm.ts  
-domain/value-obejects/alarm-severity.ts
-
-```typescript
-export class AlarmSeverity {
-  constructor(readonly value: 'critical' | 'high' | 'medium' | 'low') {}
-
-  equals(severity: AlarmSeverity) {
-    return this.value === severity.value;
-  }
-}
-```
-
-#### value objects
-name originates from Domain Driven Design  
-immutable object that describes fragment of domain with no identity
-
-two value objects are equal when they have same value  
-they don't have to be same object
-
-#### create factory
-domain/factories/alarm.factory.ts
-
-```typescript
-@Injectable()
-export class AlarmFactory  {
-  create(name: string, severity: string) {
-    const alarmId = randomUUID();
-    const alarmSeverity = new AlarmSeverity(severity as AlarmSeverity['value'])
-    return new Alarm(alarmId, name, alarmSeverity)
-  }
-}
-```
-
-#### what about dtos?
-since dtos belong now to the presentation layer  
-they cannot be used by controllers, which are domain layer
-
-we could move them to application layer  
-but they represent data that is sent over the network  
-so its definitely more a user facing, user interface element  
-and they also contain validation rules
-
-we could create new class, Payload or Command  
-or type arguments in controller as any
-
-application/commands/create-alarm.command.ts
-```typescript
-export class CreateAlarmCommand {
-  constructor(
-    public readonly name: string,
-    public readonly severity: string
-  ) {}
-}
-```
-
-after this, we need to make sure that controller  
-which is in presenters layer, will create that CreateAlarmCommand
-
-```typescript
-@Post()
-create(@Body() createAlarmDto: CreateAlarmDto) {
-  return this.alarmsService.create(
-    new CreateAlarmCommand(createAlarmDto.name, createAlarmDto.severity),
-  );
-}
-```
-
-#### ports
-define constract of interaction with external world  
-adapters implement these contacts and serve as translating bridge
-
-/application/ports/alarm.repository.ts
-```typescript
-export abstract class AlarmRepository {
-  abstract findAll(): Promise<Alarm[]>
-  abstract save(alarm: Alarm): Promise<Alarm>
-}
-```
-
-*It seems like "domain" center of Hexagonal architecture*  
-*is realize in project by:*  
-*/domain: entities, value objects, factories*  
-*/application: services, commands (dtos replacement), ports*
-
-we use abstract class because they can be injected  
-(typescript interfaces are wiped out during transpilation)
-
-#### TypeORM persistence adapter
-/infrastructure/persistence/orm/entities/alarm.entity
-```typescript
-@Entity('alarms')
-export class AlarmEntity {
-  @PrimaryColumn('uuid')
-  id: string
-
-  @Column()
-  name: string
-
-  @Column()
-  severity: string
-}
-```
-
-/infrastructure/persistence/orm/repositories/alarm.repository.ts
-```typescript
-export class OrmAlarmRepository implements AlarmRepository {
-  constructor(
-    @InjectRepository(AlarmEntity)
-    private readonly alarmRepository: Repository<AlarmEntity>,
-  ) {}
-
-  async findAll(): Promise<Alarm[]> {
-    const entities = await this.alarmRepository.find();
-    return entities.map((item) => AlarmMapper.toDomain(item));
-  }
-
-  async save(alarm: Alarm): Promise<Alarm> {
-    const persistenceModel = AlarmMapper.toPersistence(alarm)
-    const entity = await this.alarmRepository.save(persistenceModel);
-    return AlarmMapper.toDomain(entity)
-  }
-}
-```
-
-/infrastructure/persistence/orm/mappers/alarm.mapper.ts
-```typescript
-export class AlarmMapper {
-  static toDomain(alarmEntity: AlarmEntity) {
-    const alarmSeverity = new AlarmSeverity(
-      alarmEntity.severity as "critical" | "high" | "medium" | "low",
-    );
-    const alarmModel = new Alarm(
-      alarmEntity.id,
-      alarmEntity.name,
-      alarmSeverity,
-    );
-    return alarmModel;
-  }
-
-  static toPersistence(alarm: Alarm) {
-    const entity = new AlarmEntity();
-    entity.id = alarm.id;
-    entity.name = alarm.name;
-    entity.severity = alarm.serverity.value;
-    return entity;
-  }
-}
-```
-
-Create orm persistence module and  
-Instruct NestJS to use OrmAlarmRepository whenever AlarmRepository is requested  
-This is where we actually bind port to adapter
-
-/infrastructure/persistence/orm/orm-persistence.module.ts
-```typescript
-@Module({
-  imports: [TypeOrmModule.forFeature([AlarmEntity])],
-  providers: [
-    {
-      provide: AlarmRepository,
-      useClass: OrmAlarmRepository,
-    }
-  ],
-  exports: [AlarmRepository]
-})
-export class OrmAlarmPersistenceModule {}
-```
-
-#### In memory adapter of AlarmRepository
-Create similar `/persistence/in-memory` adapter  
-Including all the same files, but using Javascript Map as a store
-
-#### Define general Infrastructure Module
-Both OrmAlarmsPersistentModule and InMemoryAlarmPersistenceModule  
-export same dependency injection token (token with the same name)  
-which is `AlarmRepository`
-
-Below module definition of Infrastructure Model will select one of them  
-to be used in rest of Nest application when requested.
-
-/infrastructure/persistence/alarms-infrastructure.module.ts
-```typescript
-import { Module } from "@nestjs/common";
-import { InMemoryAlarmPersistenceModule } from "./in-memory/in-memory-persistence.module";
-import { OrmAlarmPersistenceModule } from "./orm/orm-persistence.module";
-
-@Module({})
-export class AlarmsInfrastructureModule {
-  static use(driver: "orm" | "in-memory") {
-    const persistenceModule =
-      driver === "orm"
-        ? OrmAlarmPersistenceModule
-        : InMemoryAlarmPersistenceModule;
-
-    return {
-      module: AlarmsInfrastructureModule,
-      imports: [persistenceModule],
-      exports: [persistenceModule],
-    };
-  }
-}
-```
-
-Include InfrastructureModule to be used in domain
-
-#### Use Infrastructure to perform create in Service
-/application/alarms.module.ts
-```typescript
-export class AlarmsModule {
-  static withInfrastructure(infrastructureModule: Type | DynamicModule) {
-    return {
-      module: AlarmsModule,
-      imports: [infrastructureModule]
-    }
-  }
-}
-```
-
-This line allow users of Alarms Module  
-to pass infrastructureModule that they want to use  
-*(it's an example of modules composition pattern)*
-
-this allows to decouple application layer from infrastructure
-
-```typescript
-imports: [infrastructureModule]
-```
-
-Finally, use Repository interface to create  
-also inject alarmRepository into AlarmsService
-
-/application/alarms.service.ts
-```typescript
-@Injectable()
-export class AlarmsService {
-  constructor(
-    private readonly alarmRepository: AlarmRepository,
-    private readonly alarmFactory: AlarmFactory
-  ) {}
-
-  create(createAlarmDto: CreateAlarmCommand) {
-    const alarm = this.alarmFactory.create(
-      createAlarmDto.name,
-      createAlarmDto.severity,
-    )
-    return this.alarmRepository.save(alarm)
-  }
-
-  findAll() {
-    return this.alarmRepository.findAll()
-  }
-}
-```
-
-#### Bootstraping
-Create interface that will represent options  
-that we can use to bootstrap (setup on start) our application
-
-src/common/interfaces/application-bootstrap-options.interface.ts
-```typescript
-export interface ApplicationBootstrapOptions {
-  driver: 'orm' | 'in-memory';
-}
-```
-
-then let's generate new module
-```bash
-nest g mo core
-```
-
-Depending on the driver in bootstrap options  
-we are going to either import typeorm module  
-or not import anything at all.
-
-```typescript
-@Module({})
-export class CoreModule {
-  static forRoot(options: ApplicationBootstrapOptions) {
-    const imports =
-      options.driver === "orm"
-        ? [
-            // hardcoded for simplicity
-            // but generally should be in environment variables
-            TypeOrmModule.forRoot({
-              type: "postgres",
-              host: "localhost",
-              port: 5432,
-              password: "pass123",
-              username: "postgres",
-              autoLoadEntities: true,
-              synchronize: true,
-            }),
-          ]
-        : [];
-
-    return {
-      module: CoreModule,
-      imports,
-    };
-  }
-}
-```
-
-Then make main App Module aware of Bootstrap options.
-
-src/app.module.ts
-```typescript
-@Module({
-  imports: [CoreModule],
-  controllers: [AppController],
-  providers: [AppService],
-})
-export class AppModule {
-  static register(options: ApplicationBootstrapOptions) {
-    return {
-      module: AppModule,
-      imports: [
-        CoreModule.forRoot(options),
-        AlarmsModule.withInfrastructure(
-          AlarmsInfrastructureModule.use(options.driver)
-        )
-      ]
-    }
-  }
-}
-```
-
-Finally select used bootstrap options in main.ts
-
-src/main.ts
-```typescript
-async function bootstrap() {
-  const app = await NestFactory.create(
-    AppModule.register({ driver: "in-memory" }),
-  );
-  await app.listen(process.env.PORT ?? 3000);
-}
-bootstrap();
-```
-
-### Onion Architecture
-Similar to Hexagonal in that it:  
-- puts domain in the center
-- is good at decoupling
-
-In many cases they are almost identical  
-although they are presented using different diagrams  
-infrastructure -> application -> domain
-
-flow of dependencies goes from infrastructure to domain  
-using DI  
-outer layers remain dependent on inner layers  
-and inner layers are unaware of outer layers
-
-#### confusion with diagram
-Onion layer lead to a lot of confusion in Software Developer community  
-Because on diagram UI and database are positioned in the same layer (infrastructure)
-
-This lead many to wrong conclusion, that Onion is insecure  
-because UI directly interact with Database  
-but that's simply not true
-
-Diagram is just a visual representation of architecture  
-and it doesn't mean that UI can interact with Database directly  
-Layers on Onion diagram are not ment to group components,  
-but show direction of dependencies
-
-#### vs Hexagonal
-Diagrams and concepts of Hexagonal and Onion are so similar  
-that they are generally the same.  
-Although there may be applied slightly different in practice.  
-Naming conventions and some design decisions are generally the same.
-
-### Domain-Driven Desgin
-set of patterns (concepts) and practices  
-approach to developing a software project
-
-concentrate on domain model and logic  
-Eric Evans: tackling complexity in the heart of software
-
-#### ubiquitous language (wszechobecny)
-structure in our code should match that in business domain  
-it's about creating a language that connects implementation to business experts
-
-words and phrases from the business domain are directly used in the code base  
-and it's about creating model of that domain  
-describing all the objects and interactions between them  
-using language that is both understood by developers and business experts
-
-#### strategic design process
-to achieve DDD,  
-to identify core domain and subdomains:  
-1. domain storytelling  
-2. event storming  
-3. context mapping
-
-#### 1. Domain Storytelling
-What it is:  
-Gather domain experts and team members together.  
-Let the experts narrate real-world business processes in plain language.  
-Visually record each “story” (e.g., actors, actions, and work artifacts) to uncover domain terminology and workflows.
-
-#### 2. Event Storming
-What it is:  
-A collaborative workshop where participants use sticky notes to model domain events (e.g., “Ticket Issued,” “Payment Received,” etc.).  
-The focus is on key events that change the state of the system.  
-By grouping events, commands, and policies, you discover natural groupings and potential bounded contexts.
-
-#### 3. Context Mapping
-What it is:  
-Identify bounded contexts (subdomains) within your larger domain, each with its own model and language.  
-Show how these contexts relate (e.g., “Ticketing Context” depends on “Payment Context”).  
-Defines integration points, ownership of data, and which domain is your “core.”
-
-#### Expressing domain model in the code
-building blocks:  
-entities  
-value objects  
-aggregates  
-factories  
-repositories  
-services  
-domain events
-
-#### Entity
-unique objects that have identity  
-even when values of entity A and B are same  
-entities are not same
-
-they are mutable  
-and even if values of entity A change  
-it's still the same entity
-
-they have lifecycle
-
-#### Value object
-immutable  
-don't have unique identifier  
-they are equal to each other if they have same attributes
-
-#### Aggregate
-cluster of objects treated as a single unit
-
-they ensure that all the objects within aggregate are always  
-in consistient and valid state, that invariants are satisfied
-
-Aggregate represents transactional consistiency boundary.  
-Changes in the objects within aggreage should be done in single transaction.
-
-#### Repository
-Are used to persist and retrieve aggregates.
-
-Repository provides abstraction over the database layer.  
-They enable to work with aggregates without worrying about   
-underlying database access and storage implementation.
-
-#### Service
-Encapsulate domain logic that doesn't belong to  
-any particual entity or value object.
-
-Example: sending emails to users when new alarm is created.
-
-Heavy usage of services is often a signal of a problem.  
-That the model itself is "anemic".  
-Anemic model is antipattern.  
-Meaning: domain doesn't contain any logic (any functions that perform)  
-and is just a bunch of getters and setters.
-
-#### Factory
-Encapsulate creation of complex objects.  
-Especially useful if creation of an objects involves:  
-- complex validation
-- initialization
-- coordination  
-of many objects
-
-Factories help to keep domain clean and focus on business logic  
-While offloading responsibility of object creatiion to dedicated factory classes.
-
-#### Event
-Communicate and capture domain specific information about actions  
-or domain model changes that have happened in the past.
-
-Events play a crucial role in enabling loose coupling,  
-scalability and eventual consistiency in distributed systems.
-
-two types of events:  
-domain events  
-integration events.
-
-
-
-NestJS Docs, websockets
-=======================
-https://docs.nestjs.com/websockets
-
-Nest abstracts implementation details  
-same component can run on Http-based api, WebSockets, Microservices
-
-installation
-```bash
-npm i @nestjs/websockets @nestjs/platform-socket.io
-```
-
-#### Gateways
-can be treated as providers  
-they can inject through constructor  
-and be injected
-
-they are not instantiated  
-until referenced in providers of module
-
-@WebSocketGateway  
-two WS platforms are supported: `socket.io` and `ws`
-
-| name      | stars | created |
-|-----------|-------|---------|
-| socket.io | 62k   | 2010    |
-| ws        | 22k   | 2011    |
-
-by default same port as http server is used  
-to have different or a namespace add argument
-
-```typescript
-@WebSocketGateway(80)
-@WebSocketGateway(80, { namespace: 'events' })
-@WebSocketGateway(81, { transports: ['websocket'] })
-```
-
-
-
 NestJS Fundamentals
 ===================
 https://learn.nestjs.com/p/fundamentals
@@ -1526,6 +765,859 @@ it compares @Entity descriptions with state of database
 and creates migration automatically to match entities
 ```bash
 npx typeorm migration:generate -d ormconfig.js migrations/SchemaSync
+```
+
+### Dependency Injection
+When we ask for dependency in constructor nest handles Dependency Injection.
+
+```javascript
+export class CoffeesController {
+  constructor(private readonly coffeesService: CoffeesService) {}
+}
+```
+
+There are three steps required for DI to happen:
+- CoffeesService has @Injectable decorator marking it as managed by Nest
+- CoffeesService is mentioned as provider in module: `providers: [CoffeesService]`
+- We are requesting it in a constructor of the CoffeesController
+
+By default, providers have singleton scope.
+
+Nest instantiates controller
+it looks are there dependencies needed
+Nest performs lookup of CoffeesService token, to get class
+it will create it or get the already created one (since it's a singleton)
+
+It all happens during application bootstrapping
+When there is a graph of dependencies, they are resolved from the bottom
+
+This syntax
+
+```javascript
+providers: [CoffeesService]
+```
+
+Is a shortcut when token name is same as class
+Here, a `provide` is a token
+
+```javascript
+providers: [
+  {
+    provide: CoffeesService,
+    useClass: CoffeesService,
+  },
+]
+```
+
+#### Module Encapsulation
+In some sense list of providers is a public api
+
+```bash
+nest g mo coffee-rating
+nest g s coffee-rating
+```
+
+CofeeRating needs CoffeesService to fetch data
+however it belongs to another module.
+To reach it, import that module into new module.
+
+```typescript
+// coffee-rating.module.ts
+@Module({
+  imports: [CoffeesModule],
+  providers: [CoffeeRatingService]
+})
+```
+
+If we request CoffeesService now in a new module,
+
+```typescript
+//coffee-rating.service.ts
+@Injectable()
+export class CoffeeRatingService {
+  constructor(private readonly coffeesService: CoffeesService) {}
+}
+```
+
+bootstrapping will end with an error:
+
+```
+Please make sure that the argument CoffeesService at index [0]
+is available in the CoffeeRatingModule context.
+```
+
+This is because all tokens are encapsulated
+and to be accessible from outside, we have to export them.
+
+```typescript
+//coffees.module.ts
+@Module({
+  imports: [TypeOrmModule.forFeature([Coffee, Flavor, Event])],
+  controllers: [CoffeesController],
+  providers: [CoffeesService],
+  exports: [CoffeesService]
+})
+```
+
+
+
+From the Leet Code
+==================
+
+#### >> and ~~ limitation
+like all bitwise operators, they will convert to32 bit int  
+so it cannot be used for numbers higher than:
+```
+2**32 = 4294967296 = 4.2e9
+```
+
+### >> operator
+Division by two, rounded down
+```javascript
+5 >> 1 // 2
+```
+
+### ~~ operator
+#### Convert string to number
+```javascript
+~~"412.7" // 412
+~~"4"     // 4
+~~"-4"    // -4
+```
+
+#### Floor of decimal
+```javascript
+console.log(~~4.7);  // Output: 4
+console.log(~~-4.7); // Output: -4
+```
+
+#### Convert null or undefined to 0
+```javascript
+~~null      // 0
+~~undefined // 0
+~~{}.foo    // 0
+```
+
+Works by applying the bitwise NOT (~) operator twice. Since bitwise operators  
+only work on integers, JavaScript internally converts the number to a 32-bit  
+signed integer.
+
+#### Why to use it
+It is more performant than Math.floor(), Math.trunc(), or parseInt().
+
+### Arrays in Javascript
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array  
+Arrays are stored as a object with indexes as properties  
+these indexes are strings
+
+#### toString() cooercion
+when calling element arr[index]  
+engine will do implicit index.toString() convertion  
+`arr[2]` is same as `arr["2"]`
+
+```javascript
+arr = [23, 13, 456] // (3) [23, 13, 456]
+arr["2"]            // 456
+arr[2]              // 456
+arr["05"] = "foo"
+arr                 // (3) [23, 13, 456, 05: 'foo']
+```
+
+#### Typed arrays
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray
+
+faster and better on memory  
+but more restictive
+
+fixed size: length set on creation and cannot change  
+typing: all elements have to be same type  
+fast: use contignous memory making access and iteration faster  
+no push: no array push(), splice() etc, because they have fixed size
+
+```javascript
+let arr = new Int32Array(10);
+arr[0] = 42;
+arr[1] = 100;
+console.log(arr[0]); // 42
+console.log(arr.length); // 10
+```
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Typed_arrays
+
+| Type              | Aprox range | bytes |
+|-------------------|-------------|-------|
+| Uint8Array        | 0 to 255    | 1     |
+| Uint8ClampedArray | 0 to 255    | 1     |
+| Uint16Array       | 0 to 6e4    | 2     |
+| Uint32Array       | 0 to 4e9    | 4     |
+| BigUint64Array    | 0 to 1e19   | 8     |
+
+| Type          | Aprox range   | bytes |
+|---------------|---------------|-------|
+| Int8Array     | -128 to 127   | 1     |
+| Int16Array    | -3e4 to 3e4   | 2     |
+| Int32Array    | -2e9 to 2e9   | 4     |
+| BigInt64Array | -9e18 to 9e18 | 8     |
+
+| Type         | Aprox range     | bytes |
+|--------------|-----------------|-------|
+| Float16Array | -6e4 to 6e4     | 2     |
+| Float32Array | -3e38 to 3e38   | 4     |
+| Float64Array | -1e308 to 1e308 | 8     |
+
+to check precise size calculate 2 to power of bites
+```
+2**8 = 256
+2**16 = 65536
+2**32 = 4294967296 = 4.2e9
+2**64 = 18446744073709552000 = 1.8e19
+```
+
+### JS binary operators
+| Operator | Name                  | Example  | Binary Calculation | Result                            |
+|----------|-----------------------|----------|--------------------|-----------------------------------|
+| &        | AND                   | 5 & 1    | 0101 & 0001        | 0001 (1)                          |
+| \|       | OR                    | 5 \|  1  | 0101 \| 0001       | 0101 (5)                          |
+| ^        | XOR                   | 5 ^ 1    | 0101 ^ 0001        | 0100 (4)                          |
+| ~        | NOT                   | ~5       | ~00000101          | 11111010 (-6 in two's complement) |
+| <<       | Left Shift            | 5 << 1   | 0101 << 1          | 1010 (10)                         |
+| >>       | Right Shift           | 5 >> 1   | 0101 >> 1          | 0010 (2)                          |
+| >>>      | Zero-fill Right Shift | -5 >>> 1 | `11111011 >>> 1`   | Fills with 0 instead of sign bit  |
+
+All of them use 32 bit uint  
+So if number is higher, it will be limited
+
+
+Defensive Semicolon
+===================
+As seen in zustand sourcecode:
+
+src/middleware/persist.ts:313
+```typescript
+;(api as StoreApi<S> & StorePersist<S, S>).persist = {
+```
+
+This is used to prevent problems when lines would be joined into one line  
+during minification. It seems to be especially common on lines which start with  
+parenthesis.
+
+```typescript
+a + b
+(c as Api).persist()
+
+// after lines join becomes b() invocation
+a + b(c as Api).persist()
+```
+
+
+
+NestJS Architecture and Advanced patterns
+=========================================
+https://learn.nestjs.com/p/architecture-and-advanced-patterns
+
+#### start new app
+```bash
+nest new nest-advanced
+nest g res alarms
+```
+
+#### layer (n-tier) architecture
+each layer has specific role  
+communication between layers is well defined
+
+presentation: user interactions  
+application: manages flow  
+domain: business rules  
+data access: persistence
+
+nest has three layer architecture by default  
+controllers: user requests handling  
+services: business logic  
+data access: persistence
+
+### Hexagonal Architecture
+also known as "ports and adapters"  
+separates core business logic from external factors  
+(databases, user interfaces, frameworks)
+
+#### ports
+interfaces that represent entry-points into application  
+define contract for interaction of domain with external world
+
+#### adapters
+implement these port interfaces  
+serve as bridge between domain and external systems  
+translate from language of domain to external systems
+
+adapters usually delegate a lot
+
+#### dependency inversion
+high level modules should not depend on low level  
+central domain should not depend external systems  
+*(instead both shuold depend on abstractions know as ports)*
+
+#### flow
+in traditional architecture flow is:  
+controllers -> services -> persistence
+
+in hexagonal services are in center  
+controllers -> services <- persistence
+
+### Hexagonal In Practice
+![js hexagonal](./assets/js-hexagonal.png)
+
+create folders
+
+#### application:
+application layer, manages the flow  
+it will comunicate with database through ports
+
+#### domain:
+domain model, value objects, domain events
+
+#### infrastructure: 
+message brokers, data access components
+
+#### presenters:
+controllers, gateways, user facing elements  
+sometimes called user interface
+
+#### reorganize files
+after `nest g res`  
+into application folder: move alarms service and module  
+into presenters/http: controller and dto  
+*(all of these move with tests)*  
+also remove entities folder
+
+#### add domain files:
+domain/alarm.ts  
+domain/value-obejects/alarm-severity.ts
+
+```typescript
+export class AlarmSeverity {
+  constructor(readonly value: 'critical' | 'high' | 'medium' | 'low') {}
+
+  equals(severity: AlarmSeverity) {
+    return this.value === severity.value;
+  }
+}
+```
+
+#### value objects
+name originates from Domain Driven Design  
+immutable object that describes fragment of domain with no identity
+
+two value objects are equal when they have same value  
+they don't have to be same object
+
+#### create factory
+domain/factories/alarm.factory.ts
+
+```typescript
+@Injectable()
+export class AlarmFactory  {
+  create(name: string, severity: string) {
+    const alarmId = randomUUID();
+    const alarmSeverity = new AlarmSeverity(severity as AlarmSeverity['value'])
+    return new Alarm(alarmId, name, alarmSeverity)
+  }
+}
+```
+
+#### what about dtos?
+since dtos belong now to the presentation layer  
+they cannot be used by controllers, which are domain layer
+
+we could move them to application layer  
+but they represent data that is sent over the network  
+so its definitely more a user facing, user interface element  
+and they also contain validation rules
+
+we could create new class, Payload or Command  
+or type arguments in controller as any
+
+application/commands/create-alarm.command.ts
+```typescript
+export class CreateAlarmCommand {
+  constructor(
+    public readonly name: string,
+    public readonly severity: string
+  ) {}
+}
+```
+
+after this, we need to make sure that controller  
+which is in presenters layer, will create that CreateAlarmCommand
+
+```typescript
+@Post()
+create(@Body() createAlarmDto: CreateAlarmDto) {
+  return this.alarmsService.create(
+    new CreateAlarmCommand(createAlarmDto.name, createAlarmDto.severity),
+  );
+}
+```
+
+#### ports
+define constract of interaction with external world  
+adapters implement these contacts and serve as translating bridge
+
+/application/ports/alarm.repository.ts
+```typescript
+export abstract class AlarmRepository {
+  abstract findAll(): Promise<Alarm[]>
+  abstract save(alarm: Alarm): Promise<Alarm>
+}
+```
+
+*It seems like "domain" center of Hexagonal architecture*  
+*is realize in project by:*  
+*/domain: entities, value objects, factories*  
+*/application: services, commands (dtos replacement), ports*
+
+we use abstract class because they can be injected  
+(typescript interfaces are wiped out during transpilation)
+
+#### TypeORM persistence adapter
+/infrastructure/persistence/orm/entities/alarm.entity
+```typescript
+@Entity('alarms')
+export class AlarmEntity {
+  @PrimaryColumn('uuid')
+  id: string
+
+  @Column()
+  name: string
+
+  @Column()
+  severity: string
+}
+```
+
+/infrastructure/persistence/orm/repositories/alarm.repository.ts
+```typescript
+export class OrmAlarmRepository implements AlarmRepository {
+  constructor(
+    @InjectRepository(AlarmEntity)
+    private readonly alarmRepository: Repository<AlarmEntity>,
+  ) {}
+
+  async findAll(): Promise<Alarm[]> {
+    const entities = await this.alarmRepository.find();
+    return entities.map((item) => AlarmMapper.toDomain(item));
+  }
+
+  async save(alarm: Alarm): Promise<Alarm> {
+    const persistenceModel = AlarmMapper.toPersistence(alarm)
+    const entity = await this.alarmRepository.save(persistenceModel);
+    return AlarmMapper.toDomain(entity)
+  }
+}
+```
+
+/infrastructure/persistence/orm/mappers/alarm.mapper.ts
+```typescript
+export class AlarmMapper {
+  static toDomain(alarmEntity: AlarmEntity) {
+    const alarmSeverity = new AlarmSeverity(
+      alarmEntity.severity as "critical" | "high" | "medium" | "low",
+    );
+    const alarmModel = new Alarm(
+      alarmEntity.id,
+      alarmEntity.name,
+      alarmSeverity,
+    );
+    return alarmModel;
+  }
+
+  static toPersistence(alarm: Alarm) {
+    const entity = new AlarmEntity();
+    entity.id = alarm.id;
+    entity.name = alarm.name;
+    entity.severity = alarm.serverity.value;
+    return entity;
+  }
+}
+```
+
+Create orm persistence module and  
+Instruct NestJS to use OrmAlarmRepository whenever AlarmRepository is requested  
+This is where we actually bind port to adapter
+
+/infrastructure/persistence/orm/orm-persistence.module.ts
+```typescript
+@Module({
+  imports: [TypeOrmModule.forFeature([AlarmEntity])],
+  providers: [
+    {
+      provide: AlarmRepository,
+      useClass: OrmAlarmRepository,
+    }
+  ],
+  exports: [AlarmRepository]
+})
+export class OrmAlarmPersistenceModule {}
+```
+
+#### In memory adapter of AlarmRepository
+Create similar `/persistence/in-memory` adapter  
+Including all the same files, but using Javascript Map as a store
+
+#### Define general Infrastructure Module
+Both OrmAlarmsPersistentModule and InMemoryAlarmPersistenceModule  
+export same dependency injection token (token with the same name)  
+which is `AlarmRepository`
+
+Below module definition of Infrastructure Model will select one of them  
+to be used in rest of Nest application when requested.
+
+/infrastructure/persistence/alarms-infrastructure.module.ts
+```typescript
+import { Module } from "@nestjs/common";
+import { InMemoryAlarmPersistenceModule } from "./in-memory/in-memory-persistence.module";
+import { OrmAlarmPersistenceModule } from "./orm/orm-persistence.module";
+
+@Module({})
+export class AlarmsInfrastructureModule {
+  static use(driver: "orm" | "in-memory") {
+    const persistenceModule =
+      driver === "orm"
+        ? OrmAlarmPersistenceModule
+        : InMemoryAlarmPersistenceModule;
+
+    return {
+      module: AlarmsInfrastructureModule,
+      imports: [persistenceModule],
+      exports: [persistenceModule],
+    };
+  }
+}
+```
+
+Include InfrastructureModule to be used in domain
+
+#### Use Infrastructure to perform create in Service
+/application/alarms.module.ts
+```typescript
+export class AlarmsModule {
+  static withInfrastructure(infrastructureModule: Type | DynamicModule) {
+    return {
+      module: AlarmsModule,
+      imports: [infrastructureModule]
+    }
+  }
+}
+```
+
+This line allow users of Alarms Module  
+to pass infrastructureModule that they want to use  
+*(it's an example of modules composition pattern)*
+
+this allows to decouple application layer from infrastructure
+
+```typescript
+imports: [infrastructureModule]
+```
+
+Finally, use Repository interface to create  
+also inject alarmRepository into AlarmsService
+
+/application/alarms.service.ts
+```typescript
+@Injectable()
+export class AlarmsService {
+  constructor(
+    private readonly alarmRepository: AlarmRepository,
+    private readonly alarmFactory: AlarmFactory
+  ) {}
+
+  create(createAlarmDto: CreateAlarmCommand) {
+    const alarm = this.alarmFactory.create(
+      createAlarmDto.name,
+      createAlarmDto.severity,
+    )
+    return this.alarmRepository.save(alarm)
+  }
+
+  findAll() {
+    return this.alarmRepository.findAll()
+  }
+}
+```
+
+#### Bootstraping
+Create interface that will represent options  
+that we can use to bootstrap (setup on start) our application
+
+src/common/interfaces/application-bootstrap-options.interface.ts
+```typescript
+export interface ApplicationBootstrapOptions {
+  driver: 'orm' | 'in-memory';
+}
+```
+
+then let's generate new module
+```bash
+nest g mo core
+```
+
+Depending on the driver in bootstrap options  
+we are going to either import typeorm module  
+or not import anything at all.
+
+```typescript
+@Module({})
+export class CoreModule {
+  static forRoot(options: ApplicationBootstrapOptions) {
+    const imports =
+      options.driver === "orm"
+        ? [
+            // hardcoded for simplicity
+            // but generally should be in environment variables
+            TypeOrmModule.forRoot({
+              type: "postgres",
+              host: "localhost",
+              port: 5432,
+              password: "pass123",
+              username: "postgres",
+              autoLoadEntities: true,
+              synchronize: true,
+            }),
+          ]
+        : [];
+
+    return {
+      module: CoreModule,
+      imports,
+    };
+  }
+}
+```
+
+Then make main App Module aware of Bootstrap options.
+
+src/app.module.ts
+```typescript
+@Module({
+  imports: [CoreModule],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {
+  static register(options: ApplicationBootstrapOptions) {
+    return {
+      module: AppModule,
+      imports: [
+        CoreModule.forRoot(options),
+        AlarmsModule.withInfrastructure(
+          AlarmsInfrastructureModule.use(options.driver)
+        )
+      ]
+    }
+  }
+}
+```
+
+Finally select used bootstrap options in main.ts
+
+src/main.ts
+```typescript
+async function bootstrap() {
+  const app = await NestFactory.create(
+    AppModule.register({ driver: "in-memory" }),
+  );
+  await app.listen(process.env.PORT ?? 3000);
+}
+bootstrap();
+```
+
+### Onion Architecture
+Similar to Hexagonal in that it:  
+- puts domain in the center
+- is good at decoupling
+
+In many cases they are almost identical  
+although they are presented using different diagrams  
+infrastructure -> application -> domain
+
+flow of dependencies goes from infrastructure to domain  
+using DI  
+outer layers remain dependent on inner layers  
+and inner layers are unaware of outer layers
+
+#### confusion with diagram
+Onion layer lead to a lot of confusion in Software Developer community  
+Because on diagram UI and database are positioned in the same layer (infrastructure)
+
+This lead many to wrong conclusion, that Onion is insecure  
+because UI directly interact with Database  
+but that's simply not true
+
+Diagram is just a visual representation of architecture  
+and it doesn't mean that UI can interact with Database directly  
+Layers on Onion diagram are not ment to group components,  
+but show direction of dependencies
+
+#### vs Hexagonal
+Diagrams and concepts of Hexagonal and Onion are so similar  
+that they are generally the same.  
+Although there may be applied slightly different in practice.  
+Naming conventions and some design decisions are generally the same.
+
+### Domain-Driven Desgin
+set of patterns (concepts) and practices  
+approach to developing a software project
+
+concentrate on domain model and logic  
+Eric Evans: tackling complexity in the heart of software
+
+#### ubiquitous language (wszechobecny)
+structure in our code should match that in business domain  
+it's about creating a language that connects implementation to business experts
+
+words and phrases from the business domain are directly used in the code base  
+and it's about creating model of that domain  
+describing all the objects and interactions between them  
+using language that is both understood by developers and business experts
+
+#### strategic design process
+to achieve DDD,  
+to identify core domain and subdomains:  
+1. domain storytelling  
+2. event storming  
+3. context mapping
+
+#### 1. Domain Storytelling
+What it is:  
+Gather domain experts and team members together.  
+Let the experts narrate real-world business processes in plain language.  
+Visually record each “story” (e.g., actors, actions, and work artifacts) to uncover domain terminology and workflows.
+
+#### 2. Event Storming
+What it is:  
+A collaborative workshop where participants use sticky notes to model domain events (e.g., “Ticket Issued,” “Payment Received,” etc.).  
+The focus is on key events that change the state of the system.  
+By grouping events, commands, and policies, you discover natural groupings and potential bounded contexts.
+
+#### 3. Context Mapping
+What it is:  
+Identify bounded contexts (subdomains) within your larger domain, each with its own model and language.  
+Show how these contexts relate (e.g., “Ticketing Context” depends on “Payment Context”).  
+Defines integration points, ownership of data, and which domain is your “core.”
+
+#### Expressing domain model in the code
+building blocks:  
+entities  
+value objects  
+aggregates  
+factories  
+repositories  
+services  
+domain events
+
+#### Entity
+unique objects that have identity  
+even when values of entity A and B are same  
+entities are not same
+
+they are mutable  
+and even if values of entity A change  
+it's still the same entity
+
+they have lifecycle
+
+#### Value object
+immutable  
+don't have unique identifier  
+they are equal to each other if they have same attributes
+
+#### Aggregate
+cluster of objects treated as a single unit
+
+they ensure that all the objects within aggregate are always  
+in consistient and valid state, that invariants are satisfied
+
+Aggregate represents transactional consistiency boundary.  
+Changes in the objects within aggreage should be done in single transaction.
+
+#### Repository
+Are used to persist and retrieve aggregates.
+
+Repository provides abstraction over the database layer.  
+They enable to work with aggregates without worrying about   
+underlying database access and storage implementation.
+
+#### Service
+Encapsulate domain logic that doesn't belong to  
+any particual entity or value object.
+
+Example: sending emails to users when new alarm is created.
+
+Heavy usage of services is often a signal of a problem.  
+That the model itself is "anemic".  
+Anemic model is antipattern.  
+Meaning: domain doesn't contain any logic (any functions that perform)  
+and is just a bunch of getters and setters.
+
+#### Factory
+Encapsulate creation of complex objects.  
+Especially useful if creation of an objects involves:  
+- complex validation
+- initialization
+- coordination  
+of many objects
+
+Factories help to keep domain clean and focus on business logic  
+While offloading responsibility of object creatiion to dedicated factory classes.
+
+#### Event
+Communicate and capture domain specific information about actions  
+or domain model changes that have happened in the past.
+
+Events play a crucial role in enabling loose coupling,  
+scalability and eventual consistiency in distributed systems.
+
+two types of events:  
+domain events  
+integration events.
+
+
+
+NestJS Docs, websockets
+=======================
+https://docs.nestjs.com/websockets
+
+Nest abstracts implementation details  
+same component can run on Http-based api, WebSockets, Microservices
+
+installation
+```bash
+npm i @nestjs/websockets @nestjs/platform-socket.io
+```
+
+#### Gateways
+can be treated as providers  
+they can inject through constructor  
+and be injected
+
+they are not instantiated  
+until referenced in providers of module
+
+@WebSocketGateway  
+two WS platforms are supported: `socket.io` and `ws`
+
+| name      | stars | created |
+|-----------|-------|---------|
+| socket.io | 62k   | 2010    |
+| ws        | 22k   | 2011    |
+
+by default same port as http server is used  
+to have different or a namespace add argument
+
+```typescript
+@WebSocketGateway(80)
+@WebSocketGateway(80, { namespace: 'events' })
+@WebSocketGateway(81, { transports: ['websocket'] })
 ```
 
 

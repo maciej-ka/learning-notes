@@ -1,4 +1,36 @@
-Become a VSCode Power User!
+Tenant
+======
+A tenant is a group of users  
+who share a common access with specific privileges  
+to the software instance.
+
+User / Admin / Provider  
+but also this can be by geography
+
+#### all tenant app
+each tenant uses:  
+same application  
+same database
+
+pros: cheap  
+cons: no isolation, failure will affect all
+
+#### multi tenant application:
+each tenant uses:  
+same application  
+separate database
+
+#### single tenant app
+each tenant uses:  
+separate application  
+separate database
+
+pros: more resiliant  
+cons: more expensive
+
+
+
+Become a VSCode Power User
 ===========================
 with Steve Kinney  
 https://stevekinney.net/courses/visual-studio-code

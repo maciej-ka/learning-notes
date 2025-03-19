@@ -979,6 +979,36 @@ export class CoffeeBrandsFactory {
 })
 ```
 
+#### Async Providers
+Sometimes when application bootstrapping needs to be delayed,  
+until some of asynchronous tasks are finished.
+
+Like for example, lets not accept requests  
+until connection with database is established.
+
+useFactory DI can return Promise and in that case Nest will  
+await that promise before instantiating any class dependent on it.
+
+This can solve some race conditions and application startup needs.
+
+```typescript
+// coffees.module.ts
+import { Connection } from 'typeorm';
+
+@Module({
+  // ...
+  providers: [
+    {
+      provide: COFFEE_BRANDS,
+      useFactory: async (connection: Connection): Promise<string[]> => {
+        const coffeeBrands = await connection.query('SELECT * ...');
+        return coffeeBrands;
+      },
+      inject: [Connection]
+    },
+  ],
+})
+```
 
 
 

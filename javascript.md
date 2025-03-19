@@ -1152,6 +1152,60 @@ exclusively for each incoming request.
 Instances are automatically garbage collected  
 after the request has completed processing.
 
+This may have impact on your application performance
+
+#### Scope bubbling
+
+This will work as expected,  
+creating one instance each time there is a request,  
+even if the class that requests this token  
+is using default singleton scope
+
+For example we set service to be per request
+
+```typescript
+// src/coffees/coffees.service.ts
+@Injectable({ scope: Scope.REQUEST })
+```
+
+And even though controller is using default,  
+it works correctly.
+
+```typescript
+// coffees.controller.ts
+@Controller('coffees')
+export class CoffeesController {
+  constructor(private readonly coffeesService: CoffeesService) {}
+  // ...
+}
+```
+
+This is possible, because in Nest, scopes bubble up  
+in the injection chain. This means that in above example,  
+the CoffeesController implicitly becomes request scope.
+
+#### Request injection
+Request scope providers can inject original request object.
+
+This is useful when you need access to request specific information.  
+Like headers, cookies, IP addresses, etc.
+
+
+```typescript
+// coffees.controller.ts
+
+import { Request } from 'express';
+import { REQUEST } from '@nestjs/core';
+
+@Controller('coffees')
+export class CoffeesController {
+  constructor(
+    private readonly coffeesService: CoffeesService,
+    @Inject(REQUEST) private readonly request: Request,
+  ) {}
+}
+```
+
 
 
 From the Leet Code

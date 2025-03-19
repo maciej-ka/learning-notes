@@ -1190,7 +1190,6 @@ Request scope providers can inject original request object.
 This is useful when you need access to request specific information.  
 Like headers, cookies, IP addresses, etc.
 
-
 ```typescript
 // coffees.controller.ts
 
@@ -1205,6 +1204,9 @@ export class CoffeesController {
   ) {}
 }
 ```
+
+Perhaps due to bubbling, just by injecting request,  
+scope of controller implicitly changes to request.
 
 
 

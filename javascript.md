@@ -1010,6 +1010,85 @@ import { Connection } from 'typeorm';
 })
 ```
 
+#### Dynamic Modules
+Sometimes we need flexibility when using modules.  
+Module may need to behave differently in different circumstances.
+
+Static modules can't have its providers be  
+configured by a module that is consuming them.
+
+Dynamic modules need configuration  
+before they can be used by a consumer.
+
+```bash
+nest g mo database
+```
+
+if this module would be static,  
+it could look like this
+
+```typescript
+import { createConnection } from 'typeorm';
+
+@Module({
+  providers: [
+    {
+      provide: 'CONNECTION',
+      useValue: createConnection({
+        type: 'postgres',
+        host: 'localhost',
+        port: 5432,
+      }),
+    },
+  ],
+})
+
+export class DatabaseModule {}
+```
+
+However what, if we would like to reuse it  
+but be able for consumer to change the port?
+
+
+```typescript
+import { DynamicModule, Module } from '@nestjs/common';
+import { ConnectionOptions, createConnection } from 'typeorm';
+
+@Module({})
+export class DatabaseModule {
+  static register(options: ConnectionOptions): DynamicModule {
+    return {
+      module: DatabaseModule,
+      providers: [
+        {
+          provide: 'CONNECTION',
+          useValue: createConnection(options),
+        }
+      ]
+    }
+  }
+}
+```
+
+DynamicModule is very similar to Module,  
+however it requires module property to be set.
+
+Consume this dynamic module in other modules
+
+```typescript
+// coffee-rating.module.ts
+@Module({
+  imports: [
+    DatabaseModule.register({
+      type: 'postgres',
+      host: 'localhost',
+      password: 'password',
+      port: 5432
+    })
+  ],
+  // ...
+})
+```
 
 
 

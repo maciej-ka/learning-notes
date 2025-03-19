@@ -1090,6 +1090,68 @@ Consume this dynamic module in other modules
 })
 ```
 
+#### Providers Scope
+You may need some DI providers to be per request.
+
+This can be useful in instance tracking applications  
+or multi tenant applications.
+
+Injection scope allows to obtain desired provider  
+that has a lifetime you need.
+
+**DEFAULT**  
+By default, providers are singleton  
+Once application have been boostraped,  
+all singletons will be instantiated.
+
+Singleton is recommended for most cases,  
+for performance reasons.
+
+```typescript
+@Injectable()
+```
+
+Is same as
+
+```typescript
+@Injectable({ scope: Scope.DEFAULT })
+```
+
+**TRANSIENT**  
+Transient are not shared between consumers.  
+Each consumer will receive separate instance.
+
+```typescript
+@Injectable({ scope: Scope.TRANSIENT })
+export class CoffeesService { 
+  // ...
+}
+```
+
+For custom providers, the place to define scope  
+is in additional property `scope`
+
+```typescript
+// coffees.module.ts
+@Module({
+  // ...
+  providers: [
+    {
+      provide: COFFEE_BRANDS,
+      useFactory: () => ['buddy brew', 'nescafe'],
+      scope: Scope.TRANSIENT,
+    },
+  ],
+})
+```
+
+**REQUEST**  
+Provides new instance of requested provider  
+exclusively for each incoming request.
+
+Instances are automatically garbage collected  
+after the request has completed processing.
+
 
 
 From the Leet Code

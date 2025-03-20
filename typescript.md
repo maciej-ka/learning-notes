@@ -64,7 +64,168 @@ but reasons of incidents are usually:
 08% someone deleted the S3 bucket  
 10% everything else
 
-How do we make sure that change in API doesn't break something?
+How do we make sure that change  
+in API doesn't break something?
+
+We will share and enforce strategies  
+to check types across the stack.
+
+Typescript works really well in compile time.  
+It doesn't exists on production. It's effictevly gone there.
+
+#### Type guards
+Native typescript thing that you can do.  
+Especially when you call `unknown`.  
+When you change explicit `any` to implicit `unknown`
+
+You will write much worse then this:
+
+```typescript
+const isTask = (task: Task): task is Task => {
+  // make sure its an object
+  if (typeof task !== 'object') return false;
+
+  // make sure it's not null
+  // because null is a object
+  if (task === null) return false
+
+  // check that it has properties
+  if (typeof task.id !== 'number') return false;
+  if (typeof task.title !== 'string') return false;
+  if (typeof task.completed !== 'boolean') return false;
+
+  return true
+}
+```
+
+This can be still messed.  
+Perhaps something by accident can pass these checks.
+
+Hopefully there is an Open Source tool for that.  
+Because last thing your boss wan't to hear is  
+"I will make a Open Source library for that"
+
+#### Zod
+Validation library built specifically for TypeScript's type system  
+it centers on zero dependencies, complete type inference  
+and immutable schemas
+
+```typescript
+const taskSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  completed: z.boolean(),
+})
+```
+
+There is also a way to say: id has to be a number  
+or something that coerces into a number.  
+And Zod will convert it for you and return number  
+(or fail validation).
+
+There is some overlap with typescript  
+You can Pick, Omit, do Partials
+
+There is a way to take Zod  
+and turn it into typescript
+
+```typescript
+type Task = z.infer<typeof taskSchema>;
+```
+
+Example of testing variable with schema  
+It will return typed variable.
+
+```typescript
+taskSchema.parse({
+  id: 1,
+  title: 'Task 1',
+  completed: true
+})
+```
+
+If it cannot parse, it will throw an error.  
+Assumption is that it's better to blow up,  
+instead of processing with that data.
+
+There is also a safeParse.  
+It will return object with success field.  
+However, result will not be typed
+
+```typescript
+const isTask = (task: unknown): task is Task => {
+  return taskSchema.safeParse(task).success;
+}
+```
+
+#### Alternatives to Zod
+#### yup
+effectivelly the same
+
+#### io-ts
+same basic idea
+
+#### Zod ecosystem
+https://zod.dev/?id=ecosystem  
+zod-to-ts: Generate TypeScript definitions from Zod schemas.  
+... way more
+
+#### Coerce example
+```typescript
+z.coerce.string().email()
+z.coerce.string().email().min(5)
+```
+
+https://zod.dev/?id=objects
+
+#### Zod can do what typescript cannot do
+check that data has minimum length
+
+#### literals
+```typescript
+literalSchema.parse('hello');
+```
+
+#### enums
+```typescript
+const colorEnum = z.enum(['RED', 'GREEN', 'BLUE']);
+```
+
+#### tuples
+example is useState, which is array  
+but its more a tuple
+```typescript
+const tupleSchema = z.tuple([z.string(), z.number()]);
+```
+
+#### union
+```typescript
+const stringOrNumberSchema = z.union([z.string(), z.number()]);
+```
+
+#### composition
+when you find out you're rewriting same thing  
+over and over again, there are some tools,  
+to extend and reuse.
+
+```typescript
+const baseUserSchema = z.object({
+  id: z.number().positive(),
+  createdAt: z.date(),
+});
+
+const customerSchema = baseUserSchema.extend({
+  customerType: z.literal('customer'),
+  orders: z.array(z.object({ orderId: z.string() })),
+});
+
+const adminSchema = baseUserSchema.extend({
+  customerType: z.literal('admin'),
+  permissions: z.array(z.string()),
+});
+
+const userSchema = z.union([customerSchema, adminSchema]); // Combine reusable schemas
+```
 
 
 

@@ -1,3 +1,75 @@
+Build End to End TypeScript Apps
+================================
+Frontend Masters, Steve Kinney  
+https://stevekinney.net/courses/full-stack-typescript  
+https://github.com/stevekinney/full-stack-typescript
+
+#### Trust
+Value of Typescript is that you use it across sides.  
+Client-Side Application: type safe and wonderful  
+Server-Side Application: type safe and wonderful  
+but there may be a lot of problem in http wall
+
+Usually there is a lot trust  
+that you get something over the wire that you expect.
+
+It's more than http:  
+is the stuff that is arriving from database is what I expect  
+is the data that goes to database something that we expect  
+if you use microservices, add a trust in communication with them
+
+```typescript
+export const getTask = async (id: string) => {
+  const response = await fetch(`${API_URL}/tasks/${id}`)
+  if(!response.ok) {
+    throw new Error('failed do fetch task')
+  }
+  return await response.json()
+}
+```
+
+by default you will have response here as `any` type  
+and that any will cut through any checks
+
+you can solve it
+
+```typescript
+export const getTask = async (id: string): Promise<Task> => {
+  // ...
+}
+```
+
+But this gives you some intellisense.  
+It's still a Promise any but we just pretend it's something else.  
+So it's not really more safe.  
+Because data can be something else than you expect
+
+Same thing on the server side, in express
+
+```typescript
+const task = req.body
+```
+
+that body is type `any`
+
+Anything comming from outside world is unknown.  
+The same about getting data from database.  
+(database often is biggest offender)
+
+not real numbers,  
+but reasons of incidents are usually:
+
+53% backend change API without telling us  
+29% some library or tool changed the api without telling anyone  
+08% someone deleted the S3 bucket  
+10% everything else
+
+How do we make sure that change in API doesn't break something?
+
+
+
+
+
 Variance notes
 ==============
 #### Covariance

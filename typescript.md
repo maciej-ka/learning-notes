@@ -723,7 +723,7 @@ import { CreateTaskSchema, TaskSchema, UpdateTaskSchema, CreateTask } from 'busy
 
 const validateCreateTask: RequestHandler<{}, unknown, CreateTask> = (req, res, next) => {
   try {
-    const body = CreateTaskSchema.parse(req.body)
+    CreateTaskSchema.parse(req.body)
     next();
   } catch(error) {
     return handleError(req, res, error)
@@ -748,12 +748,12 @@ make the validate more generic
 ```typescript
 const validateBody = <T>(schema: ZodSchema<T>): RequestHandler<NonNullable<unknown>, unknown, T> => (req, res, next) => {
   try {
-    const body = schema.parse(req.body)
+    schema.parse(req.body);
     next();
-  } catch(error) {
-    return handleError(req, res, error)
+  } catch (error) {
+    return handleError(req, res, error);
   }
-}
+};
 
 app.post('/tasks', validateBody(CreateTaskSchema), async (req, res) => {
   try {
@@ -762,6 +762,7 @@ app.post('/tasks', validateBody(CreateTaskSchema), async (req, res) => {
   }
 });
 ```
+
 
 
 Variance notes

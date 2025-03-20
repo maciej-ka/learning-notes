@@ -610,6 +610,158 @@ package.json
 "busy-beee-schema": "*",
 ```
 
+#### Shared types
+put them into shared folder of monorepo
+
+```typescript
+// shared/schemas.ts
+import { z } from 'zod';
+
+export const TaskSchema = z.object({
+  id: z.coerce.number(),
+  title: z.string(),
+  description: z.string().optional(),
+  completed: z.coerce.boolean().default(false),
+})
+
+export const CreateTaskSchema = TaskSchema.omit({ id: true })
+export const UpdateTaskSchema = TaskSchema.partial().omit({ id: true })
+export const TaskListSchema = z.array(TaskSchema)
+
+export type Task = z.infer<typeof TaskSchema>
+export type CreateTask = z.infer<typeof CreateTaskSchema>
+export type UpdateTask = z.infer<typeof UpdateTaskSchema>
+export type TaskList = z.infer<typeof TaskListSchema>
+```
+
+In theory we will never hit this !name here
+
+```typescript
+const { name, email } = CreateUserSchema.parse(req.body);
+
+if (!name || !email) {
+  return res.status(400).json({ message: 'Name and email are required' });
+}
+```
+
+difference with these below  
+is that the first one can get very verbose
+
+```typescript
+const newUser = UserSchema.parse({ id: uuidv4(), name, email });
+const newUser: User = UserSchema.parse({ id: uuidv4(), name, email });
+```
+
+reuse id definition
+
+```typescript
+const UserIdSchema = UserSchema.pick({ id: true })
+```
+
+start with type
+
+```typescript
+interface User {
+  id: string;
+  name: string;
+  email: string;
+}
+
+const UserSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  email: z.string().email(),
+}) satisfies z.ZodType<User>
+```
+
+another example
+
+```typescript
+const UserSchema = z.object({
+  id: z.string().uuid(),
+  name: z.string(),
+  email: z.string().email(),
+})
+
+type User = z.infer<typeof UserSchema>
+
+const CreateUserSchema = UserSchema.omit({ id: true })
+const PartialUserSchema = UserSchema.partial().omit({ id: true })
+const ListUserSchema = z.array(UserSchema)
+
+const UserIdSchema = UserSchema.pick({ id: true })
+```
+
+### Middleware to validate
+So you don't have to do it manually.
+
+Other typical uses of middleware: check oAuth token  
+and do a request to database to provide real user data  
+and exchange token for real user.
+
+You can do something similar for Zod.  
+Provide middleware
+
+```typescript
+const dumbestMiddleware = (req: Request, res: Response, next: () => void) => {
+  next();
+}
+```
+
+better way to type it
+
+```typescript
+const dumbestMiddleware: RequestHandler = (req, res, next) => {
+  next();
+}
+```
+
+validate create
+
+```typescript
+import { CreateTaskSchema, TaskSchema, UpdateTaskSchema, CreateTask } from 'busy-bee-schema';
+
+const validateCreateTask: RequestHandler<{}, unknown, CreateTask> = (req, res, next) => {
+  try {
+    const body = CreateTaskSchema.parse(req.body)
+    next();
+  } catch(error) {
+    return handleError(req, res, error)
+  }
+}
+
+app.post('/tasks', validateCreateTask, async (req, res) => {
+  try {
+    const task = req.body;
+    if (!task.title) return res.status(400).json({ message: 'Title is required' });
+
+    await createTask.run([task.title, task.description]);
+    return res.status(201).json({ message: 'Task created successfully!' });
+  } catch (error) {
+    return handleError(req, res, error);
+  }
+});
+```
+
+make the validate more generic
+
+```typescript
+const validateBody = <T>(schema: ZodSchema<T>): RequestHandler<NonNullable<unknown>, unknown, T> => (req, res, next) => {
+  try {
+    const body = schema.parse(req.body)
+    next();
+  } catch(error) {
+    return handleError(req, res, error)
+  }
+}
+
+app.post('/tasks', validateBody(CreateTaskSchema), async (req, res) => {
+  try {
+    const task = req.body;
+    // ...
+  }
+});
+```
 
 
 Variance notes

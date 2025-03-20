@@ -1208,6 +1208,83 @@ export class CoffeesController {
 Perhaps due to bubbling, just by injecting request,  
 scope of controller implicitly changes to request.
 
+### Application Configuration
+Applications need to run in different environments,  
+each with potentially different setting.
+
+development  
+staging  
+production
+
+One of typical differences is database credentials.
+
+It's a common practice to store these configurations  
+as a part of environemnt in a node process global env variable.
+
+Nest.js helps to automate this, with a Config Package.
+
+```bash
+npm i @nestjs/config
+```
+
+Calling forRoot will parse `.env` from main project location.  
+And it will merge these with values in node process.env.  
+Storing result in global object that we can access anywhere  
+using ConfigService class.
+
+```typescript
+// app.module.ts
+import { ConfigModule } from '@nestjs/config';
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+  ]
+})
+```
+
+#### .env files
+Common way to hold key value pairs of configuration data.  
+Like: secret keys, database options.
+
+```
+// .env
+DATABASE_USER=postgres
+DATABASE_PASSWORD=pass123
+DATABASE_NAME=postgres
+DATABASE_PORT=5432
+DATABASE_HOST=localhost
+```
+
+If they contain real secrets, then never track them by git.  
+So add it them to gitignore file:
+
+```
+// .gitignore
+*.env
+```
+
+Then start to use these settings.  
+All values in process.env are strings by default.
+
+```typescript
+// app.module.ts
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DATABASE_HOST,
+      port: +process.env.DATABASE_PORT,
+      username: process.env.DATABASE_USER,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
+      autoLoadEntities: true,
+      synchronize: true,
+    }),
+  // ...
+  ],
+})
+```
+
 
 
 From the Leet Code

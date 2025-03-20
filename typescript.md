@@ -448,7 +448,167 @@ const taskSchema = z.object({
 }) satisfies z.ZodType<Task>;
 ```
 
+### Server / Client excercise
 
+#### express
+```typescript
+const body = req.body;
+const params = req.params;
+const query = req.query;
+```
+
+there is also `req.locals`  
+Place to add some data, as request passess middleware.  
+But it's a wild west
+
+Req has 5 generic types it can be  
+you can check details in `IRouteMatcher`
+
+```typescript
+interface Request<
+  P = ParamsDictionary,
+  ResBody = any,
+  ReqBody = any,
+  ReqQuery = ParsedQs,
+  Locals extends Record<string, any> = Record<string, any>,
+> extends core.Request {}
+```
+
+You can validate Req with zod.
+
+```typescript
+import { Request, Response, NextFunction } from 'express';
+app.get('/users', (req: Request, res: Response, next: NextFunction) => {
+});
+```
+
+You can also promise something to typescript.  
+And typescript will believe you:
+
+```typescript
+// Define the parameter structure
+interface UserParams {
+  userId: string;
+}
+app.get('/users/:userId', (req: Request<UserParams>, res: Response) => {
+  // TypeScript now knows req.params.userId exists and is a string
+  const userId = req.params.userId;
+});
+```
+
+there is a way to implicitly type like this
+
+```typescript
+interface UserQuery {
+  sort?: string;
+  filter?: string;
+  page?: string; // Query params are always strings with basic Express typing
+}
+
+app.get('/users', (req: Request<{}, {}, {}, UserQuery>, res: Response) => {
+  // TypeScript knows about req.query.sort, req.query.filter, etc.
+  const page = Number(req.query.page || '1');
+});
+```
+
+In an absence of a contract,  
+we need to reverse engineer a contract.
+
+Capitalize schema? Perhaps. At least have it consistent.
+
+Start typing in places where you put data from web into server
+
+```typescript
+export const TaskSchema = z.object({
+  id: z.number(),
+  title: z.string(),
+  description: z.string().optional(),
+  completed: z.boolean().default(false),
+})
+
+export const CreateTaskSchema = TaskSchema.omit({ id: true })
+export const UpdateTaskSchema = TaskSchema.partial().omit({ id: true })
+export const TaskListSchema = z.array(TaskSchema)
+
+app.post('/tasks', async (req, res) => {
+  try {
+    const task = CreateTaskSchema.parse(req.body);
+    // ....
+  }
+})
+```
+
+Same thing in update
+
+Once you defended walls, normal typing rules apply.  
+You don't have to do it all the time.  
+Just do schema checking at the gates.
+
+```typescript
+app.put('/tasks/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const previous = TaskSchema.parse(await getTask.get([id]));
+    const updates = UpdateTaskSchema.parse(req.body);
+    const task = { ...previous, ...updates };
+  }
+})
+```
+
+Because SQLite stores boolean as number 0/1  
+do a coerce
+
+```typescript
+export const TaskSchema = z.object({
+  id: z.coerce.number(),
+  title: z.string(),
+  description: z.string().optional(),
+  completed: z.coerce.boolean().default(false),
+})
+```
+
+schema can be also inlined  
+in short cases
+
+```typescript
+const { id } = z.object({ id: z.coerce.number() }).parse(req.params);
+```
+
+#### Client, how to get types
+how to share. If you have one folder with monorepo, then that's easy.
+
+There is also a way to have a separate npm package.  
+Here you have to hope that server is using same version as client.
+
+```typescript
+export const fetchTasks = async (showCompleted: boolean) => {
+  const url = new URL(`/tasks`, API_URL);
+
+  if (showCompleted) {
+    url.searchParams.set('completed', 'true');
+  }
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch tasks');
+  }
+
+  const tasks = TaskListSchema.parse(await response.json())
+  return tasks;
+};
+```
+
+You should always do the simplest thing  
+until you cannot.
+
+For package.json you can use  
+if you are building shared together
+
+package.json
+```json
+"busy-beee-schema": "*",
+```
 
 
 

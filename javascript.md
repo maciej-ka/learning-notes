@@ -1285,6 +1285,34 @@ All values in process.env are strings by default.
 })
 ```
 
+#### Custom env file paths
+By default .env files are expected to be in the root of app.  
+It's possible to change filename, like this.
+
+```typescript
+// app.module.ts
+ConfigModule.forRoot({
+  envFilePath: '.environment'
+}),
+```
+
+And also it's possible to specify multiple paths.  
+Config will be a merge of variables in array of files.  
+If the same variable will be found in multiple files,  
+the first occurence will be used.
+
+There is also an option, that you will not use .env files.  
+Becuase config options will be provided by Heroku  
+or something like it.
+
+In that case, there is option to disable env files:
+
+```typescript
+// app.module.ts
+ConfigModule.forRoot({
+  ignoreEnvFile: true
+}),
+```
 
 
 From the Leet Code

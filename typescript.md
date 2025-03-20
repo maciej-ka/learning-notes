@@ -365,29 +365,90 @@ or a JSON representation of that object.
 ```typescript
 const complexDataSchema = z.preprocess(
   (input: unknown) => {
-    if (
-      typeof input === 'string' &&
-      input.startsWith('{') &&
-      input.endsWith('}')
-    ) {
-      try {
-        return JSON.parse(input);
-      } catch {
-        return input; // If parsing fails, keep it as the original string
-      }
+    if (typeof input === 'string') {
+      return JSON.parse(input);
     }
     return input;
-  },
-  z.union([
-    z.object({
-      type: z.literal('json'),
-      data: z.object({ value: z.number() }),
-    }),
-    // "prefix-" string
-    z.string().startsWith('prefix-'),
-  ]),
+  }
 );
 ```
+
+#### asynchronous validation
+
+```typescript
+async function checkUsernameAvailability(username: string): Promise<boolean> {
+  return !['takenUser', 'anotherTakenUser'].includes(username);
+}
+
+const asyncUsernameSchema = z.string().refine(
+  async (val) => { return await checkUsernameAvailability(val) },
+  { message: 'Username is taken' },
+);
+```
+
+#### coerce first
+
+When you accept value "close enough".  
+And you will get a number as result.
+
+```typescript
+const coercedNumberSchema = z.coerce.number().min(100)
+```
+
+### Zod summary
+you can parse form body with the same thing  
+as you use on server to validate
+
+And vice versa.
+
+The point of Zod is that you can reuse it.
+
+And even if you didn't share the types,  
+you can use zod to get type from the schema.
+
+`zod-to-json-schema`  
+You can serialize zod schemas to json schemas.  
+Which can be then published and used in several places.  
+Not only javascript.
+
+It can work with multi languages. Use it Ruby.  
+Most of swagger and tooling is json.
+
+And schemas are useful even if you don't have types.
+
+#### Zod is not a typescript replacement
+
+In your practice, do you define less typescript types  
+when working with zod? Or you add zod as extra,  
+double work around types?
+
+I still use typescript in a lot of places, in functions.  
+Typescript is still valid in all the internal work.  
+But zod is when you have your data in.  
+From source that you cannot trust.
+
+#### Start with typescript
+
+In modern typescript, you can use satisfies.  
+It will make sure that schema matches the type.
+
+```typescript
+type Task = {
+  id: string;
+  title: string;
+  description?: string;
+  completed: boolean;
+};
+
+const taskSchema = z.object({
+  id: z.string().uuid(),
+  title: z.string(),
+  description: z.string().optional(),
+  completed: z.boolean(),
+}) satisfies z.ZodType<Task>;
+```
+
+
 
 
 

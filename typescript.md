@@ -227,7 +227,167 @@ const adminSchema = baseUserSchema.extend({
 const userSchema = z.union([customerSchema, adminSchema]); // Combine reusable schemas
 ```
 
+#### some examples
+the order in chains matter
 
+Sometimes you have types before,  
+then don't get type from zod.
+
+```typescript
+const basicUserSchema = z.object({
+  name: z.string(),
+  age: z.number().int().positive(),
+})
+
+type User = z.infer<typeof basicUserSchema>;
+
+const basicUserSchema = z.object({
+  name: z.string(),
+  age: z.number().min(0),
+})
+
+const optionalAgeSchema = z.object({
+  name: z.string(),
+  age: z.number().min(0).optional().default(0),
+})
+
+const optionalAgeSchema = z.object({
+  name: z.string(),
+  age: z.number().nonnegative().default(0),
+})
+```
+
+order matters  
+and differently to typescript  
+there is no hoisting here
+
+```typescript
+const addressSchema = z.object({
+  street: z.string(),
+  city: z.string(),
+  zip: z.string().length(5),
+  apartmentNumber: z.string().optional()
+});
+
+const userProfileSchema = z.object({
+  name: z.string(),
+  addresses: z.array(addressSchema).nonempty()
+})
+
+const userIdentitySchema = z.union([
+  z.literal("anonymous"),
+  z.object({
+    id: z.number(),
+    name: z.string()
+  })
+]);
+
+function isPrime(num: number): boolean { return true }
+const primeNumberSchema = z
+  .number()
+  .int()
+  .refine(isPrime, { message: 'Quantity must be prime!' });
+
+const dateStringSchema = z.string().transform((val) => {
+  const date = new Date(val);
+  if (isNaN(date.getTime())) {
+    throw new Error('Invalid date string')
+  }
+  return date
+});
+```
+
+#### Branded type
+
+way to force that UserId has some special test  
+it will force you to always validate UserId type this way  
+and if you try to use just a string with this  
+it will not pass
+
+```typescript
+const userIdSchema = z.string().uuid().brand<'UserId'>()
+type UserId = z.infer<typeof userIdSchema>; // string & { __brand: "UserId" }
+
+
+const fullUserSchema = z.object({
+  name: z.string(),
+  email: z.string(),
+  phoneNumber: z.string(),
+  addresses: z.array(addressSchema).nonempty()
+})
+
+type User = z.infer<typeof fullUserSchema>
+
+const partialUserUpdateSchema = fullUserSchema.partial()
+const publicProfileSchema = fullUserSchema.pick({ name: true, addresses: true })
+const userWithoutEmailSchema = fullUserSchema.omit({ email: true })
+
+const hexColorSchema = z.custom<string>((val) => {
+  if (!/^#[0-9A-Fa-f]{3}([0-9A-Fa-f]{3})?$/.test(val)) {
+    throw new Error('Invalid hex color');
+  }
+  return val;
+})
+```
+
+### Advanced Zod
+
+#### lazy recursion
+If we want to have a category, that can have subcategories
+
+```typescript
+const categorySchema = z.object({
+  name: z.string()
+  subcategories: categorySchema.array().optional()
+})
+```
+
+but above will fail because of javascript  
+complaining that you cannot use categorySchema  
+because you are in the process of defining it  
+(it's not defined)
+
+```typescript
+const categorySchema = z.lazy(() =>
+  z.object({
+    name: z.string(),
+    subcategories: z.array(categorySchema).optional(),
+  }),
+);
+```
+
+#### complex data schema
+If you want to preprocess data a little first.
+
+You know that you want object,  
+or a JSON representation of that object.
+
+```typescript
+const complexDataSchema = z.preprocess(
+  (input: unknown) => {
+    if (
+      typeof input === 'string' &&
+      input.startsWith('{') &&
+      input.endsWith('}')
+    ) {
+      try {
+        return JSON.parse(input);
+      } catch {
+        return input; // If parsing fails, keep it as the original string
+      }
+    }
+    return input;
+  },
+  z.union([
+    z.object({
+      type: z.literal('json'),
+      data: z.object({ value: z.number() }),
+    }),
+    // "prefix-" string
+    z.string().startsWith('prefix-'),
+  ]),
+);
+```
 
 
 

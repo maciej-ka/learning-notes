@@ -1314,6 +1314,41 @@ ConfigModule.forRoot({
 }),
 ```
 
+#### Config schema validation
+Some config variables may be essential.  
+it makes sense to throw error on bootstrap,  
+in case some of them are missing.
+
+To validate, we will use joi
+```bash
+npm i @hapi/joi
+npm i --save-dev @types/hapi__joi
+```
+
+Validate configuration schema
+
+```typescript
+// app.module.ts
+import * as Joi from '@hapi/joi';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      validationSchema: Joi.object({
+        DATABASE_HOST: Joi.required(),
+        DATABASE_PORT: Joi.number().default(5432),
+      })
+    }),
+    // ...
+  ],
+})
+```
+
+To test it, change .env file.  
+However Nest doesn't listen for changes in .env files.  
+So server has to be restarted manually.
+
+
 
 From the Leet Code
 ==================

@@ -763,6 +763,177 @@ app.post('/tasks', validateBody(CreateTaskSchema), async (req, res) => {
 });
 ```
 
+### OpenAPI aka Swagger
+Used to be called Swagger.
+
+Zod is great,  
+but js objects doesn't work in other languages.
+
+Open API is a convention to follow.  
+Has several formats, Yaml is easy to read
+
+It also contains a lot of schemas,  
+and it's also a contract of how api works.
+
+```yaml
+openapi: 3.0.0
+info:
+  title: User API
+  version: 1.0.0
+paths:
+  /users:
+    get:
+      summary: Get a list of users
+      parameters:
+        - name: query
+          in: query
+          description: Search query
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: Page number
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+    CreateUserRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+```
+
+Generally you shouldn't write the OpenAPI by hand  
+but to generate it from coe
+
+some tools to generate  
+`swagger-jsdoc`: from JSDoc annotations  
+`express-openapi`: allows to define using YAML  
+`ts-node-dev` and `openapi-typescript`: when combined, can generate from TS  
+`openapi-express`: generates spec from the running express
+
+There is also a way to generate OpenAPI from protobuff.  
+And in Go there is a way to generate protobuff  
+straight from the code.
+
+Having a OpenAPI contract you can generate client  
+which will make requests.
+
+#### generate from zod
+
+you need to extend zod schemas  
+by adding example and descriptions
+
+```typescript
+import { extendZodWithOpenApi, generateSchema } from '@anatine/zod-openapi';
+import { OpenAPIObject } from 'openapi3-ts/oas31';
+import { z } from 'zod';
+import * as schemas from './your-schemas'; // Import your Zod schemas
+
+extendZodWithOpenApi(z);
+
+// Define TaskSchema with OpenAPI metadata
+const TaskSchema = schemas.TaskSchema.openapi({
+  description: 'A task item',
+    example: {
+    id: 1,
+    title: 'Complete OpenAPI integration',
+    description: 'Add OpenAPI specs to the tasks API',
+    completed: false,
+  },
+});
+```
+
+there are many tools, one of them is  
+good candidate for a package.json script
+
+```bash
+npx openapi-typescript ./openapi.json -o /src/api/types.ts
+```
+
+#### help you create requests
+Another library by the same creators  
+Will help you  
+`openapi-fetch`
+
+```typescript
+import createClient from 'openapi-fetch'
+import type { paths } from './api.types';
+
+const { GET, POST, PUT, DELETE } = createClient<paths>({ baseUrl: "https://locahost:4001" })
+
+GET('/tasks', { query: { completed: true } })
+POST('/tasks', {
+  body: {
+    title: 'New Task',
+    description: 'WOwo',
+    completed: false
+  }
+})
+```
+
+#### alert when you break your api
+Will alert you when you break your own contract  
+`express-openapi-validator`
+
+```typescript
+app.use(
+  OpenApiValidator.middleware({
+    apiSpec: './openapi.json',
+    validateRequests: true,
+    validateResponses: true,
+  }),
+);
+```
+
+**Generating Zod schema from OpenAPI**  
+`orval`  
+can do several things,  
+It can Generate mocks with MSW
+
+```javascript
+module.exports = {
+  'busy-bee': {
+      output: {
+      client: 'zod',
+      mode: 'single',
+      target: './src/schemas.ts',
+    },
+      input: {
+      target: './openapi.json',
+    },
+  },
+};
+```
+
+and then run it
+```bash
+npx orval --config orval.config.cjs
+```
+
+and it will create Zod schemas for you.
+
 
 
 Variance notes

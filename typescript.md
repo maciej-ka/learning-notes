@@ -934,6 +934,288 @@ npx orval --config orval.config.cjs
 
 and it will create Zod schemas for you.
 
+### tRPC
+
+tRPC  
+t = typescript
+
+gRPC  
+g = google or go
+
+#### pattern "backend for frontend"
+if you don't like api contract  
+because for example it's SOAP or XML
+
+even if the backend team is in the other language  
+you can put it into layer and still use tRPC  
+Wallmart did it at some point
+
+it's possible to use with dozen with microfrontends
+
+this is very usefull, when you want to be typescript safe  
+it's also similar 
+
+Client side -> tRPC API (Node) -> Databases, Services, etc
+
+always consider regular HTTP  
+as this is alternative
+
+#### create server
+
+```typescript
+import { initTRPC } from '@trpc/server';
+
+const t= initTRPC.create();
+const router = t.router({
+  hello: t.procedure.query(() => {
+    return 'Hello from the server!'
+  })
+})
+
+export type AppRouter = typeof Router;
+```
+
+#### create client
+
+```typescript
+import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
+import type { AppRouter } from '../server'
+
+const trpc = createTRPCProxyClient<AppRouter>({
+  llinks: [httpBatchLink({ url: '/api/trpc' })],
+});
+
+async function greetServer() {
+  const greeting = await trpc.hello.query();
+  console.log(greeting)
+}
+```
+
+#### add tRPC to http server
+If you already have a http REST service,  
+you don't have to replace it to have tRPC,  
+instead you can add tRPC on top of it.
+
+#### implement excercise
+context is similar to React  
+it's like create some data that should be available for many parts
+
+```typescript
+// trpc-context.ts
+import { inferAsyncReturnType } from '@trpc/server';
+import { getDatabase } from '@/database.js';
+
+export async function createContext() {
+  const database = await getDatabase()
+  return { database }
+}
+
+export type Context = inferAsyncReturnType<typeof createContext>
+```
+
+adapter
+
+```typescript
+// trpc-adapter.ts
+import  { createExpressMiddleware } from "@trpc/server/adapters/express";
+import { Router } from 'express';
+import { createContext } from "./trpc-context.js";
+
+export function ceateTrpcAdapter(router: Router) {
+  const router = Router();
+  router.use('/trpc', createExpressMiddleware({ router: null, createContext }))
+  return trpc;
+}
+```
+
+definition of methods that user can call
+
+```typescript
+// trpc.ts
+
+import { initTRPC } from '@trpc/server';
+import type { Context } from './trpc-context.ts';
+import { TaskListQuerySchema, TaskListSchema } from 'busy-bee-schema';
+
+const t = initTRPC.context<Context>().create();
+
+export const router = t.router;
+export const publicProcedure = t.procedure;
+
+// here are function which we want user to be able to call
+export const taskRouter = router({
+  getTasks: publicProcedure.input(TaskListQuerySchema).query(async ({ input, ctx }) => {
+    const database = ctx.database;
+    const completedTasks = await database.prepare("SELECT * FROM ...")
+    const incompleteTasks = await database.prepare("SELECT * FROM ...")
+    const tasks = input.completed ? completedTasks : incompleteTasks
+    const rows = TaskListSchema.parse(await tasks.all())
+    return rows;
+  }),
+});
+```
+
+this fragment is actually exposing trpc
+
+```typescript
+// server.ts
+app.use('/api', createTrpcAdapter())
+```
+
+using on the client
+
+```typescript
+import { NewTask, Task, UpdateTask } from 'busy-bee-schema';
+import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
+import type { AppRouter } from '../../server/src/trpc';
+
+const client = createTRPCProxyClient<AppRouter>({
+  links: [
+    httpBatchLink({
+      url: 'http://localhost:4001/api/trpc',
+    }),
+  ],
+});
+
+export const fetchTasks = async (showCompleted: boolean): Promise<Task[]> => {
+  return client.task.getTasks.query({ completed: showCompleted ? true : undefined });
+};
+```
+
+#### tRPC vs HTTP
+can handle batch updated  
+can use websockets
+
+what's the price?  
+complexity
+
+also may be harder to debug  
+(there is nothing like HTTP when you need to debug)
+
+pros  
+more freedom  
+probably better performance
+
+### Databases
+Prisma  
+TypeORM
+
+#### Prisma
+https://www.prisma.io/  
+it has paid and free option  
+(they can manage hosting databases)
+
+when you come from Ruby on Rails  
+and want to have abstraction over database
+
+```bash
+npx prisma init
+```
+
+it set's up basic prisma/schema.prisma  
+schema.prisma
+
+we define model there
+
+```
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./development.prisma.sqlite"
+}
+
+model Task {
+  id Int @id @default(autoincrement())
+  title String
+  description String?
+  completed Boolean @default(false)
+}
+```
+
+Prisma will take care about:
+- database schema
+- and generating type safe client
+
+```bash
+npx prisma migrate dev --name init
+npx prisma generate
+```
+
+small example of creating client in context
+
+```typescript
+// trpc-context.ts
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient();
+
+export async function createContext() {
+  const database = await getDatabase();
+  const tasks = new TaskClient(database);
+  return { tasks, prisma };
+}
+```
+
+And making a query
+
+```typescript
+// trpc.ts
+const { prisma } = ctx;
+return prisma.task.findMany({
+  where: { completed: !!input.completed }
+})
+```
+
+#### Prisma with tRPC
+tRPC is like exposing methods.  
+And Prisma has a lot methods ready made.
+
+So we could select select some of Prisma methods  
+and expose them directly. And we will get full type safety.
+
+#### Genrate Zod from Prisma
+schema.prisma
+
+```
+generator zod {
+  provider = "zod-prisma-types"
+}
+```
+
+and then generate  
+./prisma/generated/zod
+
+```bash
+npx prisma generate zod
+```
+
+#### Generate tRPC from Prisma
+
+schema.prisma
+
+```
+generator trpc {
+  provider = "prisma-trpc-generator"
+  withZod = true
+  withMiddleware = false
+  withShield = false
+  contextPath = "../src/context"
+  trpcOptionsPath = "../src/trpcOptions"
+}
+```
+
+and then 
+
+```bash
+npx prisma generate trpc
+```
+
+#### Generate Swagger Client
+using generate Open API specification
+
 
 
 Variance notes

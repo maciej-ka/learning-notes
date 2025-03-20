@@ -1,3 +1,62 @@
+AI tools
+========
+O'Reilly talk with Addy Osmani
+
+Great for the greenfield apps.  
+Will do 70% of start work.
+
+But they are not so good in legacy code.  
+And finishing that last 30%.
+
+[Bolt](https://bolt.new/)  
+[V0](https://v0.dev/)  
+Cursor  
+[Windsurf](https://codeium.com/windsurf)
+
+Just try them for yourself.  
+To see what is possible now.  
+To learn where they are good it  
+and where they fall short.
+
+There is a place with these tools,  
+where the returns on time investment diminishes.  
+You need to spot this moment.  
+And enject from AI at this point  
+and go back to manually craft things.
+
+It's a good time now for upskilling.
+
+They are also very good  
+when you work on main project  
+to spike some idea on the side.  
+For Hackatons.
+
+To prototype and hack on the side,  
+and then move results of this,  
+into the main project.
+
+It will become more important to validate,  
+that the end result is what we wanted.
+
+And team knowledge sharing protocols  
+will become more important.  
+That when you submit the code, you think  
+who will maintain the code,  
+will that person have understanding,  
+is there a documentation.
+
+Implement practices when working with AI  
+to trust but verify.
+
+Little bit like with junior developers,  
+you would verify their work.
+
+Think about long term.  
+Don't overrely on AI,  
+because it leads to skill erosion.
+
+
+
 Tenant
 ======
 A tenant is a group of users  

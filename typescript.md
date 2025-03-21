@@ -1214,7 +1214,25 @@ npx prisma generate trpc
 ```
 
 #### Generate Swagger Client
-using generate Open API specification
+`swagger-ui-express`
+
+Use generated Open API specification  
+to make a swagger client.
+
+```typescript
+// server.ts
+import swaggerUi from 'swagger-ui-express'
+import openApi from './openapi.json' with { type: 'json' }
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApi, { explorer: true }))
+```
+
+and with this visit your server  
+(port may be different)  
+http://localhost:4001/api-docs/
 
 
 

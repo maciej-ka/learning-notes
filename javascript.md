@@ -1375,6 +1375,8 @@ To import in other places, just add import like this:
 ```
 
 Then, to use it call get and provide expected type.  
+(string is default and can be ommited)
+
 However that type is just information to compiler.  
 Even if we specify number, it will be in runtime a string.  
 As every enviroment variable is a string.  
@@ -1395,6 +1397,52 @@ ConfigService get has also second argument: default value.
 ```typescript
 const databaseHost = this.configService.get<string>('DATABASE_HOST', 'localhost')
 ```
+
+#### Custom configuration files
+For more complex applications we may want  
+configuration to return nested objects.
+
+This way we could group settings by domain.  
+Like to group all the database related settings.
+
+we will create a factory function  
+that will return a configuration object
+
+```typescript
+// app.config.ts
+export default () => ({
+  environment: process.env.NODE_ENV || 'development',
+  database: {
+    host: process.env.DATABASE_HOST,
+    port: parseInt(process.env.DATABASE_PORT, 10) || 5432,
+  }
+});
+```
+
+to use this config factory,  
+point to it inside module
+
+```typescript
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      load: [appConfig],
+      // ...
+    })
+  ]
+})
+```
+
+Access this configuration factory using ConfigService.  
+Get function allows to traverse nested configuration.
+
+```typescript
+const databaseHost = this.configService.get('database.host', 'localhost')
+```
+
+Problems with custom configuration factory above are:
+- there is no type checking
+- it's easy to do make typo in traverse path string
 
 
 

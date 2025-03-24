@@ -1348,6 +1348,54 @@ To test it, change .env file.
 However Nest doesn't listen for changes in .env files.  
 So server has to be restarted manually.
 
+#### Using the Config Service
+Config Service is a part of Config Module.
+It provides convinient `get` method to access config variables.
+
+To import it into app, we use `forRoot` in app module.
+
+```typescript
+// app.module.ts
+import { ConfigModule } from '@nestjs/config';
+@Module({
+  imports: [
+    ConfigModule.forRoot(),
+  ]
+})
+```
+
+But we do use `forRoot` only once.
+To import in other places, just add import like this:
+
+```typescript
+// coffees.module.ts
+@Module({
+  imports: [TypeOrmModule.forFeature([Coffee, Flavor, Event]), ConfigModule],
+})
+```
+
+Then, to use it call get and provide expected type.
+However that type is just information to compiler.
+Even if we specify number, it will be in runtime a string.
+As every enviroment variable is a string.
+And Nest.js will not convert these.
+
+```typescript
+// coffees.service.ts
+export class CoffeesService {
+  constructor(private readonly configService: ConfigService) {
+    const databaseHost = this.configService.get<string>('DATABASE_HOST')
+    console.log(databaseHost);
+  }
+}
+```
+
+ConfigService get has also second argument: default value.
+
+```typescript
+const databaseHost = this.configService.get<string>('DATABASE_HOST', 'localhost')
+```
+
 
 
 From the Leet Code

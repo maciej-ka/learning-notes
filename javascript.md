@@ -1525,6 +1525,58 @@ export class CoffeesService {
 }
 ```
 
+#### Asynchronously Configure Dynamic Modules
+
+TypeOrm is a good example of module,  
+that is configured by static method
+
+```typescript
+// app.module.ts
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      load: [appConfig],
+    }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: process.env.DATABASE_HOST,
+    })
+  ]
+})
+```
+
+However, if we would reverse order  
+and first import TypeOrm, then module would fail.
+
+Because our process environment variables are loaded  
+after the TypeOrmModule is configured.
+
+For modules import order to not be important,  
+we can use async methods `forRootAsync`, `forFeatureAsync`  
+which are added to most Nest.js ecosystem modules
+
+
+```typescript
+@Module({
+  imports: [
+    TypeOrmModule.forRootAsync({
+      useFactory: () => ({
+        type: 'postgres',
+        host: process.env.DATABASE_HOST,
+        // ...
+      })
+    }),
+  ]
+})
+```
+
+In above example, `useFactory` is like any other async provider  
+(from DI lessons) it can be async and can inject dependencies.  
+So we could even directly inject ConfigModule into that factory.
+
+This works now, because async configuration will resolve  
+after every module in DI has been resolved.
+
 
 
 From the Leet Code

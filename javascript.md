@@ -1444,6 +1444,87 @@ Problems with custom configuration factory above are:
 - there is no type checking
 - it's easy to do make typo in traverse path string
 
+#### Configuration Namespaces and Partial Registration
+Our project can grow so much,  
+that we may need multiple config files  
+one in each module.
+
+Create configuration inside coffees folder
+
+```typescript
+// /coffees/config/coffees.config.ts
+import { registerAs } from "@nestjs/config";
+
+export default registerAs('coffees', () => ({
+  foo: 'bar',
+}))
+```
+
+`registerAs` lets us register  
+a namespaced configuration object  
+under the key passed as argument
+
+To use it, add it to the module using `forFeature`.  
+This way of importing is called partial registration.
+
+So far we processed configuration files in root module  
+using `forRoot` method. As your application grows you may  
+end with several feature specific configuration files  
+located in multiple directories.
+
+```typescript
+// coffees.module.ts
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([Coffee, Flavor, Event]),
+    ConfigModule.forFeature(coffeesConfig)
+  ],
+  // ...
+})
+```
+
+To access config variable use ConfigService.get  
+passing partial registration key
+
+```typescript
+const coffeesConfig = this.configService.get('coffees')
+```
+
+which will return object
+
+```typescript
+{ foo: 'bar' }
+```
+
+While it's also possible to traverse here,  
+note that this is error phone  
+and would be more difficult to test  
+as we would need to mock whole get method.
+
+```typescript
+this.configService.get('coffees.foo')
+```
+
+The best practice is to inject whole configuration object.  
+For that we use exported KEY property of namespaced config.  
+And built in ConfigType will infer config type.  
+This will provide strong typing benefits.
+
+```typescript
+// coffees.service.ts
+import { ConfigType } from '@nestjs/config';
+import coffeesConfig from './config/coffees.config';
+
+export class CoffeesService {
+  constructor(
+    @Inject(coffeesConfig.KEY)
+    private readonly coffeesConfiguration: ConfigType<typeof coffeesConfig>,
+  ) {
+    console.log(this.coffeesConfiguration);
+  }
+}
+```
+
 
 
 From the Leet Code

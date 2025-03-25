@@ -1736,13 +1736,16 @@ Nest has exceptions layer to handle all not catched errors.
 It shows user friendly response.  
 This is done using builtin exception filter.
 
-It's possible to add custom exception filter.
+It's possible to add custom exception filter.  
+For demonstration, we will write filter  
+that catches any HttpException
 
 ```bash
 nest g filter common/filters/http-exception
 ```
 
-It will generate
+It will generate empty filter.  
+Filters have to implement ExceptionFilter
 
 ```typescript
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
@@ -1811,6 +1814,70 @@ Which should respond with
 
 Potentially, this could be a good place to call  
 error tracking service or perhaps an analytics.
+
+#### Protect Routes with Guards
+Guard determine is given request allowed to access something.  
+If it is not allowed, error will be thrown.
+
+For demonstration we will create guard that will validate  
+that api key is present
+
+```bash
+nest g guard common/guards/api-key
+```
+
+Which will generate code below.  
+Guards have to implement CanActivate.
+
+```typescript
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Observable } from 'rxjs';
+
+@Injectable()
+export class ApiKeyGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    return true;
+  }
+}
+```
+
+If we change default return to false, and register guard globally,  
+we will get 403 Forbidden for every response
+
+```typescript
+// main.ts
+async function bootstrap() {
+  // ...
+  app.useGlobalGuards(new ApiKeyGuard())
+}
+```
+
+Setup our guard to valide that api key is present  
+but only on routes that are not public
+
+Define api key in .env file,  
+so that it's not pushed to the git repo
+
+```
+.env
+API_KEY=50aWa92...
+```
+
+Use ExecutionContext to get underlying request
+
+```typescript
+// api-key.guard.ts
+import { Request } from 'express'
+
+@Injectable()
+export class ApiKeyGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const request = context.switchToHttp().getRequest<Request>()
+    const authHeader = request.header('Authorization');
+    return authHeader === process.env.API_KEY
+  }
+}
+```
 
 
 

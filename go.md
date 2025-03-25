@@ -573,8 +573,25 @@ import { API } from "./services/API.js";
 ```
 
 #### Web Component
-In short, your own custom HTML tag element
+In short, your own custom HTML tag element.
+custom element has to have a hyphen.
 
+this class is becoming HTMLElement
+so `this` is actually me, the htmlElement
+
+```javascript
+export class HomePage extends HTMLElement {
+  connectedCallback() {
+    const template = document.getElementById("template-home");
+    const content = template.content.cloneNode(true);
+    this.appendChild(content);
+  }
+}
+customElements.define("home-page", HomePage);
+```
+
+connectedCallback is a moment that our
+component is mounted on the page
 
 
 Complete Go

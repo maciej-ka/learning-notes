@@ -9,16 +9,6 @@ Like one to encrypt the password.
 Because backend is in Go  
 it will be quite fast.
 
-#### Environment Variables
-Idea from Javascript ecosystem.  
-There is microlibrary in Go that will emulate this.  
-go get github.com/joho/godotenv
-
-We will use it to pass db connection string.  
-Because as Go is compiled  
-if connection string would be compiled  
-it would not be possible to change it dynamically
-
 #### Virtual DOM
 When you have a copy of DOM in memory.  
 And you keep Virtual DOM and real DOM in sync.  
@@ -449,6 +439,141 @@ it will try to interpret every request and respond to it.
 
 For that reason, usually static files are last.
 
+#### Environment Variables
+Idea from Javascript ecosystem.  
+There is microlibrary in Go that will emulate this.  
+
+```bash
+go get github.com/joho/godotenv
+```
+
+We will use it to pass db connection string.  
+Because as Go is compiled  
+if connection string would be compiled  
+it would not be possible to change it dynamically
+
+If you are going to ship to the server,  
+then don't build with variables.
+
+create .env file
+```
+DATABASE_URL="postgres:..."
+```
+
+and load them using library
+
+```go
+import (
+  "github.com/joho/godotenv"
+)
+
+func main() {
+  // log initializer
+  logInstance := initializeLogger()
+  // environment variables
+  if err := godotenv.Load(); err != nil {
+    log.Fatal("No .env file was available")
+  }
+}
+```
+
+this will actually merge variables from .env  
+into any existing system variables
+
+#### Connect to database
+We are using and reading env varibles here
+
+```go
+dbConnStr := os.Getenv("DATABASE_URL")
+if dbConnStr == "" {
+  log.Fatal("DTABASE_URL not set")
+}
+db, err := sql.Open("postgres", dbConnStr)
+if err != nil {
+  log.Fatalf("Failed to connect to the DB: %v", err)
+}
+defer db.Close()
+```
+
+After that there will be error:
+
+```
+Failed to connect to the DB: sql: unknown driver "postgres" (forgotten import?)
+```
+
+this line is comming from this line
+
+```go
+db, err := sql.Open("postgres", dbConnStr)
+```
+
+We need to add import  
+but because we don't use anything from that import  
+we will get another error, unless we signal  
+that it's unused with underscore
+
+```go
+import (
+  _ "github.com/lib/pq"
+)
+```
+
+#### Data interfaces, Repository Pattern
+we will define all the data  
+that we need for our project
+
+`error` is not a variable name here  
+but a type
+
+we are creating abstraction,  
+so that in future we may have different implementation  
+and change from 
+
+```go
+// data/interfaces.go
+package data
+
+import "frontendmasters.com/reelingit/models"
+
+type MovieStorage interface {
+  GetTopMovies() ([]models.Movie, error)
+  GetMovieById(id int) (models.Movie, error)
+  SearchMoviesByName(name string) ([]models.Movie, error)
+  GetAllGenres() ([]models.Genre, error)
+}
+```
+
+#### Movie repository
+In Go there is no way to say that we fullfil interface.  
+Any time we implement the same methods that interface requries,  
+Go will automatically mark, that we are implementing a interface.
+
+#### search input
+has some extra properties
+
+```html
+<input type="search" placeholder="Search movies">
+```
+
+#### import with ecma script modules
+this is a way to include script with module support
+
+defer will load file in pararel while page is parsed  
+but will wait with execution after the initial page is parsed
+
+```html
+<script src="app.js" type="module" defer></script>
+```
+
+and then its possible to import  
+but paths have to end with js extension, like
+
+```javascript
+import { API } from "./services/API.js";
+```
+
+#### Web Component
+In short, your own custom HTML tag element
 
 
 

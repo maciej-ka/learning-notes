@@ -77,7 +77,7 @@ go get github.com/joho/godotenv
 go get github.com/lib/pq
 ```
 
-#### no http server lib
+#### No http server lib
 No need for external library for http server.  
 Go was optimized for that purpose from the begining.
 
@@ -101,7 +101,7 @@ func main() {
 ListenAndServe is synchronous  
 so anything after it will not execute
 
-#### run app
+#### Run app
 ```bash
 go run .
 ```
@@ -114,12 +114,17 @@ result:
 
 This is because we don't have a handler.
 
-#### handler
-Definition of: if you look for that api, use this
+#### Handler
+What is handling a request for one specific route.  
+Definition of: if you look for that api, use this.
 
-#### file server http.FileServer
+#### File server http.FileServer
 A very simple serving of file.  
 Way to simulate Apache.
+
+```go
+http.Handle("/", http.FileServer(http.Dir("public")))
+```
 
 By default, paths given are relative.
 
@@ -128,7 +133,174 @@ however because go is compiled,
 that absolute path will be built in  
 and you will not be able to change it.
 
+#### LFI, Local File Inclusion
+FileServer has no protection from LFI  
+So it's possible to attempt request like  
+http://localhost:8080/../../etc/passwd
 
+For that reason, it's advised, to preprocess request  
+and sanitze paths
+
+```go
+fs := http.FileServer(http.Dir("./public"))
+http.Handle("/static/", http.StripPrefix("/static/", fs))
+```
+
+#### Emmet html
+`!` will expand to html  
+perhaps same as `html:5`
+
+#### Architecture
+We could create all in one go file  
+and one js file.
+
+But those files would be too coupled  
+with that one problem we solve,  
+that one case we have.
+
+Ane we would not be able to extend it later
+
+#### Go Air
+Restart go after anything changes.  
+like nodemon: detect changes and restart.
+
+Nodemon can be also used,  
+with some options, so that it knows  
+project is not node.
+
+#### Logger
+This will just log to console.
+
+```go
+log.Fatalf("server failed")
+fmt.Println("Serving the files")
+```
+
+Many ways to create logger.  
+Some of them are in the cloud, like Vercel.
+
+Cloud logs service providers,  
+you will be able to monitor  
+and get statistics
+
+We will create a logger that will save in file.
+
+```go
+// logger.go
+package logger
+
+import (
+  "log"
+  "os"
+)
+
+type Logger struct {
+  infoLogger  *log.Logger
+  errorLogger *log.Logger
+  file        *os.File
+}
+
+// NewLogger creates a new logger with output to both file and stdout
+func NewLogger(logFilePath string) (*Logger, error) {
+  file, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+  if err != nil {
+    return nil, err
+  }
+
+  return &Logger{
+    infoLogger:  log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile),
+    errorLogger: log.New(file, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile),
+    file:        file,
+  }, nil
+}
+
+// Info logs informational messages to stdout
+func (l *Logger) Info(msg string) {
+  l.infoLogger.Printf("%s", msg)
+}
+
+// Error logs error messages to file
+func (l *Logger) Error(msg string, err error) {
+  l.errorLogger.Printf("%s: %v", msg, err)
+}
+
+// Close closes the log file
+func (l *Logger) Close() {
+  l.file.Close()
+}
+```
+
+One adventage of this  
+is that later it's easy to change from saving in local file  
+to using one of cloud provided logger service
+
+Then use that logger
+
+```go
+func initializeLogger() *logger.Logger {
+  logInstance, err := logger.NewLogger("movie.log")
+  if err != nil {
+    log.Fatalf("Failed to initialize logger: %v", err)
+  }
+  defer logInstance.Close()
+  return logInstance
+}
+```
+
+defer will execute later
+
+create logger in the main
+
+```go
+func main() {
+  logInstance := initializeLogger()
+
+  // ...
+  err := http.ListenAndServe(addr, nil)
+  if (err != nil) {
+    logInstance.Error("Server failed", err)
+    log.Fatalf("Server failed: %v", err)
+  }
+}
+```
+
+#### No constuctors
+In go we don't have constructors  
+but we simulate them using factories
+
+#### Nil
+In Go there is no null value in general  
+however pointer can be `nil`.
+
+one way to make a string or float optional  
+is to make it a pointer just for that nilability
+
+```go
+type Movie struct {
+  Score *float32
+  Language *string
+}
+```
+
+In database there is difference  
+between null and empty string
+
+#### No errors
+But we often return two values from function
+- possible value
+- and a error
+
+#### Modules, capital letter exports
+When you import a module, you import all it exports.  
+And to tell, that something should be exported, use capital letter.
+
+#### Models
+It's not mandatory to add them.  
+It's mimicing the ORM.
+
+And this is also for security,  
+because we can check that data is matching  
+a structure definition we created.
 
 
 

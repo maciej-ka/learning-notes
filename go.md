@@ -121,6 +121,17 @@ Definition of: if you look for that api, use this
 A very simple serving of file.  
 Way to simulate Apache.
 
+By default, paths given are relative.
+
+You can always use absolute,  
+however because go is compiled,  
+that absolute path will be built in  
+and you will not be able to change it.
+
+
+
+
+
 
 
 Complete Go

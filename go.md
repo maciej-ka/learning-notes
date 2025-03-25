@@ -178,9 +178,9 @@ and then just to use it
 air
 ```
 
-however, whenever we will change frontend
-like index.html, it will also restart.
-So we need to create .air.toml
+however, whenever we will change frontend  
+like index.html, it will also restart.  
+So we need to create .air.toml  
 and declare to only care about go files
 
 ```toml
@@ -423,9 +423,9 @@ if err := json.NewEncoder(w).Encode(movies); err != nil {
 }
 ```
 
-it's lower case, so it's not exported
-we want data to be like any type,
-the way to do it in go is `interface{}`
+it's lower case, so it's not exported  
+we want data to be like any type,  
+the way to do it in go is `interface{}`  
 (this is kind of any)
 
 ```go
@@ -444,7 +444,7 @@ h.writeJSONResponse(w, movies)
 ```
 
 #### Order of handlers
-Order is important. if we would have FileServer first,
+Order is important. if we would have FileServer first,  
 it will try to interpret every request and respond to it.
 
 For that reason, usually static files are last.

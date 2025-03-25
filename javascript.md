@@ -1983,6 +1983,23 @@ import { APP_GUARD } from '@nestjs/core';
 export class CommonModule {}
 ```
 
+#### Add Pointcuts with Interceptors
+Interceptors are inspired by aspect programming.  
+Aim of them is to increase modularity.
+
+The allow to add additional behaviour to existing functions  
+without the need to modify their code.
+
+They allow to:
+- run code before or after the function execution
+- transform the result from method
+- transform exception from method
+- completely override the method
+
+As an example we will change all our responses  
+to always have additional data property.
+
+
 
 
 JS tricks learned from the Leet Code

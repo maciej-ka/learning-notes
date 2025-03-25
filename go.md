@@ -1,15 +1,125 @@
 Build a Fullstack App with Vanilla JS and Go
 ============================================
-Maximiliano Firtman
+Maximiliano Firtman  
 https://github.com/firtman/go-vanillajs
 
+We will use few "micro libraries".  
+Like one to encrypt the password.
 
+Because backend is in Go  
+it will be quite fast.
 
+#### Environment Variables
+Idea from Javascript ecosystem.  
+There is microlibrary in Go that will emulate this.  
+go get github.com/joho/godotenv
 
+We will use it to pass db connection string.  
+Because as Go is compiled  
+if connection string would be compiled  
+it would not be possible to change it dynamically
 
+#### Virtual DOM
+When you have a copy of DOM in memory.  
+And you keep Virtual DOM and real DOM in sync.  
+React engine at some point will sync it.
 
+It's proper for performance.  
+We are not going to use it.
 
+#### Database
+Few Cloud based:  
+http://supabase.com  
+http://aiven.io/postgresql  
+http://neon.tech
 
+they have free tier  
+with usually 500MB of space
+
+#### Movie Api
+TMDB: The Movie Database  
+Open source version of IMDB  
+on the course we will use 5000 subset  
+that is ready as SQL in db installation script
+
+Movie images will come from TMBD online server  
+and video trailers will come from youtube
+
+### Start the project
+Create project.  
+It's called a module in go.
+
+In Go we typically name module in domain way  
+even if the domain isn't a real registered one.
+
+```bash
+go mod init frontendmasters.com/movies
+```
+
+create a new main.go file
+
+```go
+package main
+
+func main() {
+}
+```
+
+#### main.go
+It's little like package.json
+
+Few dependencies we will need later.  
+In Go lang, dependencies are global.  
+Not like in Node, where each app has it's copy.
+
+```bash
+go get github.com/joho/godotenv
+go get github.com/lib/pq
+```
+
+#### no http server lib
+No need for external library for http server.  
+Go was optimized for that purpose from the begining.
+
+```go
+package main
+
+import (
+  "log"
+  "net/http"
+)
+
+func main() {
+  const addr = ":8080"
+  err := http.ListenAndServe(addr, nil)
+  if (err != nil) {
+    log.Fatalf("Server failed: %v", err)
+  }
+}
+```
+
+ListenAndServe is synchronous  
+so anything after it will not execute
+
+#### run app
+```bash
+go run .
+```
+
+visit  
+http://localhost:8080/
+
+result:  
+404 page not found
+
+This is because we don't have a handler.
+
+#### handler
+Definition of: if you look for that api, use this
+
+#### file server http.FileServer
+A very simple serving of file.  
+Way to simulate Apache.
 
 
 

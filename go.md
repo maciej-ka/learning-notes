@@ -1,3 +1,18 @@
+Build a Fullstack App with Vanilla JS and Go
+============================================
+Maximiliano Firtman
+https://github.com/firtman/go-vanillajs
+
+
+
+
+
+
+
+
+
+
+
 Complete Go
 ===========
 Melkey  

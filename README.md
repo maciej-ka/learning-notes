@@ -43,6 +43,7 @@ Elixir in action, [Manning](https://www.manning.com/books/kubernetes-in-action-s
 
 [Go](./go.md)
 =============
+Build a Fullstack App with Vanilla JS and Go, [Frontend Masters](https://frontendmasters.com/workshops/vanilla-js-go/)  
 Complete go, [Frontend Masters](https://frontendmasters.com/workshops/complete-go/)
 
 [Javascript](./javascript.md)  

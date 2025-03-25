@@ -1731,6 +1731,86 @@ update(@Param('id') id: number, @Body(ValidationPipe) updateCoffeeDto: UpdateCof
 }
 ```
 
+#### Catch Exceptions with Filters
+Nest has exceptions layer to handle all not catched errors.
+It shows user friendly response.
+This is done using builtin exception filter.
+
+It's possible to add custom exception filter.
+
+```bash
+nest g filter common/filters/http-exception
+```
+
+It will generate
+
+```typescript
+import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+
+@Catch()
+export class HttpExceptionFilter<T> implements ExceptionFilter {
+  catch(exception: T, host: ArgumentsHost) {}
+}
+```
+
+`@Catch()` expects single parameter or a list.
+Using list we can process more
+than one exception with one filter.
+
+`host.switchToHttp()` will give us access
+to native request or response
+
+```typescript
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException } from '@nestjs/common';
+import { Response } from 'express';
+
+@Catch(HttpException)
+export class HttpExceptionFilter<T extends HttpException> implements ExceptionFilter {
+  catch(exception: T, host: ArgumentsHost) {
+    const ctx = host.switchToHttp()
+    const response = ctx.getResponse<Response>()
+
+    // get the error
+    const status = exception.getStatus();
+    const exceptionReponse = exception.getResponse()
+    const error = typeof response === 'string'
+      ? { message: exceptionReponse }
+      : (exceptionReponse as object);
+
+    // build the response
+    response.status(status).json({
+      ...error,
+      timestamp: new Date().toISOString()
+    })
+  }
+}
+```
+
+Bind exception filter globally
+
+```typescript
+// main.ts
+async function bootstrap() {
+  // ...
+  app.useGlobalFilters(new HttpExceptionFilter())
+}
+```
+
+To test, visit a wrong url
+http://localhost:3000/wrong
+
+Which should respond with
+```json
+{
+  "message": "Cannot GET /wrong",
+  "error": "Not Found",
+  "statusCode": 404,
+  "timestamp": "2025-03-25T13:02:37.799Z"
+}
+```
+
+Potentially, this could be a good place to call
+error tracking service or perhaps an analytics.
 
 
 

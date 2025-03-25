@@ -1732,8 +1732,8 @@ update(@Param('id') id: number, @Body(ValidationPipe) updateCoffeeDto: UpdateCof
 ```
 
 #### Catch Exceptions with Filters
-Nest has exceptions layer to handle all not catched errors.
-It shows user friendly response.
+Nest has exceptions layer to handle all not catched errors.  
+It shows user friendly response.  
 This is done using builtin exception filter.
 
 It's possible to add custom exception filter.
@@ -1753,11 +1753,11 @@ export class HttpExceptionFilter<T> implements ExceptionFilter {
 }
 ```
 
-`@Catch()` expects single parameter or a list.
-Using list we can process more
+`@Catch()` expects single parameter or a list.  
+Using list we can process more  
 than one exception with one filter.
 
-`host.switchToHttp()` will give us access
+`host.switchToHttp()` will give us access  
 to native request or response
 
 ```typescript
@@ -1796,7 +1796,7 @@ async function bootstrap() {
 }
 ```
 
-To test, visit a wrong url
+To test, visit a wrong url  
 http://localhost:3000/wrong
 
 Which should respond with
@@ -1809,7 +1809,7 @@ Which should respond with
 }
 ```
 
-Potentially, this could be a good place to call
+Potentially, this could be a good place to call  
 error tracking service or perhaps an analytics.
 
 

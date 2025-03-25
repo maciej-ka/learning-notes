@@ -1577,10 +1577,165 @@ So we could even directly inject ConfigModule into that factory.
 This works now, because async configuration will resolve  
 after every module in DI has been resolved.
 
+### More Building Blocks
+Nest.js is about:
+- keeping code organized
+- establishing clear boundaries
+- having dedicated architecture blocks
+
+so that solutions are:  
+maintanable and scalable
+
+#### Binding Techniques
+There are 3 ways to bind  
+filters, guards and interceptors  
+to route handlers:
+- globally scoped
+- controller scoped
+- method scoped
+
+Plus one more way,  
+only for pipes
+- param scoped 
+
+They don't overwrite each other  
+but instead, they layer each other.
+
+So if you add globally scoped pipe  
+it will be added to any other existing  
+on controller scope, method scope etc.
+
+#### global scope bind
+One global example of pipe we already seen  
+is validation pipe
+
+```typescript
+// main.ts
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true
+      }
+    }),
+  );
+}
+```
+
+Methods starting with `app.use` are
+
+```
+useGlobalFilters
+useGlobalGuards
+useGlobalInterceptors
+useGlobalPipes
+```
+
+The way we are setting ValidationPipe above  
+will not enable any dependency injection,  
+as `main.ts` is outside of any Nest.js module
+
+One way to set it up with option to inject  
+is to set up inside module with custom provider syntax
+
+```typescript
+// app.module.ts
+import { Module, ValidationPipe } from '@nestjs/common';
+import { APP_PIPE } from '@nestjs/core';
+@Module({
+  // ...
+  providers: [
+    AppService,
+    {
+      provide: APP_PIPE,
+      useClass: ValidationPipe,
+    },
+  ]
+})
+```
+
+This way we are able to instantiate ValidationPipe  
+within scope of module and once created,  
+register it as a global pipe
+
+There are corresponding tokens for other building features:
+
+```
+APP_PIPE
+APP_INTERCEPTOR
+APP_GUARD
+APP_FILTER
+```
+
+#### controller scope bind
+And if we want to not define validation pipe globally,  
+but more specifically, on a controller.
+
+define Validation only for routes at CoffeesController
+
+```typescript
+// coffees.controller.ts
+import { UsePipes } from '@nestjs/common';
+@UsePipes(ValidationPipe)
+@Controller('coffees')
+export class CoffeesController {
+  // ...
+}
+```
+
+list of similar decorators:
+
+```
+@UsePipes
+@UseInterceptors
+@UseGuards
+@UseFilters
+```
+
+They will accept list of classes.  
+But they can also accept created instance.  
+This is the way to pass configuration options.
+
+```typescript
+@UsePipes(new ValidationPipe())
+```
+
+When possible, use class name, as this reduces memory usage.
+
+#### method scope bind
+Apply Validation pipe only to selected one method.  
+Use the same decorator but not on controller but method.
+
+```typescript
+@UsePipes(ValidationPipe)
+@Get()
+getPage(@Query() paginationQuery: PaginationDto) {
+  return this.coffeesService.findAll(paginationQuery);
+}
+```
+
+#### param scope bind
+Only available for pipes.  
+In our example, it allows to validate only selected param.  
+We do it by adding validation pipe to existing decorator  
+`@Body(ValidationPipe)`
+
+```typescript
+@Patch(':id')
+update(@Param('id') id: number, @Body(ValidationPipe) updateCoffeeDto: UpdateCoffeeDto) {
+  this.coffeesService.update(id, updateCoffeeDto);
+}
+```
 
 
-From the Leet Code
-==================
+
+
+JS tricks learned from the Leet Code
+====================================
 
 #### >> and ~~ limitation
 like all bitwise operators, they will convert to32 bit int  

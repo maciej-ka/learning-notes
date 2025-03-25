@@ -302,8 +302,74 @@ And this is also for security,
 because we can check that data is matching  
 a structure definition we created.
 
+#### Close to object
+In Go we don't have objects,  
+but close idea is:
 
+```go
+type MovieHandler struct {}
+```
 
+and to attach methods
+
+```go
+func (h *MovieHandler) GetTopMovies(w http.ResponseWriter, r *http.Request) {
+  // ...
+}
+```
+
+#### By reference / by value
+All arguments are passed by value apart pointers.
+
+#### Handlers
+A separate place to define routes.
+
+```go
+type MovieHandler struct {}
+
+func (h *MovieHandler) GetTopMovies(w http.ResponseWriter, r *http.Request) {
+  movies := []models.Movie {
+    {
+      ID: 1,
+      TMDB_ID: 181,
+      Title: "The Hacker",
+      ReleaseYear: 2022,
+      Genres: []models.Genre{{ID: 1, Name: "Thriller"}},
+      Keywords: []string{},
+      Casting: []models.Actor{{ID: 1, Name: "Max"}},
+    },
+  }
+  w.Header().Set("Content-Type", "application/json")
+  if err := json.NewEncoder(w).Encode(movies); err != nil {
+    http.Error(w, err.Error(), http.StatusInternalServerError)
+  }
+}
+```
+
+but better not to send that much information to use in error  
+so it's better to error like this:
+
+```go
+http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+```
+
+And then register handler in main.go
+
+```go
+func main() {
+  movieHandler := handlers.MovieHandler{}
+  http.HandleFunc("/api/movies/top", movieHandler.GetTopMovies)
+}
+```
+
+#### If with many parts
+only last one is condition
+
+```go
+if err := json.NewEncoder(w).Encode(movies); err != nil {
+  // ....
+}
+```
 
 
 Complete Go

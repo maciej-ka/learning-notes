@@ -1879,6 +1879,9 @@ export class ApiKeyGuard implements CanActivate {
 }
 ```
 
+#### Using metadata to build generic guard
+
+
 
 
 JS tricks learned from the Leet Code

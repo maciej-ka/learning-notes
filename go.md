@@ -168,6 +168,40 @@ Nodemon can be also used,
 with some options, so that it knows  
 project is not node.
 
+```bash
+go install github.com/air-verse/air@latest
+```
+
+and then just to use it
+
+```bash
+air
+```
+
+however, whenever we will change frontend
+like index.html, it will also restart.
+So we need to create .air.toml
+and declare to only care about go files
+
+```toml
+# .air.toml
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -o ./tmp/main ./main.go"
+bin = "./tmp/main"
+include_ext = ["go"]  # Only watch .go files
+exclude_dir = ["tmp", "vendor", "node_modules", "public"]
+delay = 1000  # ms
+
+[log]
+time = true
+
+[misc]
+clean_on_exit = true
+```
+
 #### Logger
 This will just log to console.
 
@@ -370,6 +404,52 @@ if err := json.NewEncoder(w).Encode(movies); err != nil {
   // ....
 }
 ```
+
+#### Two type of handlers
+Either function or value
+
+```go
+http.HandleFunc
+http.Handle
+```
+
+#### DRY Utility to format response
+We want to repeat that part
+
+```go
+w.Header().Set("Content-Type", "application/json")
+if err := json.NewEncoder(w).Encode(movies); err != nil {
+  http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+}
+```
+
+it's lower case, so it's not exported
+we want data to be like any type,
+the way to do it in go is `interface{}`
+(this is kind of any)
+
+```go
+func (h *MovieHandler) writeJSONResponse(w http.ResponseWriter, data interface{}) {
+  w.Header().Set("Content-Type", "application/json")
+  if err := json.NewEncoder(w).Encode(data); err != nil {
+    http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+  }
+}
+```
+
+and then to use it
+
+```go
+h.writeJSONResponse(w, movies)
+```
+
+#### Order of handlers
+Order is important. if we would have FileServer first,
+it will try to interpret every request and respond to it.
+
+For that reason, usually static files are last.
+
+
 
 
 Complete Go

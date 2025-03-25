@@ -1880,7 +1880,108 @@ export class ApiKeyGuard implements CanActivate {
 ```
 
 #### Using metadata to build generic guard
+To make guard know that route being accessed  
+is a public.
 
+How to know is route public?  
+We can use @SetMetadata decorator.
+
+```typescript
+@Get()
+@SetMetadata('key', 'value')
+getHello(): string {
+  return 'Hello World!';
+}
+```
+
+Set metadata takes key and value.  
+Key has to be string.  
+Value can be any type.
+
+```typescript
+// coffees.controller.ts
+@SetMetadata('isPublic', true)
+@Get()
+getPage(@Query() paginationQuery: PaginationDto) {
+  // ...
+}
+```
+
+Better is to define custom decorator  
+that will achieve the same thing.  
+So it can be reused.
+
+```typescript
+// src/common/decorators/public.decorator.ts
+import { SetMetadata } from "@nestjs/common";
+
+export const IS_PUBLIC_KEY = 'isPublic';
+export const Public = () => SetMetadata(IS_PUBLIC_KEY, true)
+```
+
+Use custom created decorator
+
+```typescript
+// coffees.controller.ts
+import { Public } from 'src/common/decorators/public.decorator';
+
+@Public()
+@Get()
+getPage(@Query() paginationQuery: PaginationDto) {
+  // ...
+}
+```
+
+Add logic to Guard of checking the metadata.  
+And allowing or not request based on its value.
+
+To access metadata, we need to use `reflector.get()`  
+it expects key, but also a context value for scope.
+
+If you need to retrieve value from class context  
+use `context.getClass()`
+
+But we will retview value from method context  
+so we use `context.getHandler()`
+
+```typescript
+// api-key.guard.ts
+import { Reflector } from '@nestjs/core';
+
+export class ApiKeyGuard implements CanActivate {
+  constructor(private readonly reflector: Reflector) {}
+
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const isPublic = this.reflector.get(IS_PUBLIC_KEY, context.getHandler())
+    // ...
+  }
+}
+```
+
+Global guards that depend on other classes,  
+must be declared within module context,  
+for Dependency Injection to work correctly.
+
+For convenience, declare a new "common" module  
+and define guard there.
+
+```bash
+nest g mo common
+```
+
+Since guard accesses an env variable  
+there is a ConfigModule import.
+
+```typescript
+// src/common/common.module.ts
+import { APP_GUARD } from '@nestjs/core';
+
+@Module({
+  imports: [ConfigModule],
+  providers: [{ provide: APP_GUARD, useClass: ApiKeyGuard }]
+})
+export class CommonModule {}
+```
 
 
 

@@ -861,9 +861,7 @@ that is actually not a resource on server
 and it only makes sense for javascript client.
 
 #### path definition
-path is actually //  
-but we have to escape second one  
-(otherwise it will seem to be a comment?)  
+but we have to escape path separator
 path: /\/movies\/\d+/,
 
 if you are only accessing component from js  

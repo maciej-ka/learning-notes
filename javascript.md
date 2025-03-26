@@ -2299,8 +2299,70 @@ export class LoggingMiddleware implements NestMiddleware {
 }
 ```
 
+#### Create Custom Param Decorators
 
+Typescript decorators are functions, that provide functions.  
+We can create our own, custom decorators.
 
+Let's say we want to inject protocol  
+Normally we would have inject whole request to do it.  
+And it will complicate testing, because we will  
+have to mock the whole request object.
+
+```typescript
+@Get(':id')
+async findOne(@Req() request, @Param('id', ParseIntPipe) id: number) {
+  console.log(request.protocol);
+}
+```
+
+Define own decorator.  
+With a help of `createParamDecorator` utility from Nest.
+
+```typescript
+// src/common/decorators/protocol.decorator.ts
+import { createParamDecorator, ExecutionContext } from "@nestjs/common";
+
+export const Protocol = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest();
+    return request.protocol;
+  },
+);
+```
+
+Example of using it in the route handler
+
+```typescript
+// coffees.controller.ts
+@Get(':id')
+async findOne(@Protocol() protocol: string, @Param('id', ParseIntPipe) id: number) {
+  console.log(protocol);
+}
+```
+
+Passing parameters to custom decorator  
+our example is too simple to have any parameter  
+but let's say that it could get default value.
+
+```typescript
+@Protocol('https')
+```
+
+To access this value use the first argument  
+of the `createParamDecorator`.  
+Rename it and give it a proper type.
+
+```typescript
+// src/common/decorators/protocol.decorator.ts
+
+export const Protocol = createParamDecorator(
+  (defaultValue: string, ctx: ExecutionContext) => {
+    console.log({ defaultValue });
+    // ...
+  },
+);
+```
 
 JS tricks learned from the Leet Code
 ====================================

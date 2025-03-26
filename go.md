@@ -881,7 +881,47 @@ history.pushState(null, "", )
 ```
 
 There is new api, but it's still not compatible
+with all recent browsers.
 
+#### Adding server routes to Go
+
+```go
+catchAllClientRoutesHandler := func(w http.ResponseWriter, r *http.Request) {
+  // A) http redirect 301 or 302
+  // B) serve index.html page
+}
+
+http.HandleFunc("/movies", catchAllClientRoutesHandler)
+http.HandleFunc("/movies/", catchAllClientRoutesHandler)
+http.HandleFunc("/account", catchAllClientRoutesHandler)
+```
+
+this will requre also the client to query for absolute
+
+```html
+<base href="/">
+```
+
+#### Using view transitions
+
+https://caniuse.com/view-transitions
+Browser will make a screenshot, when startViewTransition
+is called, and will apply a transition to it.
+
+```javascript
+const oldPage = document.querySelector("main").firstElementChild;
+if (oldPage) oldPage.style.viewTransitionName = "new";
+pageElement.style.viewTransitionName = "new";
+document.startViewTransition(() => {
+  document.querySelector("main").innerHTML = "";
+  document.querySelector("main").appendChild(pageElement);
+})
+```
+
+there is also a transition for cross document
+when we are not using SPA
+
+https://caniuse.com/cross-document-view-transitions
 
 
 

@@ -2118,6 +2118,92 @@ async findOne(@Param('id') id: number) {
 }
 ```
 
+#### Creating Custom Pipes
+Pipes have two typical use cases:
+- transformation
+- validation
+
+Validation is inspecting the data:  
+when it's ok, data is passed unchaged,  
+when it's not ok, error is thrown.
+
+Pipes operate on params of a route handler.  
+Nest triggers pipe just before method is invoked.
+
+If data is transformed, route handler gets  
+(in params) these transformed data.
+
+Nest.js comes with several pipes  
+available out of the box.  
+(all from Nest common package)
+- ValidationPipe
+- ParseArrayPipe
+- ParseIntPipe
+
+For demo, we will recreate a ParseIntPipe,  
+that will transform any incomming string  
+into integer.
+
+```bash
+nest g pipe common/pipes/parse-int
+```
+
+Will generate code below.  
+All pipes should implement PipeTransform.  
+This interface requires to implement transform function.  
+It has two values  
+`value`: the input value of processed argument, before transformation  
+`metadata`: the metadata of processed argument
+
+```typescript
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
+
+@Injectable()
+export class ParseIntPipe implements PipeTransform {
+  transform(value: any, metadata: ArgumentMetadata) {
+    return value;
+  }
+}
+```
+
+Whatever value is returned,  
+it completely overwrites value of argument.
+
+This is good occasion to provide a default value  
+if the argument is missing in the request handler call.
+
+```typescript
+// src/common/pipes/parse-int/parse-int.pipe.ts
+import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
+
+@Injectable()
+export class ParseIntPipe implements PipeTransform {
+  transform(value: string, metadata: ArgumentMetadata) {
+    const result = parseInt(value, 10)
+    if (isNaN(result)) {
+      throw new BadRequestException(
+        `Validation failed. "${value} is not an integer"`
+      )
+    }
+    return result
+  }
+}
+```
+
+Use the pipe to transform one of arguments
+
+```typescript
+// coffees.controller.ts
+@Get(':id')
+async findOne(@Param('id', ParseIntPipe) id: number) {
+  return this.coffeesService.findOne(id);
+}
+```
+
+
+
+
+
 
 
 JS tricks learned from the Leet Code

@@ -861,7 +861,7 @@ that is actually not a resource on server
 and it only makes sense for javascript client.
 
 #### path definition
-but we have to escape path separator
+but we have to escape path separator  
 path: /\/movies\/\d+/,
 
 if you are only accessing component from js  
@@ -880,7 +880,7 @@ pushState:
 history.pushState(null, "", )
 ```
 
-There is new api, but it's still not compatible
+There is new api, but it's still not compatible  
 with all recent browsers.
 
 #### Adding server routes to Go
@@ -904,8 +904,8 @@ this will requre also the client to query for absolute
 
 #### Using view transitions
 
-https://caniuse.com/view-transitions
-Browser will make a screenshot, when startViewTransition
+https://caniuse.com/view-transitions  
+Browser will make a screenshot, when startViewTransition  
 is called, and will apply a transition to it.
 
 ```javascript
@@ -918,11 +918,14 @@ document.startViewTransition(() => {
 })
 ```
 
-there is also a transition for cross document
+there is also a transition for cross document  
 when we are not using SPA
 
 https://caniuse.com/cross-document-view-transitions
 
+#### target vs currentTarget
+`event.target`: actuall element was clicked  
+`event.currentTarget`: element that has listener defined
 
 
 

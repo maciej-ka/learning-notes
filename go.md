@@ -758,6 +758,60 @@ this.elements
 this.getAttribute("elements")
 ```
 
+#### rerender web component
+to rerender on attributes change  
+you have to take element out  
+and create it again
+
+but there is also html api to handle that
+
+#### noscript
+html has <script> and <noscript>  
+in 90' there were few browsers without javascript support  
+and <noscript> was used to show a message for users  
+using these browsers that cannot support javascript
+
+#### include style to web component
+link css in web component template
+
+and to avoid making these css rules global  
+you can use shadow dom
+
+to trigger it use
+
+```html
+<template id="tempalte-movie-details" shadowmode="close">
+```
+
+#### render method or just connectedCallback?
+render will probably have to call API
+
+```typescript
+async render() {
+  await API.getMovieById(this.movie)
+}
+```
+
+if we try to use it in connectedCallback directly  
+it will not work, because connectedCallback is not async.
+
+#### alert
+call to alert is synchronous
+
+#### clone deep
+true in arguemnt is for deep
+
+```javascript
+const content = template.content.cloneNode(true)
+```
+
+#### textContent vs innerHTML
+innerHTML will accept html and interpret it  
+it's little unsafe because it will also accept javascript  
+so if it's from user space, cross site scripting is possible
+
+textContent will only show content  
+but not execute it and not interpret it
 
 
 

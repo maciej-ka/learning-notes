@@ -991,6 +991,30 @@ you should receive email to reset password.
 It's still possible to try to still create account  
 for someone email, to check does it exist.
 
+Also, it's a good idea to temporarly block login  
+for few minutes, after several failed sign in attempts.
+
+#### Autocomplete
+`cc-name` is a credit name  
+`new-password` is suggestion to autogenerate  
+`password` is for reusing password
+
+example of form using these autocomplete fields
+```html
+<form onsubmit="app.register(event)">
+  <label for="register-name">Name</label>
+  <input id="register-name" type="text" required autocomplete="name">
+
+  <label for="register-email">Email</label>
+  <input id="register-email" type="email" autocomplete="email" required />
+
+  <label for="register-password">Password</label>
+  <input id="register-password" type="password" autocomplete="new-password" required />
+
+  <label for="register-password-confirmation">Repeat your Password</label>
+  <input id="register-password-confirmation" type="password" required />
+</form>
+```
 
 
 Complete Go

@@ -927,6 +927,70 @@ https://caniuse.com/cross-document-view-transitions
 `event.target`: actuall element was clicked  
 `event.currentTarget`: element that has listener defined
 
+#### Passkeys
+Replacement to passwords.  
+It can use biometric.  
+Or usb token keys.
+
+#### Authentication in Go
+we will use mini library for turning passwords  
+into passowrd hashes
+
+```bash
+go get "golang.org/x/crypto/bcrypt"
+```
+
+Common handling of errors in Go
+
+Create a definition of errors on bottom of file  
+and then use them to hint, what kind of error happened
+
+and also it's still ok to mix this  
+with using general errors
+
+
+```go
+func (r *AccountRepository) Register(name, email, password string) (bool, error) {
+  // ...
+  return false, ErrRegistrationValidation
+}
+
+var (
+  ErrRegistrationValidation   = errors.New("registration failed")
+  ErrAuthenticationValidation = errors.New("authentication failed")
+  ErrUserAlreadyExists        = errors.New("user already exists")
+  ErrUserNotFound             = errors.New("user not found")
+)
+```
+
+#### Sql injection
+-- in sql is a comment
+
+username: ' or 1 = 1; --'  
+password: ' or 1 = 1; --'
+
+which could result in  
+(if arguments were not escaped):
+
+```sql
+SELECT * FROM USERS WHERE USERNAME = '' or 1 = 1; --
+```
+
+this was used in past  
+to sign in, often as a first user.
+
+#### Credentials are wrong message
+Don't create separate error message  
+for "password is wrong" and "email is wrong".  
+So that it's not possible to check which users exist.
+
+Also in reset passowrd, Just inform:  
+if your account email is correct,  
+you should receive email to reset password.
+
+It's still possible to try to still create account  
+for someone email, to check does it exist.
+
 
 
 Complete Go

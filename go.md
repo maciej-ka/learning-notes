@@ -813,6 +813,51 @@ so if it's from user space, cross site scripting is possible
 textContent will only show content  
 but not execute it and not interpret it
 
+#### dl list
+definition list  
+like accordion  
+uses `dt` and `dd` tags
+
+#### child component
+to have a component with another compoent,  
+either use javascript
+
+```javascript
+document.querySelector("main").appendChild(new MovieDetailsPage())
+```
+
+or html
+
+```html
+<template id="template-movie-details">
+  <article id="movie">
+    <youtube-embed id="trailer" data-url=""></youtube-embed>
+  </article>
+</template>
+```
+
+#### listen for attribute change
+listening for attributes when they change  
+you have to tell which attributes are you interested in
+
+```javascript
+export class YouTubeEmbed extends HTMLElement {
+  static get observedAttributes() {
+    return ['data-url']
+  }
+
+  attributeChangedCallback(prop, value) {
+    if (prop === 'data-url') {
+      const url = this.dataset.url
+      console.log(url);
+    }
+  }
+}
+```
+
+
+
+
 
 
 

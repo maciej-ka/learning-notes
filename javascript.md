@@ -2060,6 +2060,64 @@ Interceptors can do:
 - analytics tracking
 - way more...
 
+#### Handling Timeouts with Interceptors
+
+Extend behaviour of route handler.  
+What if we need to handle timeouts for all our endpoints.
+
+```bash
+nest g interceptor common/interceptors/timeout
+```
+
+We want to terminate request after some time.
+
+```typescript
+// src/common/interceptors/timeout/timeout.interceptor.ts
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { Observable, timeout } from 'rxjs';
+
+export class TimeoutInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    return next.handle().pipe(
+      timeout(3000),
+      catchError (err => err instanceof TimeoutError
+        ? throwError(new RequestTimeoutException())
+        : throwError(err)
+      )
+    );
+  }
+}
+```
+
+Builtin RxJs timeout function will throw error.  
+If it happens, the user will receive response 500  
+and a generic server error.
+
+To be more specific, we pipe timeout into catchError,  
+so that if TimeoutError is detected, we format error  
+into more specific, timeout related exception.
+
+Bind interceptor globally.  
+(binding serveral interceptors in one call).
+
+```typescript
+// main.ts
+async function bootstrap() {
+  app.useGlobalInterceptors(new WrapResponseInterceptor(), new TimeoutInterceptor())
+}
+```
+
+Introduce 5 second pause, to test new interceptor.
+
+```typescript
+// coffees.controller.ts
+@Get(':id')
+async findOne(@Param('id') id: number) {
+  await new Promise(resolve => setTimeout(resolve, 5000))
+  return this.coffeesService.findOne(id);
+}
+```
+
 
 
 JS tricks learned from the Leet Code

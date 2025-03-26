@@ -686,10 +686,10 @@ example content
 ```
 
 #### Loading spinners
-They are considered really bad today.
+They are considered really bad today.  
 Because it's like setting yourself a label "I'm slow".
 
-Better pattern is to renders placeholders
+Better pattern is to renders placeholders  
 with wavy animations.
 
 Example of wavy animation
@@ -714,24 +714,24 @@ movie-item img {
 ```
 
 #### Web components, HTMLElement extend
-You don't have to directly extend HTMLElement
-you can extend subclass, one of HtmlElements
+You don't have to directly extend HTMLElement  
+you can extend subclass, one of HtmlElements  
 like a div or button
 
 
 #### The way to pass parameters
-This way is future compatible.
+This way is future compatible.  
 In case future html addes elements property.
 
 ```html
 <animated-loading data-elements="5"></animated-loading>
 ```
 
-This is best practice.
-Not adding data is a little bit breaking rules,
+This is best practice.  
+Not adding data is a little bit breaking rules,  
 but it will work nonetheless.
 
-Also there is different way to read from non data.
+Also there is different way to read from non data.  
 Because there is nice API to read from data.
 
 ```typescript
@@ -745,8 +745,8 @@ class AnimatedLoading extends HTMLElement {
 }
 ```
 
-Use connectedCallback to read properties.
-Because constructor is first place called,
+Use connectedCallback to read properties.  
+Because constructor is first place called,  
 but at this point, html didn't parse properties.
 
 ```typescript

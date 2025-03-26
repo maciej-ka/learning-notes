@@ -2200,8 +2200,104 @@ async findOne(@Param('id', ParseIntPipe) id: number) {
 }
 ```
 
+#### Add Request Logging with Middleware
+Middleware is called before route handler.  
+And before any other building blocks of Nest.js  
+(interceptors, guards, pipes)
 
+Middleware has access to request and response.  
+And are not tied to method, but route path.
 
+Middleware can:
+- execute code
+- change request and response
+- end request
+- call next middleware
+
+If the middleware doesn't want to end request  
+processing it must call the next method.  
+Otherwise request will be left hanging  
+and never complete.
+
+Middleware can be implemented in either  
+function or class.
+
+Function middleware  
+is stateless  
+and cannot inject
+
+Class middleware  
+can have state  
+and can inject
+
+We will create a class middleware.
+
+```bash
+nest g middleware common/middleware/logging
+```
+
+Generated code below.  
+It must implement NestMiddleware interface.  
+That expects to provide use method.  
+It doesn't have special requirements  
+but it has to invoke `next()`,  
+otherwise request will be hanging.
+
+```typescript
+import { Injectable, NestMiddleware } from '@nestjs/common';
+
+@Injectable()
+export class LoggingMiddleware implements NestMiddleware {
+  use(req: any, res: any, next: () => void) {
+    next();
+  }
+}
+```
+
+We bind middleware to route path  
+represented as a string.
+
+```typescript
+// common.module.ts
+
+@Module({
+  // ...
+})
+export class CommonModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggingMiddleware).forRoutes("*")
+  }
+}
+```
+
+Implementing `NestModule` requires to provide configure method,  
+which takes middleware consumer as an argument.
+
+Consumer provides set of methods to tie route to middleware.
+
+Other options to specify paths 
+
+```typescript
+consumer.apply(LoggingMiddleware).forRoutes("*")
+consumer.apply(LoggingMiddleware).forRoutes("coffees")
+consumer.apply(LoggingMiddleware).forRoutes({ path: "coffees", method: RequestMethod.GET })
+
+//allow for all but exclude ones with coffees prefix
+consumer.apply(LoggingMiddleware).exclude('coffees').forRoutes("*")
+```
+
+Example of middleware that will measure a time  
+between request and response.
+
+```typescript
+export class LoggingMiddleware implements NestMiddleware {
+  use(req: any, res: any, next: () => void) {
+    console.time("Request-response time")
+    res.on('finish', () => console.timeEnd("Request-response time"))
+    next();
+  }
+}
+```
 
 
 

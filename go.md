@@ -685,6 +685,81 @@ example content
 }
 ```
 
+#### Loading spinners
+They are considered really bad today.
+Because it's like setting yourself a label "I'm slow".
+
+Better pattern is to renders placeholders
+with wavy animations.
+
+Example of wavy animation
+
+```css
+movie-item img {
+  animation: loading-wave 1.5s infinite ease-in-out;
+}
+
+.loading-wave {
+    background: linear-gradient(
+        90deg,
+        #555 0%,
+        #999 50%,
+        #555 100%
+    );
+    background-size: 200% 100%;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
+    animation: loading-wave 1.5s infinite ease-in-out;
+}
+```
+
+#### Web components, HTMLElement extend
+You don't have to directly extend HTMLElement
+you can extend subclass, one of HtmlElements
+like a div or button
+
+
+#### The way to pass parameters
+This way is future compatible.
+In case future html addes elements property.
+
+```html
+<animated-loading data-elements="5"></animated-loading>
+```
+
+This is best practice.
+Not adding data is a little bit breaking rules,
+but it will work nonetheless.
+
+Also there is different way to read from non data.
+Because there is nice API to read from data.
+
+```typescript
+class AnimatedLoading extends HTMLElement {
+  constructor() {
+    super()
+  }
+
+  connectedCallback() {
+  }
+}
+```
+
+Use connectedCallback to read properties.
+Because constructor is first place called,
+but at this point, html didn't parse properties.
+
+```typescript
+// with data prefix
+const elements = this.dataset.elements
+
+// without data prefix
+this.elements
+this.getAttribute("elements")
+```
+
+
+
 
 
 Complete Go

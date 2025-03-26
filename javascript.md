@@ -1997,8 +1997,68 @@ They allow to:
 - completely override the method
 
 As an example we will change all our responses  
-to always have additional data property.
+to be wrapped in additional data property.
 
+```bash
+nest g interceptor common/interceptors/wrap-response
+```
+
+Which will generate code below.  
+All interceptors should implement NestInterceptor interface  
+that will implement intercept method, that returns Observable  
+from Rxjs library.
+
+```typescript
+@Injectable()
+export class WrapResponseInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    return next.handle();
+  }
+}
+```
+
+Rxjs makes it easier, to compose code organized around callbacks.  
+It's alternative to Promises and plain callbacks.  
+Observable has pipe and there is a tap method.
+
+```typescript
+import { Observable, tap } from 'rxjs';
+return next.handle().pipe(tap(data => console.log('After...', data)));
+```
+
+In Interceptor, `next.handle()` invokes route handler.  
+Without it the route handler will not be invoked at all.  
+By surrounding it with our code, we can decide,  
+to add custom behaviour before or after the route handler.
+
+Binding interceptor globally
+
+```typescript
+// main.ts
+async function bootstrap() {
+  app.useGlobalInterceptors(new WrapResponseInterceptor())
+}
+```
+
+Data wrapper, that will wrap responses in data property.
+
+```typescript
+// src/common/interceptors/wrap-response/wrap-response.interceptor.ts
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { map, Observable } from 'rxjs';
+
+@Injectable()
+export class WrapResponseInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    return next.handle().pipe(map(data => ({ data })));
+  }
+}
+```
+
+Interceptors can do:
+- adding version
+- analytics tracking
+- way more...
 
 
 

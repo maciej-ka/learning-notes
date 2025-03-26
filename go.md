@@ -855,7 +855,34 @@ export class YouTubeEmbed extends HTMLElement {
 }
 ```
 
+#### Define routes
+Client routes are when we have path in browser  
+that is actually not a resource on server  
+and it only makes sense for javascript client.
 
+#### path definition
+path is actually //  
+but we have to escape second one  
+(otherwise it will seem to be a comment?)  
+path: /\/movies\/\d+/,
+
+if you are only accessing component from js  
+there is no reason to call `customElements.define`  
+however, it's a good practice to still do it
+
+#### history api
+it's old api from mid 2005'
+
+pushState:
+- first argument is data
+- second is unused!
+- last is url
+
+```javascript
+history.pushState(null, "", )
+```
+
+There is new api, but it's still not compatible
 
 
 

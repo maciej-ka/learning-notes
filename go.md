@@ -653,6 +653,38 @@ if we define constructor in our component,
 it's mandatory, that we call `super()`  
 and we do it as a first thing in a constructor
 
+#### Web manifest
+Mostly for Progressive Web Apps, but not only.  
+It can define theme color, background color and icon  
+that will be used when saving the app to dock  
+on mac safari.
+
+to use it, add a link in html
+
+```html
+<link rel="manifest" href="app.webmanifest">
+```
+
+example content
+
+```json
+{
+  "name": "ReelingIt",
+  "short_name": "ReelingIt",
+  "theme_color": "#43281C",
+  "display": "browser",
+  "background_color": "#56bce8",
+  "description": "The ultimate app for movie lovers: discover trailers, reviews, showtimes, and more. Experience cinema like never before!",
+  "icons": [
+    {
+      "src": "images/icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}
+```
+
 
 
 Complete Go

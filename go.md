@@ -1016,6 +1016,32 @@ example of form using these autocomplete fields
 </form>
 ```
 
+### How to know, that user is authenticated
+#### Classic solution:
+create a session, which is a concept on server,  
+send a cookie to the browser  
+that cookie doesn't have password  
+and it will be sent on every request
+
+however cookie have problems:
+
+javascript can access them, and try to steal  
+(unless HttpOnly is used)
+
+they are always included in request  
+which can be vulerability  
+(unless CORS is configured)
+
+#### JWT
+You don't to need do anything on server side  
+JWT has expiration.
+
+problem is that there is no protection  
+if someone got that JWT, he can use it  
+and to at least to some degree mitigate this  
+JWT usually has expiration date
+
+
 
 Complete Go
 ===========

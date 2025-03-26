@@ -573,10 +573,10 @@ import { API } from "./services/API.js";
 ```
 
 #### Web Component
-In short, your own custom HTML tag element.
+In short, your own custom HTML tag element.  
 custom element has to have a hyphen.
 
-this class is becoming HTMLElement
+this class is becoming HTMLElement  
 so `this` is actually me, the htmlElement
 
 ```javascript
@@ -585,13 +585,74 @@ export class HomePage extends HTMLElement {
     const template = document.getElementById("template-home");
     const content = template.content.cloneNode(true);
     this.appendChild(content);
+    this.render();
   }
 }
 customElements.define("home-page", HomePage);
 ```
 
-connectedCallback is a moment that our
+connectedCallback is a moment that our  
 component is mounted on the page
+
+there has to be template defined somewhere  
+it can be in the main index.html or alternativelly,  
+it can be imported from another html file
+
+```html
+<template id="template-home">
+   <section class="vertical-scroll" id="top-10">
+     <h2>This Week's Top Movies</h2>
+     <ul></ul>
+   </section>
+</template>
+```
+
+and then we can populate the `ul` list  
+using data from api in our imperative,  
+dom manipulating render method, that we call  
+at the end of connectedCallback()
+
+```javascript
+async render() {
+  const movies = await API.getTopMovies()
+  const ul = document.querySelector("#top-10 ul")
+  ul.innerHTML = "";
+  movies.forEach(movie => {
+    const li = document.createElement("li");
+    li.appendChild(new MovieItem(movie));
+    ul.appendChild(li);
+  });
+}
+```
+
+MovieItem is using another component.  
+This time there is no template in the dom,  
+but the template is defined using JS string template
+
+```javascript
+export class MovieItemComponent extends HTMLElement {
+  constructor(movie) {
+    super();
+    this.movie = movie;
+  }
+  connectedCallback() {
+    this.innerHTML = `
+      <a href="#">
+        <article>
+          <img src="${this.movie.poster_url}" alt="${this.movie.title} Poster">
+          <p>${this.movie.title} (${this.movie.release_year})</p>
+        </article>
+      </a>
+    `;
+  }
+}
+customElements.define("movie-item", MovieItemComponent)
+```
+
+if we define constructor in our component,  
+it's mandatory, that we call `super()`  
+and we do it as a first thing in a constructor
+
 
 
 Complete Go

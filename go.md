@@ -1016,6 +1016,39 @@ example of form using these autocomplete fields
 </form>
 ```
 
+#### Getter on object literal
+```javascript
+const Store = {
+  jwt: null,
+  get loggedIn() {
+    return this.jwt !== null
+  }
+}
+```
+
+#### JS proxy
+allows to pass events
+
+```javascript
+const proxiedStore = new Proxy(Store, {
+  set: (target, prop, value) => {
+    if (prop=="jwt") {
+      target(prop) = value;
+      localStorage.setItem("jwt", value);
+    }
+  }
+})
+```
+
+#### localStorage
+key-store
+
+typically 5MB however uses UTF-16  
+so in practice size available is like a half 5MB  
+...2.5MB
+
+
+
 ### How to know, that user is authenticated
 #### Classic solution:
 create a session, which is a concept on server,  
@@ -1040,6 +1073,8 @@ problem is that there is no protection
 if someone got that JWT, he can use it  
 and to at least to some degree mitigate this  
 JWT usually has expiration date
+
+
 
 
 

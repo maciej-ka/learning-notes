@@ -1714,6 +1714,127 @@ HTML to facilitate timely indexing.
 tool that can generate static websites  
 https://gohugo.io/
 
+### Offline support
+We could enable users to check their watchlist  
+even if they don't have a connection.
+
+check frontend masters:  
+JavaScript in the Background
+
+#### PWA
+Make your app installable. Design pattern to create  
+installable web apps for operationg systems using web  
+technologies with no native code
+
+#### Web Worker
+Thread of Javascript  
+That can execute code in parallel
+
+#### Service Worker
+Type of Web Worker  
+that additionaly can act as a web server proxy
+
+Web workder that web apps can register that  
+will act as a web proxy or a local web server  
+client-side
+
+It's a proxy to pretend that client  
+has a server connection
+
+#### Idea
+(PWA - Service Worker) - Cross Domain Server/Your server  
+client side              servers
+
+#### Service Worker, Cache storage
+has another extra element Cache storage  
+that we are in charge  
+it's a cache of request - response
+
+example of use
+
+```javascript
+caches
+await caches.open("my-cache")
+cache.add("https://firtdev-logo.svg") // will store
+```
+
+it will store full request and full response  
+also including headers.
+
+and there is no space limit to this storage,  
+however it's not persistent by default,  
+browser can clear it, when disk is low on size  
+(but it's something you can ask for, to not clear)
+
+### Cache strategies
+#### Cache first
+if there is file in Cache  
+then we are sending cached file immediately
+
+it can be svg, img, but also  
+a request for json with data
+
+biggest problem:  
+what if server is changing that data  
+how to invalidate
+
+#### Network First
+Every network will keep cache updated  
+And Cache will be used only if network fail
+
+#### Stale While Revalidate
+While waiting for network,  
+service will send version from cache  
+and then we change with fresh version  
+when response from network is back
+
+#### Your own
+You can create your own strategy
+
+#### Service Worker implemnetation
+
+```javascript
+window.addEventListener("DOMContentLoaded", event => {
+  app.Router.init();
+  navigator.serviceWorker.register("/sw.js");
+})
+```
+
+Service worker has capabilities of a server.  
+Respond to everything with "hahaha"  
+in the name of server
+
+```javascript
+// sw.js
+console.log("I'm a service workder");
+
+self.addEventListener("fetch", event => {
+  console.log(`The browser is requesting ${event.request.url}`)
+  event.responseWith(new Response("hahaha"))
+})
+self.addEventListener("fetch", )
+```
+
+Chrome will tell, that response is from service worker  
+in the **size** column of network tab (strange)
+
+#### Manage Service Worker in Chrome
+Chrome tools > Application > Update on reload  
+also use Update and Remove
+
+shift + r will bypass service worker  
+(sometimes it's tricky to get rid of service worker running)
+
+#### Running in background
+chrome://serviceworker-internals/
+
+lifecycle of service worker is not completely attached  
+for lifecycle of the web page
+
+service worker will stay active for some time, like 40s  
+after the visit is gone
+
+
 
 Complete Go
 ===========

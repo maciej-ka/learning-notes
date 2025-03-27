@@ -2509,6 +2509,26 @@ with decorator that will set status code
 @ApiForbiddenResponse({ description: 'Forbidden.' })
 ```
 
+#### Using Tags to Group Resources
+tags enable groupping related endpoints together.  
+They enable to break api into logical parts,  
+making it easier to navigate in Swagger UI.
+
+Group all /coffee endpoints together.  
+It's also possible to apply tags and group  
+on a method level.
+
+```typescript
+// src/coffees/coffees.controller.ts
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('coffees')
+@Controller('coffees')
+export class CoffeesController {
+  // ...
+}
+```
+
 
 
 JS tricks learned from the Leet Code

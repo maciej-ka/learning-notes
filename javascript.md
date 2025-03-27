@@ -2364,6 +2364,54 @@ export const Protocol = createParamDecorator(
 );
 ```
 
+### Nest Swagger/ OpenAI
+It's vital to any app and especially sdk app  
+to provide documentation of your code.
+
+OpenApi Specification is a language agnostic format  
+used to describe REST Api.
+
+It describes:
+- operations
+- input parameters
+- responses
+- authentication
+
+and other:
+- contact information
+- license / terms of use
+
+Nest can generate such documentation with use of decorators
+
+```bash
+npm i @nestjs/swagger swagger-ui-express
+```
+
+Start building documentation
+
+```typescript
+// main.ts
+import { DocumentBuilder } from '@nestjs/swagger';
+
+async function bootstrap() {
+  const options = new DocumentBuilder()
+    .setTitle("Iluvcoffee")
+    .setDescription("Coffee application")
+    .setVersion("1.0")
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document)
+
+  await app.listen(process.env.PORT ?? 3000);
+}
+```
+
+Start app and visit Swagger client at  
+http://localhost:3000/api
+
+
+
+
 JS tricks learned from the Leet Code
 ====================================
 

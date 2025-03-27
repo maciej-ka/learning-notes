@@ -1721,6 +1721,10 @@ even if they don't have a connection.
 check frontend masters:  
 JavaScript in the Background
 
+offline can also mean server not responding  
+(even if the user has network connection)  
+it's server offline (not client)
+
 #### PWA
 Make your app installable. Design pattern to create  
 installable web apps for operationg systems using web  
@@ -1767,6 +1771,9 @@ browser can clear it, when disk is low on size
 (but it's something you can ask for, to not clear)
 
 ### Cache strategies
+Generally you should fine tune,  
+what will be cached.
+
 #### Cache first
 if there is file in Cache  
 then we are sending cached file immediately
@@ -1833,6 +1840,44 @@ for lifecycle of the web page
 
 service worker will stay active for some time, like 40s  
 after the visit is gone
+
+#### What to cache
+for sure all css, javascript files  
+all the assets
+
+as for data  
+each of them needs consideration
+
+and controllers probably should also know  
+is the user offline or online  
+and not show some of content (like log in page)  
+when user is offline and using cache
+
+#### Offline.js
+small lib to try to connect,  
+show status if server is not reachable  
+and try to reconnect
+
+#### Background Sync API
+Let's you mark offline changes as pending.  
+Even after close of your web app, when it's not active  
+but browser is running, it will try to synchronize  
+in the background.
+
+#### PWA
+In easy way convert site to installable.
+
+manifest.json
+```json
+{
+  "display": "standalone",
+  "scope": "/",
+  "start": "/"
+}
+```
+
+This will add icon in browser to install,  
+as an app in MacOS applications.
 
 
 

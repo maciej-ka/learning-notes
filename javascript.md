@@ -2529,6 +2529,29 @@ export class CoffeesController {
 }
 ```
 
+### Testing in Nest.js, introduction to Jest
+Automated testing is essential part in any serious app  
+development. It enables to quickly repeat tests and suites.
+
+Jest has a focus on simplicity.  
+It has familiar testing syntax.  
+Provides builtin mocking capability.  
+And can run tests reliably in parallel.
+
+To make running tests even faster,  
+jest first reruns failed tests first.  
+And then organizes rest according to  
+how long each test takes to finish.
+
+In Nest.js Jest is used both for unit tests  
+and for e2e tests.
+
+```bash
+npm run test
+npm run test:cov # unit tests and coverage
+npm run test:e2e
+```
+
 
 
 JS tricks learned from the Leet Code

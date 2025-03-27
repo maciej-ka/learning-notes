@@ -927,7 +927,7 @@ https://caniuse.com/cross-document-view-transitions
 `event.target`: actuall element was clicked  
 `event.currentTarget`: element that has listener defined
 
-#### Passkeys
+#### passkeys
 Replacement to passwords.  
 It can use biometric.  
 Or usb token keys.
@@ -1188,11 +1188,11 @@ export default class FavoritePage extends CollectionPage {
 customElements.define("favorite-page", FavoritePage);
 ```
 
-#### Passkeys, passwordless authentication
+#### passkeys, passwordless authentication
 Allows user to sign in without a password.  
 It's a big recent trend in web apps.
 
-What is a Passkey?  
+What is a passkey?  
 They will become more popular  
 In some time there will be apps  
 which don't have passwords at all.  
@@ -1220,7 +1220,7 @@ is man in the middle possible in HTTPS?
 it's secure only between browser and first place  
 most exposed part in web server (CloudFront)
 
-#### Passkeys is pair of keys
+#### passkeys is pair of keys
 in short: it's a SSH (like on github cli),  
 where private key is stored  in Authenticator app  
 which is usually provided by OS and works in cloud
@@ -1233,13 +1233,13 @@ Then we use private/public key
 with maths we create two related keys.  
 *HTTPS and crypto are using private/public keys*
 
-Passkey is pair of keys  
+passkey is pair of keys  
 it's exactly as SSH
 
 if someone has your private key, you're screwed.  
 same as SSH or any other private/public key system.
 
-Passkeys are same as SSH keys it's same solution,  
+passkeys are same as SSH keys it's same solution,  
 but used in new situation, for signin in
 
 A) Private will be stored in Authenticator  
@@ -1267,7 +1267,7 @@ keys can be stored:
 
 Default storage for Mac, is on cloud
 
-One Passkey is combined for one host, domain and port  
+One passkey is combined for one host, domain and port  
 only one origin. So they cannot be shared (at least in current version)
 
 #### Security
@@ -1299,7 +1299,7 @@ what is challenge?
 it's a string
 
 #### Passwords app on mac
-has a section for Passkeys  
+has a section for passkeys  
 it's possible to see a list or to delete passkey  
 but you cannot see the passkey
 
@@ -1339,6 +1339,109 @@ Server decides, that user is authenticated, by checking
 that user replied to a new (log in) challenge in a way  
 that can be decoded using stored on server public key,  
 which Authenticator sent when account was created.
+
+#### Share passkeys
+On some devices you can share passkeys  
+with your family (for netflix)
+
+it may be better to create many passkeys  
+as user can 
+
+#### Implement
+four web services
+
+sign in:  
+1 send challenge  
+2 verify challenge
+
+log in  
+3 send challenge  
+4 verify challenge
+
+Implement WebAuthn API client-side  
+Implement identity-first flow  
+(site will ask first only for email)  
+Store n credentials per account
+
+1 - * relation:  
+1 User - passkeys *
+
+#### Go WebAuthn
+https://github.com/go-webauthn/webauthn
+
+```
+go get "github.com/go-webauthn/webauthn/webauthn"
+```
+
+#### Name vs Display name
+Name: is internal  
+Display name: is what is shown to user
+
+Authenticator will show Display name
+
+#### Session
+Concept of creating a session on server.  
+Because HTTP is stateless.
+
+On every refresh of page server doesn't know,  
+that user is same.
+
+Server sends a cookie. And then, when client will resend it   
+server will restore session from cookie.
+
+In passkeys, we need session to wait for the challenge response.  
+and when response comes, to know, with which challenge to compare.
+
+### 4 passkey endpoints
+
+#### Registration - Begin / End
+it's keypass registration  
+and here, we need to know  
+for which user we are adding it
+
+A) Old, existing sites  
+if it's an old site, we need user  
+to be first authenticated, to know  
+for which user we provide this additional way  
+of log in.
+
+B) New, passkey first site  
+if it's a new site, passkey first  
+then you may think in other way  
+user doesn't have to be authenticated first  
+1 you first store passkey  
+2 then, later, you attach metadata to that passkey  
+... by asking user some additional data
+
+#### Authentication
+generally, these don't require user context
+
+we should ask for email  
+it's not mandatory, but it's a good practice  
+and with that server will ask Authenticator  
+to respond to challenge with that email
+
+on response to (in Old, existing sites)
+
+#### passkey summary
+Seems, unless site is passkey first  
+we will use three authentication corelated mechanisms:
+
+JWT to read email of existing user  
+and as actuall way to authenticate
+
+Cookie/Session to corelate pending challenge  
+with an answer to challenge
+
+passkeys: for nice UX,  
+internally exchanged to JWT
+
+Summary:  
+it will be **harder to implement**  
+but the goal is **better UX** and less user problems
+
+also for better time of support,  
+as lost passwords are not a problem
 
 
 

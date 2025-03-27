@@ -1427,21 +1427,220 @@ on response to (in Old, existing sites)
 Seems, unless site is passkey first  
 we will use three authentication corelated mechanisms:
 
-JWT to read email of existing user  
+1 JWT to read email of existing user  
 and as actuall way to authenticate
 
-Cookie/Session to corelate pending challenge  
+2 Cookie/Session to corelate pending challenge  
 with an answer to challenge
 
-passkeys: for nice UX,  
+3 passkeys: for nice UX,  
 internally exchanged to JWT
 
 Summary:  
 it will be **harder to implement**  
-but the goal is **better UX** and less user problems
+the goal is **better UX** and less user problems
 
 also for better time of support,  
 as lost passwords are not a problem
+
+#### for the browsersite
+defer will be loaded in order  
+better to place that library before app
+
+```html
+<script src="https://unpkg.com/@simplewebauthn/browser/dist/bundle/index.umd.min.js" defer></script>
+<script src="/app.js" type="module" defer></script>
+```
+
+when logged in there will be a new button  
+to create a passkey to sign in
+
+Using that library to register
+
+```javascript
+// This triggers the browser to display the passkey modal
+// A new public-private-key pair is created.
+const attestationResponse = await SimpleWebAuthnBrowser.startRegistration(
+  { optionsJSON: options.publicKey }
+);
+```
+
+Using that library to authenticate
+
+```javascript
+// This triggers the browser to display the passkey / WebAuthn modal
+// The challenge has been signed after this.
+const assertionResponse = await SimpleWebAuthnBrowser.startAuthentication(
+  { optionsJSON: options.publicKey }
+);
+```
+
+#### button
+by default button has a type "submit"  
+and to change it to normal button that will not submit form  
+change it's type to "button"
+
+```html
+<button type="button" onclick="app.loginWithPasskey()">Login with Passkey</button>
+```
+
+#### things are more complicated
+there is another, public key from the server  
+but it's not passkey public key  
+it's something added on top of passkey spec  
+by the go and browser tools, we are using
+
+so apart from client private/public key  
+there is also server private/public key  
+(this is not part of passkey spec)  
+it's a extra layer added on top
+
+#### Reponse to register begin
+
+```json
+{
+    "publicKey": {
+        "rp": {
+            "name": "ReelingIt",
+            "id": "localhost"
+        },
+        "user": {
+            "name": "ma(hidden)@gmail.com",
+            "displayName": "ma(hidden)@gmail.com",
+            "id": "Mg"
+        },
+        "challenge": "C0epG2-a5-8y874_VoERHEtX1UU5qdmXallysp9FSwM",
+        "pubKeyCredParams": [
+            {
+                "type": "public-key",
+                "alg": -7
+            },
+            {
+                "type": "public-key",
+                "alg": -35
+            },
+            {
+                "type": "public-key",
+                "alg": -36
+            },
+            {
+                "type": "public-key",
+                "alg": -257
+            },
+            {
+                "type": "public-key",
+                "alg": -258
+            },
+            {
+                "type": "public-key",
+                "alg": -259
+            },
+            {
+                "type": "public-key",
+                "alg": -37
+            },
+            {
+                "type": "public-key",
+                "alg": -38
+            },
+            {
+                "type": "public-key",
+                "alg": -39
+            },
+            {
+                "type": "public-key",
+                "alg": -8
+            }
+        ],
+        "timeout": 300000,
+        "authenticatorSelection": {}
+    }
+}
+```
+
+#### Log in challenge from server
+```json
+{
+    "publicKey": {
+        "challenge": "yfBNmSwWPxz4yDA4AePLoQkt0XB4_Rq-L6BkMO8yTkI",
+        "timeout": 300000,
+        "rpId": "localhost",
+        "allowCredentials": [
+            {
+                "type": "public-key",
+                "id": "r3OKZKi50ngaL8vPYbTXTA",
+                "transports": [
+                    "hybrid",
+                    "internal"
+                ]
+            }
+        ]
+    }
+}
+```
+
+#### Response to Log in challenge
+```json
+{
+   "id":"r3OKZKi50ngaL8vPYbTXTA",
+   "rawId":"r3OKZKi50ngaL8vPYbTXTA",
+   "response":{
+      "authenticatorData":"SZYN5YgOjGh0NBcPZHZgW4_krrmihjLHmVzzuoMdl2MdAAAAAA",
+      "clientDataJSON":"eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoieWZCTm1Td1dQeHo0eURBNEFlUExvUWt0MFhCNF9ScS1MNkJrTU84eVRrSSIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MCIsImNyb3NzT3JpZ2luIjpmYWxzZX0",
+      "signature":"MEUCIC6F25onqCrbB7IgsKSZepuTTXeAW_ElxuTp4JkWLjCPAiEA0I58XO7x4F6rbdDRS2mX_epA-XUFKHIC8LztXOtBdfA",
+      "userHandle":"Mg"
+   },
+   "type":"public-key",
+   "clientExtensionResults":{
+      
+   },
+   "authenticatorAttachment":"platform"
+}
+```
+
+#### What if someone loses passkey
+Users are encorouged to store more than one  
+and using different devices, also on cloud.
+
+If user loses last passkey, then it's a problem.  
+You could try to restore that account for email,  
+but be carefull, to not lower the security,  
+because email may be hacked. So at least first send email:  
+someone is trying to restore passkey for your account.
+
+And don't make it possible immediately,  
+but only after some time of waiting,  
+so that if user is hacked, he can react.
+
+#### Conditional UI
+A terrible name.  
+(passkey autofill)
+
+It's experimental from spec point of view.  
+Idea is that we can login directly, without email.
+
+When clicking email,  
+browser will suggest passord list  
+on that list there are passkeys,  
+and if user selects one of these,  
+browser will try to send email name from passkey
+
+to make this work, you have to challenge user  
+on page login of log in form,  
+However server will not get email  
+... so it it has to create a **blind challenge**
+
+and if input is changed to have webauthn  
+(and it must be on the end)  
+then browser will autofill email field
+
+```html
+<input id="login-email" required type="email" autocomplete="email webauthn">
+```
+
+Challenge is, that blind challenge has timeout  
+and it may expire, so it's not obvious how to handle this.
+
 
 
 

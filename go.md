@@ -1075,6 +1075,118 @@ and to at least to some degree mitigate this
 JWT usually has expiration date
 
 
+#### example of middleware in go
+This middleware will check that user is signed in.  
+Using it when defining a route in `main.go`
+
+```go
+http.Handle("/api/account/favorites/",
+  accountHandler.AuthMiddleware(http.HandlerFunc(accountHandler.GetFavorites)))
+```
+
+And example of implementation of that middleware.
+
+```go
+func (h *AccountHandler) AuthMiddleware(next http.Handler) http.Handler {
+  return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+    tokenStr := r.Header.Get("Authorization")
+    if tokenStr == "" {
+      http.Error(w, "Missing authorization token", http.StatusUnauthorized)
+      return
+    }
+
+    // Parse and validate the token
+    token, err := jwt.Parse(tokenStr,
+      func(t *jwt.Token) (interface{}, error) {
+        // Ensure the signing method is HMAC
+        if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+          return nil, jwt.ErrSignatureInvalid
+        }
+        return []byte(token.GetJWTSecret(*h.logger)), nil
+      },
+    )
+    if err != nil || !token.Valid {
+      http.Error(w, "Invalid token", http.StatusUnauthorized)
+      return
+    }
+    // ...
+
+    // Inject email into the request context
+    ctx := context.WithValue(r.Context(), "email", email)
+    next.ServeHTTP(w, r.WithContext(ctx))
+  })
+}
+```
+
+#### passing headers in fetch
+If the header will be null, it will not be included
+
+```typescript
+headers: {
+    "Authorization": app.Store.jwt ? `Bearer ${app.Store.jwt}` : null
+},
+```
+
+#### Reuse in web components
+One component can be used in several components.
+
+```html
+<template id="template-collection">
+  <h2></h2>
+  <ul id="movies"></ul>
+</template>
+```
+
+And it's possible to create OOP hierarchy  
+when defining web components.
+
+A generic parent class
+
+```javascript
+export class CollectionPage extends HTMLElement {
+  constructor(endpoint, title) {
+    super();
+    this.endpoint = endpoint;
+    this.title = title;
+  }
+
+  async render() {
+    const movies = await this.endpoint()
+    const ulMovies = this.querySelector("ul");
+    ulMovies.innerHTML = "";
+    if (movies && movies.length > 0) {
+      movies.forEach(movie => {
+        const li = document.createElement("li");
+        li.appendChild(new MovieItemComponent(movie));
+        ulMovies.appendChild(li);
+      });
+    } else {
+      ulMovies.innerHTML = "<h3>There are no movies</h3>";
+    }
+  }
+
+  connectedCallback() {
+    const template = document.getElementById("template-collection");
+    const content = template.content.cloneNode(true);
+    this.appendChild(content);
+    this.render();
+  }
+}
+```
+
+A child class
+
+```javascript
+import API from "../services/API.js";
+import { CollectionPage } from "./CollectionPage.js";
+
+export default class FavoritePage extends CollectionPage {
+  constructor() {
+    super(API.getFavorites, "Favorite Movies")
+  }
+}
+customElements.define("favorite-page", FavoritePage);
+```
 
 
 

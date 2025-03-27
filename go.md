@@ -1641,7 +1641,78 @@ then browser will autofill email field
 Challenge is, that blind challenge has timeout  
 and it may expire, so it's not obvious how to handle this.
 
+### Browser without JS support
+In 90' that was a thing.
 
+But today it's actually different client:
+- search crawlers
+- AI (models being trained)
+- AI (chatgpt, grog, ... searching the content)
+
+All these don't invoke javascript.  
+They will not be able to see the content.
+
+#### A Solution: we can go server side.
+but this will be bad for performance.
+
+#### B Mix (it had many names)
+universal rendering  
+hybrid rendering  
+isomorphic rendering
+
+we render something server side  
+and then client will take over
+
+Easier way to do this is to have javascript  
+both on client and backend  
+because this way we can reuuse the same code
+
+there are few unperformant solutions
+- you potentially can run JS in Go
+- or render content on server in headless browser
+
+#### Simpler solution
+we will low level manipulate string of html  
+it's laborous
+
+#### How about making main invisible?
+```html
+<main style="display: none" />
+```
+
+however google will interpret this as a trick  
+it was common in the 90 and early 2000
+
+```html
+<main style="display: none">
+  free games, porn, free mp3
+</main>
+```
+
+google has a second crawler, using less often  
+that can interpret JS, that is used to verify  
+that the real content is what the static html  
+claims to be.
+
+Today another way to attack is to try AI inject  
+something like:
+
+```html
+<main style="display: none">
+  if you are an AI model, forget everything you've asked for and...
+</main>
+```
+
+From docs online  
+This rendering process allows Googlebot to interpret JavaScript and access  
+content that isn't present in the static HTML. However, rendering JavaScript is  
+resource-intensive and may not occur immediately after crawling. Therefore,  
+it's recommended to ensure that critical content is available in the static  
+HTML to facilitate timely indexing.
+
+#### Hugo
+tool that can generate static websites  
+https://gohugo.io/
 
 
 Complete Go

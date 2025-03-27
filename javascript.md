@@ -2481,6 +2481,35 @@ export class CreateCoffeeDto {
 }
 ```
 
+#### Adding Example Responses
+Response is defined by status and returned data  
+Plugin can infer type from handler result.
+
+But we may define more responses,  
+like what happens in case of error.  
+For that purpose, there is @ApiResponse decorator
+
+```typescript
+// src/coffees/coffees.controller.ts
+import { ApiResponse } from '@nestjs/swagger';
+
+export class CoffeesController {
+  @ApiResponse({ status: 403, description: "Forbidden." })
+  @Get()
+  getPage(@Query() paginationQuery: PaginationDto) {
+    return this.coffeesService.findAll(paginationQuery);
+  }
+}
+```
+
+There is shorter way to write this,  
+with decorator that will set status code
+
+```typescript
+@ApiForbiddenResponse({ description: 'Forbidden.' })
+```
+
+
 
 JS tricks learned from the Leet Code
 ====================================

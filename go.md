@@ -1188,6 +1188,158 @@ export default class FavoritePage extends CollectionPage {
 customElements.define("favorite-page", FavoritePage);
 ```
 
+#### Passkeys, passwordless authentication
+Allows user to sign in without a password.  
+It's a big recent trend in web apps.
+
+What is a Passkey?  
+They will become more popular  
+In some time there will be apps  
+which don't have passwords at all.  
+No google federation login.
+
+It's possible, that in some time  
+there will be less passwords on the web  
+and in the end there will be none used.
+
+Currently  
+User is using browser, and user has secret  
+(the password), which is then sent to web server.  
+And server is typically storing that password  
+in the database, in hashed way (hopefully)
+
+Problem is "bad actors"
+- it can be keylogger
+- 3rd app that has a keyboard support
+- man in the middle (if HTTP)
+- getting into database (data breach, have i been pwned?)
+- phising attack (fake call center, fake website)
+- brute forcing, trying to guess the secret
+
+is man in the middle possible in HTTPS?  
+it's secure only between browser and first place  
+most exposed part in web server (CloudFront)
+
+#### Passkeys is pair of keys
+in short: it's a SSH (like on github cli),  
+where private key is stored  in Authenticator app  
+which is usually provided by OS and works in cloud
+
+User has authenticator:
+- usb key
+- device with biometric (finger scan, face scan)
+
+Then we use private/public key  
+with maths we create two related keys.  
+*HTTPS and crypto are using private/public keys*
+
+Passkey is pair of keys  
+it's exactly as SSH
+
+if someone has your private key, you're screwed.  
+same as SSH or any other private/public key system.
+
+Passkeys are same as SSH keys it's same solution,  
+but used in new situation, for signin in
+
+A) Private will be stored in Authenticator  
+even user will not be able to access it  
+B) Public will be sent to web server  
+so even if there is a breach, there is no problem.
+
+it based on WebAuthn API
+
+Google recommendation for using:  
+https://developers.google.com/identity/passkeys/ux/user-interface-design
+- use the word passkey, not biometric
+- tell about benefit, like "sign in faster"
+
+Around 93% devices are ready for passkeys  
+https://state-of-passkeys.io
+
+it can be used as multi-factor  
+or single-factor
+
+keys can be stored:
+- on device, (on )
+- on external hardware (pendrive)
+- cloud
+
+Default storage for Mac, is on cloud
+
+One Passkey is combined for one host, domain and port  
+only one origin. So they cannot be shared (at least in current version)
+
+#### Security
+best: passkeys  
+so-so: multi-factor auth (bad bad user experience)  
+worst: form based auth
+
+#### Github
+Option for passwordless sign-in with passkeys.  
+Also, one user can have many passkeys.
+
+#### Some services
+https://passkeys.io (you can create temp account for few hours)  
+https://webauthn.me (nice presentation of flow)
+
+#### Username and email
+Why we stil need to record username and email?  
+Because user can have many accounts, many identities.  
+The same device, the same website but different identities.
+
+#### Flow
+browser -> challenge -> server  
+server -> challenge -> browser  
+browser -> challenge -> authenticator  
+finger touch: creates private key, encrypts challenge with it  
+authenticator -> public key, encrypted challenge-> server
+
+what is challenge?  
+it's a string
+
+#### Passwords app on mac
+has a section for Passkeys  
+it's possible to see a list or to delete passkey  
+but you cannot see the passkey
+
+#### example of Public Key
+"kty": "EC",  
+"alg": "ECDSA_w_SHA256"  
+"crv": "P-256"  
+"x": "..."  
+"y": '...'
+
+#### Sign in later
+server will again send challenge  
+and then server expects that user will send  
+same encrypted challenge and public key  
+this way it knows that user is authenticated
+
+#### Authenticator creates
+- rawid
+- public key
+- private key
+
+#### Bluetooth
+Authenticator can be also challenged using bluetooth  
+it shows QR code to scan in authenticator
+
+QR code doesn't have challenge  
+but it has metadata that will trigger exchange using bluetooth  
+first of challenge and then, later, a public key
+
+#### Challenge
+They need to be random, unique and onetime.  
+Challenge used to sign in  
+has to be different than one used to log in.
+
+#### Server authorization
+Server decides, that user is authenticated, by checking  
+that user replied to a new (log in) challenge in a way  
+that can be decoded using stored on server public key,  
+which Authenticator sent when account was created.
+
 
 
 Complete Go

@@ -2458,6 +2458,28 @@ Without plugin, we would have to put decorator above all handlers
 and specify each piece of visible in swagger information.  
 (we can still manually overwrite anything plugin does)
 
+#### Decorating Model Properties
+Add descriptions and example values  
+using `ApiProperty` decorator.
+
+```typescript
+import { ApiProperty } from '@nestjs/swagger';
+import { IsString } from 'class-validator';
+
+export class CreateCoffeeDto {
+  @ApiProperty({ description: "The name of a coffee.", example: "Maciejka's coffee" })
+  @IsString()
+  readonly name: string;
+
+  @ApiProperty({ description: 'The brand of a coffee.' })
+  @IsString()
+  readonly brand: string;
+
+  @ApiProperty({ example: [] })
+  @IsString({ each: true })
+  readonly flavors: string[];
+}
+```
 
 
 JS tricks learned from the Leet Code

@@ -2409,6 +2409,54 @@ async function bootstrap() {
 Start app and visit Swagger client at  
 http://localhost:3000/api
 
+#### Enabling CLI Plugin
+
+By default on POST endpoints that require JSON body  
+there is no information about expected shape of that body.
+
+In code we may have dedicated dto for endpoint.  
+However Typescript has some limitations,  
+and it cannot figure out what properties class consists of  
+or to recognize is given property optional or required.
+
+There is a way to recognize these at a build time.  
+And handy way to do it is with opted in @nestjs/swagger/plugin
+
+nest-cli.json
+
+```json
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "plugins": ["@nestjs/swagger/plugin"]
+  }
+}
+```
+
+After this change it will be required to restart server,  
+in order to rebuild project and see the changes.
+
+This will correctly detect shape expected in create POST,  
+however will for for PATCH and PUT. And reason is that  
+existing `UpdateCoffeeDto` uses `PartialType` from `@nestjs/mapped-types`  
+which don't work correctly with swagger.
+
+Change the import, to make update dto be recognized by swagger.
+
+```typescript
+// src/coffees/dto/create-coffee.dto/update-coffee.dto.ts
+import { PartialType } from "@nestjs/swagger";
+import { CreateCoffeeDto } from "./create-coffee.dto";
+
+export class UpdateCoffeeDto extends PartialType(CreateCoffeeDto) {}
+```
+
+Without plugin, we would have to put decorator above all handlers  
+and specify each piece of visible in swagger information.  
+(we can still manually overwrite anything plugin does)
 
 
 

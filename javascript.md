@@ -2631,7 +2631,7 @@ JS tricks learned from the Leet Code
 like all bitwise operators, they will convert to32 bit int  
 so it cannot be used for numbers higher than:
 ```
-2**32 = 4294967296 = 4.2e9
+2**32 = 4294967296 = 4e9
 ```
 
 ### >> operator

@@ -2623,6 +2623,50 @@ of that module, like calling a `get` method.
 module.get<CoffeesService>(CoffeesService)
 ```
 
+if you wuold need basic, transient request and response  
+then use `module.resolve` instead of module.get
+
+```typescript
+service = await module.resolve(CoffeesService);
+```
+
+to run tests  
+or one specific test
+
+```bash
+npm run test:watch -- coffees.service
+```
+
+it may end with an error, like this one:  
+"Nest can't resolve dependencies of the CoffeesService"  
+which is because CoffeeService needs some dependencies  
+that are not registered in the TestingModule.
+
+As a solution, we may just add missing dependencies to module  
+(use `createTestingModule` providers section for that),  
+but it's against performing unit tests in isolation,  
+and that test shouldn't depend on external dependencies.
+
+Especially we don't want to provide database connection to unit test.
+
+One way is to mock everything, but this can lead to fragile tests  
+that are hard to maintain and don't bring significant value.
+
+As a fast solution, let's provide empty objects.  
+`getRepositoryToken` is a way to get injection token for Repository.
+
+```typescript
+providers: [
+  CoffeesService,
+  { provide: getRepositoryToken(Flavor), useValue: {} },
+  { provide: getRepositoryToken(Coffee), useValue: {} },
+  { provide: DataSource, useValue: {} },
+  { provide: ConfigService, useValue: { get: () => {}} },
+  { provide: 'COFFEE_BRANDS', useValue: [] },
+  { provide: coffeesConfig.KEY, useValue: {} },
+],
+```
+
 
 JS tricks learned from the Leet Code
 ====================================

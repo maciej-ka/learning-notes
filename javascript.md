@@ -3020,6 +3020,98 @@ describe('[Feature] Coffees - /coffees', () => {
 npm scripts allow to add lifecycle hooks  
 by simply prepending `pre` or `post` to script name
 
+#### Implementing e2e Test Logic
+Having application created in e2e test means  
+that anything that is outside of module, any additional  
+bootstrap in main.ts, should be applied to e2e too.  
+(Unless it's not needed for that e2e test).
+
+```typescript
+// main.ts
+
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      // ...
+    }),
+  );
+  // ...
+}
+```
+
+Apply this fragment to e2e too
+
+```typescript
+// coffee.e2e-spec.ts
+
+describe('[Feature] Coffees - /coffees', () => {
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      // ...
+    }).compile();
+
+    app = moduleFixture.createNestApplication()
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+        transformOptions: {
+          enableImplicitConversion: true
+        }
+      }),
+    );
+    await app.init()
+  })
+
+  // ...
+})
+```
+
+For testing, let's define coffee object,  
+that will be used in application calls.
+
+```typescript
+// coffee.e2e-spec.ts
+
+describe('[Feature] Coffees - /coffees', () => {
+  const coffee = {
+    name: 'Shipwreck Roast',
+    brand: 'Buddy Brew',
+    flavors: ['chocolate', 'vanilla']
+  };
+```
+
+To create request, we use supertest library.  
+Whole section in then may be optional, as sometimes  
+it's enough to just test response status.
+
+In that second section, we are using jasmine,  
+which is another testing library, that jest is based on.
+
+```typescript
+// coffee.e2e-spec.ts
+
+import * as request from 'supertest';
+
+it('Create [POST /]', () => {
+  return request(app.getHttpServer())
+    .post('/coffees')
+    .send(coffee as CreateCoffeeDto)
+    .expect(HttpStatus.CREATED)
+    .then(({ body }) => {
+      const expectedCoffee = expect.objectContaining({
+        ...coffee,
+        flavors: expect.arrayContaining(coffee.flavors)
+      })
+      expect(body).toEqual(expectedCoffee)
+    })
+})
+```
+
+there could be a separate file with expected  
+static responses and dtos, to avoid repetition
 
 
 

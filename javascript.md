@@ -2894,6 +2894,133 @@ providers, database connections, configurations.
 imports: [AppModule],
 ```
 
+#### Creating our First e2e Test
+Grouping functionality into modules is strongly advised in Nest.  
+Because of that organizations it's usually possible  
+to test modules individually.
+
+Create a new e2e test.
+```
+src/test/coffees/coffees.e2e-spec.ts
+```
+
+And start with general skeleton of test
+
+```typescript
+import { INestApplication } from "@nestjs/common"
+import { Test, TestingModule } from "@nestjs/testing"
+import { CoffeesModule } from "../../src/coffees/coffees.module"
+
+describe('[Feature] Coffees - /coffees', () => {
+  let app: INestApplication
+
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [CoffeesModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication()
+    await app.init()
+  })
+
+  afterAll(async () => {
+    await app.close()
+  })
+})
+```
+
+To run only selected e2e test
+
+```bash
+npm run test:e2e -- coffees
+```
+
+How to deal with missing database connection?
+
+#### A Mock interactions with the database
+We could mock all interactions with the database.  
+This gives full flexibility and isolation.  
+Cons: it's time consuming, error prone,  
+hard to maintain and we don't test any db interation.
+
+#### B Use a disk based database
+Something like SQLite.  
+It may not work,if we use  
+some PostgreSQL specific elements
+
+#### C Add an additional testing database
+This way we don't have to mock anything.  
+And we can use all the features.  
+However, this adds more complexity.
+
+We will go with this option.
+
+Docker compose
+
+```yaml
+version: "3"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: pass123
+  test-db:
+    image: postgres
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_PASSWORD: pass123
+```
+
+It's basically the same configuration,  
+with one difference: to avoid port conflict  
+there is a mapping of test db to 5433
+
+To make running easier, let's add pretest  
+and posttest hooks in package.json
+
+```json
+"pretest:e2e": "docker compose up -d test-db",
+"test:e2e": "jest --config ./test/jest-e2e.json",
+"posttest:e2e": "docker compose stop test-db && docker-compose rm -f test-db",
+```
+
+And provide database configuration to e2e test.
+
+```typescript
+// coffee.e2e-spec.ts
+describe('[Feature] Coffees - /coffees', () => {
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [
+        CoffeesModule,
+        TypeOrmModule.forRoot({
+          type: 'postgres',
+          host: 'localhost',
+          port: 5433,
+          username: 'postgres',
+          password: 'postgres',
+          database: 'postgres',
+          autoLoadEntities: true,
+          synchronize: true,
+        })
+      ],
+    }).compile();
+    // ...
+  })
+})
+```
+
+#### npm lifecycle hooks
+npm scripts allow to add lifecycle hooks  
+by simply prepending `pre` or `post` to script name
+
+
 
 
 JS tricks learned from the Leet Code

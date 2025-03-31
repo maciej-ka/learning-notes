@@ -2656,6 +2656,9 @@ As a fast solution, let's provide empty objects.
 `getRepositoryToken` is a way to get injection token for Repository.
 
 ```typescript
+// coffees.service.spec.ts
+import { getRepositoryToken } from '@nestjs/typeorm';
+
 providers: [
   CoffeesService,
   { provide: getRepositoryToken(Flavor), useValue: {} },
@@ -2666,6 +2669,118 @@ providers: [
   { provide: coffeesConfig.KEY, useValue: {} },
 ],
 ```
+
+#### Adding Unit tests
+In tests we usually group tests around one of service methods.  
+Like, in our example, we will test around findOne method.
+
+As this service method calls repository findOne,  
+we will have to mock that method.
+
+```typescript
+// coffees.service.spec.ts
+import { DataSource, Repository } from 'typeorm';
+
+describe('CoffeesService', () => {
+  let service: CoffeesService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      // ...
+    }).compile();
+    service = module.get<CoffeesService>(CoffeesService);
+  }
+
+  describe('findOne', () => {
+    describe('when coffee with ID exists', () => {
+      it('should return the coffee object', async () => {
+        const coffeeId = 1;
+        const expectedCoffee = {};
+        const coffee = await service.findOne(coffeeId);
+        expect(coffee).toEqual(expectedCoffee);
+      })
+    })
+  })
+});
+```
+
+Writing tests for findOne end with error:  
+"TypeError: this.coffeeRepository.findOne is not a function."  
+This is because so far we used empty object to define repositories.
+
+Although TypeORM may have some utilities to help mocking,  
+we will create a mock from zero:
+
+```typescript
+// coffees.service.spec.ts
+
+type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
+const createMockRepository = <T = any>(): MockRepository<T> => ({
+  findOne: jest.fn(),
+  create: jest.fn(),
+})
+```
+
+We are not implementing every method for the repository,  
+We could do this later in the future.
+
+to use that factory we need to update providers
+
+```typescript
+// coffees.service.spec.ts
+
+providers: [
+  { provide: getRepositoryToken(Flavor), useValue: createMockRepository() },
+  { provide: getRepositoryToken(Coffee), useValue: createMockRepository() },
+  // ...
+]
+```
+
+And let's get that factory in beforeEach,  
+so that we can mimic responses in each test.
+
+```typescript
+describe('CoffeesService', () => {
+  let coffeeRepository: MockRepository;
+
+  beforeEach(async () => {
+    // ...
+    coffeeRepository = module.get<MockRepository>(getRepositoryToken(Coffee))
+  })
+
+  describe('findOne', () => {
+    describe('when coffee with ID exists', () => {
+      it('should return the coffee object', async () => {
+        const coffeeId = 1;
+        const expectedCoffee = {};
+
+        coffeeRepository.findOne.mockReturnValue(expectedCoffee)
+        const coffee = await service.findOne(coffeeId);
+        expect(coffee).toEqual(expectedCoffee);
+      })
+    })
+  })
+})
+```
+
+And a test case for failure case
+
+```typescript
+describe('otherwise', () => {
+  it('should throw the "NotFoundException"', async () => {
+    const coffeeId = 1;
+    coffeeRepository.findOne.mockReturnValue(undefined);
+
+    try {
+      await service.findOne(coffeeId)
+    } catch (err) {
+      expect(err).toBeInstanceOf(NotFoundException)
+      expect(err.message).toEqual(`coffee ${coffeeId} not found`);
+    }
+  })
+})
+```
+
 
 
 JS tricks learned from the Leet Code

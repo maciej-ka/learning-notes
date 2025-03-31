@@ -2781,6 +2781,119 @@ describe('otherwise', () => {
 })
 ```
 
+#### Diving Into e2e Tests 06:09
+E2E testing covers integration of classes  
+and interactions that are closer to user perspective.
+
+Empty e2e looks like this
+
+```typescript
+// app.e2e-spec.ts
+
+describe('AppController (e2e)', () => {
+  let app: INestApplication;
+
+  beforeEach(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+
+    app = moduleFixture.createNestApplication();
+    await app.init();
+  });
+
+  it('/ (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/')
+      .expect(200)
+      .expect('Hello World!');
+  });
+});
+```
+
+There are many similarities with unit test.  
+Same as in unit tests, we are using createTestingModule.  
+However, we are calling `createNestApplication`
+
+```typescript
+app = moduleFixture.createNestApplication();
+await app.init();
+```
+
+And instead of saving reference to service,  
+we are saving reference to whole app,  
+that we then use to simulate http requests.
+
+Call to init will mount all routes,  
+trigger lifecycle hooks, etc.
+
+We are simulating request using `supertest` library.  
+It's a library for creating high level abstraction  
+of creating http requests.
+
+Run e2e tests
+
+```bash
+npm run test:e2e
+```
+
+Create request with authorization header
+
+```typescript
+it('/ (GET)', () => {
+  return request(app.getHttpServer())
+    .get('/')
+    .set('Authorization', process.env.API_KEY)
+    .expect(200)
+    .expect('Hello World!');
+});
+```
+
+If when runing tests, console shows error  
+"Jest did not exit one second after the test run has complete"  
+it means that during test there where created  
+asynchronous operations that didn't complete.
+
+Very often it's open database connection.  
+To fix this, add this on the bottom of test file
+
+```typescript
+// app.e2e-spec.ts
+
+describe('AppController (e2e)', () => {
+  // ...
+  afterAll(async () => {
+    await app.close()
+  })
+});
+```
+
+Typically we don't want to create application on each test,  
+so let's change method creating that test app to beforeAll.
+
+```typescript
+// app.e2e-spec.ts
+
+describe('AppController (e2e)', () => {
+  beforeAll(async () => {
+    const moduleFixture: TestingModule = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
+    app = moduleFixture.createNestApplication();
+    await app.init();
+  });
+  // ...
+});
+```
+
+This import line is doing a lot, perhaps we don't need that much.  
+As this creates all the controllers, all the services, routes,  
+providers, database connections, configurations.
+
+```typescript
+imports: [AppModule],
+```
+
 
 
 JS tricks learned from the Leet Code

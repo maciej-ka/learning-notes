@@ -10,6 +10,10 @@ Notes on dynamic programming
 AWS For Front-End Engineers, [Frontend Masters](https://frontendmasters.com/courses/aws-v2/)  
 Notes on lambdas
 
+[C language](./c.md)
+=================
+C fundamentals, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/c-fundamentals/#player)
+
 [Career](./career.md)  
 =======================
 Software Developer Success, [Frontend Masters](https://frontendmasters.com/courses/dev-soft-skills/)  

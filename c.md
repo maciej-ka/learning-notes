@@ -552,8 +552,35 @@ printf("Header: %zud", header);
 this will show first part of that address  
 printf("Header: %d", header);
 
+if you run program twice  
+it will show different numbers  
+how is this possible?
+
+binary is the same
+
+it's a feature of OS, memory offset is randomized,  
+so that hackers cannot easily guess read memory  
+in a predictable way
+
 #### show memory
 a lot of parts of memory may not convert  
 to something printable
 
+very low memory address is most likely a part of OS  
+and operating system will prevent and introspection there  
+by throwing segmentation fault.
 
+#### null
+pointer can be null
+
+```c
+printf("Null pointer: %s\n", (char*)0);
+```
+
+this will be printed as  
+"Null pointer: (null)"
+
+#### integers everywhere
+a lot of functions in c get integer argument  
+that is interpreted in various ways  
+sometimes as number, sometimes as address

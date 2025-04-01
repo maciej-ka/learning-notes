@@ -271,6 +271,12 @@ int main() {
 will do a length calculation for you.  
 also handles interpolation
 
+in comparison to write it has assemby result  
+and makes it less performant.
+
+although perhaps some parts of what printf does  
+cannot be made faster.
+
 ```c
 #include <stdio.h>
 
@@ -295,4 +301,24 @@ int main() {
 #### main
 main function name has a special meaning
 
+#### gcc
+gcc: gnu compiler collection
+used for C and C++, works for both
+but on macOS gcc actually `clang` is used
+(it's linked)
 
+it's possible to check by looking at
+
+```bash
+gcc -version
+```
+
+result:
+
+Apple clang Version 17.0.0
+
+#### run
+
+```bash
+gcc -o app1 1.c && ./app1
+```

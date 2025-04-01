@@ -2749,40 +2749,131 @@ will tell a list of rules that its loading.
 npm run lint -- --debug
 ```
 
+#### git
+even if your projects don't make it to the github
+it makes sense to create gitignore, because many tools
+rely on what is ignored or not (dev tools, IDE)
 
+on macos especially add
 
+```
+.DS_Store
+node_modules/
+dist/
+.env
+coverage/
+.vscode/
+```
 
-
-
+it's possible to git init inside another git project
 
 #### vite
+pronounced "vit"
 french for "quick"
 from creator of vue
 has a bundler inside: Rollup
-it's like Parcel, but performant, not friendly
+(which is difficult to setup but performant)
+it's like Parcel, but performant
 
-"Rolldown"
-Rust based bundler for javascript
+Vite makes vitest run easly
 
-if using cdns, requires type module
+they are transforming source from using Rollup
+to using "Rolldown", which is a Rust based
+bundler for javascript
+
+```bash
+npm install -D vite@5.4.2 @vitejs/plugin-react@4.3.1
+```
+
+in index.html, you have to let know vite,
+that it will be working with modules
+
 ```html
 <script type="module" src="src/App.js"></script>
 ```
 
-Next ...
-several layers beneath does webpack
+if using cdns, requires type module
 
-there are not so many bundlers
-`rollup`, `webpack`, `parcel`
-and they are reused a lot
-```json
-"dev": "vite",
-"build": "vite build",
-"preview": "vite preview",
+Vite will minify for you
+and do other typical things,
+so you don't have to.
+
+Create vite configuration
+
+```javascript
+// vite.config.js
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react"
+
+export default defineConfig({
+  plugins: [react()],
+})
 ```
-dev: used the most time
-build: more for github actions
-preview: build as production (debug problem that's only on production)
+
+#### production vs development dependency
+Actually it doesn't matter so much,
+is dependency development or production
+because you're always going to build your project
+before it goes to production.
+
+```bash
+npm i react@18.3.1 react-dom@18.3.1
+```
+
+#### npm security warning
+
+```bash
+npm audit
+npm audit fix
+```
+
+Fix will try to find patch that is fixing
+and if there is one, it applies it.
+
+#### imports
+default import
+named import
+
+```javascript
+import React from 'react'
+import { createRoot } from 'react-dom/client'
+```
+
+react-dom/client is a new way to write this import
+
+#### Run vite
+
+npm run dev: 90% of times this is what you run
+to start development.
+
+npm run build: create production package
+
+npm run preview: if you had a bug, which was visible
+only in built version of project. Preview helps with this
+it will build as for production, but serve it locally,
+to solve problems. You will rarely use it. But when you do,
+you will be happy it's there
+
+package.json
+*order is not important*
+
+```json
+{
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite",
+    "preview": "vite preview"
+  },
+  type: "module"
+}
+```
+
+to run
+
+```bash
+npm run dev
+```
 
 port number
 5173: in roman numerals V1T3
@@ -2798,7 +2889,8 @@ proxy: {
     changeOrigin: true
   },
 }
-``````
+```
+
 #### JSX
 Was never intended to be used in React.
 used in SolidJS

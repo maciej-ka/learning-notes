@@ -51,7 +51,7 @@ but my boss doesn't allow for that
 C) I want to write Scala
 
 ### Currently in develop
-#### Rock
+#### Roc
 https://www.roc-lang.org/  
 by Richard Feldman
 
@@ -125,3 +125,46 @@ Java
 Javascript through webassembly
 
 #### Why C is popular
+Maximum possible performance  
+thanks to Zero-overhead  
+as close to OS and CPU as possible
+
+Much more ergonomic than Assembly
+
+Much simpler than C++  
+C++ are very complicated  
+and compilation time is way longer  
+many people know both and prefer C
+
+#### Speed
+Local Static HTTP Server Perf Olympics  
+how fast can local http server be.
+
+3: Node.js, http-server  
+2: Rust, simple-http-server  
+1: C, no library
+
+300 lines of C code  
+that we will write in this workshop  
+using only stdlib
+
+Node uses V8 uses C++  
+(building V8 takes forever)
+
+#### Low overhead C alternativees
+C++ very complex, huge in game dev  
+Rust (Zed, Biome, Ripgrep)  
+Zig (Ghostty,Bun, TigerBeetle, Roc)  
+many others: D, Odin, JAI, Carbon
+
+all support C interop  
+bacuse C is the language that other languages  
+use to talk to each other
+
+in that sense C is most universal language.
+
+#### POSIX, why no windows
+OS-specific APIs  
+macOS, Linux, BSD all use POSIX PIs  
+(WSL also supports POSIX APIs)
+

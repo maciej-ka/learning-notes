@@ -482,7 +482,8 @@ HTTP/1.1 200 OK
 ```
 
 #### null terminator
-what is used to mark, where string has end
+what is used to mark, where string has end  
+character used for that, is `\0`
 
 this is a way to send a string  
 without telling, how long string is
@@ -550,4 +551,9 @@ printf("Header: %zud", header);
 
 this will show first part of that address  
 printf("Header: %d", header);
+
+#### show memory
+a lot of parts of memory may not convert  
+to something printable
+
 

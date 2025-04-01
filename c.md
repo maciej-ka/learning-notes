@@ -911,3 +911,45 @@ with arenas you never have to free memory
 once code is done with some part of memory  
 then whole arena is freed
 
+### network I/O
+#### sockets
+AF_INET: Ipv4
+
+```c
+int socket_f = socket(AF_INET, SOCK_STREAM, 0);
+```
+
+#### get address
+to get address of anything
+
+```c
+int opt = 1
+
+// this will get address of that opt
+// so that it can be reused in function
+&opt
+```
+
+#### sizeof
+how many bytes variable occupies
+
+```c
+sizeof(opt)
+```
+
+socket before call to bind is like  
+a open communcation channel
+
+this is a way to say "trust me, I know better"  
+what type these bytes are
+
+```c
+(struct sockaddr *)&address
+```
+
+#### errno
+whenever one of built in functions returns -1  
+errno is a variable that is filled with error number  
+that then can be inspected for a reason of error
+
+

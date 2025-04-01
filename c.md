@@ -1091,3 +1091,43 @@ potential way to handle this situation:
 #endif
 ```
 
+### Wrap up
+memory is basically a gigantic array of bytes  
+pointer means "memroy address"  
+C has 50 years, and yet, it's
+
+#### node.js addons in C++
+it's possible to extend Node  
+https://nodejs.org/api/addons.html
+
+it's possible to speed up you program  
+and then distribute it on npm
+
+#### resources
+"How to Build Software From Source"  
+Andrew Kelley (zig language create)  
+2023 Software You can love  
+Building Large C and C++ Project  
+can be very difficult
+
+Brian W.Kernighan, Dennis M.Ritchie  
+K&R, one of classical book  
+has also a lot about philosophy of writing
+
+if you want more about optimization:  
+http://agner.org/optimize
+
+very indepth course  
+where you start by building  
+a simulator of old computer  
+https://www.computerenhance.com/  
+Pefrormance-Aware Programming
+
+#### Low-overhead C alternatives
+C++ (probably most complicated of popular languages),  
+Rust (very different, doing it's own thing),  
+D,  
+Zig, (has a great uptake in popularity)  
+Odin, (let's improve, but not make things complex)  
+Jai,
+

@@ -3074,7 +3074,7 @@ export default defineConfig({
 Image file from Google.
 It's also format used by ChatGPT.
 
-
+--- stopped here ---
 
 ### Hooks
 before there were class.

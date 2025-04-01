@@ -1,7 +1,8 @@
 C fundamentals
 ==============
 https://github.com/rtfeldman/c-workshop-v1  
-Richard Feldman
+Richard Feldman  
+https://zed.dev/
 
 ### Programming Languages
 #### Zig
@@ -151,6 +152,9 @@ using only stdlib
 Node uses V8 uses C++  
 (building V8 takes forever)
 
+You cannot have memory safety  
+and top performance
+
 #### Low overhead C alternativees
 C++ very complex, huge in game dev  
 Rust (Zed, Biome, Ripgrep)  
@@ -167,4 +171,128 @@ in that sense C is most universal language.
 OS-specific APIs  
 macOS, Linux, BSD all use POSIX PIs  
 (WSL also supports POSIX APIs)
+
+### Hello, Metal
+c is typed language
+
+```c
+#include <unistd.h>
+
+void main() {
+  write(1, "Hello, World!", 13);
+}
+```
+
+1 means: write to stdout  
+13 is length of string  
+`write(1, "Hello, World!", 13);`
+
+how to detect how long a string:  
+checking every byte and counting  
+so for efficiency
+
+#### assembly
+What it translates to, in assembly
+
+```
+.LC0:
+  .string "Hello, World!"
+
+main:
+  mov edx, 13
+  mov esi, OFFSET FLAT:.LC0
+  mov edi, 1
+  jmp write
+```
+
+... how fast it runs?  
+as fast as possible  
+there is no faster way to write hello world  
+(there is no instruction to remove from here)
+
+comparison:  
+C: 7 lines  
+C++: 11 lines  
+Go lang: 44 lines  
+(setting garbage collection, also loops)
+
+Rust, Zig, JAI, Odin, Carbon  
+try to be in that regards close to C and C++  
+than in Golang (in)
+
+C speed comes from how little it does  
+how minimal in execution it is.
+
+in assembly there is no scope  
+there are only global variable registers
+
+there are not functions  
+"procedural approach" of programming  
+was a convention that devs agreed
+
+LC0 on top is so called section  
+it puts constants there
+
+in binary there is contignous fragment  
+only dedicated to constants  
+which are labeled
+
+LC0 - local constant number zero  
+OFFSET FLAT:.LC0 - we want to load from that section
+
+jmp write - there is somewhere else a function write  
+and three lines before, are preparing state of processor  
+before jumping to function. Write function is provided by OS.
+
+mov edx - move to register
+
+c library is a way to get into OS  
+there is something like a syscall  
+which is like telling OS:  
+this program wants to run this function.  
+these syscalls have numbers, but if you use them directly  
+then you are risking that these numbers will change meaning  
+and for that reason its advised to use c standard library
+
+#### return 0
+return 0: all success  
+return non 0: there was error
+
+```c
+#include <unistd.h>
+
+int main() {
+  write(1, "Hello, World!", 13);
+  return 0
+}
+```
+
+#### printf
+will do a length calculation for you.  
+also handles interpolation
+
+```c
+#include <stdio.h>
+
+int main() {
+  printf("Hello, World!");
+  return 0
+}
+```
+
+string interpolation
+
+```c
+#include <stdio.h>
+
+int main() {
+  int num = 42;
+  printf("The number is: %d", num);
+  return 0
+}
+```
+
+#### main
+main function name has a special meaning
+
 

@@ -413,6 +413,13 @@ and interpreting it in a different way
 #### example of interpretation
 1 here is 32 bit integer
 
+0,1,2 are standarized  
+0 = standard input (stdin)  
+1 = standard output (stdout)  
+2 = standard error (stderr)
+
+everything above is used to write to file
+
 ```c
 write(1, "Hello, World!", 13);
 ```
@@ -437,9 +444,110 @@ to extend one character to be used from next byte
 13  
 last argument is a 64-bit integer
 
+#### write takes three integers
+write takes three integers  
+string is actually sent as memory address
+
+```c
+// this line
+write(1, "Hello, World!", 13);
+// is translated into this
+write(1, 57234858394934, 13)
+```
+
+#### what is memory
+memory is gigantic array of bytes
+
 #### where translation for UTF happens
 it depends on what is doing displaing.  
 In terminal its a shell (and perhaps terminal)  
 to interpret these bytes as UTF and display characters.
 
 before UTF there were internationalization pages.
+
+btw.  
+UTF-16 may be historical mistake  
+(many articles on "could we avoid UTF-16 fiasco")
+
+#### pointer
+"Pointer" means "Memory Address"
+
+#### HTTP Responses
+after a hit, response will start
+
+```
+HTTP/1.1 200 OK
+
+<!doc type ..
+```
+
+#### null terminator
+what is used to mark, where string has end
+
+this is a way to send a string  
+without telling, how long string is
+
+```c
+char *header = "HTTP/1.1 200 OK";
+```
+
+star is next to name, not a type,  
+it's probably a historical mistake
+
+this header will point to first character of string
+
+#### strlen
+it's unefficient, will walk each character  
+until null terminator is found.
+
+```c
+write(1, header, 13)
+write(1, header, strlen(header))
+```
+
+compiler optimization of strlen:  
+when you use strlen on something static  
+then compiler will check length at build way  
+and subtitute call for a number.
+
+but when it's done on some dynamic data  
+runtime only data, then it has to walk it char by char
+
+#### another syntax, []
+equivalent syntax
+
+```c
+char *header = 12352
+char header[] = 12352
+```
+
+#### tradeoff
+even in 1983 some people where complaining  
+that tradeoff of walking byte per byte is poor
+
+null terminating, and strlen walking  
+is a decision that did NOT age well
+
+#### null terminated required
+a lot of libraries will require string  
+to be null terminated
+
+```c
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+  char *header = "HTTP/1.1 200 OK"
+  printf("Header: %s", header);
+  return 0;
+}
+```
+
+#### show memory address
+to show memory address  
+not sure why it's called `zud`  
+printf("Header: %zud", header);
+
+this will show first part of that address  
+printf("Header: %d", header);
+

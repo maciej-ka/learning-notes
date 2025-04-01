@@ -302,9 +302,9 @@ int main() {
 main function name has a special meaning
 
 #### gcc
-gcc: gnu compiler collection
-used for C and C++, works for both
-but on macOS gcc actually `clang` is used
+gcc: gnu compiler collection  
+used for C and C++, works for both  
+but on macOS gcc actually `clang` is used  
 (it's linked)
 
 it's possible to check by looking at
@@ -322,3 +322,124 @@ Apple clang Version 17.0.0
 ```bash
 gcc -o app1 1.c && ./app1
 ```
+
+#### out of memory
+first it will print what is in binary of program  
+that is being run
+
+```c
+write(1, "Hello, World!\n", 200);
+int num = 42;
+printf("The number is: %d\n", num);
+```
+
+so, after print 200, the next lines will be visible  
+because memory will print first, what is in binary  
+of a current program.
+
+If this will be way more increased,  
+it will show OS memory
+
+it's potentially possible to see secrets that way.
+
+#### segmentation fault
+has no stack trace!
+
+`libbacktrace:` will show you what is current trace  
+so it can monitor what is current trace  
+and show what was in trace just before segmentation fault
+
+when you try to read outside of memory  
+that your OS allows for your program
+
+they are very difficult to debug  
+because ther is stack
+
+#### return non zero
+way to check result of last command:
+
+```bash
+echo $?
+```
+
+#### include
+`#include` does copy paste  
+so result of it is exactly as if source of import  
+would be copy pasted into top of file
+
+if these files include another files  
+then there is potential to include one file more then once  
+and c lang does a bit of protection to not allow for that
+
+```c
+#include <stdio.h>
+#include <unistd.h>
+```
+
+this was a goal of golang to improve include
+
+#### linking
+step after compilation
+
+after having binary, it's a step that does wiring of dependencies,  
+it can look to check is include ever used, by checking is any part  
+of program doing a jump to that section (of assembly)
+
+### Building HTTP Responses
+#### memory
+in the end in CPU memory is ones and zeros  
+and developer tells, how to interpretate them
+
+CPUs asks: tell me what are these ones and zeros  
+and what you want to do with them?
+
+hardware doesn't care  
+it's us, who decide  
+how to interpret these ones and zero
+
+#### byte
+this term arrived later  
+and first, it wasn't settled is byte 7 bits or 8
+
+#### many interpretations
+you can take the same ones and zeros  
+the same fragment of memory  
+and interpret them differently
+
+it's called "casting" (in c way)  
+taking same fragment of memory  
+and interpreting it in a different way
+
+#### example of interpretation
+1 here is 32 bit integer
+
+```c
+write(1, "Hello, World!", 13);
+```
+
+"Hello"  
+is represented as bytes  
+ASCII encoding, 1B per character  
+(and first bit is zero because only 7 first is used)  
+48: 'H'  
+65: 'e'  
+108: 'l'  
+108: 'l'  
+111: '0'
+
+UTF-8  
+clever thing,  
+first 127 characters are same in UTF-8 and ASCII  
+UTF uses that free first byte  
+to extend one character to be used from next byte  
+(or even similar)
+
+13  
+last argument is a 64-bit integer
+
+#### where translation for UTF happens
+it depends on what is doing displaing.  
+In terminal its a shell (and perhaps terminal)  
+to interpret these bytes as UTF and display characters.
+
+before UTF there were internationalization pages.

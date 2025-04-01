@@ -584,3 +584,330 @@ this will be printed as
 a lot of functions in c get integer argument  
 that is interpreted in various ways  
 sometimes as number, sometimes as address
+
+
+### Request
+#### functions
+```
+GET /blog HTTP/1.1
+Host: www.example.com
+User-Agent: ....
+```
+
+File to open:  
+blog/index.html
+
+```c
+int main() {
+  char *req = "GET /blog HTTP/1.1..."
+  char *path = to_path(req);
+
+  printf("Path: %s, path")
+
+  return 0
+}
+```
+
+in c, we have to declare header  
+of function before useage
+
+```c
+char* to_path(const char* req);
+
+int main() {
+  // ....
+}
+```
+
+or we can just declare function body above
+
+```c
+char *to_path(char *req) {
+  // Input: "GET /blog HTTP/1.1..."
+  // Goal: "blog/index.html"
+  char *start = req
+    while (start[0] != ' ') {
+      if (!start[0]) { return NULL }
+      start++;
+    }
+}
+```
+
+#### same
+on hardware level zero is special case  
+and all the non zero are other case
+
+```c
+start[0] == '\0'
+!start[0]
+```
+
+#### curly are optional
+while `{}`  are optional  
+it can lead to very difficult problems to debug.
+
+famous heartbleed exploit
+
+```c
+if (!start[0])
+  return NULL;
+```
+
+as a practice, always put them
+
+#### to path rewrite
+another way to write it
+
+```c
+char *to_path(char *req) {
+  // Input: "GET /blog HTTP/1.1..."
+  // Goal: "blog/index.html"
+  for (
+    char *start =  req;
+    start[0] != ' ';
+    start++
+  ) {
+    (!start[0]) { return NULL; }
+    start++;
+  }
+}
+```
+
+#### get previous character
+using pointer arithmetic `end[-1]`  
+we are modifying in place
+
+```c
+char *end
+if (end[-1] == '/') {
+  end--
+} else {
+  end[0] = '/'
+}
+```
+
+#### memcpy
+copy and change fragment of memory
+
+```c
+// write "index.html\0 after
+memcpy(end + 1, "index.html", 11);
+```
+
+end + 1: the destination  
+11: how many bytes we want to copy from the source
+
+(why 11, string has 10? ... because of null terminator)  
+in c "index.html" the language  
+will add \0 by default to the end
+
+#### more implicit way to memcpy
+here we are more implicit that, 
+
+```c
+const char *DEFAULT_FILE = "index.html";
+memcpy(
+  end + 1,
+  DEFAULT_FILE,
+  strlen(DEFAULT_FILE) + 1);
+```
+
+#### mutable strings
+strings in c lang are mutable
+
+#### bus error
+when you are getting string from outside  
+as a pointer, and you want to modify it in place  
+(in macOS it will be reported as "bus error")
+
+#### readonly memory
+this is because it's readonly memory  
+to fix it
+
+```c
+// change this
+*req
+
+// into this
+req[]
+```
+
+implication of [] is that we are saying:  
+I want that variable to be added to stack  
+make it local to the function (on stack)  
+so that I can modify it
+
+#### dereference
+`start[0]` is a way to deference pointer
+
+```c
+char *start
+start[0]
+```
+
+#### memory optimizations
+can rearange your code
+
+#### memcpy
+it's important to check, that destination has  
+enough of space to write, what we want.
+
+if we don't then we risk, that we will overwrite  
+a part of binary of our own program.
+
+And this, with memory optimizations that rearrange  
+can be difficult to spot.
+
+### File I/O
+#### open file
+open file returns int  
+known as file descriptor (fd)
+
+and its very important, to close a file  
+after you are done.
+
+```c
+char *path = "example.txt";
+int fd = open(path, O_RDONLY);
+
+if (fd  == -1) {
+  // Handle errors
+}
+
+char buffer[100];
+ssize_t length = read(fd, buffer, 100);
+
+if (length == -1) {
+  // Handle errors
+}
+```
+
+#### convention on errors
+it's very common to have c function  
+to signal, that there is error, by returning:  
+`-1`
+
+#### reserve space for 100 chars
+don't initalize this space to anything.  
+don't put anything in there.  
+(it can be some memory garbage)
+
+```c
+char buffer[100];
+```
+
+#### how to read all bytes
+not just assume 100  
+for that we need to ask operationg system  
+how large file is
+
+we read it from metadata
+
+stat structure, struct is close to object  
+however there is no way to iterate over keys
+
+struct is array of bytes  
+with convience to call fields by name
+
+```c
+struct stat {
+  dev_t st_dev; // id of device
+  ino_t st_ino; // inode number
+  mode_t st_mode; // protection
+  link_t st_nlink; // number of hard links
+  // ...
+}
+```
+
+this is how to use it  
+first we reserve space in memory for it
+
+
+```c
+struct stat metadata;
+
+if (fstat(fd, &metadata) == -1) {
+  //  Error
+}
+
+// Printe size, not sure where %ld comes from
+printf("%ld bytes\n", metadata.st_size);
+
+close(fd);
+```
+
+#### struct
+this is a way to send a struct to a function  
+where struct is not copied, for performance reasons  
+but instead its sent as addres in memory, by reference
+
+passing memory address is always 8B  
+in comparison, stat struct has 144B  
+it wouldn't be efficient to copy it
+
+in c lang it's very common to see functions  
+that just pass memory addresses
+
+#### functions don't leak memory
+after function is done  
+all it's local variables are done  
+by a nature, how the stack works
+
+for that reason, it's not safe  
+to return a address of local variable from function
+
+this is why it's often safer,  
+when return memory is provided by caller  
+as a pointer argument
+
+#### heap
+functions can reserve long lived memory  
+using `malloc()`
+
+When possible, it's better to avoid using malloc,  
+and instead reusing memory. To suprise it's often  
+less error prone that way.
+
+anythime you call malloc, you also have a memory leak  
+and you have to call `free`
+
+but if you call `free` too early  
+then you can cause bugs  
+and security problems
+
+two flavors:
+
+A use after free  
+... it's same type of problem  
+as returning local memory from function  
+(and if you're lucky, your data is still there)
+
+B double free  
+when you call free twice  
+when you still hold address after first free  
+and that space was assigned by another part of program  
+and by accident it got same memory address  
+and by mistake, first part of code is again calling free
+
+c standard library is not using malloc
+
+#### how memory is organized
+exacutable + constants  
+global vars  
+stack  
+heap (by far largest)
+
+it's possible, for example,  
+when trying to read very large file  
+that heap can be extended
+
+you cannot read 5GB in one run  
+you can divide it to chunks, and process in parts.
+
+#### memory arenas
+alternative to malloc  
+it's almost like you make a small stack of your own  
+with arenas you never have to free memory  
+once code is done with some part of memory  
+then whole arena is freed
+

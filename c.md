@@ -952,4 +952,142 @@ whenever one of built in functions returns -1
 errno is a variable that is filled with error number  
 that then can be inspected for a reason of error
 
+#### string comparison
+this will not work, because it's memory address
+that is compared, not value
+
+```c
+if (extension == "png") {
+   // ....
+}
+```
+
+to fix this:
+
+```c
+if (!strcmp(extension, "png")) {
+  // ....
+}
+```
+
+if strings are same, strcmp will return 0
+
+#### fast c trick, c casting
+because strcmp would be slow
+as it would compare for each case
+bit by bit, restarting again for each failed case
+
+```
+"png"
+"css"
+"js"
+"html"
+```
+
+we look into bytes and bits of these
+h 104
+t 116
+m 109
+l 108
+
+so in a sense, html has a value 1,752,660,652
+as long as we treat these as four bytes or less
+we can interpret them as numbers
+
+```c
+const int PNG = 18886283520;
+const int HTML = 17524606652;
+
+switch (*(int *)extension) {
+  case PNG:
+    type = "image/png";
+    break;
+  case HTML:
+    type = "text/html";
+    break;
+  }
+}
+```
+
+#### multiply by two
+c language compiler will automatically change
+times 2 into bitshift, because it's way more performant.
+
+#### bit shift and bit or
+fast way to calculate magical number
+we calculate that large number by bitshifts
+to multiply, and then bitwise OR to perform sum
+
+```c
+'h' | ('t' << 8) | ('m' << 16) | ('l' << 24)
+to_int('h', 't', 'm', 'l')
+```
+
+#### make a const at a compile time
+we would like to store result of that 
+
+`#define`
+everything that starts with `#` is a preprocessor directive.
+
+way to write macros
+
+```c
+#define PORT 8080;
+printf("Listening on localhost: %d\n", PORT);
+```
+
+we can also build functions with it
+
+```c
+#define FOURCHAR(a, b, c, d) \
+a | (b << 8) | (c << 16) | (d << 24)
+printf("Listening on localhost: %d\n", PORT);
+
+const int HTML = FOURCHAR('h', 't', 'm', 'l');
+const int CSS = FOURCHAR('c', 's', 's', '\0');
+const int JS = FOURCHAR('j', 's', '\0', '\0');
+```
+
+#### sendfile
+when we
+read() from a file descriptor
+and then we
+write() to another fd
+
+and we have to think, should we malloc and so
+
+if OS can do something for you, it becomes way easier,
+and sendfile is OS utility, that says:
+tell me two file descriptors: destination and source
+
+sendfile is OS dependent
+it's different on Linux and macOS
+(they are totally different)
+
+macOS is built on BSD
+
+this is a limit to portability
+in case of sendfile they use different imports
+and have different arguments.
+
+#### target specific preprocessor macros
+
+
+```c
+#ifdef __linux__
+#include <sys/sendfile.h>
+#endif
+```
+
+potential way to handle this situation:
+
+```c
+#ifdef __linux__
+  // Linux-specific code
+#elif defined(__APPLE__)
+  // macOS-specifc code
+#else
+  #error "Unsupporte OS"
+#endif
+```
 

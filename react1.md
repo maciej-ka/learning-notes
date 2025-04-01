@@ -2446,7 +2446,7 @@ https://frontendmasters.com/courses/complete-react-v9/
 https://react-v9.holt.courses/  
 https://github.com/btholt/citr-v9-project
 
-currencies built into browser:
+#### currencies built into browser
 
 ```javascript
 const intl = new Intl.NumberFormat("en-US", {
@@ -2455,17 +2455,34 @@ const intl = new Intl.NumberFormat("en-US", {
 });
 ```
 
+#### Opinion on Next.js
+It's a good tool, if you have shape of problem  
+that Next is aimed to solve. But it's completely valid  
+to still write regular client side React.
+
+#### WSL2, Windows Subsystem for Linux
+A part of Windows that allows to use GNU/Linux
+
+### React without build step
+
+#### UMD
+universal module definition
+
+#### no build step
 it's possible to make react  
 without build step
 
 makes sense to add something here  
 so that users without js can see some info
+
 ```html
 <div id="root">not rendered</div>
 ```
 
-#### react from cdns, no build
-unpkg: cdn for package
+#### unpkg, unpackage
+Created by one of React Router authors.  
+Basically it's a CDN for every npm package.  
+Way to start with something with no build step.
 
 ```html
 <div id="root">not rendered</div>
@@ -2474,16 +2491,18 @@ unpkg: cdn for package
 <script src="src/App.js"></script>
 ```
 
-start http
+#### npx serve start http
+made by Vercel
+
 ```bash
 npx serve
 ```
-made by vercel
 
+#### first component
 App.js
 
 ```javascript
-const App = () =>  {
+const App = () => {
   return React.createElement(
     "div",
     {},
@@ -2496,6 +2515,7 @@ const root = ReactDOM.createRoot(container);
 root.render(React.createElement(App));
 ```
 
+#### components
 component is like a stamp
 
 create Element has two ways  
@@ -2515,7 +2535,7 @@ return React.createElement("div", {}, [
 ])
 ```
 
-props:
+#### props
 
 ```javascript
 const Pizza = (props) => {
@@ -2539,11 +2559,62 @@ React.createElement(Pizza, {}),
 React.createElement(Pizza),
 ```
 
-a lot of ternary operators in React
+#### a bit of history
+When React was created,  
+market was about model - view - viewmodel.
 
+Frameworks like:  
+Backbone  
+Knockout  
+old Angular
+
+they well trying to copy Rails  
+but on frontend
+
+and React took a bit of PHP  
+instead of here is model, view and viewmodel  
+they were inspired by PHP way of combining all together  
+so that one concern contains a bit of everything.
+
+#### JSX
+Was a huge barrier to adoption for a lot of people  
+in early days of React.
+
+#### npm
+Usefulnes  of npm is that we can specify  
+exact versions of tools our project relies on.
+
+```bash
+npm init -y
+```
+
+#### prettier
 .prettierrc  
 can be very short:  
-`{}`
+it's a way to say: "use all defaults"
+
+```
+{}
+```
+
+install as dev dependency  
+(don't use it in production environment)
+
+```bash
+npm i -D prettier
+```
+
+set script for prettier  
+reason to put it in escaped quote  
+is to avoid OS doing file expansion
+
+```json
+{
+  "scripts": {
+    "format": "prettier --write \"src/**/*.{js.jsx,css,html}\""
+  }
+}
+```
 
 #### CRA
 not recommended anymore in React docs  
@@ -2558,43 +2629,139 @@ balanced view:
 catch very common errors  
 otherwise leave me alone
 
-sort imports? one of least favorite rules
+general approach to dev tools  
+your developer has something in mind  
+and wants to express it in the code.  
+Don't intterrupt, unless you're helping them
 
-current config:  
-`eslint.config.mjs`
+Just to get someone to write code in some format  
+just because you like it, only creates more friction.  
+Unless it's important, don't do it.
+
+one of least favorite rules:  
+sort imports
+
+valid example:  
+never use `with`  
+(very old syntax which no one uses)
+
+as Prettier is better for formatting,  
+leave formatting to Prettier  
+and focus eslint on problems.
+
+#### oxlint, Biome
+Eslint alternatives.  
+New, they rely on eslint  
+Evan You, started new company around oxlint and Vite.
+
+Biome, formerly called Rome  
+written in Rust, faster than ESLint
+
+#### Eslint 8 vs 9
+Quite a big difference
+
+```bash
+npm install -D eslint@9.9.1 eslint-config-prettier@9.1.0 globals@15.9.0
+```
+
+#### @type
+Way to tell IDE, to provide completions  
+for non typescript fragment of code
 
 ```javascript
 /** @type {import('eslint').Linter.Config[]} */
 ```
-tip for vscode  
-to use completions for that type  
-(without typescript!)
 
-config
-```json
-"lint": "eslint"
-```
-run
-```bash
-npm run lint -- --fix
-```
--- is needed  
-without it --fix will be parameter of npm
+#### config
+current config uses mjs,  
+import (not require)
 
-#### oxlint, Biome
-written in Rust, faster than ESLint
+to use all settings, switch to  
+(but you will regret, it's too much)
+
+```javascript
+export default [
+  js.configs.all,
+  // ...
+]
+```
+
+eslint config is built in steps,  
+each next builds on top of previous.  
+It's important, to always put prettier as last.  
+Because it doesn't provide, it just disables.
+
+Our settings are in middle,  
+between js.configs.recommended and prettier
+
+```javascript
+// eslint.config.mjs
+
+import js from "@eslint/js"
+import globals from "globals"
+import prettier from "eslint-config-prettier"
+
+/** @type {import('eslint').Linter.Config[]} */
+export default [
+  js.configs.recommended,
+  {
+    files: ["**/*.js", "**/*.jsx"],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node },
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        }
+      }
+    }
+  },
+  prettier
+]
+```
 
 https://www.npmjs.com/package/globals  
 Global identifiers from different JavaScript environments  
 `globals.browser`
 
+#### config script
+package.json
+
+```json
+"scripts": {
+  "lint": "eslint"
+}
+```
+
+#### run eslint
+without -- the fix will be applied to npm  
+(while we wan't to apply it to eslint)
+
+```bash
+npm run lint -- --fix
+```
+
+#### eslint debug
+quite interesting  
+shows a lot of info how eslint works,  
+will tell a list of rules that its loading.
+
+```bash
+npm run lint -- --debug
+```
+
+
+
+
+
+
+
 #### vite
-french for "quick"  
-from creator of vue  
-has a bundler inside: Rollup  
+french for "quick"
+from creator of vue
+has a bundler inside: Rollup
 it's like Parcel, but performant, not friendly
 
-"Rolldown"  
+"Rolldown"
 Rust based bundler for javascript
 
 if using cdns, requires type module
@@ -2602,27 +2769,27 @@ if using cdns, requires type module
 <script type="module" src="src/App.js"></script>
 ```
 
-Next ...  
+Next ...
 several layers beneath does webpack
 
-there are not so many bundlers  
-`rollup`, `webpack`, `parcel`  
+there are not so many bundlers
+`rollup`, `webpack`, `parcel`
 and they are reused a lot
 ```json
 "dev": "vite",
 "build": "vite build",
 "preview": "vite preview",
 ```
-dev: used the most time  
-build: more for github actions  
+dev: used the most time
+build: more for github actions
 preview: build as production (debug problem that's only on production)
 
-port number  
+port number
 5173: in roman numerals V1T3
 
-redirect  
-http://localhost:5173/api/pizza  
-to  
+redirect
+http://localhost:5173/api/pizza
+to
 http://localhost:3000/api/pizza
 ```json
 proxy: {
@@ -2633,17 +2800,17 @@ proxy: {
 }
 ``````
 #### JSX
-Was never intended to be used in React.  
+Was never intended to be used in React.
 used in SolidJS
 
-use jsx or js as extension?  
+use jsx or js as extension?
 initially it had to be jsx
 
-Dan Abramov: I just use "js"  
-it caused massive swing from jsx to js  
+Dan Abramov: I just use "js"
+it caused massive swing from jsx to js
 but vite requires it, so its jsx again
 
-reason for "classname" not "class"  
+reason for "classname" not "class"
 class is reserved word in javascript
 
 same with label for
@@ -2651,89 +2818,89 @@ same with label for
 <label htmlFor="..."
 ```
 
-this is valid html  
-but wrong jsx:  
-<input>  
-valid jsx:  
+this is valid html
+but wrong jsx:
+<input>
+valid jsx:
 <input />
 
 do you have to use
 ```javascript
 import React from "react"
 ```
-it used to be required  
+it used to be required
 now if file is jsx extension that import is added
 
-lower/upper case  
-h1: literally a tag  
+lower/upper case
+h1: literally a tag
 H1: a component
 
 ### Hooks
-before there were class.  
-Class are very rarely used.  
+before there were class.
+Class are very rarely used.
 It's almost strange how class components are gone.
 
-You don't want anything heavy in render path,  
+You don't want anything heavy in render path,
 because it will slow down.
 
 when app crashes, named function:
 ```javascript
 export default function Order () {}
 ```
-will display little better in stack  
+will display little better in stack
 then:
 ```javascript
 const Pizza = (props) => {}
 ```
 
-two-way binding  
-Angular 1  
-but it turns out, it was hard to work  
+two-way binding
+Angular 1
+but it turns out, it was hard to work
 where this variable comed from?
 
-in comparison, React is very verbose  
+in comparison, React is very verbose
 but also easy to work
 
 #### order dependent
 cannot be inside conditionals
 
 ### Strict mode
-will run everything twice  
+will run everything twice
 to make sure you don't have side effects
 
 ### Dev tools
-you can change state just to test  
+you can change state just to test
 and also recently it allows to edit props
 
-$0 -> last selected thing in inspector  
+$0 -> last selected thing in inspector
 $r -> last react component selected in component tree
 
-changing a tab to components after inspector  
+changing a tab to components after inspector
 will remember last selected and translate it to react
 
 #### React is usually fast enough
 apart from moments when you have problem
 
 #### order
-first render  
+first render
 useEffect(..., [])
 
-first render is before  
+first render is before
 useEffect will schedule function
 
 ### useDebugValue
 send some value to Components developers tool for component
 
 ### Preconnect / Preload
-Apart from lazy and eager load...  
-preconnect: open socket and have everything ready for download  
+Apart from lazy and eager load...
+preconnect: open socket and have everything ready for download
 preload: load something you expect
 
-service workers:  
-they can work like: here is a map of everything needed  
+service workers:
+they can work like: here is a map of everything needed
 please preload all
 
-preload and preconnect  
+preload and preconnect
 React 19
 
 

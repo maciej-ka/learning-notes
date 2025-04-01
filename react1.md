@@ -2878,54 +2878,203 @@ npm run dev
 port number
 5173: in roman numerals V1T3
 
-redirect
-http://localhost:5173/api/pizza
-to
-http://localhost:3000/api/pizza
-```json
-proxy: {
-  "/api": {
-    target: "http://localhost:3000",
-    changeOrigin: true
-  },
+#### JSX
+Famous Pete Hunt presentation 
+https://www.youtube.com/watch?v=x7cQ3mrcKaY
+
+Hack is flavor of PHP, or something similar,
+and JSX was prepared last minute, to convince Hack devs
+to use React.
+
+And then it becomed really popular,
+SolidJS uses it, it can be used in Vite
+
+People before spend a lot of time in projects
+ripping js apart and separating it from html.
+
+What started to convince people, was that in the end
+if you write JS to make html, then perhaps it's better
+to write html. JSX is very thin layer.
+
+#### Jsx or Js
+Use jsx or js as extension?
+Initially it had to be jsx.
+
+Dan Abramov: "I just use js"
+it caused massive swing from `jsx` to `js`
+but vite requires it, so its jsx again.
+
+Reason for "classname" not "class"
+class is reserved word in javascript
+
+same with label `for` which is reserved in JS
+
+```jsx
+<label htmlFor="..." />
+```
+
+You can put in curly braces any js expression.
+Expression is everything, that can be
+a right part of assignment
+
+```jsx
+const Pizza = (props) => {
+  return (
+    <div className="pizza">
+      <h1>{props.name}</h1>
+      <p>{props.description}</p>
+    </div>
+  )
 }
 ```
 
-#### JSX
-Was never intended to be used in React.
-used in SolidJS
+Is same as:
 
-use jsx or js as extension?
-initially it had to be jsx
-
-Dan Abramov: I just use "js"
-it caused massive swing from jsx to js
-but vite requires it, so its jsx again
-
-reason for "classname" not "class"
-class is reserved word in javascript
-
-same with label for
-```html
-<label htmlFor="..."
+```javascript
+const Pizza = (props) => {
+  return React.createElement("div", {}, [
+    React.createElement("h1", {}, props.name),
+    React.createElement("p", {}, props.description)
+  ])
+}
 ```
 
+#### JSX is not as forgiving as html.
 this is valid html
 but wrong jsx:
-<input>
-valid jsx:
-<input />
 
-do you have to use
+```html
+<input>
+```
+
+valid jsx:
+
+```jsx
+<input />
+```
+
+#### named export vs default
+With named you can export many from one files.
+Some people have strong opinions about it.
+
+javascript and React has too much strong opinions
+on things that perhaps shouldn't matter at all.
+
+Do you have to import React
+
 ```javascript
 import React from "react"
 ```
-it used to be required
-now if file is jsx extension that import is added
+
+Tools have gone smart enough that they can recognize it.
+It used to be required, not anymore.
 
 lower/upper case
 h1: literally a tag
 H1: a component
+
+#### eslint react
+There are several things that we want eslint to detect,
+in how we are using React.
+
+```bash
+npm i -D eslint-plugin-react@7.37.1
+```
+
+configure
+eslint react needs to know react version,
+
+```javascript
+// eslint.config.mjs
+import reactPlugin from "eslint-plugin-react"
+
+export default [
+  js.configs.recommended,
+  {
+    ...reactPlugin.configs.flat.recommended,
+    settings: {
+      react: {
+        version: "detect",
+      }
+    }
+  },
+  reactPlugin.configs.flat["jsx-runtime"],
+  {
+    files: ["**/*.js", "**/*.jsx"],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node },
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true,
+        }
+      }
+    },
+    rules: {
+      "react/no-unescaped-entities": "off",
+      "react/prop-types": "off",
+    }
+  },
+  prettier
+]
+```
+
+this one will fix error of missing React import
+
+```javascript
+reactPlugin.configs.flat["jsx-runtime"],
+```
+
+add eslint rules
+they have to be added almost last
+(order is important in eslint.config.mjs)
+because what is later will override
+
+react/no-unescaped-entities
+without this, you cannot write unescaped '
+and you have to write instead `&apos;`
+(in reality you prefer your tools to escape for you)
+
+"flat" are a new format of eslint configs
+
+### Api server
+
+#### solve CORS with proxy
+Use vite as a proxy.
+Run our frontend and backend on the same port.
+
+redirect
+http://localhost:5173/api/pizzas
+to
+http://localhost:3000/api/pizzas
+
+```javascript
+// vite.config.js
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react"
+
+export default defineConfig({
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true
+      },
+      "/public": {
+        target: "http://localhost:3000",
+        changeOrigin: true
+      }
+    },
+  },
+  plugins: [react()],
+})
+```
+
+#### webp
+Image file from Google.
+It's also format used by ChatGPT.
+
+
 
 ### Hooks
 before there were class.

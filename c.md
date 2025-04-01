@@ -953,7 +953,7 @@ errno is a variable that is filled with error number
 that then can be inspected for a reason of error
 
 #### string comparison
-this will not work, because it's memory address
+this will not work, because it's memory address  
 that is compared, not value
 
 ```c
@@ -973,8 +973,8 @@ if (!strcmp(extension, "png")) {
 if strings are same, strcmp will return 0
 
 #### fast c trick, c casting
-because strcmp would be slow
-as it would compare for each case
+because strcmp would be slow  
+as it would compare for each case  
 bit by bit, restarting again for each failed case
 
 ```
@@ -984,14 +984,14 @@ bit by bit, restarting again for each failed case
 "html"
 ```
 
-we look into bytes and bits of these
-h 104
-t 116
-m 109
+we look into bytes and bits of these  
+h 104  
+t 116  
+m 109  
 l 108
 
-so in a sense, html has a value 1,752,660,652
-as long as we treat these as four bytes or less
+so in a sense, html has a value 1,752,660,652  
+as long as we treat these as four bytes or less  
 we can interpret them as numbers
 
 ```c
@@ -1010,12 +1010,12 @@ switch (*(int *)extension) {
 ```
 
 #### multiply by two
-c language compiler will automatically change
+c language compiler will automatically change  
 times 2 into bitshift, because it's way more performant.
 
 #### bit shift and bit or
-fast way to calculate magical number
-we calculate that large number by bitshifts
+fast way to calculate magical number  
+we calculate that large number by bitshifts  
 to multiply, and then bitwise OR to perform sum
 
 ```c
@@ -1026,7 +1026,7 @@ to_int('h', 't', 'm', 'l')
 #### make a const at a compile time
 we would like to store result of that 
 
-`#define`
+`#define`  
 everything that starts with `#` is a preprocessor directive.
 
 way to write macros
@@ -1049,25 +1049,25 @@ const int JS = FOURCHAR('j', 's', '\0', '\0');
 ```
 
 #### sendfile
-when we
-read() from a file descriptor
-and then we
+when we  
+read() from a file descriptor  
+and then we  
 write() to another fd
 
 and we have to think, should we malloc and so
 
-if OS can do something for you, it becomes way easier,
-and sendfile is OS utility, that says:
+if OS can do something for you, it becomes way easier,  
+and sendfile is OS utility, that says:  
 tell me two file descriptors: destination and source
 
-sendfile is OS dependent
-it's different on Linux and macOS
+sendfile is OS dependent  
+it's different on Linux and macOS  
 (they are totally different)
 
 macOS is built on BSD
 
-this is a limit to portability
-in case of sendfile they use different imports
+this is a limit to portability  
+in case of sendfile they use different imports  
 and have different arguments.
 
 #### target specific preprocessor macros

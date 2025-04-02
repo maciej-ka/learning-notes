@@ -3135,6 +3135,9 @@ it's a cleanup function
 (it's run before each call of useEffect)  
 (and when component unmounts)
 
+first render happens before  
+useEffect will schedule function
+
 useEffect cannot be async function  
 but it can call async function:
 
@@ -3148,6 +3151,20 @@ async function fetchPizzaTypes() {
 
 useEffect(() => {
   fetchPizzaTypes()
+}, [])
+```
+
+or define function inside useEffect block
+
+```javascript
+useEffect(() => {
+  async function fetchPizzaOfTheDay() {
+    const response = await fetch("/api/pizza-of-the-day")
+    const data = await response.json();
+    setPizzaOfTheDay(data);
+  }
+
+  fetchPizzaOfTheDay();
 }, [])
 ```
 
@@ -3236,6 +3253,45 @@ when you need them.
 
 Profiler will show when and why each component rendered.  
 And also it can show Priority: Immediate or Deffered.
+
+#### Custom Hooks
+Hooks are composable. We can create one hook, that will encapsulate  
+several useState, useEffect inside. And make them reusable.
+
+It's just a function that calls another functions.  
+Name "Custom Hooks" is making them seem  
+to be more complicated, then they are.
+
+#### When to use Custom Hooks
+Opinions are divided.
+
+One Extreme end: never write any custom components.
+
+Another extreme end: never put useEffect in your component.  
+Any effect should always to go custom hook.  
+Nice thing is that custom hooks are easy to test.
+
+Recommended: put effect into custom hook, when:
+- they are reused (at least once)
+- or they need to be tested
+
+#### DRY
+Don't repeat yourself
+
+Perhaps you're WET person.  
+Allow to repeat once,  
+Consider refactor on second, third repeat.
+
+#### Linux filenames
+Are case insensitive.
+
+#### "use" naming convention
+It's not mandatory for custom hooks  
+to begin with use
+
+but if custom hook begins this way  
+then all the linting will detect this  
+and apply rules it normally does to hooks
 
 
 

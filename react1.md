@@ -2446,15 +2446,6 @@ https://frontendmasters.com/courses/complete-react-v9/
 https://react-v9.holt.courses/  
 https://github.com/btholt/citr-v9-project
 
-#### currencies built into browser
-
-```javascript
-const intl = new Intl.NumberFormat("en-US", {
-  style: "currency",
-  currency: "USD",
-});
-```
-
 #### Opinion on Next.js
 It's a good tool, if you have shape of problem  
 that Next is aimed to solve. But it's completely valid  
@@ -2750,8 +2741,8 @@ npm run lint -- --debug
 ```
 
 #### git
-even if your projects don't make it to the github
-it makes sense to create gitignore, because many tools
+even if your projects don't make it to the github  
+it makes sense to create gitignore, because many tools  
 rely on what is ignored or not (dev tools, IDE)
 
 on macos especially add
@@ -2768,24 +2759,24 @@ coverage/
 it's possible to git init inside another git project
 
 #### vite
-pronounced "vit"
-french for "quick"
-from creator of vue
-has a bundler inside: Rollup
-(which is difficult to setup but performant)
+pronounced "vit"  
+french for "quick"  
+from creator of vue  
+has a bundler inside: Rollup  
+(which is difficult to setup but performant)  
 it's like Parcel, but performant
 
 Vite makes vitest run easly
 
-they are transforming source from using Rollup
-to using "Rolldown", which is a Rust based
+they are transforming source from using Rollup  
+to using "Rolldown", which is a Rust based  
 bundler for javascript
 
 ```bash
 npm install -D vite@5.4.2 @vitejs/plugin-react@4.3.1
 ```
 
-in index.html, you have to let know vite,
+in index.html, you have to let know vite,  
 that it will be working with modules
 
 ```html
@@ -2794,8 +2785,8 @@ that it will be working with modules
 
 if using cdns, requires type module
 
-Vite will minify for you
-and do other typical things,
+Vite will minify for you  
+and do other typical things,  
 so you don't have to.
 
 Create vite configuration
@@ -2812,9 +2803,9 @@ export default defineConfig({
 ```
 
 #### production vs development dependency
-Actually it doesn't matter so much,
-is dependency development or production
-because you're always going to build your project
+Actually it doesn't matter so much,  
+is dependency development or production  
+because you're always going to build your project  
 before it goes to production.
 
 ```bash
@@ -2828,11 +2819,11 @@ npm audit
 npm audit fix
 ```
 
-Fix will try to find patch that is fixing
+Fix will try to find patch that is fixing  
 and if there is one, it applies it.
 
 #### imports
-default import
+default import  
 named import
 
 ```javascript
@@ -2844,18 +2835,18 @@ react-dom/client is a new way to write this import
 
 #### Run vite
 
-npm run dev: 90% of times this is what you run
+npm run dev: 90% of times this is what you run  
 to start development.
 
 npm run build: create production package
 
-npm run preview: if you had a bug, which was visible
-only in built version of project. Preview helps with this
-it will build as for production, but serve it locally,
-to solve problems. You will rarely use it. But when you do,
+npm run preview: if you had a bug, which was visible  
+only in built version of project. Preview helps with this  
+it will build as for production, but serve it locally,  
+to solve problems. You will rarely use it. But when you do,  
 you will be happy it's there
 
-package.json
+package.json  
 *order is not important*
 
 ```json
@@ -2875,36 +2866,36 @@ to run
 npm run dev
 ```
 
-port number
+port number  
 5173: in roman numerals V1T3
 
 #### JSX
-Famous Pete Hunt presentation 
+Famous Pete Hunt presentation   
 https://www.youtube.com/watch?v=x7cQ3mrcKaY
 
-Hack is flavor of PHP, or something similar,
-and JSX was prepared last minute, to convince Hack devs
+Hack is flavor of PHP, or something similar,  
+and JSX was prepared last minute, to convince Hack devs  
 to use React.
 
-And then it becomed really popular,
+And then it becomed really popular,  
 SolidJS uses it, it can be used in Vite
 
-People before spend a lot of time in projects
+People before spend a lot of time in projects  
 ripping js apart and separating it from html.
 
-What started to convince people, was that in the end
-if you write JS to make html, then perhaps it's better
+What started to convince people, was that in the end  
+if you write JS to make html, then perhaps it's better  
 to write html. JSX is very thin layer.
 
 #### Jsx or Js
-Use jsx or js as extension?
+Use jsx or js as extension?  
 Initially it had to be jsx.
 
-Dan Abramov: "I just use js"
-it caused massive swing from `jsx` to `js`
+Dan Abramov: "I just use js"  
+it caused massive swing from `jsx` to `js`  
 but vite requires it, so its jsx again.
 
-Reason for "classname" not "class"
+Reason for "classname" not "class"  
 class is reserved word in javascript
 
 same with label `for` which is reserved in JS
@@ -2913,8 +2904,8 @@ same with label `for` which is reserved in JS
 <label htmlFor="..." />
 ```
 
-You can put in curly braces any js expression.
-Expression is everything, that can be
+You can put in curly braces any js expression.  
+Expression is everything, that can be  
 a right part of assignment
 
 ```jsx
@@ -2940,7 +2931,7 @@ const Pizza = (props) => {
 ```
 
 #### JSX is not as forgiving as html.
-this is valid html
+this is valid html  
 but wrong jsx:
 
 ```html
@@ -2954,10 +2945,10 @@ valid jsx:
 ```
 
 #### named export vs default
-With named you can export many from one files.
+With named you can export many from one files.  
 Some people have strong opinions about it.
 
-javascript and React has too much strong opinions
+javascript and React has too much strong opinions  
 on things that perhaps shouldn't matter at all.
 
 Do you have to import React
@@ -2966,22 +2957,22 @@ Do you have to import React
 import React from "react"
 ```
 
-Tools have gone smart enough that they can recognize it.
+Tools have gone smart enough that they can recognize it.  
 It used to be required, not anymore.
 
-lower/upper case
-h1: literally a tag
+lower/upper case  
+h1: literally a tag  
 H1: a component
 
 #### eslint react
-There are several things that we want eslint to detect,
+There are several things that we want eslint to detect,  
 in how we are using React.
 
 ```bash
 npm i -D eslint-plugin-react@7.37.1
 ```
 
-configure
+configure  
 eslint react needs to know react version,
 
 ```javascript
@@ -3024,14 +3015,14 @@ this one will fix error of missing React import
 reactPlugin.configs.flat["jsx-runtime"],
 ```
 
-add eslint rules
-they have to be added almost last
-(order is important in eslint.config.mjs)
+add eslint rules  
+they have to be added almost last  
+(order is important in eslint.config.mjs)  
 because what is later will override
 
-react/no-unescaped-entities
-without this, you cannot write unescaped '
-and you have to write instead `&apos;`
+react/no-unescaped-entities  
+without this, you cannot write unescaped '  
+and you have to write instead `&apos;`  
 (in reality you prefer your tools to escape for you)
 
 "flat" are a new format of eslint configs
@@ -3039,12 +3030,12 @@ and you have to write instead `&apos;`
 ### Api server
 
 #### solve CORS with proxy
-Use vite as a proxy.
+Use vite as a proxy.  
 Run our frontend and backend on the same port.
 
-redirect
-http://localhost:5173/api/pizzas
-to
+redirect  
+http://localhost:5173/api/pizzas  
+to  
 http://localhost:3000/api/pizzas
 
 ```javascript
@@ -3071,78 +3062,117 @@ export default defineConfig({
 ```
 
 #### webp
-Image file from Google.
+Image file from Google.  
 It's also format used by ChatGPT.
 
---- stopped here ---
-
 ### Hooks
-before there were class.
-Class are very rarely used.
+Before there were class.  
+Class are very rarely used.  
 It's almost strange how class components are gone.
 
-You don't want anything heavy in render path,
+You don't want anything heavy in render path,  
 because it will slow down.
 
-when app crashes, named function:
+Render function is a very hot fragment: it's run a lot.  
+When you have something expensive on it,  
+people will start see a "jank".
+
+Components defined as named functions  
+show better in logs, when app crashes:
+
 ```javascript
+// this shows in errors better
 export default function Order () {}
-```
-will display little better in stack
-then:
-```javascript
+
+// this shows a bit worse
 const Pizza = (props) => {}
 ```
 
-two-way binding
-Angular 1
-but it turns out, it was hard to work
-where this variable comed from?
+#### Two-way binding
+Angular 1 was big two way binding  
+It was fun to write  
+but very hard to maintain... where this variable comed from?
 
-in comparison, React is very verbose
-but also easy to work
+In comparison, React is very verbose.  
+It could be shorter, more terse.  
+It's a little less fun to write  
+but a lot more fun to maintain
 
-#### order dependent
-cannot be inside conditionals
+... and this is worth it's weight in gold  
+as we don't want to optimize few hours we wrote  
+it's better to optimize houndreds hours we maintain
 
-### Strict mode
-will run everything twice
-to make sure you don't have side effects
+Signals: in SolidJS and Preact maybe  
+React doesn't have a lot of black magic  
+to make binding work.
 
-### Dev tools
-you can change state just to test
-and also recently it allows to edit props
+#### Hooks are Order Dependent
+Cannot be inside conditionals, loops.  
+Sometimes you ignore a hook,  
+but it still has to be called every time.
 
-$0 -> last selected thing in inspector
-$r -> last react component selected in component tree
+#### useEffect
+For doing side effects.  
+Frequently used for api requests.  
+But could be also used to show clock  
+because time is side effect.
 
-changing a tab to components after inspector
-will remember last selected and translate it to react
+Basically it can be used to change component  
+but not because of not user input.
 
-#### React is usually fast enough
-apart from moments when you have problem
+#### Derrived state
+Vue an Svelte have concept of derrived state.  
+it doesn't exist in React, as it's just done  
+using normal javascript inside function of component.
 
-#### order
-first render
-useEffect(..., [])
+#### useEffect async not possible
+You cannot use async in useEffect,  
+because async returns Promise.  
+and so useEffect would not return undefined anymore.
 
-first render is before
-useEffect will schedule function
+Feturn from useEffect has a meaning  
+it's a cleanup function  
+(it's run before each call of useEffect)  
+(and when component unmounts)
 
-### useDebugValue
-send some value to Components developers tool for component
+useEffect cannot be async function  
+but it can call async function:
 
-### Preconnect / Preload
-Apart from lazy and eager load...
-preconnect: open socket and have everything ready for download
-preload: load something you expect
+```javascript
+async function fetchPizzaTypes() {
+  const pizzaRes = await fetch("/api/pizzas");
+  const pizzaJson = await pizzaRes.json();
+  setPizzaTypes(pizzaJson);
+  setLoading(false);
+}
 
-service workers:
-they can work like: here is a map of everything needed
-please preload all
+useEffect(() => {
+  fetchPizzaTypes()
+}, [])
+```
 
-preload and preconnect
-React 19
+#### Wait for 10 seconds
+
+```javascript
+await new Promise((resolve) => setTimeout(resolve, 10 * 1000))
+```
+
+#### Dependency array
+If missing, the useEffect will run always
+
+Generally if useEffect is using some variable,  
+rule of thumb is to put it into dependency array.
+
+#### Currencies built into browser
+
+```javascript
+const intl = new Intl.NumberFormat("en-US", {
+  style: "currency",
+  currency: "USD",
+});
+
+price = intl.format(selectedPizza.sizes[pizzaSize])
+```
 
 
 

@@ -3174,6 +3174,56 @@ const intl = new Intl.NumberFormat("en-US", {
 price = intl.format(selectedPizza.sizes[pizzaSize])
 ```
 
+#### Key prop
+Imagine there is complicated component  
+And user refilters or swaps order of two components.  
+React doesn't have a concept what is where.  
+So it would have to tear everything apart and rerender.
+
+With keys, React can identify,  
+that thing that moved in DOM  
+is the same thing,  
+and doesn't need to be rerendered
+
+Using index as key can misinform React.  
+Although it sometimes doesn't matter.
+
+#### NODE_ENV
+Will tell tools, is the mode production or development.  
+By default it's production, unless you run development server.
+
+Vite, Remix, Next will set it for you automatically.
+
+#### Strict mode
+Kind of React mode.
+
+```javascript
+<StrictMode>
+  <App />
+</StrictMode>
+```
+
+Set of checks. React normally does them,  
+but in Strict Mode, React will not allow.
+
+It will yell when deprecated API from React is used.
+
+Will double renders all components (and runs useEffects twice).  
+This way it can catch subtle problem of render changing something.  
+Render function not being pure. Modifying component between renders.
+
+#### Dev tools
+https://react.dev/learn/react-developer-tools
+
+you can change state just to test  
+and also recently it allows to edit props
+
+$0 -> last selected thing in inspector  
+$r -> last react component selected in component tree
+
+changing a tab to components after inspector  
+will remember last selected and translate it to react
+
 
 
 Less common hooks

@@ -3215,14 +3215,27 @@ Render function not being pure. Modifying component between renders.
 #### Dev tools
 https://react.dev/learn/react-developer-tools
 
-you can change state just to test  
-and also recently it allows to edit props
+Can be used to edit state live and see result  
+And recenty same for editing props live.
 
 $0 -> last selected thing in inspector  
-$r -> last react component selected in component tree
+$r -> last React component selected in component tree
+
+In case you want to programmatically interact with component.
 
 changing a tab to components after inspector  
 will remember last selected and translate it to react
+
+#### Profiler
+React is usually fast enough,  
+Advice is to continue writing React in naive way,  
+not anticipate problems ahead, because it often doesn't work
+
+And only then work on performance enhancements  
+when you need them.
+
+Profiler will show when and why each component rendered.  
+And also it can show Priority: Immediate or Deffered.
 
 
 

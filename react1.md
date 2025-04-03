@@ -3485,7 +3485,117 @@ What happened to these historical arguments
 Perhaps this topic needs more attention  
 and we should argue about it more.
 
+### Tanstack Router
+#### What about React Router?
+It's still applicable and ok to use.
 
+Tanstack Router is focused on client side routing.  
+React Router has equal attention for server and client.
+
+React Router v7 and Remix are merging  
+They will become same thing.
+
+#### TanStack ecosystem
+TanStack Start: a bit like Remix and a bit like CRA  
+TanStack Store: a version of Redux  
+TanStack Form: is interesting  
+TanStack Virtual: when you need to render milion of rows
+
+#### TanStack Router
+```bash
+npm install @tanstack/react-router@1.65.0
+npm install -D @tanstack/router-plugin@1.65.0 @tanstack/router-devtools@1.65.0
+```
+
+All versions of tanstack tools/libs are the same "1.65.0",  
+So you don't have to worry about: which version works with which.  
+Downside is: often these versions are exactly the same as previous one.
+
+```javascript
+// vite.config.js
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
+
+export default defineConfig({
+  // ...
+  plugins: [TanStackRouterVite(), react()],
+})
+```
+
+Make sure to put `TanStackRouter` before `react()`.  
+This will make TanStackRouter being aware of where the routes go.
+
+There will be a generated file `routeTree.gen.ts`.  
+It's nice that it's a typescript file, so that rest of code can use.  
+Even though it's generated file, you are meant to add it to repo.
+
+Create a `routes/__root.jsx` file,  
+which will say what every route is going to have.  
+What is the code that all the routes will share.  
+It's a recreation of `App.jsx`
+
+
+```javascript
+// src/routes/__root.jsx
+import { useState } from "react";
+import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import PizzaOfTheDay from "../PizzaOfTheDay.jsx";
+import Header from "../Header";
+import { CartContext } from "../contexts.jsx";
+
+export const Route = createRootRoute({
+  component: () => {
+    const cartHook = useState([]);
+    return (
+      <>
+        <CartContext.Provider value={cartHook}>
+          <div>
+            <Header />
+            <Outlet />
+            <PizzaOfTheDay />
+          </div>
+        </CartContext.Provider>
+        <TanStackRouterDevtools />
+      </>
+    );
+  },
+});
+```
+
+Export is expected by TanStack router to be called `Route`  
+`Outlet` is the part that will be swapped.  
+All this inline component could be separated,  
+as a normal component.
+
+Updated main application definition:
+
+```javascript
+// src/App.jsx
+import { RouterProvider, createRouter } from "@tanstack/react-router"
+import { routeTree } from './routeTree.gen'
+
+const router = createRouter({ routeTree })
+
+const App = () => {
+  return (
+    <RouterProvider router={router} />
+  );
+};
+```
+
+Move Page files into `routes` directory `Order.jsx`  
+and rename it to `order.lazy.jsx`.
+
+This is tell react router to split build and load later.  
+There is also a option to not not add lazy part,  
+and then that will not be lazy, but will be loaded immediately.
+
+#### dunder __
+In python the `__` is called dunder.
+
+#### Enhancing components
+It's possible to have components which don't show anything,  
+but they just enhance components that are inside them.
 
 
 

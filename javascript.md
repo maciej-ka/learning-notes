@@ -136,6 +136,8 @@ Parsing
 Formatting
 
 #### Lexing
+Same as `Tokenization`
+
 It's usually what compilers do first  
 Point is to turn source into tokens
 
@@ -476,10 +478,119 @@ of mismatches, which is extra code
 It can infer everything.  
 You don't need to annotate types.
 
-**Polymorphic**  
-support generics  
+**Polymorphic**, support generics  
 I have array of numbers, array of strings  
 Parametric polymorphism: most general way possible.
+
+#### Inferring Constants
+Goal: infer that c is a String
+
+```javascript
+const a = "hi"
+const b = a
+const c = b
+```
+
+#### Types Database
+and we use Union Find algorithm  
+(Disjoint Set Union)
+
+```
+id 0, type null // const a
+id 1, type null // "hi"
+id 2, type null // const b
+id 3, type null // const c
+```
+
+after visiting "a"
+
+```
+id 0, db[1] // const a
+id 1, type null // "hi"
+id 2, type null // const b
+id 3, type null // const c
+```
+
+after visiting "hi"  
+there is also an option,  
+to remember that "hi" is value  
+for some performance hit
+
+```
+id 0, db[1] // const a
+id 1, String // "hi"
+id 2, type null // const b
+id 3, type null // const c
+```
+
+after visit of b and c
+
+```
+id 0, db[1] // const a
+id 1, String // "hi"
+id 2, db[0] // const b
+id 3, db[2] // const c
+```
+
+After that we annotate Parse Tree  
+turn it to Typed Parse Tree Node
+
+Parse Tree Node
+
+```javascript
+{
+  type: "ConstDecl"
+  id: "a",
+  value: {
+    type: "String",
+    value: "hi",
+  }
+}
+```
+
+Typed Parse Tree node  
+adds types to nodes
+
+```javascript
+{
+  type: "ConstDecl"
+  id: "a",
+  typeId: 0,
+  value: {
+    type: "String",
+    value: "hi",
+    typeId: 1,
+  }
+}
+```
+
+internally Type Table looks like
+
+```
+db[0] = { symlink: 1 }
+db[1] = { concrete: "String" }
+db[2] = { symlink: 2 }
+db[3] = { symlink: 3 }
+```
+
+Path compression,  
+the longer chain of hops gets  
+the slower resultion will be.
+
+Path compression is not possible  
+if language has subtypes  
+where we learn about types as we go
+
+This can be also used to find definition of type.  
+Becuase if we keep position of type,  
+for each concrete type,  
+then we can go there
+
+Naming  
+Parse Tree -> Parse Tree + Scopes
+
+Inference:  
+Parse Tree + Scopes -> Parse Tree + Type DB
 
 
 

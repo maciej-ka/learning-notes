@@ -52,7 +52,6 @@ Complete go, [Frontend Masters](https://frontendmasters.com/workshops/complete-g
 
 [Javascript](./javascript.md)  
 ===============================
-Building a Static Type-Inferring Compiler, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/static-type-compiler/#player)  
 NestJS Architecture and Advanced patterns, [Nestjs Courses](https://courses.nestjs.com/#architecture)  
 NestJS Fundamentals, [Nest Courses](https://courses.nestjs.com/)  
 NestJS Crud tutorial, [Nest Docs](https://docs.nestjs.com/first-steps)  
@@ -109,6 +108,7 @@ Notes on covariance, `///`, grab type of props, decorators
 
 [Various](./various.md)  
 =========================
+Building a Static Type-Inferring Compiler, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/static-type-compiler/#player)  
 Notes from Martin Fowler article on Microservices  
 Web Accessibility, Frontend Masters  
 Introduction to developer tools, [Frontend Masters](https://frontendmasters.com/workshops/dev-tools-v4/)  

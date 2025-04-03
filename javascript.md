@@ -314,6 +314,89 @@ it will be turned to "x = x + 2"
 For a moment was 11 most popular language on GitHub.  
 It was a traspiler.
 
+#### Recursive formatters
+
+```javascript
+function formatBinaryExpression(node) {
+  return `${formatNode(node.left)} ${node.operator} ${formatNode(node.right)}`;
+}
+
+function formatCallExpression(node) {
+  return `${formatNode(node.callee)}(${node.arguments.map(x => formatNode(x)).join(', ')})`
+}
+
+function formatArrayLiteral(node) {
+  if (node.elements.length === 0) {
+    return "[]"
+  }
+  return `[${node.elements.map(x => formatNode(x)).join(', ')}]`
+}
+```
+
+This uses recursion,  
+There is a risk, that stack will overflow  
+To solve it, write own array on heap as a simulation of Stack.
+
+### Naming
+another step  
+called cannonization sometimes
+
+Naming:  
+Parse Tree -> Parse Tree + Scople
+
+we will have data structure to track  
+what is in the scope right now
+
+```javascript
+// const scope = new Set()
+const x = 5
+// scope.add("x")
+const y = x + 1
+// if !scope.has("x") - naming error
+// scope.add("y")
+```
+
+this way we can identify variable used  
+before it was declared
+
+and we can detect duplicate name declaration  
+and shadowing: it's a case when it's not exactly  
+in same scope, but in one of parent scopes.
+
+#### Nested scopes
+Common thing in languages
+
+```javascript
+const inc = (n) => {
+  return n + 1
+}
+
+const x = 5
+const y = inc(3)
+```
+
+This is a case where it's not enough to have one scope.  
+Because inside function some identifiers are allowed  
+which are not allowed outside that function.
+
+We will have array of scopes
+
+```javascript
+const inc = (n) => { // const inner = new set(), scopes.push(inner)
+  return n + 1 // if (!scopes.some(s => s.has("n")))
+} // scopes.pop()
+
+const x = 5
+const y = inc(3)
+```
+
+When we check is variable defined,  
+we have to check current scope (called inner)  
+AND all parent scopes.
+
+```javascript
+if (!scopes.some(s => s.has("n")))
+```
 
 
 

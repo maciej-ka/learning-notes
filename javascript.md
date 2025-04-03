@@ -398,6 +398,89 @@ AND all parent scopes.
 if (!scopes.some(s => s.has("n")))
 ```
 
+#### Hoisting
+Allowed in Javascript
+
+```javascript
+const x = 5
+const y = inc(3)
+
+function inc(arg) {
+  return arg + 1
+}
+```
+
+how to deal with this?
+
+have a second pass:  
+on first pass we only look for identifiers  
+and we only add to scope, never check
+
+on second: we only check is identifier there
+
+#### Question
+how would we keep track of which scope was  
+where between two stages in two pass,  
+would we attach Scopes to tokens?
+
+it's rare that we need to track Scopes  
+Cannonicalization is one place,  
+where we can store integer for string  
+but also make it unique in scope
+
+#### Canonicalization
+Naming  
+Pase Tree -> Canonical IR
+
+Code Gen  
+Canonical IR -> Output String
+
+difference is that Cannonical IR is changed a bit.  
+"String interning?" give every string a position in hash.
+
+desugaring: to have fewer cases to handle  
+detect that some syntax is a sugar of another  
+and transform it to only one
+
+#### visit
+Visitor pattern.  
+Going trough each node and doing something.
+
+### Inferring Constants
+Type Variables  
+sometimes calle type "ids"
+
+#### Hindley-Milner Inference
+Two scientists  
+Algorithm for type checking, type inference
+
+Functional langauges tend to use it  
+Elm, Haskell, Roc
+
+**Simple** type system  
+no co/contraviarance: as there is no subtyping  
+*Go interface is example of subtyping*  
+Without subtyping you can use type variable as solution
+
+**Sound**: no runtime type mismatches, not possible  
+There is no runtime type mismatch  
+Before program runs there is a check  
+(we are expecting here a function and this is not)
+
+unsound is more expensive in performance  
+because it requires type checks  
+and perhaps gracefull, recoverable handling  
+of mismatches, which is extra code
+
+**Decidable** (no annotations required, ever)  
+It can infer everything.  
+You don't need to annotate types.
+
+**Polymorphic**  
+support generics  
+I have array of numbers, array of strings  
+Parametric polymorphism: most general way possible.
+
 
 
 NestJS Fundamentals

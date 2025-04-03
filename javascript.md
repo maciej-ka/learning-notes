@@ -796,15 +796,15 @@ we need to recursivelly unify arguments (argument types)
 and in the end unify with return type of function
 
 #### Calling functions
-We can call functions several times.
+We can call functions several times.  
 And one of them can pass while another will fail.
 
-In the call, we union type of call arguments
+In the call, we union type of call arguments  
 with type of function parameters
 
 #### Error handling
-To keep going and stop on first error,
-we store type as Error, and have special set of rules
+To keep going and stop on first error,  
+we store type as Error, and have special set of rules  
 in union function, that enable us to keep going.
 
 ### Polymorphism

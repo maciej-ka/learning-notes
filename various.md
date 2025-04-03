@@ -942,6 +942,49 @@ const types = {
   VOID  
 }
 
+### Resources for compilers
+#### Compilers: Principles, Techniques and Tools  
+Aho, Sethi, Ullman
+
+its very famous  
+but its very outdate
+
+#### Engineering a Compiler  
+(second edition)  
+Cooper, Torczon
+
+if you want something  
+that is more practical and modern
+
+#### Program Proof  
+Samuel Mimram
+
+This is the book if you want to get great  
+with type inference.
+
+#### LVM
+Intermediate representation  
+very slow  
+but can generate to a lot of targets  
+x64, web assembly, machine code, assembly, ...
+
+it's also famous for being a golden standard  
+in compiler optimization
+
+#### Structure and Interpretation of Computer Programs
+Many people say this changed the way they look  
+at the programs after reading this books.
+
+However, this didn't work for me.  
+I was just seeing slow programs.
+
+#### Crafting interpreters
+Often recommended
+
+#### Grokking simplicity
+Great book  
+by Eric Normand
+
 
 
 AI tools

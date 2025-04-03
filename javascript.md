@@ -633,10 +633,22 @@ And then we call unification.
 Here we check, is the type of 0 a number
 
 #### Unifying Operators
-unify(null, null) -> symlink
-
+unify(null, null) -> symlink  
 result of a unify is symlinked one of arguments
 
+Unify is used for two purposes:
+- to calculate types in non obvious situations  
+(when one argument is known type and another is unknown)
+
+to detect type errors  
+(when both argument types are known)
+
+and "magic" part is that we don't know upfront  
+which case it will be, on early phases,  
+it's dynamically decided what case is more needed  
+at the moment (type inference or check)  
+almost as if union would be smart and would understand  
+what is more needed at the moment.
 
 ```
 unify("String", "String") -> "String"
@@ -694,9 +706,108 @@ Probably tells more about emotions toward typing,
 then about details of typing.
 
 #### What about nodes that cannot mismatch
-Unify knows about types
+Unify knows about types  
 it's not aware at all about tree
 
+### Inferring Conditionals
+```javascript
+const a = "hi"
+const cond = true
+const b = cond ? a : "other"
+```
+
+one rule is:  
+cond must be boolean.
+
+another rule is:  
+both branches must be the same type.  
+we can also say that b, a and "other" have to be the same type
+
+```
+0: a
+1: "hi"
+2: cond
+3: true
+```
+
+type db  
+0: db[1]  
+1: String  
+2: db[3]  
+3: Bool
+
+for  
+const b = cond ? a : "other"
+
+we assing  
+4: b  
+5: cond  
+6: a  
+7: "other"
+
+unify result of ternary with first branch of ternary  
+unify(4, 8) 
+
+// unify conditional type  
+unify(5, 2)
+
+unify condition with Bool  
+(as this is constraint from conditions)  
+unify(5, Bool)
+
+make sure both branches are same  
+unify (6, 7)
+
+### Inferring Functions
+conste inc = (x) => {  
+  return x + 1  
+}
+
+0: inc  
+1: result of function  
+2: (x)  
+3: arrow  
+4: type of return  
+5: "1"
+
+unify(0, 1) =   
+unify(4, Number) +   
+unify(2, Number) +  
+unify(5, Number) +  
+unify(5, Number) 1  
+unify(3, 4) return
+
+After all unifications, we still don't know  
+the result type of function.
+
+Type of function is concrete  
+with more information
+
+```javascript
+{
+  concrete: "Function",
+  args: [2],
+  returns: 3,
+}
+```
+
+Before we can say, what is result type of function  
+we need to recursivelly unify arguments (argument types)  
+and in the end unify with return type of function
+
+#### Calling functions
+We can call functions several times.
+And one of them can pass while another will fail.
+
+In the call, we union type of call arguments
+with type of function parameters
+
+#### Error handling
+To keep going and stop on first error,
+we store type as Error, and have special set of rules
+in union function, that enable us to keep going.
+
+### Polymorphism
 
 
 NestJS Fundamentals

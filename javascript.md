@@ -640,14 +640,13 @@ Unify is used for two purposes:
 - to calculate types in non obvious situations  
 (when one argument is known type and another is unknown)
 
-to detect type errors  
+- to detect type errors  
 (when both argument types are known)
 
 and "magic" part is that we don't know upfront  
-which case it will be, on early phases,  
-it's dynamically decided what case is more needed  
-at the moment (type inference or check)  
-almost as if union would be smart and would understand  
+which case it will be, as it's dynamically decided  
+what case is needed at the moment (type inference or check)  
+almost as if union would be smart and understand  
 what is more needed at the moment.
 
 ```
@@ -808,6 +807,102 @@ we store type as Error, and have special set of rules
 in union function, that enable us to keep going.
 
 ### Polymorphism
+this should fail for second case
+
+```javascript
+const inc = (x) => {
+  return x + 1
+}
+
+inc(42)
+inc("hi")
+```
+
+in comparison with code above  
+this should work ok for both cases  
+and not fail on second
+
+```javascript
+const identity = (a) => { return a }
+
+identity(42)
+identity("hi")
+```
+
+it's an example of polymorphic function.
+
+0: type of identity identifier  
+1: result of whole  
+2: argument a  
+3: result of function
+
+unify(0, 1)  
+unify(3, 2)
+
+0: db[1]  
+1: null  
+2: null  
+3: db[2]
+
+4: return  of identity(42)  
+5: 42
+
+unify(4, 2)  
+unify(5, 2)  
+unify(5, Number)
+
+but this assigs Number  
+as a type for argument x of function
+
+#### alternative unification method
+how else we can do unification,  
+to not run into problem
+
+during unification we can create a new entry  
+in database table
+
+when we get a call, we create a copy  
+of type database for function  
+and we infer on that copy
+
+we know to do this, because at the moment of call  
+we see that argument of function has type === null
+
+same for polymorphic array
+
+#### Type Annotations
+In Hindley-Milner they can act as verified comments.
+
+#### Principal Decidable Type Inference
+Rank 1 types  
+Rank 2 types  
+Rank N types
+
+All Hindley-Milner are decidable,  
+but not all are Principal 
+
+principal means: inference always infers  
+the most generic type, the most flexible type
+
+If all type errors are raised at build time,  
+then all type errors have to be known at build time.
+
+#### Typescript
+Probably the most complicated type system.  
+At least from all popular.
+
+Why TS doesn't have type inference from arguments?  
+Perhaps hoisitng is the reason.
+
+#### Currying, Haskell
+Technically, all functions in Haskell take only one argument  
+and the way to have multi arguments is by currying.
+
+However in syntax it's a bit hidden,  
+as both syntax for function declaration and calling function,   
+hide this and seem to accept multiple arguments
+
+
 
 
 NestJS Fundamentals

@@ -12,7 +12,6 @@ Notes on lambdas
 
 [C language](./c.md)
 =================
-Building a Static Type-Inferring Compiler, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/static-type-compiler/#player)  
 C fundamentals, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/c-fundamentals/#player)
 
 [Career](./career.md)  
@@ -53,6 +52,7 @@ Complete go, [Frontend Masters](https://frontendmasters.com/workshops/complete-g
 
 [Javascript](./javascript.md)  
 ===============================
+Building a Static Type-Inferring Compiler, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/static-type-compiler/#player)  
 NestJS Architecture and Advanced patterns, [Nestjs Courses](https://courses.nestjs.com/#architecture)  
 NestJS Fundamentals, [Nest Courses](https://courses.nestjs.com/)  
 NestJS Crud tutorial, [Nest Docs](https://docs.nestjs.com/first-steps)  

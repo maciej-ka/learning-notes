@@ -1,3 +1,226 @@
+Building a Static Type-Inferring Compiler
+=========================================
+https://docs.google.com/presentation/d/1EkOFQCGFAIuIKG7sJB2ibsWE3Q8eti9UShLgo_z0rwo/edit?slide=id.g3478b1c1c1a_0_3445#slide=id.g3478b1c1c1a_0_3445
+https://github.com/rtfeldman/compiler-workshop-v1  
+Richard Feldman
+
+### Programming Game
+**JAI**  
+APL family, Erlang  
+symbol heavy, but it can be read
+
+#### GSL
+Shader language, similar to C++  
+but with restrictions
+
+#### Elixir
+Created by Jose Vadim, core member of Rails,  
+who was confused how difficult  
+pararell programming is in Erlang  
+but missed syntax and simplicity of Ruby.
+
+#### OCaml
+ML family language, created at the top of OOP peak  
+it was combination of OOP and functional programming.  
+Today it's used purely functional, and OOP is ignored.
+
+#### Lisp
+1950', meant to help with AI reasearch,  
+originally wasn't meant for humans to implement.
+
+#### Datalog
+Dialect of Lisp, dedicated for logic programming.  
+Niki Tonsky created Closure implementation of Datalog.
+
+#### Swift
+20something, created by MVL, popular optimizer for compilers,  
+and he was hired to optimize C++ compile,  
+he is one of three persons who made C++ compiler
+
+Apple had Objective-C. And that language was showing its age  
+and creator of Swift had idea that new language  
+will be close enough to Objective-C,  
+that transition will be fairly easy.  
+That sort of transition is unheard of,  
+Google isn't using Go so much for comparison.
+
+#### Kotlin
+From JetBrains, creator of IDEs,  
+made as improvement of Java, runs on JVM,  
+cleans a lot of historical things in Java.
+
+Somehow it become really popular in Android.  
+And then it started to be really popular.
+
+#### Groovy
+Also JVM language, dynamically typed.  
+It's if you like Ruby but want to run on JVM.  
+As Scala took Java and moved it into functional programming,  
+Then Groovy took Java and moved it  
+to dynamic programming language, similar to Ruby.
+
+### History
+#### ENIAC
+Electronic Numerical Integrator and Computer  
+programmed manually by wiring cables.
+
+#### Compilers
+Somethign that takes source code  
+and turns it to machine instructions.  
+C, Rust, Assembly
+
+they turn source into machine ahead of time
+
+#### Runtime, Interpreter
+Turn source into machine when it's executed.
+
+#### Just in Time
+If some fragment of code is becoming hot,  
+then JiT will compile that fragment of code  
+in hope that cost of compilation will be better  
+then keeping interpretation of that fragment of code.
+
+Ruby, PHP has JiT compiler too
+
+Web Assemby also has Just-In-Time  
+and it was designed to work mainly in that mode.  
+as consequence, in Web Assemby you cannot ever wait  
+for some fragment of code to arrive later.
+
+#### Intermediate code
+Typescript,  
+tsc: typescript compiler  
+perhaps should be called transpiler.  
+because it transpiles into JavaScript
+
+#### Bytecode compilers
+Java most popular example of this  
+Byte is not ment to be read by humans.  
+Because of bytecode it's possible to build  
+on many different machines. It's portable.
+
+HotSpot: famous JiT compiler in Java  
+After that they were hired by Google to do V8
+
+### Terminology
+(low level: not meant to be human readable)
+assember low level -> low level
+transpiler high -> high
+interpreter generate at runtime
+compiler generate at compilate time
+
+#### Analysis
+ex. finding undefined names
+
+analysis often work on top of:
+Names (not found)
+Types (wrong types)
+Optimization (making code faster)
+
+# Workshop
+Compiler for small subset of JS
+We will build formatting
+Name Resolution
+
+Parser (you don't need separate tokenizer and lexer)
+Type Inference Hindley-Milner, not Typescript
+WASM Generation
+
+#### Hindley-Milner
+Type inference algorithm,
+used by Haskell
+
+### Formatting
+Lexing
+Parsing
+Formatting
+
+#### Lexing
+It's usually what compilers do first
+
+```javascript
+const x = 5 // x is 5
+```
+
+it's really not convinient to analyze such code.
+so let's walk a source, and identify commonly known parts
+
+we see const, so we say "hey, I know this"
+and then we represent that const as:
+
+```javascript
+{
+  type: "CONST",
+  value: null,
+  position: 0,
+}
+```
+
+then we see x,
+and it looks like something like from user space
+we say it's identifier
+
+```javascript
+{
+  type: "IDENTIFIER",
+  value: "x",
+  position: 6,
+
+}
+```
+
+we keep track of positions,
+this is what LSP will require,
+(unfortunatelly it works with UTF-16)
+
+then = 
+
+```javascript
+{
+  type: "EQUALS",
+  value: null,
+  position: 8
+}
+```
+
+5, again it looks like something from user space
+we do some analysis of things from user space
+and for some reason there is no language that allows
+for variable to start with number, because this way
+it's easy to figure out, this is a number, not identifier
+
+```javascript
+{
+  type: "NUMBER",
+  value: "5",
+  position: 10,
+}
+```
+
+then //
+
+```javascript
+{
+  type: "COMMENT"
+  value: "x is 5"
+  position: ...
+}
+```
+
+#### Formatting
+what should we print
+
+```javascript
+{
+  type: "CONST",
+  value: null,
+  position: 0,
+}
+```
+
+should be formatted as:
+"const "
+
 NestJS Fundamentals
 ===================
 https://learn.nestjs.com/p/fundamentals

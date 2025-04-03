@@ -1,12 +1,6 @@
-Building a Static Type-Inferring Compiler
-=========================================
-Richard Feldman
-
-
-
-
 C fundamentals
 ==============
+https://docs.google.com/presentation/d/1CGtDVSazrJHI52OnwwJXgogQEHs63lrasfQWJvmcYM0/edit
 https://github.com/rtfeldman/c-workshop-v1  
 Richard Feldman  
 https://zed.dev/

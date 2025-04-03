@@ -3293,6 +3293,30 @@ but if custom hook begins this way
 then all the linting will detect this  
 and apply rules it normally does to hooks
 
+#### useDebugValue
+If we want to quickly see in React dev tools  
+what some value is. This is only for dev, for dev tools.  
+When in production mode, this will not be logged out.
+
+If used inside Custom Hook, it will show that value  
+as a quick preview of hook value in component.
+
+```javascript
+export const usePizzaOfTheDay = () => {
+  //...
+  useDebugValue(
+    pizzaOfTheDay ?
+      `${pizzaOfTheDay.id}: ${pizzaOfTheDay.name}`
+      : "loading ..."
+  );
+}
+```
+
+It's a niche use case, but it's also possible to use it  
+several times in custom hook, although only first will  
+be visible as a header of custom hook, other will be  
+visible in a expanding list.
+
 
 
 Less common hooks

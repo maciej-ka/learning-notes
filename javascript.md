@@ -902,6 +902,45 @@ However in syntax it's a bit hidden,
 as both syntax for function declaration and calling function,   
 hide this and seem to accept multiple arguments
 
+### Generating WASM
+Code Generation  
+Parse Tree + Type DB -> WebAssembly Bytecode
+
+All Code Gen will require Parse Tree,  
+but not all will need Type DB
+
+#### Web Assembly
+Web Assembly is ones and zeros,  
+designed to be efficiency streamed over net.  
+Not designed to be human readible.
+
+It's not depenedent on architecture,  
+so it doesn't require to be built for every platform.
+
+web assembly had to do a lot of tradeoffs  
+one of them is it uses stack machine
+
+#### Sections
+Web Assembly consists of sections  
+that come in streaming
+
+type: 1  
+function: 3  
+memory: 5  
+export: 7  
+code: 10  
+data: 11
+
+web assembly has some magic numbers to know  
+(although you don't have to know them)
+
+const types = {  
+  I32: booleans  
+  F64: number  
+  ANYFUNC: function   
+  FUNC: function definition  
+  VOID  
+}
 
 
 

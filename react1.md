@@ -3275,12 +3275,14 @@ Recommended: put effect into custom hook, when:
 - they are reused (at least once)
 - or they need to be tested
 
-#### DRY
+#### DRY / WET
 Don't repeat yourself
 
 Perhaps you're WET person.  
 Allow to repeat once,  
 Consider refactor on second, third repeat.
+
+WET: Write Everything Twice
 
 #### Linux filenames
 Are case insensitive.
@@ -3316,6 +3318,70 @@ It's a niche use case, but it's also possible to use it
 several times in custom hook, although only first will  
 be visible as a header of custom hook, other will be  
 visible in a expanding list.
+
+#### form onSubmit
+This may be better than button with onClick.  
+Having onSubmit in form will also submit  
+when enter is pressed in input.
+
+Which is generally more accessible.
+
+```javascript
+<form
+  onSubmit={(e) => {
+    e.preventDefault();
+    setCart([...cart, { pizza: selectedPizza, size: pizzaSize, price }]);
+  }}
+>
+  ...
+</form>
+```
+
+#### Array reduce
+Some may say "Why don't you use reduce here?"  
+To them I say "go back to Haskell".
+
+After the years, I found out that I was writing  
+a lot of reduces because they seemed to be fun.  
+Not because the seemed clear.
+
+#### Emmet div with class expand
+```
+// expand 
+.cart
+
+// into
+<div className="cart"></div>
+```
+
+#### Functional / Display components
+Some of components are "dumb".  
+They only display things.
+
+And some of people take this to the extreme,  
+and divide all components into functional and display.  
+This may be pointless.
+
+#### CSS is terrible
+because it's so relying on structure
+
+#### One way data flow
+Props are things that are passed from parent to child.  
+And props are immutable. Value in child is separated.  
+Value in the parent is separated from the value in the child.
+
+This is sometimes called one-way-data-flow,  
+data only flows down, never up.
+
+It's not possible to directly modify data of parant props  
+in child component. Only way is by calling a modify function  
+which was passed from parent to child.
+
+In that way, components are self encapsulated.
+
+This can be annoying, but it helps debugging  
+because whenever there is a problem with some value,  
+it's quite obvious, which is the place in code responsible.
 
 
 

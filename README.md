@@ -12,6 +12,7 @@ Notes on lambdas
 
 [C language](./c.md)
 =================
+Building a Static Type-Inferring Compiler, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/static-type-compiler/#player)  
 C fundamentals, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/c-fundamentals/#player)
 
 [Career](./career.md)  

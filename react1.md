@@ -3395,6 +3395,89 @@ and then children components can take it from portal.
 Some of data is a good candidate for context, if it's app level state.  
 especially if it is some kind of global, like a user or theme.
 
+#### contexts.jsx
+One way to organize context. Create one file,  
+and throw all contexts into one file.  
+(because as separate file, context is very short)
+
+```javascript
+import { createContext } from "react";
+
+export const CartContext = createContext([]);
+// or, because we will share a useState hook
+export const CartContext = createContext([[], function(){}]);
+```
+
+It's recommended to initialize context  
+with a shape of future value.
+
+It could be completely empty, `createContext()`.  
+But for the sake of future typescript, and testing.  
+Especially for reason of typescript,  
+which will imediatelly understand.
+
+```javascript
+const App = () => {
+  const cartHook = useState([]);
+  return (
+    <CartContext.Provider value={cartHook}>
+      <div>
+        <Header />
+        <Order />
+        <PizzaOfTheDay />
+      </div>
+    </CartContext.Provider>
+  );
+};
+```
+
+We could wrap more selectivelly.  
+Or even, if there is a good reason,  
+Wrap twice, two separate fragments of JSX.
+
+If Contexts are wrapped one inside other,  
+then the value uses, will be the closest one  
+to client component.
+
+In react 19 it's possible to write Provider shorter:
+
+```javascript
+const App = () => {
+  const cartHook = useState([]);
+  return (
+    <CartContext value={cartHook}>
+      <div>
+        <Header />
+        <Order />
+        <PizzaOfTheDay />
+      </div>
+    </CartContext>
+  );
+};
+```
+
+With this code, we are enabling any place to be able  
+to modify setCart. You can shoot your foot off with it,  
+as this is a global setter and may be difficult to debug.  
+When possible, consider alternatives to using context.
+
+```javascript
+export default function Order() {
+  const [cart, setCart] = useContext(CartContext);
+  ...
+}
+```
+
+Context API is better than it used to be.  
+Facebook used to have problem with phantom notifications,  
+where user could see notification number, but after click  
+there wasn't anything there. It was React problem of context  
+having problem to trace changes correctly.
+
+Context always introduces indirection.  
+What modified context? It's not immediately apparent.  
+Although import of context can help to narrow down places.
+
 #### Semantic markup
 What happened to these historical arguments  
 "don't use div, use nav".

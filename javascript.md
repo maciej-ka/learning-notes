@@ -1,6 +1,6 @@
 Building a Static Type-Inferring Compiler
 =========================================
-https://docs.google.com/presentation/d/1EkOFQCGFAIuIKG7sJB2ibsWE3Q8eti9UShLgo_z0rwo/edit?slide=id.g3478b1c1c1a_0_3445#slide=id.g3478b1c1c1a_0_3445
+https://docs.google.com/presentation/d/1EkOFQCGFAIuIKG7sJB2ibsWE3Q8eti9UShLgo_z0rwo/edit?slide=id.g3478b1c1c1a_0_3445#slide=id.g3478b1c1c1a_0_3445  
 https://github.com/rtfeldman/compiler-workshop-v1  
 Richard Feldman
 
@@ -103,49 +103,50 @@ HotSpot: famous JiT compiler in Java
 After that they were hired by Google to do V8
 
 ### Terminology
-(low level: not meant to be human readable)
-assember low level -> low level
-transpiler high -> high
-interpreter generate at runtime
+(low level: not meant to be human readable)  
+assember low level -> low level  
+transpiler high -> high  
+interpreter generate at runtime  
 compiler generate at compilate time
 
 #### Analysis
 ex. finding undefined names
 
-analysis often work on top of:
-Names (not found)
-Types (wrong types)
+analysis often work on top of:  
+Names (not found)  
+Types (wrong types)  
 Optimization (making code faster)
 
-# Workshop
-Compiler for small subset of JS
-We will build formatting
+# Workshop  
+Compiler for small subset of JS  
+We will build formatting  
 Name Resolution
 
-Parser (you don't need separate tokenizer and lexer)
-Type Inference Hindley-Milner, not Typescript
+Parser (you don't need separate tokenizer and lexer)  
+Type Inference Hindley-Milner, not Typescript  
 WASM Generation
 
 #### Hindley-Milner
-Type inference algorithm,
+Type inference algorithm,  
 used by Haskell
 
 ### Formatting
-Lexing
-Parsing
+Lexing  
+Parsing  
 Formatting
 
 #### Lexing
-It's usually what compilers do first
+It's usually what compilers do first  
+Point is to turn source into tokens
 
 ```javascript
 const x = 5 // x is 5
 ```
 
-it's really not convinient to analyze such code.
+it's really not convinient to analyze such code.  
 so let's walk a source, and identify commonly known parts
 
-we see const, so we say "hey, I know this"
+we see const, so we say "hey, I know this"  
 and then we represent that const as:
 
 ```javascript
@@ -156,8 +157,8 @@ and then we represent that const as:
 }
 ```
 
-then we see x,
-and it looks like something like from user space
+then we see x,  
+and it looks like something like from user space  
 we say it's identifier
 
 ```javascript
@@ -169,8 +170,8 @@ we say it's identifier
 }
 ```
 
-we keep track of positions,
-this is what LSP will require,
+we keep track of positions,  
+this is what LSP will require,  
 (unfortunatelly it works with UTF-16)
 
 then = 
@@ -183,10 +184,10 @@ then =
 }
 ```
 
-5, again it looks like something from user space
-we do some analysis of things from user space
-and for some reason there is no language that allows
-for variable to start with number, because this way
+5, again it looks like something from user space  
+we do some analysis of things from user space  
+and for some reason there is no language that allows  
+for variable to start with number, because this way  
 it's easy to figure out, this is a number, not identifier
 
 ```javascript
@@ -218,8 +219,103 @@ what should we print
 }
 ```
 
-should be formatted as:
+should be formatted as:  
 "const "
+
+but with color applied
+
+#### Formatting Newlines
+You can omit or not trailing comma
+
+```javascript
+{
+  a: 1,
+  b: 2,
+  c: 3,
+}
+```
+
+vs
+
+```javascript
+{ a: 1, b: 2, c: 3 }
+```
+
+(no trailing comma)
+
+But how can we do this when lexing,  
+when creating tokens.
+
+#### Parse Tree
+also called AST,  
+you need Parse Tree for that,  
+also called Abstract Syntax Tree.
+
+const x = 5 // x is 5
+
+CONST  
+IDNETIFIER "x"  
+EQUALS  
+NUMBER 5  
+COMMENT ""
+
+in Parse tree
+
+```javascript
+{ 
+  type: ConstDecl,
+  id: "x",
+  value: {
+    type: "Number",
+    value: "5",
+  }
+}
+```
+
+#### Formatting Newlines
+Set isMultiline: true in the parse tree node  
+when we see the comma token at the end
+
+Parse Tree is a great place to add flags  
+and additional values. 
+
+
+Lexing
+Source String -> Tokens  
+
+Parsing
+Tokens -> Parse Tree  
+
+Code Gen
+Parse Tree -> Output String
+
+#### Syntax Sugar
+we will support special syntax:
+
+```javascript
+x+++
+```
+
+IDENTIFIER "x"  
+PLUS  
+PLUS  
+PLUS
+
+{  
+  type: "PlusPlusPlus"  
+  identifier: "x",  
+}
+
+Parse Tree -> CodeGen -> Output String  
+it will be turned to "x = x + 2"  
+(this part is a transpiler)
+
+#### CoffeeScript
+For a moment was 11 most popular language on GitHub.  
+It was a traspiler.
+
+
+
 
 NestJS Fundamentals
 ===================

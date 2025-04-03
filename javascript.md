@@ -592,6 +592,111 @@ Parse Tree -> Parse Tree + Scopes
 Inference:  
 Parse Tree + Scopes -> Parse Tree + Type DB
 
+### Type Unifications
+Way to say "these 2 types should be identical".
+
+This is also a way to impose, restrict a type  
+with multiple constraints.
+
+A way to detect type mismatches.
+
+```javascript
+const a = "hi"
+const b = a
+a * b
+```
+
+here we require, that boths sides of a * b  
+have to be a number  
+(and that whole thing will return a number)
+
+a is a string  
+and from type inference we know b is a
+
+```javascript
+const a = "hi" // a:0 , "hi":1
+const b = a // b:2
+a * b // 3
+```
+
+Type lookup  
+filled, because we can assume that a * b is number
+
+```
+0, db[1]
+1, String
+2, db[0]
+3, Number
+```
+
+And then we call unification.  
+Here we check, is the type of 0 a number
+
+#### Unifying Operators
+unify(null, null) -> symlink
+
+result of a unify is symlinked one of arguments
+
+
+```
+unify("String", "String") -> "String"
+unify("Number", "Number") -> "Number"
+unify("Number", "String") -> Type Mismatch
+```
+
+when we apply this to our example:  
+we run unify on a * b
+
+unify("Number", "String") -> Type Mismatch
+
+#### Implementation
+```javascript
+const unify = (aTypeId, bTypeId) -> {
+  const aType = resolveSymlinksAndCompress(aTypeId)
+  const bType = resolveSymlinksAndCompress(aTypeId)
+
+  // "unbound variable", we don't know about type of it
+  if (aType === null) {
+    db[aTypeId] = (bType == null)
+      ? { symlink: bTypeId }
+      : { concrete: bType.concrete }
+  } else if (bType === null) {
+    // here we know that aType is not null
+    // because we already took care of that above
+    // to have simpler life, swap and call again
+    // to be handled by code abouve
+    return unify(bTypeId, aTypeId)
+  } else if (aType.concrete != bType.concrete) {
+    reportTypeMismatch()
+  }
+}
+```
+
+Example of unbound variable:  
+Polymorphic function, like identity function.  
+Until it's called, we don't know anything about its type.
+
+#### Recursive check
+These would be a problem for type inference
+
+```javascript
+a = a
+```
+
+And similarly you can get into similar problem  
+whenever you unify things.
+
+These cases are detected using recursive check.
+
+#### Strong Typing
+Controversial term. Has many definitions.  
+Probably tells more about emotions toward typing,  
+then about details of typing.
+
+#### What about nodes that cannot mismatch
+Unify knows about types
+it's not aware at all about tree
+
 
 
 NestJS Fundamentals

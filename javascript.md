@@ -280,13 +280,13 @@ Parse Tree is a great place to add flags
 and additional values. 
 
 
-Lexing
+Lexing  
 Source String -> Tokens  
 
-Parsing
+Parsing  
 Tokens -> Parse Tree  
 
-Code Gen
+Code Gen  
 Parse Tree -> Output String
 
 #### Syntax Sugar

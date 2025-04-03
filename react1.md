@@ -3383,6 +3383,27 @@ This can be annoying, but it helps debugging
 because whenever there is a problem with some value,  
 it's quite obvious, which is the place in code responsible.
 
+#### Contexts
+Powerful tool. New React developers use it a lot.  
+It simplifies writing, but complicates maintenance.  
+If data in context would be local data, not app level  
+then consider not using contexts, just rely on prop drilling.
+
+Context is a bit like dumping data to portal  
+and then children components can take it from portal.
+
+Some of data is a good candidate for context, if it's app level state.  
+especially if it is some kind of global, like a user or theme.
+
+#### Semantic markup
+What happened to these historical arguments  
+"don't use div, use nav".
+
+Perhaps this topic needs more attention  
+and we should argue about it more.
+
+
+
 
 
 Less common hooks

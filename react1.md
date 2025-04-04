@@ -3692,6 +3692,65 @@ const App = () => {
 };
 ```
 
+### Using Tanstack Query
+This is just idea for organizing,  
+Feel free to take or ignore it.
+
+Create new folder for api requests `/src/api`
+
+```javascript
+// /src/api/getPastOrders.js
+export default async function getPastOrders(page) {
+  const response = await fetch(`/api/past-orders?page=${page}`);
+  const data = await response.json();
+  return data;
+}
+```
+
+We will use this function in TanStack Query,  
+although we don't have to, it can be just called  
+inside `useEffect`.
+
+Query key is array. It's very similar to Redis.  
+Stale time is in miliseconds. This here is 30 seconds.  
+This is quite short, but it may make sense here,  
+as this is page of history of orders, so it can often change,  
+but still we don't want to hammer the API on page visits.
+
+Apart from `isLoading` there are bunch more: isSuccess,  
+isPending, isRefetch ... and there is also an option to use  
+`state`, which is enum.
+
+```javascript
+// /src/routes/past.lazy.jsx
+import { useQuery } from "@tanstack/react-query";
+
+export const Route = createLazyFileRoute('/past')({
+  component: PastOrdersRoute,
+})
+
+function PastOrdersRoute() {
+  const [page, setPage] = useState(1);
+  const { isLoading, data } = useQuery({
+    queryKey: ['past-orders', page],
+    queryFn: () => getPastOrders(page),
+    staleTime: 30000,
+  })
+  if (isLoading) {
+    return (
+      <div className="past-orders">
+        <h2>Loading ...</h2>
+      </div>
+    )
+  }
+
+  return (
+    <div className="past-orders">
+      ...
+    </div>
+  )
+}
+```
 
 
 Less common hooks

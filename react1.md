@@ -3626,6 +3626,71 @@ In python the `__` is called dunder.
 It's possible to have components which don't show anything,  
 but they just enhance components that are inside them.
 
+### TanStack Query
+Previously called React Query.  
+Now it has Angular, Vue, couple more versions.
+
+Good for data that is highly cacheable.  
+Which is true for many API calls.  
+Replaces most of previous usage of useEffect.
+
+Install lib itself, linter and devtools
+
+```bash
+npm i @tanstack/react-query@5.59.13
+npm i -D @tanstack/react-query-devtools@5.59.13 @tanstack/eslint-plugin-query@5.59.7
+```
+
+Modify linter
+
+```javascript
+// eslint.config.mjs
+import pluginQuery from "@tanstack/eslint-plugin-query"
+
+reactPlugin.configs.flat["jsx-runtime"],
+...pluginQuery.configs['flat/recommended'],
+```
+
+Setup devtools
+
+```javascript
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+export const Route = createRootRoute({
+  component: () => {
+    return (
+      <>
+        <TanStackRouterDevtools />
+        <ReactQueryDevtools />
+      </>
+    );
+  },
+});
+```
+
+Devtools are popping out now, there is  
+Vercel, Next.js, Redux Toolkit.
+
+Setup QueryClient. One of options is to prefill cache.  
+This is usefull when you know that it's very likely  
+that user will need some API response  
+and it can be queried immediately.
+
+```javascript
+// App.jsx
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const router = createRouter({ routeTree })
+const queryClient = new QueryClient();
+
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router} />
+    </QueryClientProvider>
+  );
+};
+```
 
 
 

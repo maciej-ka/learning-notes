@@ -3590,12 +3590,42 @@ This is tell react router to split build and load later.
 There is also a option to not not add lazy part,  
 and then that will not be lazy, but will be loaded immediately.
 
+To register lazy route, add some configuration to `order.lazy.jsx`
+
+```javascript
+// order.lazy.jsx
+import { createLazyFileRoute } from "@tanstack/react-router";
+
+export const Route = createLazyFileRoute("/order")({
+  component: Order,
+});
+```
+
+#### TanStackRouter stubs
+If a new file is created, like /routes/index.lazy.js  
+while the dev server is running, TanStackRouter will prefill  
+that file with initial code, to be modified.
+
+(in contrast to `routeTree.get.ts` which shuldn't be modifed)
+
+#### Link
+It's rendered as "<a></a>" tag, but with additional it will handle client side route change
+
+```javascript
+import { createLazyFileRoute, Link } from '@tanstack/react-router'
+<Link to="/order">Order</Link>
+<Link to="/">
+  <h1 className="logo">Padre Gino's Pizza</h1>
+</Link>
+```
+
 #### dunder __
 In python the `__` is called dunder.
 
 #### Enhancing components
 It's possible to have components which don't show anything,  
 but they just enhance components that are inside them.
+
 
 
 

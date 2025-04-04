@@ -3752,6 +3752,52 @@ function PastOrdersRoute() {
 }
 ```
 
+#### Tanstack Query vs useEffect
+When to use one or other?  
+There is personal preference.
+
+Industry tends to use React Query to call API.  
+There nice refetch, caching, error handling.  
+Good developer experience that allows you,  
+to use it in a way you want.
+
+Want to refetch each time, set `staleTime` to 0.
+
+Use effect still has it's place.  
+If you want to talk to localStorage.
+
+Another good example for using useEffect:  
+I mounted component and want to fire analytics.
+
+#### Remote state, React Query, Redux, Zustand
+These are different tools for different job.  
+You can use Zustand with React Query.  
+Or use Redux as a cache.
+
+TanstackStore is more directly competing with Zustand.
+
+If I would build something like Figma, big complicated app,  
+that would have a lot of app level data, I would use Zustand.
+
+Also on iOS App and React Native, it would make sense  
+to use Zustand, as that app would also have large app level data.
+
+#### Should Query have custom hook?
+It may not make sense to write custom hooks for each query.  
+We are not going to be testing that query.  
+So just for one request, it seems it's not justified.
+
+But if it would be several queries fired in a sequence  
+and it would be important that order is correct,  
+that's a good candidate for custom hook.
+
+#### How to organize component files?
+If each component has separate folder  
+and in that folder there is: css, jsx and tests,  
+then if that component would need to be removed  
+it becomes very easy to not miss any file.
+
+
 
 Less common hooks
 =================

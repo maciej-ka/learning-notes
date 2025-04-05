@@ -3354,6 +3354,15 @@ Not because the seemed clear.
 <div className="cart"></div>
 ```
 
+#### Emmet div with id expand
+```
+// expand 
+#modal
+
+// into
+<div id="modal"></div>
+```
+
 #### Functional / Display components
 Some of components are "dumb".  
 They only display things.
@@ -3796,6 +3805,38 @@ If each component has separate folder
 and in that folder there is: css, jsx and tests,  
 then if that component would need to be removed  
 it becomes very easy to not miss any file.
+
+### Portals
+In html there is:
+
+```html
+<div id="root">not rendered<div>
+```
+
+And it's normally not possible,  
+to render anything outside that div.
+
+It's a problem, if you want to show modal.  
+One, bad way to do it, is to use z-index.  
+Or find some way to render something first,  
+which is also hard to guarantee.
+
+#### Not only for modals
+Good example is when layout has side column  
+that has a content dependent on a Page.
+
+Using Portals it's possible for Page, to instruct  
+a Side Column to be filled with some content,  
+even though they are separated things.
+
+Good example of that would be docs, like [Azure docs](https://learn.microsoft.com/en-us/azure/developer/javascript/how-to/develop-serverless-apps?tabs=v4-ts)  
+It's a situation where side panel has a navigation.  
+And that navigation depends on content of page.
+
+With Portal component can say: render into Portal  
+this additional content.
+
+It allows to render outside of app.
 
 
 

@@ -1,3 +1,78 @@
+Costs Summary
+=============
+From greatest to smallest  
+examples show for n = 1000
+
+### N! Permutations
+```
+n!
+1000!
+= around 1e2567
+```
+
+### 2 ** N Subsets
+```
+2 ** 1000
+= 1e301
+```
+
+### CPU Operations in 1s
+```
+3GHz
+= 3e9 cycles per second
+~ 1e10
+```
+
+most CPU can perform 2-4  
+operations per cycle
+
+### N ** 2 Nested loops, Pairs
+#### N ** 2
+```
+1000 * 1000
+= 1e6
+```
+
+#### Sum of 1 + .. + n
+```
+n(n + 1) / 2
+1000 * 1001 / 2 
+= 5e5
+```
+
+#### Number of Pairs
+```
+n! / k! * (n - k)!
+1000 * 999 / 2
+= 499_500
+= 5e5
+```
+
+### N Sliding window
+```
+1000
+= 1e3
+```
+
+### N ** 0.5 Check is prime
+```
+31
+```
+
+because typical loop can look like:
+```javascript
+for (let i = 2; i * i <= n; i++) {
+  if (n % i === 0) return false;
+}
+```
+
+### log2 N Binary search
+```
+9.9
+```
+
+
+
 The Last Algorithms Course You'll Need
 ======================================
 https://frontendmasters.com/courses/algorithms
@@ -157,24 +232,24 @@ all lines filled always from left to right
 no empty spaces
 
 #### how to store it?
-in array that represents graph
+in array that represents graph  
 [5, 7, 10, 10, 8, 12, 11]
 
 #### go to children
-for each node i, it's children are:
-2i + 1
+for each node i, it's children are:  
+2i + 1  
 2i + 2
 
 #### go to parent
-(i - 1) / 2
-or with bitshift
+(i - 1) / 2  
+or with bitshift  
 (i - 1) >> 1
 
 #### updating in heap
-it requires a map of value -> index
+it requires a map of value -> index  
 I'm 17, where am I?
 
-we will need to bubble me up or down,
+we will need to bubble me up or down,  
 because I will become 25
 
 

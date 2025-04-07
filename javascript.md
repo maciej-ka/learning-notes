@@ -1,3 +1,170 @@
+JS tricks learned from the Leet Code
+====================================
+
+### Stack limit
+Test stack limit:
+
+```javascript
+let i = 0
+try {
+  function call() { call(++i) }
+  call()
+} catch {
+  console.log(i)
+}
+```
+
+9173 in Chrome  
+8768 in Node
+
+### BigInt
+Two ways to create
+
+```javascript
+// as literal
+1n
+2000n
+
+// from integer
+BigInt(num)
+```
+
+Size is determined by available memory.  
+Can be used to create huge bitmasks.  
+That still work with `&`, `|`, `^`, `<<`, and `>>`
+
+```javascript
+(1n << 100n).toString(2)
+'10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000'
+
+(1n << 100n | 1n << 50n).toString(2)
+'10000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000'
+```
+
+#### ~~ limitation
+they will convert to32 bit int  
+so it cannot be used for numbers higher than:
+```
+2**32 = 4294967296 = 4e9
+```
+
+### >> operator
+Division by two, rounded down
+```javascript
+5 >> 1 // 2
+```
+
+### ~~ operator
+#### Convert string to number
+```javascript
+~~"412.7" // 412
+~~"4"     // 4
+~~"-4"    // -4
+```
+
+#### Floor of decimal
+```javascript
+console.log(~~4.7);  // Output: 4
+console.log(~~-4.7); // Output: -4
+```
+
+#### Convert null or undefined to 0
+```javascript
+~~null      // 0
+~~undefined // 0
+~~{}.foo    // 0
+```
+
+Works by applying the bitwise NOT (~) operator twice. Since bitwise operators  
+only work on integers, JavaScript internally converts the number to a 32-bit  
+signed integer.
+
+#### Why to use it
+It is more performant than Math.floor(), Math.trunc(), or parseInt().
+
+### Arrays in Javascript
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array  
+Arrays are stored as a object with indexes as properties  
+these indexes are strings
+
+#### toString() cooercion
+when calling element arr[index]  
+engine will do implicit index.toString() convertion  
+`arr[2]` is same as `arr["2"]`
+
+```javascript
+arr = [23, 13, 456] // (3) [23, 13, 456]
+arr["2"]            // 456
+arr[2]              // 456
+arr["05"] = "foo"
+arr                 // (3) [23, 13, 456, 05: 'foo']
+```
+
+#### Typed arrays
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray
+
+faster and better on memory  
+but more restictive
+
+fixed size: length set on creation and cannot change  
+typing: all elements have to be same type  
+fast: use contignous memory making access and iteration faster  
+no push: no array push(), splice() etc, because they have fixed size
+
+```javascript
+let arr = new Int32Array(10);
+arr[0] = 42;
+arr[1] = 100;
+console.log(arr[0]); // 42
+console.log(arr.length); // 10
+```
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Typed_arrays
+
+| Type              | Aprox range | bytes |
+|-------------------|-------------|-------|
+| Uint8Array        | 0 to 255    | 1     |
+| Uint8ClampedArray | 0 to 255    | 1     |
+| Uint16Array       | 0 to 6e4    | 2     |
+| Uint32Array       | 0 to 4e9    | 4     |
+| BigUint64Array    | 0 to 1e19   | 8     |
+
+| Type          | Aprox range   | bytes |
+|---------------|---------------|-------|
+| Int8Array     | -128 to 127   | 1     |
+| Int16Array    | -3e4 to 3e4   | 2     |
+| Int32Array    | -2e9 to 2e9   | 4     |
+| BigInt64Array | -9e18 to 9e18 | 8     |
+
+| Type         | Aprox range     | bytes |
+|--------------|-----------------|-------|
+| Float16Array | -6e4 to 6e4     | 2     |
+| Float32Array | -3e38 to 3e38   | 4     |
+| Float64Array | -1e308 to 1e308 | 8     |
+
+to check precise size calculate 2 to power of bites
+```
+2**8 = 256
+2**16 = 65536
+2**32 = 4294967296 = 4.2e9
+2**64 = 18446744073709552000 = 1.8e19
+```
+
+### JS binary operators
+| Operator | Name                  | Example  | Binary Calculation | Result                            |
+|----------|-----------------------|----------|--------------------|-----------------------------------|
+| &        | AND                   | 5 & 1    | 0101 & 0001        | 0001 (1)                          |
+| \|       | OR                    | 5 \|  1  | 0101 \| 0001       | 0101 (5)                          |
+| ^        | XOR                   | 5 ^ 1    | 0101 ^ 0001        | 0100 (4)                          |
+| ~        | NOT                   | ~5       | ~00000101          | 11111010 (-6 in two's complement) |
+| <<       | Left Shift            | 5 << 1   | 0101 << 1          | 1010 (10)                         |
+| >>       | Right Shift           | 5 >> 1   | 0101 >> 1          | 0010 (2)                          |
+| >>>      | Zero-fill Right Shift | -5 >>> 1 | `11111011 >>> 1`   | Fills with 0 instead of sign bit  |
+
+All of them use 32 bit uint  
+So if number is higher, it will be limited
+
+
 NestJS Fundamentals
 ===================
 https://learn.nestjs.com/p/fundamentals
@@ -3113,133 +3280,6 @@ it('Create [POST /]', () => {
 there could be a separate file with expected  
 static responses and dtos, to avoid repetition
 
-
-
-JS tricks learned from the Leet Code
-====================================
-
-#### >> and ~~ limitation
-like all bitwise operators, they will convert to32 bit int  
-so it cannot be used for numbers higher than:
-```
-2**32 = 4294967296 = 4e9
-```
-
-### >> operator
-Division by two, rounded down
-```javascript
-5 >> 1 // 2
-```
-
-### ~~ operator
-#### Convert string to number
-```javascript
-~~"412.7" // 412
-~~"4"     // 4
-~~"-4"    // -4
-```
-
-#### Floor of decimal
-```javascript
-console.log(~~4.7);  // Output: 4
-console.log(~~-4.7); // Output: -4
-```
-
-#### Convert null or undefined to 0
-```javascript
-~~null      // 0
-~~undefined // 0
-~~{}.foo    // 0
-```
-
-Works by applying the bitwise NOT (~) operator twice. Since bitwise operators  
-only work on integers, JavaScript internally converts the number to a 32-bit  
-signed integer.
-
-#### Why to use it
-It is more performant than Math.floor(), Math.trunc(), or parseInt().
-
-### Arrays in Javascript
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array  
-Arrays are stored as a object with indexes as properties  
-these indexes are strings
-
-#### toString() cooercion
-when calling element arr[index]  
-engine will do implicit index.toString() convertion  
-`arr[2]` is same as `arr["2"]`
-
-```javascript
-arr = [23, 13, 456] // (3) [23, 13, 456]
-arr["2"]            // 456
-arr[2]              // 456
-arr["05"] = "foo"
-arr                 // (3) [23, 13, 456, 05: 'foo']
-```
-
-#### Typed arrays
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray
-
-faster and better on memory  
-but more restictive
-
-fixed size: length set on creation and cannot change  
-typing: all elements have to be same type  
-fast: use contignous memory making access and iteration faster  
-no push: no array push(), splice() etc, because they have fixed size
-
-```javascript
-let arr = new Int32Array(10);
-arr[0] = 42;
-arr[1] = 100;
-console.log(arr[0]); // 42
-console.log(arr.length); // 10
-```
-
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Typed_arrays
-
-| Type              | Aprox range | bytes |
-|-------------------|-------------|-------|
-| Uint8Array        | 0 to 255    | 1     |
-| Uint8ClampedArray | 0 to 255    | 1     |
-| Uint16Array       | 0 to 6e4    | 2     |
-| Uint32Array       | 0 to 4e9    | 4     |
-| BigUint64Array    | 0 to 1e19   | 8     |
-
-| Type          | Aprox range   | bytes |
-|---------------|---------------|-------|
-| Int8Array     | -128 to 127   | 1     |
-| Int16Array    | -3e4 to 3e4   | 2     |
-| Int32Array    | -2e9 to 2e9   | 4     |
-| BigInt64Array | -9e18 to 9e18 | 8     |
-
-| Type         | Aprox range     | bytes |
-|--------------|-----------------|-------|
-| Float16Array | -6e4 to 6e4     | 2     |
-| Float32Array | -3e38 to 3e38   | 4     |
-| Float64Array | -1e308 to 1e308 | 8     |
-
-to check precise size calculate 2 to power of bites
-```
-2**8 = 256
-2**16 = 65536
-2**32 = 4294967296 = 4.2e9
-2**64 = 18446744073709552000 = 1.8e19
-```
-
-### JS binary operators
-| Operator | Name                  | Example  | Binary Calculation | Result                            |
-|----------|-----------------------|----------|--------------------|-----------------------------------|
-| &        | AND                   | 5 & 1    | 0101 & 0001        | 0001 (1)                          |
-| \|       | OR                    | 5 \|  1  | 0101 \| 0001       | 0101 (5)                          |
-| ^        | XOR                   | 5 ^ 1    | 0101 ^ 0001        | 0100 (4)                          |
-| ~        | NOT                   | ~5       | ~00000101          | 11111010 (-6 in two's complement) |
-| <<       | Left Shift            | 5 << 1   | 0101 << 1          | 1010 (10)                         |
-| >>       | Right Shift           | 5 >> 1   | 0101 >> 1          | 0010 (2)                          |
-| >>>      | Zero-fill Right Shift | -5 >>> 1 | `11111011 >>> 1`   | Fills with 0 instead of sign bit  |
-
-All of them use 32 bit uint  
-So if number is higher, it will be limited
 
 
 Defensive Semicolon

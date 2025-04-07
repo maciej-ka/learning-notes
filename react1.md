@@ -3205,6 +3205,9 @@ and doesn't need to be rerendered
 Using index as key can misinform React.  
 Although it sometimes doesn't matter.
 
+When there is no reordering,  
+you can be more relaxed with key prop.
+
 #### NODE_ENV
 Will tell tools, is the mode production or development.  
 By default it's production, unless you run development server.
@@ -3761,6 +3764,22 @@ function PastOrdersRoute() {
 }
 ```
 
+#### Two queries dependent
+To resolve potential conflict in field names  
+of data and isLoading, destructure and rename.
+
+To not run query before some input arrives  
+from another query, use `enabled`.
+
+```javascript
+const { isLoading: isLoadingPastOrder, data: pastOrderData } = useQuery({
+  queryKey: ["past-order", focusedOrder],
+  queryFn: () => getPastOrder(focusedOrder),
+  staleTime: 24 * 60 * 60 * 1000,
+  enabled: !!focusedOrder,
+})
+```
+
 #### Tanstack Query vs useEffect
 When to use one or other?  
 There is personal preference.
@@ -3837,6 +3856,59 @@ With Portal component can say: render into Portal
 this additional content.
 
 It allows to render outside of app.
+
+index.html
+
+```html
+<body>
+  <div id="modal"></div>
+  <div id="root">not rendered</div>
+  <script type="module" src="./src/App.jsx"></script>
+</body>
+```
+
+In Modal we want to always use the same div, not create one.  
+However any interaction with DOM is slow, even `document.getById`
+
+```javascript
+// Modal.jsx
+import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom'
+
+const Modal = ({ children }) => {
+  const elRef = useRef(null)
+  if (!elRef.current) {
+    elRef.current = document.createElement("div")
+  }
+
+  useEffect(() => {
+    const modalRoot = document.getElementById("modal")
+    modalRoot.appendChild(elRef.current)
+    return () => modalRoot.removeChild(elRef.current)
+  }, [])
+
+  return createPortal(<div>{children}</div>, elRef.current)
+}
+
+export default Modal
+```
+
+Example of using that Modal component,  
+inside a page component.
+
+```javascript
+return (
+  <Modal>
+    <h2>Order #{focusedOrder}</h2>
+  </Modal>
+)
+```
+
+#### Render nothing
+
+```javascript
+return null
+```
 
 
 

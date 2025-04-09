@@ -4167,6 +4167,151 @@ needs to access their values. For that purpose
 </form>
 ```
 
+### Testing (with React)
+I like tests which prevent  
+my waste of time in the future.
+
+I hate tests which waste my time now  
+and don't help me in the future.
+
+Also, when you feel overwhelmed and axious  
+by how many things happen in the project.  
+Then this may be a good moment for test.  
+As tests can reduce cognitive load,  
+that something may break.
+
+Good use case for tests is when there is bug to fix,  
+then its good to first write the test  
+which would catch that bug.
+
+I want test to:
+- fail fast,
+- fail loud,
+- to be testing something important.
+
+I like integration tests,  
+big suites that cover user experiences  
+like: user can sign in and buy something.  
+But I like to have only few of them.  
+Few that I care about.
+
+And if integration test is too finicky  
+or I don't care deeply about it, then I delete it.
+
+Tests should be deleted on daily basis.
+
+```bash
+npm install -D vitest@2.1.3 @testing-library/react@16.0.1 happy-dom@15.7.4
+```
+
+`testing-library/react`: bunch of helper tools  
+for writing tests, this is the one everyone uses now.  
+Before there was Enzyme, but that one was't very stable.
+
+`HappyDom` is a synthetic browser environment.  
+It's replacement for JsDOM, which was massive and slow.  
+HappyDom is way smaller and faster. Although it's less complete.  
+There may be a case where your app does something non typical  
+and test will fail.
+
+### Vitest
+Really nice, because we don't have to set up.  
+Doesn't require configuration. It's replacement for Jest.  
+(And Jest was mimicking Jasmine).
+
+#### Python thing in JS double __ on both sides
+`__tests__`  
+It's a signal to any future user that it's a magical name.  
+It's important that it will be named like that.  
+Don't change this name, because things will fail.
+
+#### Testing files
+Both are supported  
+(actually any file in tests will do)
+
+```
+/__tests__/App.test.jsx
+/__tests__/App.spec.jsx
+App.test.jsx
+```
+
+update npm script  
+in package.json
+
+```json
+"test": "vitest"
+```
+
+It's smart enough to read `vite.config.js`  
+Although we need to add happy-dom to config
+
+```javascript
+// vite.config.js
+export default defineConfig({
+  // ...
+  plugins: [TanStackRouterVite(), react()],
+  test: {
+    environment: "happy-dom",
+  }
+})
+```
+
+There is also an option to use Playwright,  
+but it's not yet ready.
+
+#### Separate test vite config
+If separate vite configuration is needed for tests,  
+`vitest.config.js` file can be used.
+
+It has to extend default configuration,  
+otherwise it will be ignored.
+
+#### Example Test
+We will make sure that all images have alt prop.  
+It's not that important what you put into "test()",  
+as long as you then know what failed.
+
+As a test placeholder image, we use https://picsum.photos/200  
+(it will change once per daily)
+
+```javascript
+import { render } from "@testing-library/react";
+import { expect, test } from "vitest";
+import Pizza from "../Pizza";
+
+test("alt test renders on Pizza image", async () => {
+  const name = "My Favorite Pizza";
+  const src = "https://picsum.photos/200"
+  const screen = render(
+    <Pizza name={name} description="super cool pizza" image={src} />
+  )
+
+  const img = screen.getByRole("img");
+  expect(img.src).toBe(src)
+  expect(img.alt).toBe(name)
+})
+```
+
+`screen.get/find` will suggest a lot of completions.  
+While you may think: why I cannot have jQuery way of navigating?  
+Reason is: screen is very user based, meaning: what user can see.
+
+For example there is one for getting header,  
+without being specific is it h1 or h2.
+
+#### run tests
+all three are the same
+
+```bash
+npm run test
+npm test
+npm t
+```
+
+If your tests immediatelly work,  
+consider breaking them on purpose,  
+to be sure that they work.
+
 
 
 Less common hooks

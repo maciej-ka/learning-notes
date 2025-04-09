@@ -3780,6 +3780,47 @@ const { isLoading: isLoadingPastOrder, data: pastOrderData } = useQuery({
 })
 ```
 
+#### TanStack error handling
+For TanStack to detect error,  
+throw error in `queryFn`.
+
+```javascript
+if (!response.ok) {
+  throw new Error("Network response was not ok.")
+}
+```
+
+#### TanStack Mutations
+```javascript
+const mutation = useMutation ({
+  mutationFn: function(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target)
+    return postContact(
+      formData.get("name"),
+      formData.get("email"),
+      formData.get("message")
+    )
+  }
+})
+```
+
+Query can be called as many times,  
+as it doesn't change anything.
+
+Mutation: user has to be more carefull,  
+how, when and how many times it's called.
+
+Because of that, mutations in TanStack  
+are not called immediately.
+
+```javascript
+<form onSubmit={mutation.mutate}></form>
+```
+
+This will not directly call mutate, but instead  
+it will run a bit of ReactQuery machinery before.
+
 #### Tanstack Query vs useEffect
 When to use one or other?  
 There is personal preference.
@@ -4050,6 +4091,49 @@ It looks nicer. But it's very non explicit, very opaque.
 It's unclear what props are, which undermines React major benefit:  
 how explicit it is.
 
+### Uncontrolled forms
+Controlled form is more unusual.
+
+More usual is: let the form controll all for me,  
+and let us just listen for form changes.
+
+There is often no reason for controlled form,  
+as when we don't do any reactive things on input,  
+like: typeahead, double dropdown reacting to first select.
+
+```javascript
+function ContactRoute() {
+  const mutation = useMutation ({
+    mutationFn: function(e) {
+      e.preventDefault();
+      const formData = new FormData(e.target)
+      return postContact(
+        formData.get("name"),
+        formData.get("email"),
+        formData.get("message")
+      )
+    }
+  })
+
+  return (
+    <div className="contact">
+      <h2>Contact</h2>
+      {mutation.isSuccess ? (
+        <h3>Submitted!</h3>
+      ) : (
+        <form onSubmit={mutation.mutate}>
+          <input name="name" placeholder="Name" />
+          <input name="email" placeholder="Email" type="email" />
+          <textarea placeholder="Message" name="message"></textarea>
+          <button type="submit">Submit</button>
+        </form>
+      )}
+    </div>
+  )
+}
+```
+
+Button default type is submit.
 
 
 

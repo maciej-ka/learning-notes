@@ -3910,6 +3910,147 @@ return (
 return null
 ```
 
+### Class components
+We use function components so much, that we  
+almost don't remember about class components.  
+They are not deprecated.  
+They used to be only way to write React.
+
+I like class component, but nobody writes them.  
+So I stopped writing them too.
+
+Before effect there were lifecycle methods.  
+componentDidMount was like useEffect(..., [])  
+componentWillUnmount was like return from useEffect  
+componentDidUpdate was like listening to changes
+
+#### this in javascript
+Class components used to have problem with `this`.  
+And it often didn't had a value which programmers expected.
+
+solution was to bind in constructor
+```javascript
+constructor (props) {
+  super(props);
+  this.celebrateError = this.celebrateError.bind(this)
+}
+```
+
+or to declare as arrow function
+
+```javascript
+celebrateError = () => {
+  this.setState({
+    celebration: "lol",
+  })
+}
+```
+
+#### this, context binding
+Common interview question.  
+Arrow functions have a different way to set `this`.  
+They have a different context setting methodology.  
+(context setting is called also "this binding")
+
+#### Hooks
+It's not possible to use hooks with class components.  
+There is walkaround: to wrap class component in function  
+and pass hook as a prop.
+
+```javascript
+function ErrorBoundaryWithHooks() {
+  const pizzaOfTheDay = usePizzaOfTheDay()
+  return <ErrorBoundary potd={potd} />
+}
+```
+
+**Lexical** (arrow functions)  
+Context is set where it's written.
+
+**Dynamic** context (regular functions)  
+Context is set where it's invoked.
+
+### Error Boundaries
+Error Boundaries work only with class components.  
+They are not recommended and not deprecated.
+
+Reason of this situation is probably because React team  
+haven't found alternative way to handle Error Boundaries.
+
+nice npm package for error boundaries  
+https://www.npmjs.com/package/react-error-boundary
+
+```javascript
+// ErrorBoundary.jsx
+import { Link } from "@tanstack/react-router";
+import { Component } from "react";
+
+class ErrorBoundary extends Component {
+  state = { hasError: false }
+  static getDerivedStateFromError() {
+    return { hasError: true }
+  }
+
+  componentDidCatch(error, info) {
+    // send to TrackJS/Sentry
+    console.error("Error Boundry caught", error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="error-boundary">
+          <h2>Uh oh!</h2>
+          <p>
+            There was an error with this page. <Link to="/">Click here</Link> to go back to the home page
+          </p>
+        </div>
+      )
+    }
+    return this.props.children;
+  }
+}
+
+export default ErrorBoundary;
+```
+
+#### Using Error Boundary
+It's not possible to include ErrorBoundary inside  
+render function of troublesome component.
+
+Because in case of error, whole component is blown.
+
+So Troublesome component has to be put whole inside  
+another component, that will have ErrorBoundary.
+
+If it's proper for your app, adding ErrorBoundary  
+on root level may be a good place (to handle all errors)  
+This way it would also catch all 404 (not 100% sure)
+
+Example of using TanStack Route with it.
+
+```javascript
+// past.lazy.jsx
+export const Route = createLazyFileRoute('/past')({
+  component: ErrorBoundaryWrappedPastOrderRoutes,
+})
+
+function ErrorBoundaryWrappedPastOrderRoutes(props) {
+  return (
+    <ErrorBoundary>
+      <PastOrdersRoute {...props} />
+    </ErrorBoundary>
+  )
+}
+```
+
+#### Props spread
+Generally be careful with sending props like above `...props`.  
+It looks nicer. But it's very non explicit, very opaque.  
+It's unclear what props are, which undermines React major benefit:  
+how explicit it is.
+
+
 
 
 Less common hooks

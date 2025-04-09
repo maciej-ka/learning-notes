@@ -3821,6 +3821,12 @@ are not called immediately.
 This will not directly call mutate, but instead  
 it will run a bit of ReactQuery machinery before.
 
+Mutations are visible in TanStack Query dev tools.  
+Where it's possible did mutation happened  
+and what data was sent. (similar to network tab).
+
+Also it's possible to see what triggered mutation.
+
 #### Tanstack Query vs useEffect
 When to use one or other?  
 There is personal preference.
@@ -4115,6 +4121,10 @@ function ContactRoute() {
     }
   })
 
+  if (mutation.isError) {
+    return <h1>lol no</h1>
+  }
+
   return (
     <div className="contact">
       <h2>Contact</h2>
@@ -4134,6 +4144,28 @@ function ContactRoute() {
 ```
 
 Button default type is submit.
+
+#### Validations for uncontrolled queries
+Perhaps not needed, as browsers have some.  
+And other reason is that probably you want  
+to have validation on submit, not on keydown.
+
+#### Mix of controlled and uncontrolled
+When form onSubmit would construct FormData.  
+This could work well when form has both types  
+(controlled and uncontrolled), and form  
+needs to access their values. For that purpose  
+`new FormData(e.target)` can be used.
+
+```javascript
+<form
+  onSubmit = {(e) => {
+    const formData = new FormData(e.target)
+    e.preventDefault()
+    // ...
+  }}>
+</form>
+```
 
 
 

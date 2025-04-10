@@ -2712,6 +2712,73 @@ const [cart] = useContext(CartContext)
 const [cart] = use(CartContext)
 ```
 
+### React Compiler
+Free optimization for you code. In worst case code will be same  
+but perhaps it will be faster.
+
+`useMemo` and `useCallback` in combination of React.Memo can solve  
+performance problems. (Wait for these problems to happen first).  
+With useMemo and useCallback code is harder to reason about,  
+because some of the things will not update on every render.
+
+React Compiler will look at the code and figure out:  
+this branch of code will never update, so I can wrap it in useMemo.
+
+React Forget is historical name of React Compiler.  
+To opt out some fragment from compilation, use directive:
+
+```javascript
+"use no memo"
+```
+
+To check can project use compiler, run:  
+And it will tell, would compiler be beneficial to your project.  
+It will tell something like "I was able to affect 12 of 13 components"
+
+```bash
+npx react-compiler-healthcheck@beta
+```
+
+And then to really use it. This is safe to be used today,  
+BlueSky, Facebook and Instagram use it.
+
+```bash
+npm i -D babel-plugin-react-compiler@beta --force
+```
+
+Update vite configuration.
+
+```javascript
+// vite.config.js
+export default defineConfig({
+  // ...
+  plugins: [TanStackRouterVite(), react({
+    babel: {
+      plugins: [
+        [
+          "babel-plugin-react-compiler",
+          {
+            target: "19"
+          }
+        ]
+      ]
+    }
+  })],
+})
+```
+
+And then it should still work.
+
+```bash
+npm run dev
+```
+
+It seems like everything is working as it was,  
+but open Dev Tools > React Component Dev Tools.  
+And in tree components will be shown as Memo.
+
+It's stable enough to be used
+
 
 
 Intermediate React, v6

@@ -4354,6 +4354,82 @@ In above examples there is no need for async.
 However, because we may need it to async something later,  
 perhaps it makes sense to always add it.
 
+#### Mocking
+We have API requests in some of tested components.  
+Potentially there is an option to spin API up and make  
+real requests but don't do that, it will be headache.
+
+We will be mocking responses.  
+It's possible to mock just with vitest,  
+but vitest-fetch-mock is a bit nicer to use.
+
+```bash
+npm i -D vitest-fetch-mock@0.3.0
+```
+
+In mocked test, we need to provide a fake QueryClient.  
+`vi` is a way to create spy in vitest and `fetchMocker.enableMocks()`  
+will monkey patch fetch, so that it becomes testable  
+and doesn't really make a http request.
+
+In scenario below, we have only one route,so we don't have to tell  
+how to respond to each different potential request.
+
+After clicking button there is a moment to wait,  
+because response will arrive after some time.  
+for that reason we use find, not get
+
+```javascript
+const h3 = await screen.findByRole("heading", { level: 3 });
+```
+
+toContain may be better for test,  
+as it doesn't have to be as precise as toBe is.
+
+Checking details of fetchMocker call is dangerously close  
+to testing the implementation details.
+
+```javascript
+test("can submit contact form", async () => {
+  fetchMocker.mockResponse(JSON.stringify({ status: "ok" }))
+  const screen = render(
+    <QueryClientProvider client={queryClient}>
+      <Route.options.component />
+    </QueryClientProvider>
+  )
+
+  const nameInput = screen.getByPlaceholderText("Name");
+  const emailInput = screen.getByPlaceholderText("Email");
+  const msgTextArea = screen.getByPlaceholderText("Message");
+
+  const testData = {
+    name: "Brian",
+    email: "brian@example.com",
+    message: "just let brian teach, dustin",
+  }
+
+  nameInput.value = testData.name
+  emailInput.value = testData.email
+  msgTextArea.value = testData.message
+
+  const btn = screen.getByRole("button")
+  btn.click()
+
+  const h3 = await screen.findByRole("heading", { level: 3 });
+  expect(h3.innerHTML).toContain("Submitted");
+
+  const requests = fetchMocker.requests()
+  expect(requests.length).toBe(1)
+  expect(requests[0].url).toBe("/api/contact")
+  expect(fetchMocker).toHaveBeenCalledWith("/api/contact", {
+    body: JSON.stringify(testData),
+    headers: { "Content-Type": "application/json" },
+    method: "POST"
+  })
+}) 
+```
+
+
 
 Less common hooks
 =================

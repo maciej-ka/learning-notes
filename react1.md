@@ -4708,7 +4708,7 @@ export default defineWorkspace([
       include: ["**/*.node.test.{js,jsx}"],
       name: "happy-dom",
       environment: "happy-dom"
-    }
+    },
   },
   {
     extends: "./vite.config.js",
@@ -4768,6 +4768,61 @@ And inside UI, there is a preview of the browser.
 
 This reminds little bit storybook, where you can  
 showcase all your components, but using tests.
+
+#### npm uninstall
+Actually, this is needed for coverage to work  
+in vitest browser tests, so don't run it.
+
+```bash
+npm un @vitest/coverage-v8
+```
+
+#### use browser tests with istanbul
+```bash
+npm i -D @vitest/coverage-istanbul 
+```
+
+Update config.  
+When using browser tests with coverage,  
+atm. there is limitation to use Chromium.
+
+```javascript
+// vitest.workspace.js
+import { defineWorkspace } from "vitest/config";
+
+export default defineWorkspace([
+  {
+    extends: "./vite.config.js",
+    test: {
+      include: ["**/*.node.test.{js,jsx}"],
+      name: "happy-dom",
+      environment: "happy-dom",
+      coverage: {
+        provider: "istanbul",
+        reporter: ["test", "json", "html"]
+      },
+    },
+  },
+  {
+    extends: "./vite.config.js",
+    test: {
+      setupFiles: ["vitest-browser-react"],
+      include: ["**/*.browser.test.{js,jsx}"],
+      name: "browser",
+      coverage: {
+        provider: "istanbul",
+        reporter: ["test", "json", "html"]
+      },
+      browser: {
+        provider: "playwright",
+        enabled: true,
+        name: "chromium"
+      }
+    }
+  }
+])
+```
+
 
 
 

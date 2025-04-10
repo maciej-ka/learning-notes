@@ -4884,6 +4884,79 @@ test("correctly renders a header with a three cart count", async () => {
 });
 ```
 
+### React 19
+React doesn't change very quickly.
+
+#### "use client" and "use server"
+React is bundled now more into metaframework.  
+And these allow for running things onlyon server  
+or only on client.
+
+"use client" makes guarantee, that code will be  
+only on client (and it's possible to use it per block)
+
+"use server" means: run it all on server  
+and send to client only markup.
+
+You can build framework like Remix or Next yourself,  
+but you have to get quite dirty low level.
+
+#### taintUniqueValue, taintObjectReference
+Because with "use server" you're risking  
+of sending secrets to client by mistake  
+(by removing that line or changing it by mistake)
+
+so `taintUniqueValue`, `taintObjectReference`  
+can detect that and they prevent sending to client.
+
+#### react-helmet
+If you want your component to be able to add  
+tags like link, meta, title to html index.html.  
+At the moment option to do this is `react-helmet`
+
+but with React 19, you can just render title  
+in component, and React will automaatically stick it  
+to the header of html file
+
+```javascript
+const MyPizza = () => (
+  <div>
+    <h1>I love pizza</h1>
+    <title>🍕 Brian Loves Pizza 🍕</title>
+  </div>
+);
+```
+
+#### preload, preconnect
+https://www.debugbear.com/blog/resource-hints-rel-preload-prefetch-preconnect  
+They are called browser hints,
+
+Browser may ignore these,  
+if it's low on battery.  
+But nothing will break.
+
+preconnect: do a hanshake, get ready, but don't download  
+preload: all that and additionaly do a download
+
+```javascript
+const EnterConfirmation = () => {
+  preload("https://example.com/text-editor.js", { as: "script" });
+  return (
+    <div>
+      <a href="/text-editor">Click here to open the text editor</a>
+    </div>
+  );
+};
+```
+
+#### Custom components, web components
+They have been always kind of possible,  
+but not they are well supported.
+
+This is interesting for library authors.  
+Because you can create a component once  
+and ship it to Angular, Vue, React...
+
 
 
 Less common hooks

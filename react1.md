@@ -4652,6 +4652,26 @@ Don't aim for 100% coverage.
 Tests that you don't care about are worse,  
 than tests which don't exist.
 
+#### Vitest UI
+A new thing in Vitest
+
+```bash
+npm i -D @vitest/ui
+```
+
+and a new script in package.json
+
+```json
+{
+  "test:ui": "vitest --ui"
+}
+```
+
+In browser test report and runner.  
+A way to filter and run test individually,  
+Check how long test has taken, see module dependency.  
+A way to check what is logged to console.
+
 
 
 Less common hooks

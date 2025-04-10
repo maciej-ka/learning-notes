@@ -2612,6 +2612,106 @@ function ContactInput(props) {
 }
 ```
 
+#### use and Suspense
+It was announced very long time ago.  
+Recommendation now is not to use Suspense directly  
+but to use things that use Suspense.
+
+It's usable by TanStack Query  
+With a bit of configuration and experimental flag.
+
+```javascript
+// App.jsx
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      experimental_prefetchInRender: true,
+    }
+  }
+});
+```
+
+And then usage of it. We will use it for better handling  
+of loading state, while we are witing for query to finish.  
+We are chaining `promise` on call of useQuery, to have  
+a promise instead of typical destructured object.
+
+```javascript
+// past.lazy.jsx
+import { useState, Suspense, use } from "react"
+
+function ErrorBoundaryWrappedPastOrderRoutes(props) {
+  const [page, setPage] = useState(1);
+  const loadedPromise = useQuery({
+    queryKey: ["past-orders", page],
+    queryFn: () => getPastOrders(page),
+    staleTime: 30000,
+  }).promise;
+  return (
+    <ErrorBoundary>
+      <Suspense
+        fallback={
+          <div className="past-orders">
+            <h2>Loading Past Order ...</h2>
+          </div>
+        }
+      >
+        <PastOrdersRoute
+          loadedPromise={loadedPromise}
+          page={page}
+          setPage={setPage}
+          {...props}
+        />
+      </Suspense>
+    </ErrorBoundary>
+  );
+}
+
+function PastOrdersRoute({ page, setPage, loadedPromise }) {
+  const data = use(loadedPromise)
+
+  // ...
+  return ();
+}
+```
+
+how it works:  
+Suspense is saying: here is boundary, where stuff inside  
+may be loading. When it's loading: render the fallback.  
+When it's not loading: render whatever is inside of it.
+
+We are sending promise to a component.  
+And this line, where we use `use` says:
+
+```javascript
+const data = use(loadedPromise)
+```
+
+If this promise is not loaded: Suspend the component,  
+Don't render me, stop here, and tell the Suspense component  
+that I'm loading.
+
+And then when changing a page later retriggers page load,  
+the Suspense will be notified again.
+
+Benefit of Suspense is that component which is wrapped,  
+can forget about loading. It reads now linearly, like if  
+the data would be in it all the time.
+
+You can make one Suspense on the top of app.  
+(it's not most user friendly thing, but possible)
+
+#### use useContext
+use can replace useContext
+
+```javascript
+// before
+const [cart] = useContext(CartContext)
+// after
+const [cart] = use(CartContext)
+```
+
 
 
 Intermediate React, v6

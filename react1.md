@@ -4441,6 +4441,7 @@ How to render hook outside of component?
 You can't. So we will create component that uses it.
 
 ```javascript
+// /src/__test__/usePizzaOfTheDay.test.jsx
 import { expect, test, vi } from "vitest"
 import { render } from "@testing-library/react"
 import createFetchMock from "vitest-fetch-mock"
@@ -4483,6 +4484,7 @@ meant to wrap a hook and get response. Instead we can
 use renderHook testing utility, which does moreless the same.
 
 ```javascript
+// /src/__test__/Cart.test.jsx
 import { renderHook } from "@testing-library/react"
 
 test("gives null when first called", async () => {
@@ -4496,6 +4498,7 @@ And another test, in which we check, that hook
 makes a call to the API
 
 ```javascript
+// /src/__test__/Cart.test.jsx
 import { renderHook, waitFor } from "@testing-library/react"
 
 test("to call the API and give back the pizza of the day", async () => {
@@ -4515,6 +4518,94 @@ It will give up after second or two...
 
 You may continue adding tests for edge cases.  
 But at least the happy path is covered.
+
+#### Snapshot Testing
+100% coverage?  
+I think it's a mistake, a fools errand to go after.  
+You end testing things which are not important to test.
+
+However, there is a trick to do it: snapshot testing.  
+They are low effort and give a low confidence.  
+Low confidence? I'm out, because what are we doing.  
+And they may be discouraged now.
+
+The best case scenario for snapshot tests are dumb components,  
+which don't do much but just present.
+
+Snapshot test says: it looks like this and then it tracks.  
+It will create a file in `__snapshots__` folder  
+and dev are supposed to track these in repository.
+
+If test run is different than stored snapshot,  
+test will fail, but there is an option to update snapshot  
+with press of `u`
+
+```javascript
+// /src/__test__/Cart.test.jsx
+import { expect, test } from "vitest"
+import { render } from "@testing-library/react"
+import Cart from "../Cart"
+
+test("snapshot with nothing in cart", () => {
+  const { asFragment } = render(<Cart cart={[]} />)
+  expect(asFragment()).toMatchSnapshot()
+})
+```
+
+Snapshot update is also required after removing test,  
+because vitest will detect, that there is a snapshot  
+that is not used.
+
+Low confindence, because they are very easy to fail.  
+Especially with nessted components.  
+They break often and don't say much about reason.
+
+They may be good for parts that have UI focus.  
+And for things that don't change much.
+
+It's possible to use snapshots with any Javascript object.  
+And perhaps one more good use for these is return from API.  
+So that we check that result from API is in sync.  
+And stays as we expect.
+
+#### Match inline snapshot
+```javascript
+// /src/__test__/Cart.test.jsx
+
+test("snapshot with nothing in cart", () => {
+  const { asFragment } = render(<Cart cart={[]} />)
+  expect(asFragment()).toMatchInlineSnapshot()
+})
+```
+
+This will automatically edit current test file  
+and generate snapshot inside function call.
+
+```javascript
+// /src/__test__/Cart.test.jsx
+
+test("snapshot with nothing in cart", () => {
+  const { asFragment } = render(<Cart cart={[]} />)
+  expect(asFragment()).toMatchInlineSnapshot(`
+    <DocumentFragment>
+      <div
+        class="cart"
+      >
+        <h2>
+          Cart
+        </h2>
+        <ul />
+        <p>
+          Total: $0.00
+        </p>
+        <button>
+          Checkout
+        </button>
+      </div>
+    </DocumentFragment>
+  `)
+})
+```
 
 
 

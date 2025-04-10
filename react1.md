@@ -4607,6 +4607,51 @@ test("snapshot with nothing in cart", () => {
 })
 ```
 
+#### Code Coverage Reporting
+There is also an option to use istanbul  
+with package `@vitest/coverage-istanbul`.  
+(this is old standard, v8 is new hotness).
+
+```bash
+npm i -D @vitest/coverage-v8@2.1.3
+```
+
+And then select reporters.  
+You can pick subset of these.
+
+```javascript
+// vite.config.js
+export default defineConfig({
+  // ...
+  coverage: {
+    reporter: ["test", "json", "html"],
+  }
+})
+```
+
+And also create a coverage task in package.json  
+(this used to be quite complicated).
+
+```json
+{
+  "scripts": {
+    "coverage": "vitest --coverage"
+  }
+}
+```
+
+And then just open index.html from coverage directory.  
+Navigate in folders, open files and see, which exact lines  
+of source code have been covered and how many times.
+
+```bash
+open coverage/index.html
+```
+
+Don't aim for 100% coverage.  
+Tests that you don't care about are worse,  
+than tests which don't exist.
+
 
 
 Less common hooks

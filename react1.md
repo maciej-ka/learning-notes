@@ -2779,6 +2779,31 @@ And in tree components will be shown as Memo.
 
 It's stable enough to be used
 
+### Wrap up
+React still seem reliable.
+
+It's still best choice if something needs a team  
+and being maintained.
+
+Practice by doing terrible ideas. Shop for unmached socks,  
+Application that will AI generate titles for jogging runs  
+on base of music that was listened on that run...  
+Sarah Vieira from Twitter wants to bring back stupid.  
+I endorse that motion.
+
+It's good idea to deploy after.
+
+```bash
+npm run build
+```
+
+This will create dist that can be put on a CDN
+
+And then there is need to deploy API.  
+This one particular works on sqlite.  
+If you care about saving, perhaps use something like Neon.  
+Or Turso. And then deploy to Vercel or Elastic Beanstalk...
+
 
 
 Intermediate React, v6

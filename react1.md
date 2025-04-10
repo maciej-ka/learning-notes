@@ -4271,7 +4271,11 @@ We will make sure that all images have alt prop.
 It's not that important what you put into "test()",  
 as long as you then know what failed.
 
-As a test placeholder image, we use https://picsum.photos/200  
+As a test placeholder image, we use:  
+https://picsum.photos/200  
+200 is because it's 200 x 200 pixels  
+https://picsum.photos/300/200  
+this will be 300 x 200 pixels  
 (it will change once per daily)
 
 ```javascript
@@ -4312,6 +4316,43 @@ If your tests immediatelly work,
 consider breaking them on purpose,  
 to be sure that they work.
 
+#### Test-Driven Development on a Component
+Especially good when you found a bug,  
+and before fixing it you add test case to catch it.
+
+#### Screen is stateful
+Potential problem with below code is  
+that screen is stateful and we didn't reset it.  
+So it will contain render from this case and previous.
+
+```javascript
+test("to have default image if none is provided", async () => {
+  const screen = render(
+    <Pizza name="something else" description="super cool pizza" />
+  )
+
+  const img = screen.getByRole("img")
+  expect(img.src).not.toBe("")
+})
+```
+
+And when testing, testing library will report:  
+`TestingLibraryElementError: Found multiple elements with the role "img"`
+
+Solution is to clean after each case.  
+In vitest `afterEach` is used on top, global level  
+just like test definitions, no wrapper.
+
+```javascript
+import { render, cleanup } from "@testing-library/react"
+import { expect, test, afterEach } from "vitest"
+afterEach(cleanup)
+```
+
+#### async test
+In above examples there is no need for async.  
+However, because we may need it to async something later,  
+perhaps it makes sense to always add it.
 
 
 Less common hooks

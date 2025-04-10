@@ -1351,6 +1351,7 @@ if (!response.ok) {
 #### TanStack Mutations
 ```javascript
 const mutation = useMutation ({
+  mutationKey: ["contact"],
   mutationFn: function(e) {
     e.preventDefault();
     const formData = new FormData(e.target)
@@ -1668,6 +1669,7 @@ like: typeahead, double dropdown reacting to first select.
 ```javascript
 function ContactRoute() {
   const mutation = useMutation ({
+    mutationKey: ["contact"],
     mutationFn: function(e) {
       e.preventDefault();
       const formData = new FormData(e.target)
@@ -2516,10 +2518,10 @@ Because you can create a component once
 and ship it to Angular, Vue, React...
 
 #### Form Actions
-As developer we do a lot of forms.
+As developer we do a lot of forms.  
 In some sense most of web may be seen as form.
 
-So React team thought: let's make forms very easy to use.
+So React team thought: let's make forms very easy to use.  
 Just by changing
 ```javascript
 // from 
@@ -2533,6 +2535,81 @@ You don't have to write these anymore
 ```javascript
 e.preventDefault();
 const formData = new FormData(e.target)
+```
+
+And this will work very nicely with something like
+
+```javascript
+const mutation = useMutation ({
+  mutationFn: function(formData) {
+    "use server";
+    // save to database
+  }
+})
+```
+
+#### Another example of form action
+Before:
+
+```javascript
+<form
+  onSubmit={(e) => {
+    e.preventDefault();
+    setCart([
+      ...cart,
+      { pizza: selectedPizza, size: pizzaSize, price },
+    ]);
+  }}
+></form>
+```
+
+After:
+
+```javascript
+function addToCart() {
+  setCart([
+    ...cart,
+    { pizza: selectedPizza, size: pizzaSize, price },
+  ]);
+}
+
+<form action={addToCart}></form>
+```
+
+Which potentially later can become:
+
+```javascript
+function addToCart() {
+  "use server"
+  sql`INSERT INTO cart ...`
+}
+
+<form action={addToCart}></form>
+```
+
+#### useFormStatus
+Can be used to check, has form finished submitting.  
+It doesn't have to be directly next to form,  
+like in example below, its in a component,  
+that will be burried deep into some hierarchy,  
+where there will be form somewhere on top.
+
+The point of this hook is that it's aware of form.
+
+```javascript
+import { useFormStatus } from 'react-dom'
+
+function ContactInput(props) {
+  const { pending } = useFormStatus();
+  return (
+    <input
+      disabled={pending}
+      name={props.name}
+      type={props.type}
+      placeholder={props.placeholder}
+    />
+  )
+}
 ```
 
 

@@ -4429,6 +4429,93 @@ test("can submit contact form", async () => {
 }) 
 ```
 
+#### Testing Custom Hooks
+Testing is actually one good reason to use custom hooks,  
+as they become very easy to test. And it makes shared hooks  
+become stable and reliable.
+
+Funny is that these tests are most often longer  
+then the code itself.
+
+How to render hook outside of component?  
+You can't. So we will create component that uses it.
+
+```javascript
+import { expect, test, vi } from "vitest"
+import { render } from "@testing-library/react"
+import createFetchMock from "vitest-fetch-mock"
+import { usePizzaOfTheDay } from "../usePizzaOfTheDay"
+
+const fetchMocker = createFetchMock(vi)
+fetchMocker.enableMocks()
+
+const testPizza = {
+  id: "calabrese",
+  name: "The Calabrese Pizza",
+  category: "Supreme",
+  description: "lol pizza from Calabria",
+  image: "/public/pizzas/calabrese.webp",
+  size: { S: 12.25, M: 16.25, L: 20.25 }
+}
+
+function getPizzaOfTheDay() {
+  let pizza;
+
+  function TestComponent() {
+    pizza = usePizzaOfTheDay()
+    return null
+  }
+
+  render(<TestComponent />)
+
+  return pizza
+}
+
+test("gives null when first called", async () => {
+  fetch.mockResponseOnce(JSON.stringify(testPizza))
+  const pizza = getPizzaOfTheDay()
+  expect(pizza).toBeNull()
+})
+```
+
+We don't have to create such a component that is only  
+meant to wrap a hook and get response. Instead we can  
+use renderHook testing utility, which does moreless the same.
+
+```javascript
+import { renderHook } from "@testing-library/react"
+
+test("gives null when first called", async () => {
+  fetch.mockResponseOnce(JSON.stringify(testPizza))
+  const { result } = renderHook(() => usePizzaOfTheDay())
+  expect(result.current).toBeNull()
+})
+```
+
+And another test, in which we check, that hook  
+makes a call to the API
+
+```javascript
+import { renderHook, waitFor } from "@testing-library/react"
+
+test("to call the API and give back the pizza of the day", async () => {
+  fetch.mockResponseOnce(JSON.stringify(testPizza))
+  const { result } = renderHook(() => usePizzaOfTheDay())
+  await waitFor(() => {
+    expect(result.current).toEqual(testPizza)
+  })
+  expect(fetchMocker).toBeCalledWith("/api/pizza-of-the-day")
+})
+```
+
+`waitFor` works like this: repeat running function,  
+until it no longer throws an error.  
+And expect, when it fails, throws an error.  
+It will give up after second or two...
+
+You may continue adding tests for edge cases.  
+But at least the happy path is covered.
+
 
 
 Less common hooks

@@ -4672,6 +4672,103 @@ A way to filter and run test individually,
 Check how long test has taken, see module dependency.  
 A way to check what is logged to console.
 
+#### Browser tests
+At the moment this is experimental.  
+Playwright is successor to puppeeter.  
+Created by the same person.
+
+```bash
+npm i -D @vitest/browser@2.1.3 playwright@1.48.0 vitest-browser-react@0.0.1
+```
+
+Create a bit of configuration.  
+Workspace is for monorepos. If you have several packages in one repo,  
+you can define separate vitest workspaces for each one of them
+
+But we will use it to separate happy-dom from browser tests.  
+We bring everything from vite.config.js and just overwrite some parts.
+
+We have to rename all existing happy-dom tests  
+to have .node.test.jsx extension.
+
+We could had also put them into separate folders.  
+(Sounds like a better idea).
+
+Reason why we give names to workspaces,  
+is that they will be later visible when running.
+
+```javascript
+// vitest.workspace.js
+import { defineWorkspace } from "vitest/config";
+
+export default defineWorkspace([
+  {
+    extends: "./vite.config.js",
+    test: {
+      include: ["**/*.node.test.{js,jsx}"],
+      name: "happy-dom",
+      environment: "happy-dom"
+    }
+  },
+  {
+    extends: "./vite.config.js",
+    test: {
+      setupFiles: ["vitest-browser-react"],
+      include: ["**/*.browser.test.{js,jsx}"],
+      name: "browser",
+      browser: {
+        provider: "playwright",
+        enabled: true,
+        name: "chromium"
+      }
+    }
+  }
+])
+```
+
+After that, remove all old test parts, from `vite.config.js`.
+
+We don't need testing library, because vitest browser react  
+will provide all the things, that testing library did.  
+It aims to be API compliant.
+
+We have to await stuff, because this test is really going  
+into the browser. So it's truelly asynchronous.
+
+```javascript
+// src/__test__/Pizza.browser.test.jsx
+import { render } from "vitest-browser-react"
+import { expect, test } from "vitest"
+import Pizza from "../Pizza";
+
+test("alt text render on image", async () => {
+  const name = "My favorite pizza"
+  const src = "https://picsum.photo/200"
+  const screen = render (
+    <Pizza name={name} image={src} description="cool browser stuff" />
+  )
+
+  const img = await screen.getByRole("img")
+
+  await expect.element(img).toBeInTheDocument()
+  await expect.element(img).toHaveAttribute("src", src)
+  await expect.element(img).toHaveAttribute("alt", name)
+})
+```
+
+Before running, you need install headless browsers,  
+miniversion of firefox, chromium and webkit.
+
+```bash
+npx playwright install
+```
+
+And after that you can run.  
+And inside UI, there is a preview of the browser.
+
+This reminds little bit storybook, where you can  
+showcase all your components, but using tests.
+
 
 
 Less common hooks

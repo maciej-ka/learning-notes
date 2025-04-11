@@ -1,5 +1,5 @@
 ### Contents
-○ ◑ ●
+○ ◐ ●
 *completion*
 
 [Algorithms](./algorithms.md)
@@ -45,7 +45,7 @@ Notes: psql summary, mongoDB overview
 
 [Elixir](./elixir.md)
 =======================
-◑ Elixir in action, Saša Jurić, [Manning](https://livebook.manning.com/book/elixir-in-action-third-edition)
+◐ Elixir in action, Saša Jurić, [Manning](https://livebook.manning.com/book/elixir-in-action-third-edition)
 
 [Go](./go.md)
 =============
@@ -56,8 +56,8 @@ Notes: psql summary, mongoDB overview
 ===============================
 ● Functional Programming with Javascript, Anjana Vakil, [Frontend Masters](https://frontendmasters.com/courses/functional-first-steps-v2/)  
 ● NestJS crud tutorial, [Nest Docs](https://docs.nestjs.com/first-steps)  
-◑ NestJS Fundamentals, Kamil Mysliwiec, Mark Pieszak, [Nest Courses](https://courses.nestjs.com/)  
-◑ NestJS Architecture and Advanced patterns, Kamil Mysliwiec, Mark Pieszak, [Nestjs Courses](https://courses.nestjs.com/#architecture)  
+◐ NestJS Fundamentals, Kamil Mysliwiec, Mark Pieszak, [Nest Courses](https://courses.nestjs.com/)  
+◐ NestJS Architecture and Advanced patterns, Kamil Mysliwiec, Mark Pieszak, [Nestjs Courses](https://courses.nestjs.com/#architecture)  
 Notes: stack limit, BigInt, `>>`, `~~`, arrays, typed arrays, express  
 Notes: defensive semicolon, nestJS websockets, stimulus
 
@@ -95,7 +95,7 @@ Notes: Ruby changes from 2016
 
 [Rust](./rust.md)
 ===================
-◑ The Rust Programming Language, Steve Klabnik, Carol Nichols, [No Starch Press](https://learning.oreilly.com/library/view/the-rust-programming/9781098156817/)  
+◐ The Rust Programming Language, Steve Klabnik, Carol Nichols, [No Starch Press](https://learning.oreilly.com/library/view/the-rust-programming/9781098156817/)  
 ○ Rust for TypeScript Developers, ThePrimeagen, [Frontend Masters](https://frontendmasters.com/courses/rust-ts-devs/)
 
 [Scala](./scala.md/)
@@ -104,7 +104,7 @@ Notes: Ruby changes from 2016
 
 [Swift](./swift.md/)
 ======================
-◑ iOS App Development with Swift, Maximiliano Firtman, [Frontend Masters](https://frontendmasters.com/courses/swift-ios/)
+◐ iOS App Development with Swift, Maximiliano Firtman, [Frontend Masters](https://frontendmasters.com/courses/swift-ios/)
 
 [Typescript](./typescript.md)
 ===============================
@@ -127,5 +127,5 @@ Notes: how to contribute to Open Source
 
 [Vim](./vim.md)
 =================
-◑ Vim Fundamentals, ThePrimeagen, [Frontend Masters](https://frontendmasters.com/courses/vim-fundamentals/)  
+◐ Vim Fundamentals, ThePrimeagen, [Frontend Masters](https://frontendmasters.com/courses/vim-fundamentals/)  
 Notes: `:map`

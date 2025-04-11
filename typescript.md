@@ -28,6 +28,73 @@ Which can cooperate well and are testable.
 learna may be not needed anymore as yarn can handle it.  
 One reason for using learna is to version packages automatically.
 
+#### Volta
+Way to ensure versions of tooling, like yarn and npm  
+both on local development machine and CI/CD.  
+(perhaps it shines especially on CI/CD)
+
+```bash
+curl https://get.volta.sh | bash
+volta install node@lts yarn@^3
+```
+
+#### Npx
+npx will invoke bin of package,  
+without need to have package.json
+
+usable for packages with bin scripts,  
+but not usable for `npx lodash`
+
+#### .gitignore npm
+Way to generate typical gitignore for given language.
+
+```bash
+npx gitignore node
+```
+
+#### git history
+Once you added a file by mistake to repo,  
+then, depending on your settings, there may not be a way  
+to remove it, as it will still be in git history.
+
+#### yarn init
+Create a new package
+
+```bash
+yarn init --yes
+```
+
+then we add additional data,  
+define entry point: in dist folder  
+set private: npm will never publish this  
+build: `yarn tsc` to make sure that we use local version of tsc  
+lint: we tell which types of files we want to lint
+
+package.json
+
+```json
+{
+  "name": "chat-stdlib",
+  "packageManager": "yarn@3.6.4",
+  "main": "dist/index.js",
+  "license": "NOLICENSE",
+  "private": true,
+  "scripts": {
+    "build": "yarn tsc",
+    "lint": "yarn eslint src --ext js,ts",
+    "test": "yarn jest"
+  }
+}
+```
+
+After that we pin node and yarn using volta.  
+It's very similar to dependencies in package.json  
+but it's for javascript tooling itself.
+
+```bash
+volta pin node@lts yarn@^3.0.0
+```
+
 
 
 Build End to End TypeScript Apps

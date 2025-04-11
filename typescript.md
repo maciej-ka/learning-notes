@@ -2,6 +2,8 @@ Enterprise TypeScript
 =====================
 Frontend Masters, Mike North
 https://frontendmasters.com/courses/enterprise-typescript/
+https://www.typescript-training.com/course/enterprise-v2
+
 
 
 

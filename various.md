@@ -117,7 +117,7 @@ Names (not found)
 Types (wrong types)  
 Optimization (making code faster)
 
-# Workshop  
+### Workshop  
 Compiler for small subset of JS  
 We will build formatting  
 Name Resolution

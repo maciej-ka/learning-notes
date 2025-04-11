@@ -1,4 +1,4 @@
-PSQL cheatsheet
+psql summary
 ===============
 #### Connect
 ```bash

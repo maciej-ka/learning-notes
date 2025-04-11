@@ -1,3 +1,10 @@
+Enterprise TypeScript
+=====================
+Frontend Masters, Mike North
+https://frontendmasters.com/courses/enterprise-typescript/
+
+
+
 Build End to End TypeScript Apps
 ================================
 Frontend Masters, Steve Kinney  

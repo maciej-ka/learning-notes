@@ -973,10 +973,13 @@ The second and third parameters (flex-shrink and flex-basis) are optional.
 The default is 0 1 auto,
 
 but if you set it with a single number value, like
+
 ```css
 flex: 5;
 ```
+
 that changes the flex-basis to 0%, so it’s like setting
+
 ```css
 flex-grow: 5; flex-shrink: 1; flex-basis: 0%;
 ```
@@ -1012,5 +1015,5 @@ Normal user-agent: browser defaults
 user-agent styles  
   tend to be consistent across recent versions of browsers
 
-### Other
-AST explorer https://astexplorer.net/
+#### AST explorer
+https://astexplorer.net/

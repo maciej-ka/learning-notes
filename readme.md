@@ -1,121 +1,131 @@
 ### Contents
+◔ ◑ ◕ ●  
+*completion*
 
-[Algorithms](./algorithms.md)  
+[Algorithms](./algorithms.md)
 ===============================
-The Last Algorithms Course You'll Need, [Frontend Masters](https://frontendmasters.com/courses/algorithms/)  
-Notes on dynamic programming
+◔ The Last Algorithms Course You'll Need, [Frontend Masters](https://frontendmasters.com/courses/algorithms/)  
+Notes: cost summary, dynamic programming
 
-[AWS](./aws.md)  
+[AWS](./aws.md)
 =================
-AWS For Front-End Engineers, [Frontend Masters](https://frontendmasters.com/courses/aws-v2/)  
-Notes on lambdas
+● AWS For Front-End Engineers, Steve Kinney, [Frontend Masters](https://frontendmasters.com/courses/aws-v2/)  
+Notes: lambdas
 
 [C language](./c.md)
 =================
-C fundamentals, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/c-fundamentals/#player)
+● C fundamentals, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/c-fundamentals/#player)
 
-[Career](./career.md)  
+[Career](./career.md)
 =======================
-Software Developer Success, [Frontend Masters](https://frontendmasters.com/courses/dev-soft-skills/)  
-Notes on Live coding, listening, finding balance
+● Software Developer Success, Francesca Sadikin, [Frontend Masters](https://frontendmasters.com/courses/dev-soft-skills/)  
+Notes: poker tilting, live coding, listening, aproaching interviews
 
-[CSS](./css.md)  
+[CSS](./css.md)
 =================
-Tailwind CSS, [Frontend Masters](https://frontendmasters.com/courses/tailwind-css/)  
-Notes on where/is
+● Tailwind CSS, Steve Kinney, [Frontend Masters](https://frontendmasters.com/courses/tailwind-css/)  
+Notes: where/is, flex, cascade
 
-[Databases](./databases.md)  
+[Databases](./databases.md)
 =============================
-Complete Intro to Databases, [Frontend Masters](https://frontendmasters.com/courses/databases/)  
-Complete Intro to SQLite, [Frontend Masters](https://frontendmasters.com/courses/sqlite/)  
-PSQL cheatsheet  
-Notes on MongoDB
+● Complete Intro to SQLite, Brian Holt, [Frontend Masters](https://frontendmasters.com/courses/sqlite/)  
+◔ Complete Intro to Databases, Brian Holt, [Frontend Masters](https://frontendmasters.com/courses/databases/)  
+Notes: psql summary, mongoDB overview
 
-[Docker](./docker.md)  
+[Docker](./docker.md)
 =======================
-Kubernetes in action, [Manning](https://www.manning.com/books/kubernetes-in-action-second-edition)  
-Complete Intro to Containers, [Frontend Masters](https://frontendmasters.com/courses/complete-intro-containers-v2/)
+● Complete Intro to Containers, Brian Holt, [Frontend Masters](https://frontendmasters.com/courses/complete-intro-containers-v2/)  
+● Kubernetes in 4 Hourse, Sander van Vught, [O'Reilly](https://learning.oreilly.com/live-events/kubernetes-in-4-hours/0636920056367/)  
+◔ Kubernetes in action, Marko Lukša, Kevin Conner, [Manning](https://www.manning.com/books/kubernetes-in-action-second-edition)
 
-[Dotnet](./dotnet.md)  
+[Dotnet](./dotnet.md)
 =======================
-Building APIs with C# and .NET, [Frontend Masters](https://frontendmasters.com/courses/dotnet-apis/)  
-Introduction to C# and .NET, [Frontend Masters](https://frontendmasters.com/courses/csharp-dotnet/)
+● Introduction to C# and .NET, Spencer Schneidenbach, [Frontend Masters](https://frontendmasters.com/courses/csharp-dotnet/)  
+◔ Building APIs with C# and .NET, Spencer Schneidenbach, [Frontend Masters](https://frontendmasters.com/courses/dotnet-apis/)
 
-[Elixir](./elixir.md)  
+[Elixir](./elixir.md)
 =======================
-Elixir in action, [Manning](https://www.manning.com/books/kubernetes-in-action-second-edition)
+◑ Elixir in action, Saša Jurić, [Manning](https://livebook.manning.com/book/elixir-in-action-third-edition)
 
 [Go](./go.md)
 =============
-Build a Fullstack App with Vanilla JS and Go, [Frontend Masters](https://frontendmasters.com/workshops/vanilla-js-go/)  
-Complete go, [Frontend Masters](https://frontendmasters.com/workshops/complete-go/)
+● Build a Fullstack App with Vanilla JS and Go, Maximiliano Firtman, [Frontend Masters](https://frontendmasters.com/workshops/vanilla-js-go/)  
+● Complete go, Melkey, [Frontend Masters](https://frontendmasters.com/workshops/complete-go/)
 
-[Javascript](./javascript.md)  
+[Javascript](./javascript.md)
 ===============================
-NestJS Architecture and Advanced patterns, [Nestjs Courses](https://courses.nestjs.com/#architecture)  
-NestJS Fundamentals, [Nest Courses](https://courses.nestjs.com/)  
-NestJS Crud tutorial, [Nest Docs](https://docs.nestjs.com/first-steps)  
-Functional Programming with Javascript, [Frontend Masters](https://frontendmasters.com/courses/functional-first-steps-v2/)  
-Notes on Arrays, binary operators, defensive semicolon  
-Notes on `>>`, `~~`, Express
+● Functional Programming with Javascript, Anjana Vakil, [Frontend Masters](https://frontendmasters.com/courses/functional-first-steps-v2/)  
+● NestJS crud tutorial, [Nest Docs](https://docs.nestjs.com/first-steps)  
+◕ NestJS Fundamentals, Kamil Mysliwiec, Mark Pieszak, [Nest Courses](https://courses.nestjs.com/)  
+◑ NestJS Architecture and Advanced patterns, Kamil Mysliwiec, Mark Pieszak, [Nestjs Courses](https://courses.nestjs.com/#architecture)  
+Notes: stack limit, BigInt, `>>`, `~~`, arrays, typed arrays, express  
+Notes: defensive semicolon, nestJS websockets, stimulus
 
-[Linux](./linux.md)  
+[Linux](./linux.md)
 =====================
-Notes on perl and awk
+Notes: perl, awk
 
-[Rails](./rails.md)  
+[Rails](./rails.md)
 =====================
-Hotwire, Turbo, Stimulus, [Hotwire Screencast](https://d1d6azhz7lc2s3.cloudfront.net/hotwire-screencast.mp4)  
-Using Rails for API-only Applications, [Rails Guides](https://guides.rubyonrails.org/api_app.html)  
-Getting Started with Rails, [Rails Guides](https://guides.rubyonrails.org/getting_started.html)
+● Hotwire, Turbo, Stimulus, David Heinemeier Hansson, [Hotwire Screencast](https://d1d6azhz7lc2s3.cloudfront.net/hotwire-screencast.mp4)  
+● Using Rails for API-only Applications, [Rails Guides](https://guides.rubyonrails.org/api_app.html)  
+● Getting Started with Rails, [Rails Guides](https://guides.rubyonrails.org/getting_started.html)
 
-[React Part 1](./react1.md)  
+[React Part 1](./react1.md)
 =====================
-Intermediate React, [Frontend Masters](https://frontendmasters.com/workshops/intermediate-react-v6/)  
-Introduction to Next.js, [Frontend Masters](https://frontendmasters.com/courses/next-js-v3/)  
-Learn Next.js, [Next.js Docs](https://nextjs.org/docs/app/getting-started)  
-Complete Intro to React, [Frontend Masters](https://frontendmasters.com/courses/complete-react-v9/)  
-Notes on shadcn/ui, form validation, headless components  
-Notes on less common hooks, strict mode
+● Complete Intro to React, Brian Holt, [Frontend Masters](https://frontendmasters.com/courses/complete-react-v9/)  
+● Intermediate React, Brian Holt, [Frontend Masters](https://frontendmasters.com/workshops/intermediate-react-v6/)  
+● Next.js Fundamentals, Scott Moss, [Frontend Masters](https://frontendmasters.com/courses/next-js-v4/)  
+● Learn Next.js, [Next.js Docs](https://nextjs.org/docs/app/getting-started)  
+Notes: strict mode, shadcn/ui, form validation, headless components  
+Notes: less common hooks
 
-[React Part 2](./react2.md)  
+[React Part 2](./react2.md)
 =====================
-Tanstack React Query, [Query.gg](https://query.gg/)  
+● Tanstack React Query, ui.dev, [Query.gg](https://query.gg/)
 
-[React Part 3](./react3.md)  
+[React Part 3](./react3.md)
 =====================
-Master modern React, [React.gg](https://react.gg/)  
+◔ Master modern React, ui.dev, [React.gg](https://react.gg/)
 
-[Ruby](./ruby.md)  
+[Ruby](./ruby.md)
 ===================
-Well Grounded Rubyist, [Manning](https://www.manning.com/books/the-well-grounded-rubyist-third-edition)  
-Notes on Ruby changes from 2016
+◔ Well Grounded Rubyist, David A. Black, Joseph Leo, [Manning](https://www.manning.com/books/the-well-grounded-rubyist-third-edition)  
+Notes: Ruby changes from 2016
 
-[Rust](./rust.md)  
+[Rust](./rust.md)
 ===================
-The Rust Programming Language, [No Starch Press](https://nostarch.com/rust-programming-language-2nd-edition)  
-Rust for TypeScript Developers, [Frontend Masters](https://frontendmasters.com/courses/rust-ts-devs/)
+◑ The Rust Programming Language, Steve Klabnik, Carol Nichols, [No Starch Press](https://learning.oreilly.com/library/view/the-rust-programming/9781098156817/)  
+◔ Rust for TypeScript Developers, ThePrimeagen, [Frontend Masters](https://frontendmasters.com/courses/rust-ts-devs/)
 
-[Swift](./swift.md/)  
+[Scala](./scala.md/)
 ======================
-iOS App Development with Swift, [Frontend Masters](https://frontendmasters.com/courses/swift-ios/)
+◔ Scala for the impatient, Cay S. Horstmann, [Addison-Wesley Professional](https://learning.oreilly.com/library/view/scala-for-the/9780138033613/)
 
-[Typescript](./typescript.md)  
+[Swift](./swift.md/)
+======================
+◑ iOS App Development with Swift, Maximiliano Firtman, [Frontend Masters](https://frontendmasters.com/courses/swift-ios/)
+
+[Typescript](./typescript.md)
 ===============================
-TypeScript: From First Steps to Professional, [Frontend Masters](https://frontendmasters.com/courses/typescript-v4/)  
-Intermediate Typescript, [Frontend Masters](https://frontendmasters.com/courses/intermediate-typescript-v2/)  
-Notes on covariance, `///`, grab type of props, decorators
+● Intermediate Typescript, Mike North, [Frontend Masters](https://frontendmasters.com/courses/intermediate-typescript-v2/)  
+● Build End-to-End TypeScript Apps, Steve Kinney, [Frontend Masters](https://frontendmasters.com/workshops/fullstack-typescript-v2/)  
+◔ Enterprise TypeScript, Mike North, [Frontend Masters](https://frontendmasters.com/courses/enterprise-typescript/)  
+Notes: variance, `///`, grab type of Props, decorators
 
-[Various](./various.md)  
+[Various](./various.md)
 =========================
-Building a Static Type-Inferring Compiler, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/static-type-compiler/#player)  
-Notes from Martin Fowler article on Microservices  
-Web Accessibility, Frontend Masters  
-Introduction to developer tools, [Frontend Masters](https://frontendmasters.com/workshops/dev-tools-v4/)  
-Fudamentals of web performance, [Frontend Masters](https://frontendmasters.com/courses/web-perf-v2/)  
-Notes on Emmet, CQRS, Microfrontends, how to contribute
+● Building a Static Type-Inferring Compiler, Richard Feldman, [Frontend Masters](https://frontendmasters.com/workshops/static-type-compiler/#player)  
+● Introduction to developer tools, Jon Kuperman, [Frontend Masters](https://frontendmasters.com/workshops/dev-tools-v4/)  
+● Web Accessibility, Jon Kuperman, [Frontend Masters](https://frontendmasters.com/courses/accessibility-v3/)  
+● Become a VSCode Power User, Steve Kinney, [Frontend Masters](https://frontendmasters.com/workshops/visual-studio-code-v2/)  
+● Web Performance Fundamentals, Todd Gardner, [Frontend Masters](https://frontendmasters.com/courses/web-perf-v2/)  
+◔ Microfrontends in Action, Michael Geers, [Manning](https://learning.oreilly.com/library/view/micro-frontends-in/9781617296871/)  
+Notes: Martin Fowler on microservices, AI tools talk Addy Osmani, tenant apps  
+Notes: comparing software architectures, startup directories, Emmet, CQRS  
+Notes: how to contribute to Open Source
 
-[Vim](./vim.md)  
+[Vim](./vim.md)
 =================
-Vim Fundamentals, [Frontend Masters](https://frontendmasters.com/courses/vim-fundamentals/)  
-Notes on `:map`
+◑ Vim Fundamentals, ThePrimeagen, [Frontend Masters](https://frontendmasters.com/courses/vim-fundamentals/)  
+Notes: `:map`

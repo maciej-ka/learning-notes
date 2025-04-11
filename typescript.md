@@ -1,9 +1,32 @@
 Enterprise TypeScript
 =====================
-Frontend Masters, Mike North
-https://frontendmasters.com/courses/enterprise-typescript/
+Frontend Masters, Mike North  
+https://frontendmasters.com/courses/enterprise-typescript/  
 https://www.typescript-training.com/course/enterprise-v2
 
+#### Enterprise
+Enterprise: project has grown so much that  
+there is no one person that knows everything.
+
+There are mutliple teams involved.
+
+Everyone is doing his own thing and without guidance  
+project will have a lot of duplicates.
+
+At this scale cost of breaking the build is large,  
+as multiple teams cannot work.
+
+At this scale rewrites are extreamly expensive.  
+Design for long life becomes very important.  
+And possibility to evolve project, instead of rewrite.
+
+Managing complexity starts to be very important.  
+To have project composed of smaller parts.  
+Which can cooperate well and are testable.
+
+#### Monorepos
+learna may be not needed anymore as yarn can handle it.  
+One reason for using learna is to version packages automatically.
 
 
 

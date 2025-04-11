@@ -1,6 +1,6 @@
 ### Contents
 ◔ ◑ ◕ ●  
-◔ ◑ ◕ ●
+○ ◑ ●
 *completion*
 
 [Algorithms](./algorithms.md)

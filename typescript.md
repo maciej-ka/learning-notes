@@ -95,6 +95,205 @@ but it's for javascript tooling itself.
 volta pin node@lts yarn@^3.0.0
 ```
 
+#### install TypeScript
+```bash
+yarn add -D typescript@~5.3.0
+```
+
+#### tsconfig file
+It's necessary for typescript to run.  
+You can create it by hand, if you remember.
+
+```bash
+yarn tsc --init
+```
+
+It has mentioned options and all other possible options  
+commented out. It's a lot.
+
+#### target
+Target javascript language version.  
+Before es2016 there was no async/await.  
+On versions before there will be elaborate walkaround for async/await.
+
+```json
+{
+  "compilerOptions": {
+    "target": "es2022"
+  }
+}
+```
+
+#### module
+CommonJs is what we want.
+
+#### root dir
+Define root directory.  
+This is important, it affects auto imports.
+
+And it helps to import our library by client code.  
+Clients will not have to import `library-name/source/module-name`,  
+but will be able to import `library-name/module-name`.
+
+```json
+{
+  "compilerOptions": {
+    "rootDir": "src"
+  }
+}
+```
+
+#### types
+Types, you may think its a bit OCD (obsessive-compulsive disorder)  
+We are specyfing type packages that are allowed in the project.  
+Normally you are allowed to access anything in package.json.
+
+To see the problem, let's say we would download types for jest.  
+That we would only use in tests. Buty typescript will allow  
+to import jest in your production.
+
+This happens easy when starting to type name of function  
+and using tab complete, which may end in importing not what was meant.
+
+```json
+{
+  "compilerOptions": {
+    types: []
+  }
+}
+```
+
+#### declaration
+Part of emit block, it affect the output of compilator.  
+With that option the output will consist of runnable javascript  
+but also side by side there will be type declarations.
+
+```json
+{
+  "compilerOptions": {
+    "declaration": true
+  }
+}
+```
+
+#### outdir
+Output dir 
+
+```json
+{
+  "compilerOptions": {
+    "outDir": "dist"
+  }
+}
+```
+
+#### strip internal
+This will become important once we use API extractor  
+which is usefull for libraries.
+
+You can use js-doc tag "@internal" to tag functions that should be  
+exported but should not be a part of exported type declarations.
+
+For example, when it's a function used for testing purposes.  
+Where tests call that function but it's not really for end users.
+
+```json
+{
+  "compilerOptions": {
+    "stripInternal": true
+  }
+}
+```
+
+#### esModuleInterop
+This is set to true by default, because typescript wants  
+that everyone will start using new modules format.  
+But this seems inapropriate setting for apps.
+
+Because this, when enabled, is like saying:  
+"normally my types would not compile, but with this, it works"
+
+and because of that, any client of your code also  
+will have to have this setting to be able to compile.
+
+
+```json
+{
+  "compilerOptions": {
+    "esModuleInterop": false
+  }
+}
+```
+
+#### skipLibCheck
+Why this option is true by default?
+
+With this option set to true, if there are typescript errors  
+in declaration files of your node modules folder, then ignore them.
+
+It may seem not so harmfull at the beginning.  
+But you want your typescript to work holisticly.
+
+So by setting this to false, you make sure  
+that there are no errors within your app types  
+and your dependencies types.
+
+```json
+{
+  "compilerOptions": {
+    "skipLibCheck": false
+  }
+}
+```
+
+#### Type Checking section
+Here we will find some strong type checking options.  
+There settings are NOT good when trying to convert to TS.  
+But when starting a new project, they are recommended.
+
+```json
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true
+  }
+}
+```
+
+These are included in `strict`.  
+No need to add them to configuration again.  
+(it's easy to remember, because they start with "strict")
+
+```json
+{
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true
+  }
+}
+```
+
+#### include
+Describes the code that we want to be checked.
+
+```json
+{
+  "compilerOptions": {},
+  "include": ["src", ".eslintrc.js"]
+}
+```
+
 
 
 Build End to End TypeScript Apps

@@ -333,8 +333,90 @@ If you only set for browser, eslint will prevent process.env.
 If only for node, it will prevent from using window.document.  
 By selecting both, only rules will be from Javascript language.
 
+#### Eslint configuration
 
+extends
 
+Allows to take a preset with settings,  
+and fine tune them to personal needs
+
+```javascript
+{
+  "extends": [
+    "extends eslint:recommended",
+    "plugin@typescript-eslint/recommended"
+  ],
+}
+```
+
+This one will add rules that use type information,  
+for example: rules about forbidding explicit any
+
+```javascript
+"plugin@typescript-eslint/recommended-required-type-checking"
+```
+
+in parser options, because eslint uses typescript,  
+we have to tell, where is the typescript configuration.
+
+```javascript
+{
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "project": true,
+    "tsconfigRootDir": __dirname,
+    "sourceType": "module"
+  }
+}
+```
+
+Overrides is for describing parts of project,  
+where rules apply differently.
+
+They are processed from top to bottom,  
+so if there is overlap, the first one that is checked  
+has to be on top.
+
+```javascript
+"overrides": [
+  {
+    files: ["tests/**/*.ts"],
+    env: { node: true, jest: true }
+  }
+  {
+    extends: ["plugin:@typescript-eslint/disable-type-checked"],
+    rules: {
+      "@typescript-eslint/no-unsafe-assignment": "off",
+    },
+    "env": {
+      "node": true
+    },
+    "files": [
+      ".eslintrc.{js,cjs}"
+    ],
+    "parserOptions": {
+      "sourceType": "script"
+    }
+  }
+]
+```
+
+The two lines added to generated section are below.  
+First disables required type checking,  
+so we say that in this one place, we don't want to have that rule.
+
+```javascript
+extends: ["plugin:@typescript-eslint/disable-type-checked"],
+rules: {
+  "@typescript-eslint/no-unsafe-assignment": "off",
+},
+```
+
+to run
+
+```javascript
+yarn lint
+```
 
 
 

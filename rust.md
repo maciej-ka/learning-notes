@@ -1,5 +1,6 @@
 The Rust Programming Language
 ===============================
+https://doc.rust-lang.org/book/title-page.html
 https://learning.oreilly.com/library/view/the-rust-programming/9781098156817  
 Steve Klabnik and Carol Nichols
 
@@ -13,38 +14,45 @@ cargo new my-project
 ```
 
 run
+
 ```bash
 cargo run
 ```
 
 all variables are immutable by default
+
 ```rust
 let apples = 5;
 ```
 
 to make variable mutable, use `mut` keyword
+
 ```rust
 let mut apples = 5;
 ```
 
 we can call `read_line` short, if we include library
+
 ```rust
 use std::io;
 io::stdin().read_line(...);
 ```
 
 but also we can call it without including
+
 ```rust
 std::io::stdin().read_line(...);
 ```
 
 to pass by reference use `&` keyword
+
 ```rust
 io::stdin().read_line(&guess);
 ```
 
 however, references are also immutable by default  
 so to pass mutable reference add `mut` keyword
+
 ```rust
 io::stdin().read_line(&mut guess);
 ```
@@ -60,16 +68,20 @@ Ok: will return value that Ok is holding
 Err: will cause program to crash
 
 string templates in `println`
+
 ```rust
 println!("your guess: {guess}");
 ```
+
 or empty brackets
+
 ```rust
 println!("two is : {} and double two is {}", 2, 2 * 2);
 ```
 
 add a crate  
 in Cargo.toml
+
 ```
 [dependencies]
 rand = "0.8.5"
@@ -80,6 +92,7 @@ meaning: allow for bug fixes
 (allow above 0.8.5 but not 0.9.0)
 
 and then call
+
 ```
 cargo build
 ```
@@ -89,22 +102,27 @@ https://crates.io/
 
 versions in `Cargo.lock` are always used  
 as long as versions get upgraded with:
+
 ```
 cargo update
 ```
 
 ranges  
 include start
+
 ```rust
 start..end
 ```
+
 include start and end
+
 ```rust
 start..=end
 ```
 
 show code docs  
 but also docs about used crates
+
 ```
 cargo doc --open
 ```
@@ -114,6 +132,7 @@ has many arms
 each is made of a pattern  
 and code to run when value fits  
 match ends after first fit
+
 ```rust
 match guess.cmp(&secret_number) {
     Ordering::Less => println!("Too small"),
@@ -121,6 +140,7 @@ match guess.cmp(&secret_number) {
     Ordering::Equal => println!("You win!"),
 }
 ```
+
 rust has strong static type system  
 and a type inference  
 `i32`: 32 bit number (default)  
@@ -130,29 +150,36 @@ and a type inference
 
 parse string into number  
 `parse` returns Result variant `Err` or `Ok`
+
 ```rust
 let guess: u32 = guess
     .trim()
     .parse()
     .expect("Please type a number!");
 ```
+
 or with matching Result  
 `_` is a catch-all value
+
 ```rust
 let guess: u32 = match guess.trim().parse() {
     Ok(num) => num,
     Err(_) => continue,
 };
 ```
+
 rust has variable shadowing:  
 when we want to reuse variable  
 (even with a different type)
 
 endless
+
 ```rust
 loop {...}
 ```
+
 works with
+
 ```rust
 break
 continue
@@ -164,12 +191,14 @@ continue
 variables are immutable by default
 
 this will fail
+
 ```rust
 let x = 5;
 x = 6;
 ```
 
 but this will work
+
 ```rust
 let mut x = 5;
 x = 6;
@@ -179,6 +208,7 @@ mutability bugs are especially difficult to find
 when some place in code is changing value only sometimes
 
 also this will work (but because of shadowing)
+
 ```rust
 let x = 5;
 let x = 6;
@@ -203,6 +233,7 @@ it must know all types at compile time
 Compiler can usually infer type.  
 When many types are possible, we must add.  
 This will not compile without `u32`
+
 ```rust
 let x: u32 = "32".parse().expect("not a number");
 ```
@@ -226,11 +257,13 @@ usize
 ```
 
 division truncuates to next integer toward zero
+
 ```rust
 let truncated = -5 / 3; // Results in -1
 ```
 
 allowed formats
+
 ```rust
 98_222      // separator
 0xff        // hex
@@ -245,6 +278,7 @@ b'A' byte (only u8)
 
 handle overvlow with one of arithmetic family  
 methods like `wrapping_add`
+
 ```rust
 wrapping_*    // implicit two's complement
 checked_*     // returns None
@@ -255,6 +289,7 @@ saturating_*  // stay at maximum or minimum
 #### Float types
 default is 64, because its usually as fast as 32  
 but capable of more precision
+
 ```rust
 f32
 f64 // rust default
@@ -269,6 +304,7 @@ may be misleading, not intutitive (explained later)
 fixed length, they don't grow  
 example with optional type annotations  
 to read, use destructing or `.` and index
+
 ```rust
 let tup: (i32, f64, u8) = (500, 6.4, 1);
 let (x, y, z) = tup;
@@ -280,6 +316,7 @@ let one = x.2;
 #### Unit
 tuple of zero length  
 used as return in expressions which don't return anything
+
 ```rust
 ()
 ```
@@ -288,6 +325,7 @@ used as return in expressions which don't return anything
 fixed length  
 can live in stack, not heap  
 each element has to be of same type
+
 ```rust
 let a = [1, 2, 3, 4, 5];
 let a: [i32; 5] = [1, 2, 3, 4, 5];
@@ -303,6 +341,7 @@ which can change size
 #### Out of bounds
 in runtime, when trying to access out of bounds  
 program will panic with error
+
 ```
 index out of bounds: the len is 3 but the index is 4
 ```
@@ -329,6 +368,7 @@ Perform some action, don't return a value.
 Examples:  
 Creating variable and assigning a value is statement.  
 Because of that you **cannot** use let in assignments, like:
+
 ```rust
 let x = (let y = 5);
 ```
@@ -341,6 +381,7 @@ Evaluate to a value result.
 Examples:  
 Calling a function, calling a macro.  
 New scope created with curly brackets is expression.
+
 ```rust
 let y = {
     let x = 6;
@@ -406,6 +447,7 @@ while you are changing a type of it
 
 #### control
 generally no brackets
+
 ```rust
 if ... {
 } else if ... {
@@ -415,7 +457,9 @@ if ... {
 for i in 0..10 {
 }
 ```
+
 including 10
+
 ```rust
 for i in 0..=10 {
 }
@@ -423,26 +467,34 @@ for i in 0..=10 {
 while ... {
 }
 ```
+
 endless loop
+
 ```rust
 loop {
 }
 ```
+
 iterate over collection
+
 ```rust
 for x in &some_array {
 }
 ```
+
 last call here is to tell  
 what collection should become  
 in this case `<Vec<_>>`: become vector of original type
+
 ```rust
 vec![1, 2, 3]
   .iter()
   .map(...)
   .collect::<Vec<_>>()
 ```
+
 functions
+
 ```rust
 fn foo() {
 }
@@ -450,15 +502,19 @@ fn foo() {
 fn foo(arg1: f64, arg2: f64) {
 }
 ```
+
 return type  
 in typescript better not define return type (let TS infer it)  
 in rust you must define return type
+
 ```rust
 fn foo() -> usize {
   return 5;
 }
 ```
+
 lambdas
+
 ```rust
 |x| {
   return x;
@@ -466,8 +522,10 @@ lambdas
 
 |x| x + 1
 ```
+
 classes and methods  
 data and behaviour are defined in two separate blocks
+
 ```rust
 struct Foo {
   properties ...
@@ -487,6 +545,7 @@ impl Foo {
   pub fn this(self) ...
 }
 ```
+
 interfaces  
 in typescript interface can have many definitions  
 and they are merged (so that you can extend)  
@@ -494,6 +553,7 @@ but this can be hard to debug
 
 btw. having properties in interface may be considered bad  
 because properties are sort of implementation detail
+
 ```rust
 trait Foo {
   // no properties
@@ -503,6 +563,7 @@ trait Foo {
 impl Foo for MyStruct {
 }
 ```
+
 can you use struct without implementation?  
 yes, just like in C  
 its just a series of properties, a data shape

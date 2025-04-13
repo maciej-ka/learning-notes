@@ -24,6 +24,12 @@ Managing complexity starts to be very important.
 To have project composed of smaller parts.  
 Which can cooperate well and are testable.
 
+#### Deferred
+Own class Deferred that represents a deferred operation.  
+Very similar to Promise and wraps a Promise inside.  
+This may be usefull when you need to pass Promise  
+but that Promise being controlled from outside.
+
 #### Monorepos
 learna may be not needed anymore as yarn can handle it.  
 One reason for using learna is to version packages automatically.
@@ -126,6 +132,9 @@ On versions before there will be elaborate walkaround for async/await.
 
 #### module
 CommonJs is what we want.
+
+Source code will be Javascript Modules,  
+but result build will be commonJs.
 
 #### root dir
 Define root directory.  
@@ -293,6 +302,39 @@ Describes the code that we want to be checked.
   "include": ["src", ".eslintrc.js"]
 }
 ```
+
+### Eslint setup
+
+```bash
+yarn add -D eslint
+yarn add -D @types/eslint
+```
+There is also a yarn plugin `plugin-typescript.cjs`  
+which will automatically add types dependency (`@types...`)  
+whenever main package is installed.
+
+Eslinter have a lot of options,  
+but there is a good starting point:
+
+```bash
+yarn eslint --init
+```
+
+#### enforce code style 
+This will prevent devs to commit if they miss a space by raising  
+and error, which will bug your developers and make them tired.  
+Prettier seems to be way better option for that.  
+So check: check syntax, find problems ...  
+don't check: enforce code style 
+
+#### where does your code run?
+This is multi selection. It will affect what are you allowed to do.  
+If you only set for browser, eslint will prevent process.env.  
+If only for node, it will prevent from using window.document.  
+By selecting both, only rules will be from Javascript language.
+
+
+
 
 
 

@@ -85,7 +85,7 @@
 ● [**Using Rails for API-only Applications**](https://github.com/maciej-ka/learning-notes/blob/main/rails.md#using-rails-for-api-only-applications), Rails Guides  
 ● [**Getting Started with Rails**](https://github.com/maciej-ka/learning-notes/blob/main/rails.md#getting-started-with-rails), Rails Guides
 
-[React Part 1](./react1.md)
+[React(1)](./react1.md)
 =====================
 ● [**Complete Intro to React**](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#complete-intro-to-react), Brian Holt, Frontend Masters  
 ● [**Intermediate React**](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#intermediate-react-v6), Brian Holt, Frontend Masters  
@@ -97,11 +97,11 @@
 [*shadcn/ui*](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#shadcnui-setup)  
 [*strict mode*](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#strict-mode-1)  
 
-[React Part 2](./react2.md)
+[React(2)](./react2.md)
 =====================
 ● [**Tanstack React Query**](https://github.com/maciej-ka/learning-notes/blob/main/react2.md#tan-stack-query-react-query), ui.dev, Query.gg
 
-[React Part 3](./react3.md)
+[React(3)](./react3.md)
 =====================
 ○ [**Master modern React**](https://github.com/maciej-ka/learning-notes/blob/main/react3.md#reactgg-master-modern-react), ui.dev, React.gg
 

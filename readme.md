@@ -5,7 +5,8 @@
 [Algorithms](./algorithms.md)
 ===============================
 ◐ [**The Last Algorithms Course You'll Need**](https://github.com/maciej-ka/learning-notes/blob/main/algorithms.md#the-last-algorithms-course-youll-need), ThePrimeagen, Frontend Masters  
-Notes: [cost summary](https://github.com/maciej-ka/learning-notes/blob/main/algorithms.md#costs-summary), [dynamic programming](https://github.com/maciej-ka/learning-notes/blob/main/algorithms.md#dynamic-programming)
+[*cost summary*](https://github.com/maciej-ka/learning-notes/blob/main/algorithms.md#costs-summary)  
+[*dynamic programming*](https://github.com/maciej-ka/learning-notes/blob/main/algorithms.md#dynamic-programming)
 
 [AWS](./aws.md)
 =================

@@ -20,22 +20,22 @@
 [Career](./career.md)
 =======================
 ● [**Software Developer Success**](https://github.com/maciej-ka/learning-notes/blob/main/career.md#frontend-masters-software-developer-success), Francesca Sadikin, Frontend Masters  
-[*poker tilting*](https://github.com/maciej-ka/learning-notes/blob/main/career.md#how-to-not-tilt-in-poker)  
 [*live coding*](https://github.com/maciej-ka/learning-notes/blob/main/career.md#live-coding)
+[*poker tilting*](https://github.com/maciej-ka/learning-notes/blob/main/career.md#how-to-not-tilt-in-poker)  
 
 [CSS](./css.md)
 =================
 ● [**Tailwind CSS**](https://github.com/maciej-ka/learning-notes/blob/main/css.md#tailwind-css-frontend-masters), Steve Kinney, Frontend Masters  
-[*where/is*](https://github.com/maciej-ka/learning-notes/blob/main/css.md#keep-specificity-low)  
-[*flex*](https://github.com/maciej-ka/learning-notes/blob/main/css.md#-flex-)  
 [*cascade*](https://github.com/maciej-ka/learning-notes/blob/main/css.md#cascade)
+[*flex*](https://github.com/maciej-ka/learning-notes/blob/main/css.md#-flex-)  
+[*where/is*](https://github.com/maciej-ka/learning-notes/blob/main/css.md#keep-specificity-low)  
 
 [Databases](./databases.md)
 =============================
 ● [**Complete Intro to SQLite**](https://github.com/maciej-ka/learning-notes/blob/main/databases.md#complete-intro-to-sqlite), Brian Holt, Frontend Masters  
 ○ [**Complete Intro to Databases**](https://github.com/maciej-ka/learning-notes/blob/main/databases.md#complete-intro-to-databases), Brian Holt, Frontend Masters  
-[*psql summary*](https://github.com/maciej-ka/learning-notes/blob/main/databases.md#psql-summary)  
 [*mongoDB overview*](https://github.com/maciej-ka/learning-notes/blob/main/databases.md#mongo-overview)
+[*psql summary*](https://github.com/maciej-ka/learning-notes/blob/main/databases.md#psql-summary)  
 
 [Docker](./docker.md)
 =======================
@@ -63,21 +63,21 @@
 ● [**NestJS crud tutorial**](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#nestjs-docs-crud), Nest Docs  
 ◐ [**NestJS Fundamentals**](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#nestjs-fundamentals), Kamil Mysliwiec, Mark Pieszak, Nest Courses  
 ◐ [**NestJS Architecture and Advanced patterns**](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#nestjs-architecture-and-advanced-patterns), Kamil Mysliwiec, Mark Pieszak, Nestjs Courses  
-[*stack limit*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#stack-limit)  
-[*BigInt*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#bigint)  
 [*`>>`*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#-operator)  
 [*`~~`*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#-operator-1)  
 [*arrays*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#arrays-in-javascript)  
-[*typed arrays*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#typed-arrays)  
-[*express*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#few-notes-on-express)  
+[*BigInt*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#bigint)  
 [*defensive semicolon*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#defensive-semicolon)  
+[*express*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#few-notes-on-express)  
 [*nestJS websockets*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#nestjs-docs-websockets)  
+[*stack limit*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#stack-limit)  
 [*stimulus*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#discoveries-from-stimulus)
+[*typed arrays*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#typed-arrays)  
 
 [Linux](./linux.md)
 =====================
-[*perl*](https://github.com/maciej-ka/learning-notes/blob/main/linux.md#perl)  
 [*awk*](https://github.com/maciej-ka/learning-notes/blob/main/linux.md#awk)
+[*perl*](https://github.com/maciej-ka/learning-notes/blob/main/linux.md#perl)  
 
 [Rails](./rails.md)
 =====================
@@ -91,11 +91,11 @@
 ● [**Intermediate React**](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#intermediate-react-v6), Brian Holt, Frontend Masters  
 ● [**Next.js Fundamentals**](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#introduction-to-nextjs-v4), Scott Moss, Frontend Masters  
 ● [**Learn Next.js**](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#learn-nextjs), Next.js Docs  
-[*strict mode*](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#strict-mode-1)  
-[*shadcn/ui*](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#shadcnui-setup)  
 [*form validation*](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#react-form-validation-libraries)  
 [*headless components*](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#headless-component-libraries)  
 [*less common hooks*](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#less-common-hooks)
+[*shadcn/ui*](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#shadcnui-setup)  
+[*strict mode*](https://github.com/maciej-ka/learning-notes/blob/main/react1.md#strict-mode-1)  
 
 [React Part 2](./react2.md)
 =====================
@@ -128,10 +128,10 @@
 ● [**Intermediate Typescript**](https://github.com/maciej-ka/learning-notes/blob/main/typescript.md#intermediate-typescript), Mike North, Frontend Masters  
 ● [**Build End-to-End TypeScript Apps**](https://github.com/maciej-ka/learning-notes/blob/main/typescript.md#build-end-to-end-typescript-apps), Steve Kinney, Frontend Masters  
 ○ [**Enterprise TypeScript**](https://github.com/maciej-ka/learning-notes/blob/main/typescript.md#enterprise-typescript), Mike North, Frontend Masters  
-[*variance*](https://github.com/maciej-ka/learning-notes/blob/main/typescript.md#variance-notes)  
 [*`///`*](https://github.com/maciej-ka/learning-notes/blob/main/typescript.md#triple-slash-directive)  
-[*grab type of Props*](https://github.com/maciej-ka/learning-notes/blob/main/typescript.md#grab-type-of-properties-in-react)  
 [*decorators*](https://github.com/maciej-ka/learning-notes/blob/main/typescript.md#decorators-proposal)
+[*grab type of Props*](https://github.com/maciej-ka/learning-notes/blob/main/typescript.md#grab-type-of-properties-in-react)  
+[*variance*](https://github.com/maciej-ka/learning-notes/blob/main/typescript.md#variance-notes)  
 
 [Various](./various.md)
 =========================
@@ -141,14 +141,14 @@
 ● [**Become a VSCode Power User**](https://github.com/maciej-ka/learning-notes/blob/main/various.md#become-a-vscode-power-user), Steve Kinney, Frontend Masters  
 ● [**Web Performance Fundamentals**](https://github.com/maciej-ka/learning-notes/blob/main/various.md#fudamentals-of-web-performance), Todd Gardner, Frontend Masters  
 ○ [**Microfrontends in Action**](https://github.com/maciej-ka/learning-notes/blob/main/various.md#microfrontends-1), Michael Geers, Manning  
-[*Martin Fowler on microservices*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#martin-fowler-microservices)  
 [*AI tools talk Addy Osmani*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#ai-tools)  
-[*tenant apps*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#tenant)  
 [*comparing software architectures*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#comparing-software-architectures)  
-[*startup directories*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#startup-directories)  
-[*Emmet*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#emmet)  
-[*CQRS*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#cqrs-command-query-responsibility-segregation)  
 [*contributing to OS*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#how-to-contribute-to-open-source-nextjs)
+[*CQRS*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#cqrs-command-query-responsibility-segregation)  
+[*Emmet*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#emmet)  
+[*Martin Fowler on microservices*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#martin-fowler-microservices)  
+[*startup directories*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#startup-directories)  
+[*tenant apps*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#tenant)  
 
 [Vim](./vim.md)
 =================

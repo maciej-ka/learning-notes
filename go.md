@@ -1,5 +1,6 @@
 Build a Fullstack App with Vanilla JS and Go
 ============================================
+https://frontendmasters.com/workshops/vanilla-js-go/
 Maximiliano Firtman  
 https://github.com/firtman/go-vanillajs
 

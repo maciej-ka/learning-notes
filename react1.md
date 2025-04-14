@@ -2808,8 +2808,9 @@ Or Turso. And then deploy to Vercel or Elastic Beanstalk...
 
 Intermediate React, v6
 ======================
-Brian Holt, Frontend Masters  
+https://frontendmasters.com/workshops/intermediate-react-v6/
 https://intermediate-react-v6.holt.courses/
+Brian Holt, Frontend Masters  
 
 #### Certain features of React require Next.
 Nice part of React is composibility.  
@@ -3700,6 +3701,7 @@ npx shadcn@latest add button
 
 Introduction to Next.js, v4
 ===========================
+https://frontendmasters.com/courses/next-js-v4/
 Scott Moss, Frontend Masters  
 https://github.com/Hendrixer/next.js-fundamentals
 
@@ -5162,6 +5164,7 @@ and to fix this, you can do double brackets
 
 Learn Next.js
 =============
+https://nextjs.org/docs/app/getting-started
 https://nextjs.org/learn/dashboard-app
 
 #### use server

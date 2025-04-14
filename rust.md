@@ -1,6 +1,7 @@
 The Rust Programming Language
 ===============================
-https://doc.rust-lang.org/book/title-page.html
+https://rust-book.cs.brown.edu/
+https://doc.rust-lang.org/book
 https://learning.oreilly.com/library/view/the-rust-programming/9781098156817  
 Steve Klabnik and Carol Nichols
 
@@ -419,9 +420,8 @@ Also there is `return` keyword for returning early.
 
 Frontendmasters: Rust for typescript devs
 =========================================
-Primeagen  
 https://frontendmasters.com/courses/rust-ts-devs  
-course:  
+Primeagen  
 https://theprimeagen.github.io/rust-for-typescript-devs/
 
 #### course will not cover:

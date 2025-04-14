@@ -45,6 +45,7 @@ psql -U postgres -h localhost -p 5432
 
 Complete Intro to Databases
 ===========================
+https://frontendmasters.com/courses/databases/
 https://frontendmasters.com/courses/databases/introduction/  
 https://btholt.github.io/complete-intro-to-databases/
 

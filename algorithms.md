@@ -75,7 +75,7 @@ for (let i = 2; i * i <= n; i++) {
 
 The Last Algorithms Course You'll Need
 ======================================
-https://frontendmasters.com/courses/algorithms
+https://frontendmasters.com/courses/algorithms/
 
 ### Intro
 practical algorithms  

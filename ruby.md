@@ -1,5 +1,7 @@
 Well grounded rubyist
 =====================
+https://www.manning.com/books/the-well-grounded-rubyist-third-edition
+
 ### Running
 ```bash
 ruby 01-celcius.rb

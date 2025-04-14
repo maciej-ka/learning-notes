@@ -1,5 +1,6 @@
 Kubernetes in 4 Hours
 =====================
+https://learning.oreilly.com/live-events/kubernetes-in-4-hours/0636920056367/
 Sander van Vugt, O'Reilly
 
 Service: exposing to outside  
@@ -819,6 +820,7 @@ docker compose up db -d
 
 Kubernetes in action
 ====================
+https://www.manning.com/books/kubernetes-in-action-second-edition
 https://livebook.manning.com/book/kubernetes-in-action-second-edition/chapter-1/v-14/
 
 ### 1. Introducing Kubernetes

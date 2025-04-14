@@ -1,5 +1,6 @@
 Building a Static Type-Inferring Compiler
 =========================================
+https://frontendmasters.com/workshops/static-type-compiler/#player
 https://docs.google.com/presentation/d/1EkOFQCGFAIuIKG7sJB2ibsWE3Q8eti9UShLgo_z0rwo/edit?slide=id.g3478b1c1c1a_0_3445#slide=id.g3478b1c1c1a_0_3445  
 https://github.com/rtfeldman/compiler-workshop-v1  
 Richard Feldman
@@ -1080,6 +1081,7 @@ cons: more expensive
 
 Become a VSCode Power User
 ===========================
+https://frontendmasters.com/workshops/visual-studio-code-v2/
 with Steve Kinney  
 https://stevekinney.net/courses/visual-studio-code
 
@@ -1732,6 +1734,7 @@ a{Click me}
 
 Web Accessibility, v3
 =====================
+https://frontendmasters.com/courses/accessibility-v3/
 Frontend Masters, Jon Kuperman  
 https://github.com/jkup/learn-a11y  
 slides:  
@@ -2396,6 +2399,7 @@ docs have to describe every part in-depth
 
 Introduction to developer tools v3
 ==================================
+https://frontendmasters.com/workshops/dev-tools-v4/
 Frontend Masters, Jon Kuperman  
 https://github.com/jkup/mastering-devtools-static
 
@@ -3179,6 +3183,7 @@ Provides a read-optimized view of the user's profile (e.g., a denormalized or ca
 
 Microfrontends
 ==============
+https://learning.oreilly.com/library/view/micro-frontends-in/9781617296871/
 Micro Frontends in Action  
 Manning book by Michael Geers  
 https://learning.oreilly.com/library/view/micro-frontends-in/9781617296871/
@@ -3569,6 +3574,7 @@ describe.todo
 
 Fudamentals of web performance
 ==============================
+https://frontendmasters.com/courses/web-perf-v2/
 https://github.com/toddhgardner/fundametals-of-web-performance
 
 #### perfomance

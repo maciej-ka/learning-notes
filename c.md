@@ -1,5 +1,6 @@
 C fundamentals
 ==============
+https://frontendmasters.com/workshops/c-fundamentals/#player
 https://docs.google.com/presentation/d/1CGtDVSazrJHI52OnwwJXgogQEHs63lrasfQWJvmcYM0/edit
 https://github.com/rtfeldman/c-workshop-v1  
 Richard Feldman  

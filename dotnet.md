@@ -1,5 +1,6 @@
 Building APIs with C# and .NET
 ==============================
+https://frontendmasters.com/courses/dotnet-apis/
 https://schneidenbach.github.io/building-apis-with-csharp-and-aspnet-core/
 
 #### HTTP
@@ -63,6 +64,7 @@ dotnet new webapi -n TheEmployeeAPI
 
 Introduction to C# and .NET, Spencer Schneidenbach
 ==================================================
+https://frontendmasters.com/courses/csharp-dotnet/
 https://schneidenbach.github.io/intro-to-csharp-and-dotnet-from-beginner-to-professional
 
 you don't need:  

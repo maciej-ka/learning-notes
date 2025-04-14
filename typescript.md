@@ -1,7 +1,7 @@
 Enterprise TypeScript
 =====================
+https://frontendmasters.com/courses/enterprise-typescript/
 Frontend Masters, Mike North  
-https://frontendmasters.com/courses/enterprise-typescript/  
 https://www.typescript-training.com/course/enterprise-v2
 
 #### Enterprise
@@ -422,6 +422,7 @@ yarn lint
 
 Build End to End TypeScript Apps
 ================================
+https://frontendmasters.com/workshops/fullstack-typescript-v2/
 Frontend Masters, Steve Kinney  
 https://stevekinney.net/courses/full-stack-typescript  
 https://github.com/stevekinney/full-stack-typescript
@@ -1986,6 +1987,7 @@ https://github.com/DefinitelyTyped/DefinitelyTyped
 
 Intermediate Typescript
 =======================
+https://frontendmasters.com/courses/intermediate-typescript-v2/
 Mike North  
 https://frontendmasters.com/courses/intermediate-typescript-v2/introduction/  
 https://www.typescript-training.com/course/intermediate-v2

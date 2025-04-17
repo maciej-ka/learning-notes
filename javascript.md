@@ -3155,7 +3155,7 @@ and posttest hooks in package.json
 ```json
 "pretest:e2e": "docker compose up -d test-db",
 "test:e2e": "jest --config ./test/jest-e2e.json",
-"posttest:e2e": "docker compose stop test-db && docker-compose rm -f test-db",
+"posttest:e2e": "docker compose stop test-db && docker compose rm -f test-db",
 ```
 
 And provide database configuration to e2e test.

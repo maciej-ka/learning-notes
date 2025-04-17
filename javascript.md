@@ -2949,7 +2949,7 @@ describe('otherwise', () => {
 })
 ```
 
-#### Diving Into e2e Tests 06:09
+#### Diving Into e2e Tests
 E2E testing covers integration of classes  
 and interactions that are closer to user perspective.
 

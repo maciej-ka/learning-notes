@@ -4,6 +4,9 @@ psql summary
 ```bash
 psql -U postgres
 psql -U postgres -h localhost -p 5432
+
+# connect to docker
+docker exec -it project-db-1 psql -U postgres -d postgres
 ```
 
 #### List databases

@@ -57,6 +57,10 @@
 ● [**Build a Fullstack App with Vanilla JS and Go**](https://github.com/maciej-ka/learning-notes/blob/main/go.md#build-a-fullstack-app-with-vanilla-js-and-go), Maximiliano Firtman, Frontend Masters  
 ● [**Complete go**](https://github.com/maciej-ka/learning-notes/blob/main/go.md#complete-go), Melkey, Frontend Masters
 
+[Java](./javascript.md)
+===============================
+[**Enterprise Java: Spring Boot Fundamentals**](https://github.com/maciej-ka/learning-notes/blob/main/java.md#enterprise-java-spring-boot-fundamentals), Josh Long, Frontend Masters  
+
 [Javascript](./javascript.md)
 ===============================
 ● [**Functional Programming with Javascript**](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#functional-programming-with-javascript-v2), Anjana Vakil, Frontend Masters  

@@ -420,5 +420,43 @@ Example: give me all the Beans that have some interface.
 
 By default every object has a singleton scope.
 
-#### Above Spring 1.0
+### Above Spring 1.0
 Spring boot: convention over configuration
+
+#### Bean can be optional
+And it's possible to handle situations when Bean is not in class path.  
+It's possible to use default managed behaviour of Spring,  
+but Spring Boot will take step back if we want to create ourself.
+
+```java
+@Autowired
+```
+
+#### Environment
+It's possible to add configuration from password storage.  
+So that `Environment` can be populated from password storage.
+
+#### Events
+A lot of events to work with:  
+Event when someone authenticates,  
+Event when application is ready,  
+When Context is ready,  
+When some custom event is published
+
+```java
+@EventListener
+```
+
+#### Spring boot will not be good for
+Kernel extensions
+
+Frontend application (Vue, React)  
+however GraalVM: image compiler that can target web assembly  
+so perhaps this will change in future
+
+building AI models, not great  
+but great for consuming AI models
+
+mobile apps  
+because Swift  
+also Android is not good fit for Spring Boot

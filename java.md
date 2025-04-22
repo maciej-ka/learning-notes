@@ -670,3 +670,123 @@ MCP server for Spring Batch.
 You can ask, how far is my batch work,  
 ask it in human language.
 
+#### Limitation of Java collections
+There is no way to specify what is element of collection.  
+They way to do it is to bake generic type into superclass.
+
+```java
+class UserList extends ArraList<User> {}
+```
+
+Parametrized Type Reference  
+this also works:  
+it will create anonymous private class
+
+```java
+List<User> users = new ArrayList<>(){
+  //...
+}
+```
+
+#### Qualifiers
+When there is more than one candidate for DI,  
+more then one good fit for requested dependency,  
+then DI has to be guided by qualifier.
+
+```java
+@Bean (name = ...)
+```
+
+#### Hypermedia idea, HATEAOS
+In very early spec of HTTP, idea was, that every link  
+will have role attribute assigned to it.
+
+Idea that with API you get menu which tells,  
+how this API can be used to. And also it limits,  
+what can you call, depending on current state of application.
+
+Example of this is when you have api for orders that allow to refund,  
+you shouldn't be able to even call refund, if you don't have order.  
+This way programming becomes easier,  
+because you don't have to defend against that case.
+
+For this to work, it needs to be apparent from data,  
+what state is application in, and what operations are possible.
+
+It works by server tracing its state and modifying enable API  
+depending on changes in that state. This way server in some part  
+drive the client.
+
+#### GraphQL
+you can ask for as much or as little data as you need
+
+queries  
+mutations  
+subscriptions: long lived reads
+
+Typically, GraphQL is schema first.
+
+#### GraphiQL
+Way to test graph queries
+
+They way to make another query when one of fields is resolved  
+but this leads to N+1 problem, 1 to get all, N to get address  
+get address for user
+
+```java
+@SchemaMapping
+Address address (User user) {
+  System.out.println("returin address for " + user.id());
+  return ...
+}
+```
+
+so better, use BatchMapping, which will avoid N+1 problem  
+the way that we are doing this in batch is hidden for client,  
+client will not know is it SchemaMapping or BatchMapping
+
+```java
+@BatchMapping
+Map <User, Address addresses(Collection<User> users) {
+  var addresses = new HashMap<User, Address>()
+  users.forEach(User user -> addresses.put(user, ...))
+  System.out.println("Resolving")
+  return addresses
+}
+```
+
+#### gRPC
+This is also schema first approach.
+
+users.proto
+
+```proto
+syntax="proto3"
+import "google/protobuf/empty.proto";
+option java_package = "com.example.web.grpc"
+// ...
+
+service UsersService {
+  rpc Users(google.protobuf.Empty) returns (users){}
+}
+
+message User {
+  int32 id = 1;
+  string name = 2;
+  string username = 3
+}
+
+message Users {
+  repeated user users = 1
+}
+```
+
+That schema has no concept of collection,
+so that every time we need a collection,
+we need to define separate object
+that will represent collection.
+
+After having that schema, we have to generate code, using gRPC compiler
+and then we extend that generated code with our code
+
+gRPC requires HTTP2

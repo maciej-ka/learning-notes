@@ -14,6 +14,7 @@ It's easier to talk about who doesn't use Spring
 Google, Twitter, Facebook
 
 #### IDE
+intelliJ IDEA Ultimate  
 JetBrains  
 Spring Boot
 
@@ -580,4 +581,87 @@ Spring builds
 #### Reflection in Java
 You cannot avoid Reflection in Java,  
 It's everywhere, all annotations use it.
+
+### Scalability
+Some time ago, developer machine was way slower than production.  
+But today opposite is true: dev laptop is amazing compared to prod.  
+Because prod is often run on some stock machine just to run some linux.  
+And today idea is to scale horizontally and use load balancers.
+
+#### Thread, VirtualThread
+When waiting for socket response, using Thread is bad idea  
+because Thread will lock whole processor just waiting for response.
+
+Way better is to use VirtualThread for that case.
+
+#### Executor
+You run code in Executor, and that Executor can be either: Thread or VirtualThread.  
+In Executor you decide is IO blocking or non blocking.  
+So not the code decides
+
+In compared to that, in Kotlin and Javascript you can achieve this  
+but you have to put async/await or suspended everywhere, which is polluting the code.
+
+#### Flyway migrations
+Tool to manage migrations
+
+file for migration:  
+V1__setup.sql
+
+file that defines rollback of that migration:  
+U1__setup.sql  
+(or R1 perhaps)
+
+#### Embedded database
+H2, Derby
+
+#### Meta annotations
+`@Repository` is a meta annotation,  
+which consists of serveral other annotations.
+
+#### ListCrudRepository
+A way to provide typical model.  
+Has a lot of similarities with Ruby on Rails.
+
+```java
+interface PersonRepository extends ListCrudRepository<Person, Integer> {
+  @Query("select ....")
+  // easy way to find all, etc.
+}
+```
+
+#### YugabyteDB
+PostgreSQL frontend with very scallable backend.  
+It will scale like Cassandra will.  
+distributed PostgreSQL
+
+DynamoDB, RDBs, ... 
+
+#### Spring Batch
+framework to solve ETL batch processing  
+framework built on top of Spring Boot  
+Extraction Transformation Loading
+
+Spring Batch is meant to handle large amounts of data  
+and to turn for long time. For that reason track of task  
+is being traced in database, in tables: batch_step_execution,  
+batch_job_execution, batch_job_execution_context ...
+
+They way to work with Spring Batch is to define jobs  
+and then run them several times.
+
+If job has same name as previous, it will not be run again,  
+this can be used to a benefit, when wanting to run job  
+but never more than once a day, then use date as part of job name.
+
+When you have milions of rows, don't read all in `select *`,  
+instead use chunks. Chunk size is also important for two reasons:
+- it should be able to nicely fit into memory,
+- it's a size you're ready to loose in case of error.
+
+a lot of financial services use it
+
+Partition steps: a way to divide work in pararell.  
+It can use Kafka, in a setup where there is leader node  
+and that node will send some work to do for another node.
 

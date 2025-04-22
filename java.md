@@ -460,3 +460,124 @@ but great for consuming AI models
 mobile apps  
 because Swift  
 also Android is not good fit for Spring Boot
+
+#### GraalVM AOT
+AOT Ahead of time compilation.  
+Amazing thing.
+
+GraalVM Oracle
+```bash
+sdk install java 25.ea.18-greaal
+```
+
+Java has a release every 6 months.
+
+```bash
+javac Main.java
+java Main
+native-image Main
+./main
+```
+
+No JRE,  
+Running it assembly,  
+as fast as possible
+
+Will be complete, doesn't require Java to run  
+it's self contained, this can be a good fit  
+for many applications, like cli tools.
+
+```bash
+native-image --tool:svm-wasm Main
+node main.j
+```
+
+however atm there is no network support
+
+#### limitation of AOT, GraalVM:
+it's not possible to generate executable  
+for all three systems  
+just working from macOS  
+(they way it's possible with Golang)
+
+#### check how much ram process takes
+get PID  
+ps -o rss <PID>
+
+#### GraalVM from Oracle
+not open, proprietary  
+some extra tools,  
+one of them is profile optimalizations  
+and JIT which works very well, but only for hot path.
+
+however, you can still use it to build jar  
+and ship it how you want
+
+but you cannot make another GraalVM distribution  
+and claim, that it's yours.
+
+#### GraalVM CE
+open source
+
+
+#### GraalVM limitation
+Reflaction requries metadata,  
+which is rejected with GraalVM,  
+so these will not work normally:
+
+```java
+class Foo {
+  void bar() {}
+}
+
+class ReflectionThingy {
+  ReflectionThingy() {
+    var fooClass = Foo.class;
+    for (var field: fooClass.getDeclaredMethods())
+      System.out.println(field.getName());
+  }
+}
+```
+
+However, we can give compilation hints.  
+They will be run at a compilation time  
+and instruct compiler to keep metadata.
+
+```java
+static class Hints implements RuntimeHintsRegistrar {
+  @Override
+  public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+    hints.reflection().registerType(Foo.class, MemberCategory.values())
+  }
+}
+```
+
+#### GraalVM limitations
+jdk proxies  
+resource loading  
+reflection  
+serialization  
+jni
+
+However there are solutions for all these.  
+And Java is going ahead of that direction.
+
+#### Project Leyden
+Inspired by GraalVM  
+result is not that impressive.  
+But also goal is loar than GraalVM.
+
+Attempt to move some things  
+which traditionally are at runtime to compile time  
+Class Loading and linking, code compilation, method profiling
+
+It works well with reflection without hints
+
+#### Spring Beans
+All the annotations are set by reflection.  
+Spring builds 
+
+#### Reflection in Java
+You cannot avoid Reflection in Java,  
+It's everywhere, all annotations use it.
+

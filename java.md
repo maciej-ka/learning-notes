@@ -781,12 +781,12 @@ message Users {
 }
 ```
 
-That schema has no concept of collection,
-so that every time we need a collection,
-we need to define separate object
+That schema has no concept of collection,  
+so that every time we need a collection,  
+we need to define separate object  
 that will represent collection.
 
-After having that schema, we have to generate code, using gRPC compiler
+After having that schema, we have to generate code, using gRPC compiler  
 and then we extend that generated code with our code
 
 gRPC requires HTTP2

@@ -665,3 +665,8 @@ Partition steps: a way to divide work in pararell.
 It can use Kafka, in a setup where there is leader node  
 and that node will send some work to do for another node.
 
+#### MCP: model context protocol
+MCP server for Spring Batch.  
+You can ask, how far is my batch work,  
+ask it in human language.
+

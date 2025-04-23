@@ -167,7 +167,7 @@ So if number is higher, it will be limited
 
 NestJS Fundamentals
 ===================
-https://courses.nestjs.com/
+https://courses.nestjs.com/  
 https://learn.nestjs.com/p/fundamentals
 
 #### Introduction
@@ -3308,7 +3308,7 @@ a + b(c as Api).persist()
 
 NestJS Architecture and Advanced patterns
 =========================================
-https://courses.nestjs.com/#architecture
+https://courses.nestjs.com/#architecture  
 https://learn.nestjs.com/p/architecture-and-advanced-patterns
 
 #### start new app
@@ -3920,7 +3920,7 @@ to have different or a namespace add argument
 
 NestJS Docs Crud
 ================
-https://docs.nestjs.com/first-steps
+https://docs.nestjs.com/first-steps  
 https://docs.nestjs.com/
 
 ### Install
@@ -4135,7 +4135,7 @@ getDocs(@Query('version') version: string) {
 
 Functional Programming with Javascript v2
 =========================================
-https://frontendmasters.com/courses/functional-first-steps-v2/
+https://frontendmasters.com/courses/functional-first-steps-v2/  
 Anjana Vakil  
 slides: https://observablehq.com/embed/@anjana/what-is-functional-programming  
 excercises: https://functional-first-steps.netlify.app/1-intro/1-overview/
@@ -4376,3 +4376,18 @@ console.log(gen.next().value)
   this writing, anyway) disallow harmful links.  
 - The leak confirms that Google does indeed appear to penalize so-called toxic backlinks.
 
+### Summary of Promise methods
+#### Promise.all
+reject: on first rejection  
+resolve: with array of values
+
+#### Promise.any
+reject: if all rejected, with aggregate error  
+resolve: on first resolved
+
+#### Promise.race
+reject: on first rejected  
+resolve: on first resolved
+
+#### Promise.allSettled
+resolve: with array of results

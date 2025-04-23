@@ -1124,6 +1124,10 @@ class UsersController {
 Because we are calling another service,  
 we need to set virtual threads, otherwise IO will be CPU blocking.
 
+Also if we would be talking with database.  
+Generally recommendation is to enable virtual  
+threads by default.
+
 application.properties
 ```
 spring.application.name=web
@@ -1281,3 +1285,91 @@ After having that schema, we have to generate code, using gRPC compiler
 and then we extend that generated code with our code
 
 gRPC requires HTTP2
+
+#### Excercise demo project
+
+GraalVM Native Support Developer Tools  
+Spring Web Web  
+PostgreSQL Driver SQL  
+Docker Compose Support Developer Tools  
+Spring Data JDBC SQL  
+Spring Boot DevTools Developer Tools
+
+if you forget   
+then it's possible to add them later in pom.xml
+
+```java
+// DemoApplication.java
+package com.example.demo;
+
+import java.util.Collection;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@SpringBootApplication
+public class DemoApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(DemoApplication.class, args);
+  }
+}
+
+@Controller
+@ResponseBody
+class CustomController {
+  private final CustomerRepository customerRepository;
+
+  CustomController(CustomerRepository customerRepository) {
+    this.customerRepository = customerRepository;
+  }
+
+  @GetMapping("/customers")
+  Collection<Customer> customers() {
+    return customerRepository.findAll();
+  }
+}
+
+record Customer(@Id int id, String name) {}
+
+interface CustomerRepository extends ListCrudRepository<Customer, Integer> {}
+```
+
+And modify files in `/main/resources`
+Create schema:
+
+```sql
+-- schema.sql
+create table if not exists customer(
+  id serial primary key,
+  name text
+);
+```
+
+Seed database:
+
+```sql
+-- data.sql
+insert into customer(name) values('Maciejka');
+insert into customer(name) values('Agata');
+```
+
+set application.properties
+enable automatically loading above sql files
+
+```
+spring.application.name=demo
+spring.sql.init.mode=always
+spring.threads.virtual.enabled=true
+```
+
+to run (it will start postgres container for you)
+
+```bash
+./mvnw spring-boot:run
+```

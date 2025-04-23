@@ -1165,9 +1165,23 @@ about ubiquous language.
 @RestController
 ```
 
+but what we had done so far is not REST it's HTTP...
+
 #### REST Hypermedia idea, HATEAOS
-In very early spec of HTTP, idea was, that every link  
-will have role attribute assigned to it.
+REST is not really REST unless it uses hypermedia  
+Roy Fielding dissertation, famous talk:
+
+When you look at HTML document, link has rel.  
+The rel is the important part, it tells you what is the nature of link  
+why would you click on this. We don't use it often.
+
+We use it for "stylesheet" to instruct browser, that it could  
+and it should follow this link, to get styles for the page.
+
+Enterprise Integration Patterns, 2004 Hoppe and Wolf.  
+Hoppe "Starbucks Does Not Use Two-Phase Commit"  
+Starbucks trail of cups can fail and be reverted on any stage,  
+there is no one huge transaction.
 
 Idea that with API you get menu which tells,  
 how this API can be used to. And also it limits,  
@@ -1178,12 +1192,21 @@ you shouldn't be able to even call refund, if you don't have order.
 This way programming becomes easier,  
 because you don't have to defend against that case.
 
+The Server controlls the state, it's where the state lives,  
+if there is no link in response, then client shuold not show that link.
+
+#### HATEAOS
+Hypermedia As The Engine Of Application State.
+
 For this to work, it needs to be apparent from data,  
 what state is application in, and what operations are possible.
 
 It works by server tracing its state and modifying enable API  
 depending on changes in that state. This way server in some part  
 drive the client.
+
+#### Making hypermedia endpoint
+Basically its the same code as before, but wrapped in model envelope
 
 #### GraphQL
 you can ask for as much or as little data as you need

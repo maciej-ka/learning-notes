@@ -1383,6 +1383,8 @@ application.properties
 management.endpoints.web.exposure.include=*
 ```
 
+https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-actuator/3.4.4
+
 ```xml
 <dependency>
   <groupId>org.springframework.boot</groupId>
@@ -1415,7 +1417,6 @@ info.best-course-ever=frontend masters
 
 There is a way to show git commit info, the last git commit  
 that was before the deployment.
-
 
 #### Micrometer
 https://micrometer.io/  

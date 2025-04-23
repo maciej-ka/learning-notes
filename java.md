@@ -1478,3 +1478,85 @@ chmod a+x run.sh
 ```bash
 ./mvnw -DskipTests -Pnative spring-boot:build-image
 ```
+
+#### Typical Spring cases
+Data loading and formatting  
+Endpoint to serve  
+Client of endpoints
+
+We will look into: messaging
+
+#### Kafka
+Reliable.
+
+Spring has few layers of support for Kafka  
+spring Kafka  
+spring for Apache Pulsar
+
+RabbitMQ is made from same group of devs as Spring  
+Spring AMPQ, open standard to work with RabbitMQ
+
+JMS: very misguided "standard" from Oracle  
+25 years ago, meant as abstraction for messaging  
+but run away from it
+
+Docker container for kafka
+
+```
+services:
+  kafka:
+    image: 'apache/kafka-native:4.0.0'
+    ports:
+      - '9092:9092'
+      - '9093:9093'
+      - '9094:9094'
+      - '2181:2181'
+```
+
+Send and receive  
+Code is quite easy  
+Configuration is tedious
+
+Messages travel through the wire, and a part of incomming message  
+is a field which says what classname should it deserialize to.  
+But for that to work, we have to approve to that
+
+application.properties
+
+```
+spring.kafka.consumer.properties.spring.json.trusted.packages=*
+```
+
+in real scenarios use comma list of allowed  
+but for demo purpose, we will use *
+
+### Enterprise Integration Patterns
+Book by Bobby Wolf, Hoppe, 2004  
+aka "pipes and adapters"
+
+Airflow, popular in Python, even though its underpowered compared to Java  
+Biztalk in .net  
+they usually need a lot of consulatants  
+whole world of enterprise integration  
+...
+
+everything today is distributed  
+nowadays you have applications that need to talk to each other  
+and what if you need something more than messaging bus?
+
+OpenSource, integrations  
+when you don't want to pay for 10 consultants  
+Mule, MuleSoft, Ross Maison
+
+Four styles of integrations:  
+(mentioned in the book)  
+
+**File Transfer**  
+**Shared Database**  
+**Remote Procedure Invocation**  
+**Messaging**
+
+#### Spring Integration
+Project that supports all these four styles.
+
+

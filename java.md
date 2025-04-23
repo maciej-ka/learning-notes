@@ -1102,7 +1102,70 @@ HttpServiceProxyFactory httpServiceProxyFactory(@Qualifier(SECURED_REST_CLIENT) 
 
 Also it's very easy to crate custom, composed annotation
 
-#### Hypermedia idea, HATEAOS
+#### Web Server
+
+```java
+@Controller
+@ResponseBody
+class UsersController {
+	private final DeclarativeUsersClient usersClient;
+
+	UsersController(DeclarativeUsersClient usersClient) {
+		this.usersClient = usersClient;
+	}
+
+	@GetMapping("/users")
+	Collection<User> users() {
+		return this.usersClient.users();
+	}
+}
+```
+
+Because we are calling another service,  
+we need to set virtual threads, otherwise IO will be CPU blocking.
+
+application.properties
+```
+spring.application.name=web
+spring.threads.virtual.enabled=true
+```
+
+start
+
+```bash
+./mvnw spring-boot:run
+```
+
+and visit: http://localhost:8080/users
+
+example of Post
+
+```java
+@PostMapping("/users/{id}")
+void createuser(@RequestParam String name, @PathVariable int id, HttpServletRequest request) {}
+```
+
+lowest level mapping annotation is actually a RequestMapping
+
+```java
+@RequestMapping (method = RequestMethod.GET, value = "/users")
+// which is equivalent to
+@GetMapping("/users")
+```
+
+#### Meta annotations
+Spring is meant to write composed meta annotations,  
+so that code can be idiomatic. In domain modeling we talk  
+about ubiquous language.
+
+```java
+@Controller
+@ResponseBody
+// both are part of
+@RestController
+```
+
+#### REST Hypermedia idea, HATEAOS
 In very early spec of HTTP, idea was, that every link  
 will have role attribute assigned to it.
 

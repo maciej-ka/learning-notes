@@ -4376,7 +4376,8 @@ console.log(gen.next().value)
   this writing, anyway) disallow harmful links.  
 - The leak confirms that Google does indeed appear to penalize so-called toxic backlinks.
 
-### Summary of Promise methods
+Summary of Promise methods
+==========================
 #### Promise.all
 reject: on first rejection  
 resolve: with array of values

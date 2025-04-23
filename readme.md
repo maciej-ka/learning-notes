@@ -76,7 +76,8 @@
 [*nestJS websockets*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#nestjs-docs-websockets)  
 [*stack limit*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#stack-limit)  
 [*stimulus*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#discoveries-from-stimulus)  
-[*typed arrays*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#typed-arrays)
+[*typed arrays*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#typed-arrays)  
+[*Promise methods*](https://github.com/maciej-ka/learning-notes/blob/main/javascript.md#summary-of-promise-methods)
 
 [Linux](./linux.md)
 =====================

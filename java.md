@@ -1295,8 +1295,12 @@ Docker Compose Support Developer Tools
 Spring Data JDBC SQL  
 Spring Boot DevTools Developer Tools
 
-if you forget   
+if you forget to pick them on web site,
 then it's possible to add them later in pom.xml
+
+and to find out the xml snippet that is needed  
+it's possible to find this out on maven repository site:  
+https://mvnrepository.com/artifact/org.postgresql/postgresql/42.7.5
 
 ```java
 // DemoApplication.java
@@ -1336,12 +1340,11 @@ class CustomController {
 }
 
 record Customer(@Id int id, String name) {}
-
 interface CustomerRepository extends ListCrudRepository<Customer, Integer> {}
 ```
 
 And modify files in `/main/resources`  
-Create schema:
+Create database schema:
 
 ```sql
 -- schema.sql
@@ -1351,7 +1354,7 @@ create table if not exists customer(
 );
 ```
 
-Seed database:
+Seed the database
 
 ```sql
 -- data.sql
@@ -1359,8 +1362,9 @@ insert into customer(name) values('Maciejka');
 insert into customer(name) values('Agata');
 ```
 
-set application.properties  
+Set application.properties  
 enable automatically loading above sql files
+and don't block IO while querying with postgres.
 
 ```
 spring.application.name=demo
@@ -1368,8 +1372,13 @@ spring.sql.init.mode=always
 spring.threads.virtual.enabled=true
 ```
 
-to run (it will start postgres container for you)
+Run (it will start postgres container for you)
 
 ```bash
 ./mvnw spring-boot:run
 ```
+
+and visit  
+
+http://localhost:8080/customers
+

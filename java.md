@@ -780,6 +780,12 @@ Here you also have to use curly brackets at the end to create subclass.
 ParametrizedTypeReference<List<User>> typeRef = new ParametrizedTypeReference<List<User>>() {}
 ```
 
+but also this can work:
+
+```java
+ParametrizedTypeReference<List<User>> typeRef = new ParametrizedTypeReference<>() {}
+```
+
 #### Client
 Example of using RestClient with parametrized type.
 
@@ -883,14 +889,218 @@ class SimpleUsersClient {
 }
 ```
 
+#### Declarative Interface Clients
+Code above is substantial amount of work.  
+And there is no need to repeat it.
+
+In declarative approach, we describe routes of API that we want to consume.  
+We don't use `@Get` but `@GetExchange,` which is a client side analog of `@Get`.
+
+```java
+import org.springframework.web.service.annotation.GetExchange;
+
+interface DeclarativeUsersClient {
+  @GetExchange("/users/{id}")
+  User user(@PathVariable int id);
+
+  @GetExchange("/users")
+  Collection <User> users();
+}
+```
+
+However, to make that work, we need to create HttpServiceProxy.  
+This part will be easier soon, but that version of Spring is not ready yet.
+
+```java
+@Configuration
+class WebConfiguration {
+  @Bean
+  DeclarativeUsersClient declarativeUserClient(RestClient http) {
+    return HttpServiceProxyFactory
+      .builder()
+      .exchangeAdapter(RestClientAdapter.create(http))
+      .build()
+      .createClient(DeclarativeUsersClient.class);
+  }
+}
+```
+
+Or, for simplification, we can extract first part, factory creation  
+into `@Bean`, so that it can be reused and injected.
+
+```java
+@Configuration
+class WebConfiguration {
+  @Bean
+  HttpServiceProxyFactory httpServiceProxyFactory(RestClient http) {
+    return HttpServiceProxyFactory
+      .builder()
+      .exchangeAdapter(RestClientAdapter.create(http))
+      .build();
+  }
+
+  @Bean
+  DeclarativeUsersClient declarativeUserClient(HttpServiceProxyFactory h) {
+    return h.createClient(DeclarativeUsersClient.class);
+  }
+}
+```
+
+#### RestClient
+Can use one of several low level libraries for HTTP.  
+It will adopt to use library that it can find in class path.
+
+#### Whole code of declarative client
+
+```java
+package com.example.web;
+
+import java.util.Collection;
+
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.support.RestClientAdapter;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+
+@SpringBootApplication
+public class WebApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(WebApplication.class, args);
+  }
+}
+
+record User(int id, String name, String username, String email, Address address) {}
+record Address(String stree, String suite, String city, String zipcode, Geo geo) {}
+record Geo(float lat, float lng) {}
+
+@Configuration
+class WebConfiguration {
+  @Bean
+  HttpServiceProxyFactory httpServiceProxyFactory(RestClient http) {
+    return HttpServiceProxyFactory
+      .builder()
+      .exchangeAdapter(RestClientAdapter.create(http))
+      .build();
+  }
+
+  @Bean
+  DeclarativeUsersClient declarativeUserClient(HttpServiceProxyFactory h) {
+    return h.createClient(DeclarativeUsersClient.class);
+  }
+
+  @Bean
+  RestClient restClient(RestClient.Builder builder) {
+    return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+  }
+
+  @Bean
+  ApplicationRunner runner(DeclarativeUsersClient usersClient) {
+    return _ -> {
+      usersClient.users().forEach(System.out::println);
+      System.out.println("=================");
+      System.out.println(usersClient.user(1));
+    };
+  }
+}
+
+interface DeclarativeUsersClient {
+  @GetExchange("/users/{id}")
+  User user(@PathVariable int id);
+
+  @GetExchange("/users")
+  Collection <User> users();
+}
+```
+
 #### Qualifiers
 When there is more than one candidate for DI,  
 more then one good fit for requested dependency,  
-then DI has to be guided by qualifier.
+
+In this example Spring will complain, that it cannot AutoWire,  
+(inside httpServiceProxyFactory, the first Bean), because there is  
+more then one Bean with type RestClient.
 
 ```java
-@Bean (name = ...)
+@Configuration
+class WebConfiguration {
+  @Bean
+  HttpServiceProxyFactory httpServiceProxyFactory(RestClient http) {
+    return HttpServiceProxyFactory
+      .builder()
+      .exchangeAdapter(RestClientAdapter.create(http))
+      .build();
+  }
+  
+  @Bean
+  RestClient securedRestClient(RestClient.Builder builder) {
+    return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+  }
+
+  @Bean
+  RestClient restClient(RestClient.Builder builder) {
+    return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+  }
+}
 ```
+
+One option is to select one by the Bean name.
+
+```java
+@Bean
+HttpServiceProxyFactory httpServiceProxyFactory(Map <String, RestClient> http) {
+  return HttpServiceProxyFactory
+    .builder()
+    .exchangeAdapter(RestClientAdapter.create(http.get("securedRestClient")))
+    .build();
+}
+```
+
+Or by giving name in annotation, so that actual name is not that important  
+and there is no magical reflective string, that is not bound to anything.
+
+```java
+@Bean
+HttpServiceProxyFactory httpServiceProxyFactory(Map <String, RestClient> http) {
+  return HttpServiceProxyFactory
+    .builder()
+    .exchangeAdapter(RestClientAdapter.create(http.get(SECURED_REST_CLIENT)))
+    .build();
+}
+
+static final String SECURED_REST_CLIENT = "securedRestClient";
+static final String REST_CLIENT = "restClient";
+
+@Bean(name = SECURED_REST_CLIENT)
+RestClient securedRestClient(RestClient.Builder builder) {
+  return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+}
+
+@Bean(name = REST_CLIENT)
+RestClient restClient(RestClient.Builder builder) {
+  return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+}
+```
+
+Or by using qualifier to guide AutoWiring.  
+That Qualifier is saying, find the bean that has that name.
+
+```java
+@Bean
+HttpServiceProxyFactory httpServiceProxyFactory(@Qualifier(SECURED_REST_CLIENT) RestClient http) {
+  return HttpServiceProxyFactory
+    .builder()
+    .exchangeAdapter(RestClientAdapter.create(http))
+    .build();
+}
+```
+
+Also it's very easy to crate custom, composed annotation
 
 #### Hypermedia idea, HATEAOS
 In very early spec of HTTP, idea was, that every link  

@@ -1559,4 +1559,22 @@ Four styles of integrations:
 #### Spring Integration
 Project that supports all these four styles.
 
+Microservices should be mainstream  
+they are not at the moment.
+
+### Modularity
+Allows to not have to constantly synchronize with other people.  
+Mill Conway
+- null was one billion mistake
+- software reflects team organization
+
+#### Spring Moduleth
+If you organize your code in a way  
+that rest of the system can depend on it,  
+then rest of the system will depend on it  
+and it will become a problem
+
+don't use public by default,  
+remove it as much as you can.
+
 

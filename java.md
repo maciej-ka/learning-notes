@@ -1340,7 +1340,7 @@ record Customer(@Id int id, String name) {}
 interface CustomerRepository extends ListCrudRepository<Customer, Integer> {}
 ```
 
-And modify files in `/main/resources`
+And modify files in `/main/resources`  
 Create schema:
 
 ```sql
@@ -1359,7 +1359,7 @@ insert into customer(name) values('Maciejka');
 insert into customer(name) values('Agata');
 ```
 
-set application.properties
+set application.properties  
 enable automatically loading above sql files
 
 ```

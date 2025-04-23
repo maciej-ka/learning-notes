@@ -670,21 +670,216 @@ MCP server for Spring Batch.
 You can ask, how far is my batch work,  
 ask it in human language.
 
+### Web
+https://start.spring.io/  
+Maven, Java, Boot 3.4.4, Jar packaging, Java 24
+
+GraalVM Native Support Developer Tools  
+Spring Web Web  
+Spring for GraphQL Web  
+Spring gRPC [Experimental] I/O  
+Thymeleaf Template Engines  
+Spring HATEOAS Web  
+Spring Boot DevTools Developer Tools
+
+#### Simple HTTP client
+Fake API for testing and prototyping  
+https://jsonplaceholder.typicode.com/  
+https://jsonplaceholder.typicode.com/users
+
+define domain model
+
+```java
+record User(int id, String name, String username, String email, Address address) {}
+record Address(String stree, String suite, String city, String zipcode, Geo geo) {}
+record Geo(float lat, float lng) {}
+```
+
+Create client for the second of these urls.  
+It's going to be a Bean, managed by Spring.
+
+There are few ways to mark that:
+
+```
+@Component: Generic stereotype annotation for any Spring-managed component
+@Service: Used for service layer classes
+@Repository: Used for persistence layer/DAO classes
+@Controller/@RestController: Used for web controllers
+@Configuration
+```
+
+And it will use http client:
+
+```java
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+
+@Component
+class SimpleUsersClient {
+  private final RestClient http;
+
+  SimpleUsersClient(RestClient.Builder http) {
+    this.http = http.build();
+  }
+}
+```
+
+Or even better, with reusable configuration  
+and because of it will be possible to inject RestClient  
+instead of needing to build it every time.
+
+It will define base url of the http client.
+
+```java
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestClient;
+
+@Configuration
+class WebConfiguration {
+  @Bean
+  RestClient restClient(RestClient.Builder builder) {
+    return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+  }
+}
+```
+
 #### Limitation of Java collections
-There is no way to specify what is element of collection.  
-They way to do it is to bake generic type into superclass.
+Java has no reified generics.  
+At runtime there is no way to use reflection  
+to ask `List<String> string` what generics it uses
+
+In runtime that list just looks like list of objects.  
+It also means there is no way to have a class for list of users.
+
+They hack to solve this:  
+bake generic type into superclass hierarchy.  
+This gets reified. Because we are extending concrete type,  
+then UserList has a type, it's possible to get it using reflection.
 
 ```java
 class UserList extends ArraList<User> {}
 ```
 
-Parametrized Type Reference  
-this also works:  
-it will create anonymous private class
+#### Parametrized Type Token Pattern
+this also works: it will create anonymous private class  
+Because there is a curly bracket at the end  
+then technically it's a subclass of ArrayList
 
 ```java
-List<User> users = new ArrayList<>(){
-  //...
+List<User> users = new ArrayList<>(){}
+```
+
+and this also works, its possible to inspect this type  
+and deduce that generic parameter is of a type User.
+
+And for convienience, this is available as ParametrizedTypeReference  
+Here you also have to use curly brackets at the end to create subclass.
+
+```java
+ParametrizedTypeReference<List<User>> typeRef = new ParametrizedTypeReference<List<User>>() {}
+```
+
+#### Client
+Example of using RestClient with parametrized type.
+
+```java
+@Component
+class SimpleUsersClient {
+  private final RestClient http;
+
+  SimpleUsersClient(RestClient http) {
+    this.http = http;
+  }
+
+  private final ParameterizedTypeReference<List<User>> typeRef = new ParameterizedTypeReference<List<User>>() {};
+
+  Collection<User> users(){
+    return this.http
+      .get()
+      .uri("/users")
+      .retrieve()
+      .body(typeRef);
+  }
+}
+```
+
+And example of runner that will start
+
+```java
+@Configuration
+class WebConfiguration {
+  @Bean
+  ApplicationRunner runner(SimpleUsersClient usersClient) {
+    return _ -> usersClient.users().forEach(System.out::println);
+  }
+}
+```
+
+Then start with:
+
+```bash
+./mvnw spring-boot:run
+```
+
+#### Complete code of Simple Rest client
+
+```java
+package com.example.web;
+
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
+
+@SpringBootApplication
+public class WebApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(WebApplication.class, args);
+  }
+}
+
+record User(int id, String name, String username, String email, Address address) {}
+record Address(String stree, String suite, String city, String zipcode, Geo geo) {}
+record Geo(float lat, float lng) {}
+
+@Configuration
+class WebConfiguration {
+  @Bean
+  RestClient restClient(RestClient.Builder builder) {
+    return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+  }
+
+  @Bean
+  ApplicationRunner runner(SimpleUsersClient usersClient) {
+    return _ -> usersClient.users().forEach(System.out::println);
+  }
+}
+
+@Component
+class SimpleUsersClient {
+  private final RestClient http;
+
+  SimpleUsersClient(RestClient http) {
+    this.http = http;
+  }
+
+  private final ParameterizedTypeReference<List<User>> typeRef = new ParameterizedTypeReference<List<User>>() {};
+
+  Collection<User> users(){
+    return this.http
+      .get()
+      .uri("/users")
+      .retrieve()
+      .body(typeRef);
+  }
 }
 ```
 

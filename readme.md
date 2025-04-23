@@ -59,7 +59,7 @@
 
 [Java](./javascript.md)
 ===============================
-[**Enterprise Java: Spring Boot Fundamentals**](https://github.com/maciej-ka/learning-notes/blob/main/java.md#enterprise-java-spring-boot-fundamentals), Josh Long, Frontend Masters  
+● [**Enterprise Java: Spring Boot Fundamentals**](https://github.com/maciej-ka/learning-notes/blob/main/java.md#enterprise-java-spring-boot-fundamentals), Josh Long, Frontend Masters  
 
 [Javascript](./javascript.md)
 ===============================

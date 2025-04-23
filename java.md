@@ -1365,6 +1365,7 @@ and don't block IO while querying with postgres.
 spring.application.name=demo
 spring.sql.init.mode=always
 spring.threads.virtual.enabled=true
+spring.docker.compose.lifecycle-management=start_only
 ```
 
 Run (it will start postgres container for you)
@@ -1430,3 +1431,50 @@ Can be local network only, so only via VPN.
 Can be given different port.  
 And handled by Spring security policy.
 
+#### Outside dev
+Docker will not be started  
+we need to provide how to connect:
+
+target/application.properties
+```
+spring.datasource.password=secret
+spring.datasource.username=myuser
+spring.datasource.url=jdbc:postgresql://localhost:5432/mydatabase
+```
+
+or make sure you have env variables set  
+in a terminal in which you run docker image
+
+```
+export SPRING_DATASOURCE_PASSWORD=secret
+export SPRING_DATASOURCE_USERNAME=myuser
+export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mydatabase
+```
+
+or consider bash script for running run.sh
+
+```bash
+#!/usr/bin/env bash
+
+export SPRING_DATASOURCE_PASSWORD=secret
+export SPRING_DATASOURCE_USERNAME=myuser
+export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mydatabase
+
+docker run -e SPRING_DATASOURCE_PASSWORD=$SPRING_DATASOURCE_PASSWORD \
+  -e SPRING_DATASOURCE_URL = $SPRING_DATASOURCE_URL \
+  -e SPRING_DATASOURCE_USERNAME = $SPRING_DATASOURCE_USERNAME \
+  -p 8080:8080 \
+  docker.io/library/e2e:0.0.1-SNAPSHOT
+```
+
+and give run permission
+
+```bash
+chmod a+x run.sh
+```
+
+
+#### Build docker image
+```bash
+./mvnw -DskipTests -Pnative spring-boot:build-image
+```

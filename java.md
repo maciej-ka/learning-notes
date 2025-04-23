@@ -101,11 +101,6 @@ docker compose up
 then visit  
 http://localhost:8080/hello
 
-not sure
-```bash
-./mvnw install
-```
-
 create jar
 ```bash
 ./mvnw package
@@ -1295,7 +1290,7 @@ Docker Compose Support Developer Tools
 Spring Data JDBC SQL  
 Spring Boot DevTools Developer Tools
 
-if you forget to pick them on web site,
+if you forget to pick them on web site,  
 then it's possible to add them later in pom.xml
 
 and to find out the xml snippet that is needed  
@@ -1363,7 +1358,7 @@ insert into customer(name) values('Agata');
 ```
 
 Set application.properties  
-enable automatically loading above sql files
+enable automatically loading above sql files  
 and don't block IO while querying with postgres.
 
 ```
@@ -1381,4 +1376,56 @@ Run (it will start postgres container for you)
 and visit  
 
 http://localhost:8080/customers
+
+#### Actuator
+application.properties
+```
+management.endpoints.web.exposure.include=*
+```
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-actuator</artifactId>
+</dependency>
+```
+
+Actuator will surface state about your application.  
+It will show all endpoints available.  
+Don't use it on production
+
+http://localhost:8080/actuator  
+http://localhost:8080/actuator/health  
+http://localhost:8080/actuator/beans
+
+Also it's possible to create own Health Indicators.  
+With simple lambda function
+
+http://localhost:8080/actuator/info
+
+Info is blank page  
+application.properties
+
+```
+management.info.env.enabled=true
+info.best-course-ever=frontend masters
+```
+
+(needs restart)
+
+There is a way to show git commit info, the last git commit  
+that was before the deployment.
+
+
+#### Micrometer
+https://micrometer.io/  
+They way to do observability for Spring.  
+(it can be used also for other things).
+
+It can work with Actuator after some setup.
+
+#### Secure Actuator
+Can be local network only, so only via VPN.  
+Can be given different port.  
+And handled by Spring security policy.
 

@@ -1203,67 +1203,7 @@ It works by server tracing its state and modifying enable API
 depending on changes in that state. This way server in some part  
 drives the client.
 
-#### Making hypermedia endpoint
-Basically endpoint handler its the same code as before,
-but wrapped in model envelope.
-
-```java
-@GetMapping("/users/{id}")
-EntityModel<User> one(@PathVariable int id) {
-  return this.userModelAssembler.toModel(usersClient.user(id));
-}
-
-@GetMapping("/users")
-CollectionModel<EntityModel<User>> all() {
-  return this.userModelAssembler.toCollectionModel(usersClient.users());
-}
-```
-
-Links are created in model assembler.
-And important part is that they are created in a dynamic way.
-
-```java
-@Component
-class UserModelAssembler implements RepresentationModelAssembler<User, EntityModel<User>> {
-  @Override
-  public EntityModel<User> toModel(User entity) {
-    var controller = HateoasUsersController.class;
-    var self = linkTo(methodOn(controller).all()).withRel("all");
-    var one = linkTo(methodOn(controller).one(entity.id())).withSelfRel();
-    return EntityModel.of(entity, self, one);
-  }
-}
-```
-
-This line says: if someone is calling `all` method on a controller of choosen class,
-then that's called "all" link.
-
-```java
-var self = linkTo(methodOn(controller).all()).withRel("all");
-```
-
-And when someone calls `one` method, then this is called "self" link
-
-```java
-var one = linkTo(methodOn(controller).one(entity.id())).withSelfRel();
-```
-
-And you can make these links dynamic.
-So you can dynamically show less or more links,
-based on state of the entity.
-
-```java
-@Override
-public EntityModel<User> toModel(User entity) {
-  if (entity.isSuspended()) {
-    // ...
-  }
-  // ...
-}
-```
-
-This way server side drives representation of the client side.
-
+#### Example result
 Example result of calling http://localhost:8080/users will be:
 
 ```json
@@ -1299,9 +1239,71 @@ Example result of calling http://localhost:8080/users will be:
 }
 ```
 
-Each entity has a links,
-It's also possible to add links on resource root level.
+Each entity has a links,  
+It's also possible to add links on resource root level.  
 And it's possible to use non-hypertext links.
+
+#### hypermedia endpoints
+Basically endpoint handler its the same code as before,  
+but wrapped in model envelope.
+
+```java
+@GetMapping("/users/{id}")
+EntityModel<User> one(@PathVariable int id) {
+  return this.userModelAssembler.toModel(usersClient.user(id));
+}
+
+@GetMapping("/users")
+CollectionModel<EntityModel<User>> all() {
+  return this.userModelAssembler.toCollectionModel(usersClient.users());
+}
+```
+
+#### model envelope
+Links are created in model assembler.  
+And important part is that they are created in a dynamic way.
+
+```java
+@Component
+class UserModelAssembler implements RepresentationModelAssembler<User, EntityModel<User>> {
+  @Override
+  public EntityModel<User> toModel(User entity) {
+    var controller = HateoasUsersController.class;
+    var self = linkTo(methodOn(controller).all()).withRel("all");
+    var one = linkTo(methodOn(controller).one(entity.id())).withSelfRel();
+    return EntityModel.of(entity, self, one);
+  }
+}
+```
+
+This line says: if someone is calling `all` method on a controller of choosen class,  
+then that's called "all" link.
+
+```java
+var self = linkTo(methodOn(controller).all()).withRel("all");
+```
+
+And when someone calls `one` method, then this is called "self" link
+
+```java
+var one = linkTo(methodOn(controller).one(entity.id())).withSelfRel();
+```
+
+And you can make these links dynamic.  
+So you can dynamically show less or more links,  
+based on state of the entity.
+
+```java
+@Override
+public EntityModel<User> toModel(User entity) {
+  if (entity.isSuspended()) {
+    // ...
+  }
+  // ...
+}
+```
+
+This way server side drives representation of the client side.
 
 #### Complete code
 

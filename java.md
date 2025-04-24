@@ -1165,7 +1165,7 @@ about ubiquous language.
 
 but what we had done so far is not REST it's HTTP...
 
-### HATEAOS, REST Hypermedia idea
+### HATEOAS, REST Hypermedia idea
 REST is not really REST unless it uses hypermedia  
 Roy Fielding dissertation, famous talk:
 
@@ -1193,7 +1193,7 @@ because you don't have to defend against that case.
 The Server controlls the state, it's where the state lives,  
 if there is no link in response, then client shuold not show that link.
 
-#### HATEAOS
+#### HATEOAS
 Hypermedia As The Engine Of Application State.
 
 For this to work, it needs to be apparent from data,  

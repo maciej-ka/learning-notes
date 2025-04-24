@@ -828,7 +828,7 @@ Then start with:
 ```
 
 #### Complete code
-(my-simple-web-client)
+(/my-client-simple)
 
 ```java
 package com.example.web;
@@ -954,7 +954,7 @@ Can use one of several low level libraries for HTTP.
 It will adopt to use library that it can find in class path.
 
 #### Complete code
-(/my-declarative-client)
+(/my-client-declarative)
 
 ```java
 package com.example.web;
@@ -1108,7 +1108,7 @@ HttpServiceProxyFactory httpServiceProxyFactory(@Qualifier(SECURED_REST_CLIENT) 
 
 Also it's very easy to crate custom, composed annotation
 
-### Web Server
+### HTTP Web Server
 
 ```java
 @Controller
@@ -1127,6 +1127,7 @@ class UsersController {
 }
 ```
 
+#### Virtual threads
 Because we are calling another service,  
 we need to set virtual threads, otherwise IO will be CPU blocking.
 
@@ -1140,7 +1141,84 @@ spring.application.name=web
 spring.threads.virtual.enabled=true
 ```
 
-start
+#### Complete code
+(/my-server-http)
+
+```java
+package com.example.web;
+
+import java.util.Collection;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.support.RestClientAdapter;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+
+@SpringBootApplication
+public class WebApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(WebApplication.class, args);
+  }
+}
+
+@Controller
+@ResponseBody
+class UsersController {
+  private final DeclarativeUsersClient usersClient;
+
+  UsersController(DeclarativeUsersClient usersClient) {
+    this.usersClient = usersClient;
+  }
+
+  @GetMapping("/users")
+  Collection<User> users() {
+    return this.usersClient.users();
+  }
+}
+
+record User(int id, String name, String username, String email, Address address) {}
+record Address(String stree, String suite, String city, String zipcode, Geo geo) {}
+record Geo(float lat, float lng) {}
+
+@Configuration
+class WebConfiguration {
+  @Bean
+  HttpServiceProxyFactory httpServiceProxyFactory(RestClient http) {
+    return HttpServiceProxyFactory
+      .builder()
+      .exchangeAdapter(RestClientAdapter.create(http))
+      .build();
+  }
+
+  @Bean
+  DeclarativeUsersClient declarativeUserClient(HttpServiceProxyFactory h) {
+    return h.createClient(DeclarativeUsersClient.class);
+  }
+
+  @Bean
+  RestClient restClient(RestClient.Builder builder) {
+    return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+  }
+}
+
+interface DeclarativeUsersClient {
+  @GetExchange("/users/{id}")
+  User user(@PathVariable int id);
+
+  @GetExchange("/users")
+  Collection <User> users();
+}
+```
+
+#### Start
 
 ```bash
 ./mvnw spring-boot:run
@@ -1148,7 +1226,8 @@ start
 
 and visit: http://localhost:8080/users
 
-example of Post
+#### Other http methods
+Example of Post
 
 ```java
 @PostMapping("/users/{id}")
@@ -1177,7 +1256,8 @@ about ubiquous language.
 
 but what we had done so far is not REST it's HTTP...
 
-### HATEOAS, REST Hypermedia idea
+### HATEOAS REST web server
+#### REST Hypermedia idea
 REST is not really REST unless it uses hypermedia  
 Roy Fielding dissertation, famous talk:
 
@@ -1205,7 +1285,7 @@ because you don't have to defend against that case.
 The Server controlls the state, it's where the state lives,  
 if there is no link in response, then client shuold not show that link.
 
-#### HATEOAS
+#### HATEOAS acronym
 Hypermedia As The Engine Of Application State.
 
 For this to work, it needs to be apparent from data,  
@@ -1318,7 +1398,7 @@ public EntityModel<User> toModel(User entity) {
 This way server side drives representation of the client side.
 
 #### Complete code
-(/my-hateoas)
+(/my-server-hateoas)
 
 ```java
 package com.example.web;

@@ -784,7 +784,7 @@ but also this can work:
 ParametrizedTypeReference<List<User>> typeRef = new ParametrizedTypeReference<>() {}
 ```
 
-#### Client
+#### Making a call to endpoint
 Example of using RestClient with parametrized type.
 
 ```java
@@ -893,6 +893,7 @@ class SimpleUsersClient {
 Code above is substantial amount of work.  
 And there is no need to repeat it.
 
+#### Describe API we consume
 In declarative approach, we describe routes of API that we want to consume.  
 We don't use `@Get` but `@GetExchange,` which is a client side analog of `@Get`.
 
@@ -908,6 +909,7 @@ interface DeclarativeUsersClient {
 }
 ```
 
+#### Boilerplate
 However, to make that work, we need to create HttpServiceProxy.  
 This part will be easier soon, but that version of Spring is not ready yet.
 
@@ -925,6 +927,7 @@ class WebConfiguration {
 }
 ```
 
+#### Reusable boilerplate
 Or, for simplification, we can extract first part, factory creation  
 into `@Bean`, so that it can be reused and injected.
 
@@ -950,7 +953,8 @@ class WebConfiguration {
 Can use one of several low level libraries for HTTP.  
 It will adopt to use library that it can find in class path.
 
-#### Whole code of declarative client
+#### Complete code
+(/my-declarative-client)
 
 ```java
 package com.example.web;
@@ -1017,7 +1021,7 @@ interface DeclarativeUsersClient {
 }
 ```
 
-#### Qualifiers
+### Qualifiers
 When there is more than one candidate for DI,  
 more then one good fit for requested dependency,  
 
@@ -1048,6 +1052,7 @@ class WebConfiguration {
 }
 ```
 
+#### Bean function name
 One option is to select one by the Bean name.
 
 ```java
@@ -1060,6 +1065,7 @@ HttpServiceProxyFactory httpServiceProxyFactory(Map <String, RestClient> http) {
 }
 ```
 
+#### Bean annotated name
 Or by giving name in annotation, so that actual name is not that important  
 and there is no magical reflective string, that is not bound to anything.
 
@@ -1086,6 +1092,7 @@ RestClient restClient(RestClient.Builder builder) {
 }
 ```
 
+#### Qualifier
 Or by using qualifier to guide AutoWiring.  
 That Qualifier is saying, find the bean that has that name.
 
@@ -1101,7 +1108,7 @@ HttpServiceProxyFactory httpServiceProxyFactory(@Qualifier(SECURED_REST_CLIENT) 
 
 Also it's very easy to crate custom, composed annotation
 
-#### Web Server
+### Web Server
 
 ```java
 @Controller

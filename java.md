@@ -1239,7 +1239,7 @@ Example result of calling http://localhost:8080/users will be:
 }
 ```
 
-Each entity has a links,  
+Each entity has links,  
 It's also possible to add links on resource root level.  
 And it's possible to use non-hypertext links.
 

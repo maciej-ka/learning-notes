@@ -998,7 +998,6 @@ class WebConfiguration {
   ApplicationRunner runner(DeclarativeUsersClient usersClient) {
     return _ -> {
       usersClient.users().forEach(System.out::println);
-      System.out.println("=================");
       System.out.println(usersClient.user(1));
     };
   }
@@ -1152,7 +1151,7 @@ lowest level mapping annotation is actually a RequestMapping
 @GetMapping("/users")
 ```
 
-#### Meta annotations
+#### Composed annotations, Meta annotations
 Spring is meant to write composed meta annotations,  
 so that code can be idiomatic. In domain modeling we talk  
 about ubiquous language.
@@ -1166,7 +1165,7 @@ about ubiquous language.
 
 but what we had done so far is not REST it's HTTP...
 
-#### REST Hypermedia idea, HATEAOS
+### HATEAOS, REST Hypermedia idea
 REST is not really REST unless it uses hypermedia  
 Roy Fielding dissertation, famous talk:
 
@@ -1202,12 +1201,214 @@ what state is application in, and what operations are possible.
 
 It works by server tracing its state and modifying enable API  
 depending on changes in that state. This way server in some part  
-drive the client.
+drives the client.
 
 #### Making hypermedia endpoint
-Basically its the same code as before, but wrapped in model envelope
+Basically endpoint handler its the same code as before,
+but wrapped in model envelope.
 
-#### GraphQL
+```java
+@GetMapping("/users/{id}")
+EntityModel<User> one(@PathVariable int id) {
+  return this.userModelAssembler.toModel(usersClient.user(id));
+}
+
+@GetMapping("/users")
+CollectionModel<EntityModel<User>> all() {
+  return this.userModelAssembler.toCollectionModel(usersClient.users());
+}
+```
+
+Links are created in model assembler.
+And important part is that they are created in a dynamic way.
+
+```java
+@Component
+class UserModelAssembler implements RepresentationModelAssembler<User, EntityModel<User>> {
+  @Override
+  public EntityModel<User> toModel(User entity) {
+    var controller = HateoasUsersController.class;
+    var self = linkTo(methodOn(controller).all()).withRel("all");
+    var one = linkTo(methodOn(controller).one(entity.id())).withSelfRel();
+    return EntityModel.of(entity, self, one);
+  }
+}
+```
+
+This line says: if someone is calling `all` method on a controller of choosen class,
+then that's called "all" link.
+
+```java
+var self = linkTo(methodOn(controller).all()).withRel("all");
+```
+
+And when someone calls `one` method, then this is called "self" link
+
+```java
+var one = linkTo(methodOn(controller).one(entity.id())).withSelfRel();
+```
+
+And you can make these links dynamic.
+So you can dynamically show less or more links,
+based on state of the entity.
+
+```java
+@Override
+public EntityModel<User> toModel(User entity) {
+  if (entity.isSuspended()) {
+    // ...
+  }
+  // ...
+}
+```
+
+This way server side drives representation of the client side.
+
+Example result of calling http://localhost:8080/users will be:
+
+```json
+{
+  "_embedded": {
+    "userList": [
+      {
+        "id": 1,
+        "name": "Leanne Graham",
+        "username": "Bret",
+        "email": "Sincere@april.biz",
+        "address": {
+          "stree": null,
+          "suite": "Apt. 556",
+          "city": "Gwenborough",
+          "zipcode": "92998-3874",
+          "geo": {
+            "lat": -37.3159,
+            "lng": 81.1496
+          }
+        },
+        "_links": {
+          "all": {
+            "href": "http://localhost:8080/users"
+          },
+          "self": {
+            "href": "http://localhost:8080/users/1"
+          }
+        }
+      },
+    ]
+  }
+}
+```
+
+Each entity has a links,
+It's also possible to add links on resource root level.
+And it's possible to use non-hypertext links.
+
+#### Complete code
+
+```java
+package com.example.web;
+
+import java.util.Collection;
+
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.support.RestClientAdapter;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
+@SpringBootApplication
+public class WebApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(WebApplication.class, args);
+  }
+}
+
+@Component
+class UserModelAssembler implements RepresentationModelAssembler<User, EntityModel<User>> {
+  @Override
+  public EntityModel<User> toModel(User entity) {
+    var controller = HateoasUsersController.class;
+    var self = linkTo(methodOn(controller).all()).withRel("all");
+    var one = linkTo(methodOn(controller).one(entity.id())).withSelfRel();
+    return EntityModel.of(entity, self, one);
+  }
+}
+
+@Controller
+@ResponseBody
+class HateoasUsersController {
+  private final DeclarativeUsersClient usersClient;
+  private final UserModelAssembler userModelAssembler;
+
+  HateoasUsersController(
+    DeclarativeUsersClient usersClient,
+    UserModelAssembler userModelAssembler
+  ) {
+    this.usersClient = usersClient;
+    this.userModelAssembler = userModelAssembler;
+  }
+
+  @GetMapping("/users/{id}")
+  EntityModel<User> one(@PathVariable int id) {
+    return this.userModelAssembler.toModel(usersClient.user(id));
+  }
+
+  @GetMapping("/users")
+  CollectionModel<EntityModel<User>> all() {
+    return this.userModelAssembler.toCollectionModel(usersClient.users());
+  }
+}
+
+record User(int id, String name, String username, String email, Address address) {}
+record Address(String stree, String suite, String city, String zipcode, Geo geo) {}
+record Geo(float lat, float lng) {}
+
+@Configuration
+class WebConfiguration {
+  @Bean
+  HttpServiceProxyFactory httpServiceProxyFactory(RestClient http) {
+    return HttpServiceProxyFactory
+      .builder()
+      .exchangeAdapter(RestClientAdapter.create(http))
+      .build();
+  }
+
+  @Bean
+  DeclarativeUsersClient declarativeUserClient(HttpServiceProxyFactory h) {
+    return h.createClient(DeclarativeUsersClient.class);
+  }
+
+  @Bean
+  RestClient restClient(RestClient.Builder builder) {
+    return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+  }
+}
+
+interface DeclarativeUsersClient {
+  @GetExchange("/users/{id}")
+  User user(@PathVariable int id);
+
+  @GetExchange("/users")
+  Collection <User> users();
+}
+```
+
+### GraphQL
 you can ask for as much or as little data as you need
 
 queries  

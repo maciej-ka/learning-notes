@@ -665,7 +665,9 @@ MCP server for Spring Batch.
 You can ask, how far is my batch work,  
 ask it in human language.
 
-### Web
+### Simple HTTP client
+These are dependencies for whole web part of course:
+
 https://start.spring.io/  
 Maven, Java, Boot 3.4.4, Jar packaging, Java 24
 
@@ -677,12 +679,11 @@ Thymeleaf Template Engines
 Spring HATEOAS Web  
 Spring Boot DevTools Developer Tools
 
-#### Simple HTTP client
 Fake API for testing and prototyping  
 https://jsonplaceholder.typicode.com/  
 https://jsonplaceholder.typicode.com/users
 
-define domain model
+#### Define domain model
 
 ```java
 record User(int id, String name, String username, String email, Address address) {}
@@ -690,10 +691,11 @@ record Address(String stree, String suite, String city, String zipcode, Geo geo)
 record Geo(float lat, float lng) {}
 ```
 
+#### Client
 Create client for the second of these urls.  
 It's going to be a Bean, managed by Spring.
 
-There are few ways to mark that:
+There are few ways to mark that code to be managed:
 
 ```
 @Component: Generic stereotype annotation for any Spring-managed component
@@ -719,6 +721,7 @@ class SimpleUsersClient {
 }
 ```
 
+#### Reusable configuration
 Or even better, with reusable configuration  
 and because of it will be possible to inject RestClient  
 instead of needing to build it every time.
@@ -805,6 +808,7 @@ class SimpleUsersClient {
 }
 ```
 
+#### Runner
 And example of runner that will start
 
 ```java
@@ -823,7 +827,8 @@ Then start with:
 ./mvnw spring-boot:run
 ```
 
-#### Complete code of Simple Rest client
+#### Complete code
+(my-simple-web-client)
 
 ```java
 package com.example.web;
@@ -884,7 +889,7 @@ class SimpleUsersClient {
 }
 ```
 
-#### Declarative Interface Clients
+### Declarative Interface Clients
 Code above is substantial amount of work.  
 And there is no need to repeat it.
 
@@ -1233,7 +1238,7 @@ Example result of calling http://localhost:8080/users will be:
             "href": "http://localhost:8080/users/1"
           }
         }
-      },
+      }
     ]
   }
 }
@@ -1243,7 +1248,7 @@ Each entity has links,
 It's also possible to add links on resource root level.  
 And it's possible to use non-hypertext links.
 
-#### hypermedia endpoints
+#### Hypermedia endpoints
 Basically endpoint handler its the same code as before,  
 but wrapped in model envelope.
 
@@ -1259,7 +1264,7 @@ CollectionModel<EntityModel<User>> all() {
 }
 ```
 
-#### model envelope
+#### Model envelope
 Links are created in model assembler.  
 And important part is that they are created in a dynamic way.
 
@@ -1306,6 +1311,7 @@ public EntityModel<User> toModel(User entity) {
 This way server side drives representation of the client side.
 
 #### Complete code
+(/my-hateoas)
 
 ```java
 package com.example.web;

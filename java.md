@@ -2018,42 +2018,246 @@ interface DeclarativeUsersClient {
 ```
 
 ### gRPC
-This is also schema first approach.
+GraphQL is great and it's easy to love it,  
+however if you deeply care about performance,  
+then probably you want something like gRPC.
 
-users.proto
+gRPC requires to change the way you write code,  
+it's little overbearing, apodictic.
+
+#### Schema
+It's also schema first, a bit like graphQL.
+
+We define Users to be RPC service that returns collection of users.  
+In gRPC if we want to have collection, there is no array.  
+You have to define collection separatelly.
+
+Also everything need to be accounted,  
+you need to tell which offset everything has,  
+relative to root of type.
 
 ```proto
-syntax="proto3"
+message User {
+  int32 id = 1;
+  string name = 2;
+  string username = 3;
+}
+
+message Users {
+  repeated User users = 1;
+}
+```
+
+define UsersService to be rpc style,  
+(not fire and forget), and we give it a name "All".
+
+It's going to get nothing.  
+There is no default syntax for that, so we import Empty as type.
+
+Since this will be transpiled into Java code,  
+we need to provide some options to guide that transpilation.  
+We need to instruct target package, classname.
+
+src/main/proto/users.proto
+
+```proto
+syntax="proto3";
+
 import "google/protobuf/empty.proto";
-option java_package = "com.example.web.grpc"
-// ...
+
+option java_package = "com.example.web.grpc";
+option java_outer_classname = "UsersProto";
+option java_multiple_files = true;
 
 service UsersService {
-  rpc Users(google.protobuf.Empty) returns (users){}
+  rpc All(google.protobuf.Empty) returns (Users){};
 }
 
 message User {
   int32 id = 1;
   string name = 2;
-  string username = 3
+  string username = 3;
 }
 
 message Users {
-  repeated user users = 1
+  repeated User users = 1;
 }
 ```
 
-That schema has no concept of collection,  
-so that every time we need a collection,  
-we need to define separate object  
-that will represent collection.
+After having that schema, we have to generate code,  
+using gRPC compiler.
 
-After having that schema, we have to generate code, using gRPC compiler  
-and then we extend that generated code with our code
+Be carefull, if instead of "All" you name endpoint to Users,  
+it will conflict with Users type and compilation will fail.  
+(using protobuf is a bit tedious).
+
+```bash
+./mvnw -DskipTests package
+```
+
+Generated code can be visible inside `/target/generated-sources/grpc-java/`  
+There should be two folders grpc-java and java.  
+In IntelliJ you have to mark these as source.  
+(Eclipse and VisualStusio will not have that problem)
+
+#### Extend generated classes
+We take code that was generated and subclass it.  
+if we don't override method all, it will call the default implementation,  
+(which is to throw an error about not implemented service).
+
+
+```java
+@Service
+class UsersService extends UsersServiceGrpc.UsersServiceImplBase {
+  // ...
+
+  @Override
+  public void all(Empty request, StreamObserver<Users> responseObserver) {
+    super.all(request, responseObserver);
+    // ...
+  }
+}
+```
+
+In implementation we get collection of users,  
+for each one we map through the results  
+and we turn each row into grpc package User.  
+(we map into code generated User)
+
+for turning rows to grpc Users we call the builder  
+and manually assign value to each property.
+
+```java
+var all = this.usersClient
+  .users()
+  .stream()
+  .map(u -> com.example.web.grpc.User.newBuilder()
+    .setUsername(u.username())
+    .setName(u.name())
+    .setId(u.id())
+    .build())
+  .toList();
+```
+
+#### Complete code
+(/my-grpc)
+
+```java
+package com.example.web;
+
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
+
+import com.example.web.grpc.Users;
+import com.example.web.grpc.UsersServiceGrpc;
+import com.google.protobuf.Empty;
+
+import io.grpc.stub.StreamObserver;
+
+@SpringBootApplication
+public class WebApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(WebApplication.class, args);
+  }
+}
+
+@Service
+class UsersService extends UsersServiceGrpc.UsersServiceImplBase {
+  private final SimpleUsersClient usersClient;
+
+  UsersService(SimpleUsersClient usersClient) {
+    this.usersClient = usersClient;
+  }
+
+  @Override
+  public void all(Empty request, StreamObserver<Users> responseObserver) {
+    super.all(request, responseObserver);
+    var all = this.usersClient
+      .users()
+      .stream()
+      .map(u -> com.example.web.grpc.User.newBuilder()
+        .setUsername(u.username())
+        .setName(u.name())
+        .setId(u.id())
+        .build())
+      .toList();
+
+    responseObserver.onNext(Users.newBuilder().addAllUsers(all).build());
+    responseObserver.onCompleted();
+  }
+}
+
+record User(int id, String name, String username, String email, Address address) {}
+record Address(String street, String suite, String city, String zipcode, Geo geo) {}
+record Geo(float lat, float lng) {}
+
+@Configuration
+class WebConfiguration {
+  @Bean
+  RestClient restClient(RestClient.Builder builder) {
+    return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+  }
+}
+
+@Component
+class SimpleUsersClient {
+  private final RestClient http;
+
+  SimpleUsersClient(RestClient http) {
+    this.http = http;
+  }
+
+  private final ParameterizedTypeReference<List<User>> typeRef = new ParameterizedTypeReference<List<User>>() {};
+
+  Collection<User> users(){
+    return this.http
+      .get()
+      .uri("/users")
+      .retrieve()
+      .body(typeRef);
+  }
+}
+```
+
+#### Running and testing
+
+```bash
+./mvnw spring-boot:run
+```
+
+In logs it should be visible that gRPC services are up and running.
+
+```
+2025-04-25T16:39:53.378+02:00  INFO 66428 --- [web] [  restartedMain] toConfiguration$GrpcServletConfiguration : Registering gRPC service: UsersService
+2025-04-25T16:39:53.378+02:00  INFO 66428 --- [web] [  restartedMain] toConfiguration$GrpcServletConfiguration : Registering gRPC service: grpc.reflection.v1.ServerReflection
+2025-04-25T16:39:53.378+02:00  INFO 66428 --- [web] [  restartedMain] toConfiguration$GrpcServletConfiguration : Registering gRPC service: grpc.health.v1.Health
+```
+
+And to test we will use `grpcurl`  
+setup
+
+```bash
+brew install grpcurl
+```
+
+call
+
+```bash
+grpcurl --plaintext localhost:8080 UsersService.All
+```
 
 gRPC requires HTTP2
 
-#### Excercise demo project
+### Excercise demo project
 
 GraalVM Native Support Developer Tools  
 Spring Web Web  

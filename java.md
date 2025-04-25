@@ -687,7 +687,7 @@ https://jsonplaceholder.typicode.com/users
 
 ```java
 record User(int id, String name, String username, String email, Address address) {}
-record Address(String stree, String suite, String city, String zipcode, Geo geo) {}
+record Address(String street, String suite, String city, String zipcode, Geo geo) {}
 record Geo(float lat, float lng) {}
 ```
 
@@ -853,7 +853,7 @@ public class WebApplication {
 }
 
 record User(int id, String name, String username, String email, Address address) {}
-record Address(String stree, String suite, String city, String zipcode, Geo geo) {}
+record Address(String street, String suite, String city, String zipcode, Geo geo) {}
 record Geo(float lat, float lng) {}
 
 @Configuration
@@ -980,7 +980,7 @@ public class WebApplication {
 }
 
 record User(int id, String name, String username, String email, Address address) {}
-record Address(String stree, String suite, String city, String zipcode, Geo geo) {}
+record Address(String street, String suite, String city, String zipcode, Geo geo) {}
 record Geo(float lat, float lng) {}
 
 @Configuration
@@ -1185,7 +1185,7 @@ class UsersController {
 }
 
 record User(int id, String name, String username, String email, Address address) {}
-record Address(String stree, String suite, String city, String zipcode, Geo geo) {}
+record Address(String street, String suite, String city, String zipcode, Geo geo) {}
 record Geo(float lat, float lng) {}
 
 @Configuration
@@ -1470,7 +1470,7 @@ class HateoasUsersController {
 }
 
 record User(int id, String name, String username, String email, Address address) {}
-record Address(String stree, String suite, String city, String zipcode, Geo geo) {}
+record Address(String street, String suite, String city, String zipcode, Geo geo) {}
 record Geo(float lat, float lng) {}
 
 @Configuration
@@ -1502,6 +1502,210 @@ interface DeclarativeUsersClient {
   Collection <User> users();
 }
 ```
+
+### MVC (Model View Controller)
+Simple static server side. It's still there if you need it.
+Potentially this can work well with htmlx, there is quite good support
+for sending fragments of html in Spring.
+
+If you want to send two fragments of html to update two islands
+of web page, it's possible with Spring and htmlx. And perhaps it's
+possible to update multiple views at the same time.
+
+#### Thymeleaf
+One of server templating technologies.
+Template that will render collection of users.
+
+/src/main/resources/templates/users.html
+
+```html
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Users</title>
+
+</head>
+<body>
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Users</title>
+    <meta charset="UTF-8">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: sans-serif;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Users</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Username</th>
+        <th>Email</th>
+        <th>Street</th>
+        <th>Suite</th>
+        <th>City</th>
+        <th>Zipcode</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.id}">1</td>
+        <td th:text="${user.name}">John Doe</td>
+        <td th:text="${user.username}">johnd</td>
+        <td th:text="${user.email}">john@example.com</td>
+        <td th:text="${user.address.street}">Main St</td>
+        <td th:text="${user.address.suite}">Apt. 4</td>
+        <td th:text="${user.address.city}">Springfield</td>
+        <td th:text="${user.address.zipcode}">12345</td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
+
+</body>
+</html>
+```
+
+#### Controller
+Return from the method mvc will tell the name of template to use.
+This is done internally by "ViewResolver". In example below, "users"
+will be resolved to /src/main/resources/templates/users.html
+
+This only works if `@Controller` doesn't have `@ResponseBody`.
+And when you use ResponseBody annotation, then this is a signal,
+that intent of endpoint is different (usually render json object)
+
+```java
+@Controller
+class MvcController {
+
+  @GetMapping("/users.html")
+  String mvc() {
+    return "users";
+  }
+
+}
+```
+
+We send data to view using Model (which is a ViewModel),
+by calling addAttribute on that model.
+
+```java
+@GetMapping("/users.html")
+String mvc(Model model) {
+  model.addAttribute("users", declarativeUsersClient.users());
+  return "users";
+}
+```
+
+#### Complete code
+(/my-mvc)
+
+```java
+package com.example.web;
+
+import java.util.Collection;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.support.RestClientAdapter;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+
+@SpringBootApplication
+public class WebApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(WebApplication.class, args);
+  }
+}
+
+@Controller
+class MvcController {
+  private final DeclarativeUsersClient declarativeUsersClient;
+
+  MvcController(DeclarativeUsersClient declarativeUserClient) {
+    this.declarativeUsersClient = declarativeUserClient;
+  }
+
+  @GetMapping("/users.html")
+  String mvc(Model model) {
+    model.addAttribute("users", declarativeUsersClient.users());
+    return "users";
+  }
+}
+
+record User(int id, String name, String username, String email, Address address) {}
+record Address(String street, String suite, String city, String zipcode, Geo geo) {}
+record Geo(float lat, float lng) {}
+
+@Configuration
+class WebConfiguration {
+  @Bean
+  HttpServiceProxyFactory httpServiceProxyFactory(RestClient http) {
+    return HttpServiceProxyFactory
+      .builder()
+      .exchangeAdapter(RestClientAdapter.create(http))
+      .build();
+  }
+
+  @Bean
+  DeclarativeUsersClient declarativeUserClient(HttpServiceProxyFactory h) {
+    return h.createClient(DeclarativeUsersClient.class);
+  }
+
+  @Bean
+  RestClient restClient(RestClient.Builder builder) {
+    return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+  }
+}
+
+interface DeclarativeUsersClient {
+  @GetExchange("/users/{id}")
+  User user(@PathVariable int id);
+
+  @GetExchange("/users")
+  Collection <User> users();
+}
+```
+
+Run
+
+```bash
+./mvnw spring-boot:run
+```
+
+And visit (there has to be "html" at the end)
+http://localhost:8080/users.html
 
 ### GraphQL
 you can ask for as much or as little data as you need

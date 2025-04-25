@@ -73,18 +73,19 @@ Most popular because it's default in a lot of places.
 #### Liberrica
 Another nice one, has a lot of extra support.
 
-#### Spring code, Jurgenization
+#### Spring code, Juergenization
 Code of Spring is legendary,  
 it's very backward comp,  
 more than linux 
 
-Jurgen: legendary architect  
+Juergen Hoeller: legendary architect  
+https://www.youtube.com/watch?v=qNDMvyUfkpA  
 one of first two people joined Spring  
 made a great work of layering abstractions  
 that they can handle future changes.
 
-Jurgen is also famous for rewriting PR completely  
-"Jurgenization", taking PR, redo it, and merge.
+Juergen is also famous for rewriting PR completely  
+"Juergenization", taking PR, redo it, and merge.
 
 #### run project
 
@@ -1504,16 +1505,16 @@ interface DeclarativeUsersClient {
 ```
 
 ### MVC (Model View Controller)
-Simple static server side. It's still there if you need it.
-Potentially this can work well with htmlx, there is quite good support
+Simple static server side. It's still there if you need it.  
+Potentially this can work well with htmlx, there is quite good support  
 for sending fragments of html in Spring.
 
-If you want to send two fragments of html to update two islands
-of web page, it's possible with Spring and htmlx. And perhaps it's
+If you want to send two fragments of html to update two islands  
+of web page, it's possible with Spring and htmlx. And perhaps it's  
 possible to update multiple views at the same time.
 
 #### Thymeleaf
-One of server templating technologies.
+One of server templating technologies.  
 Template that will render collection of users.
 
 /src/main/resources/templates/users.html
@@ -1590,12 +1591,12 @@ Template that will render collection of users.
 ```
 
 #### Controller
-Return from the method mvc will tell the name of template to use.
-This is done internally by "ViewResolver". In example below, "users"
+Return from the method mvc will tell the name of template to use.  
+This is done internally by "ViewResolver". In example below, "users"  
 will be resolved to /src/main/resources/templates/users.html
 
-This only works if `@Controller` doesn't have `@ResponseBody`.
-And when you use ResponseBody annotation, then this is a signal,
+This only works if `@Controller` doesn't have `@ResponseBody`.  
+And when you use ResponseBody annotation, then this is a signal,  
 that intent of endpoint is different (usually render json object)
 
 ```java
@@ -1610,7 +1611,7 @@ class MvcController {
 }
 ```
 
-We send data to view using Model (which is a ViewModel),
+We send data to view using Model (which is a ViewModel),  
 by calling addAttribute on that model.
 
 ```java
@@ -1704,48 +1705,319 @@ Run
 ./mvnw spring-boot:run
 ```
 
-And visit (there has to be "html" at the end)
+And visit (there has to be "html" at the end)  
 http://localhost:8080/users.html
 
 ### GraphQL
-you can ask for as much or as little data as you need
+Ask for as much or as little data as the client needs.
 
-queries  
-mutations  
-subscriptions: long lived reads
+#### Schema
+GraphQL is schema first. Schema is defining types.  
+Custom defined type can be used as a field in other type.
 
-Typically, GraphQL is schema first.
+src/main/resourcs/graphql/users.graphqls
 
-#### GraphiQL
-Way to test graph queries
+```
+type User {
+  id: Int
+  name: String
+  username: String
+  email: String
+  address: Address
+}
 
-They way to make another query when one of fields is resolved  
-but this leads to N+1 problem, 1 to get all, N to get address  
-get address for user
-
-```java
-@SchemaMapping
-Address address (User user) {
-  System.out.println("returin address for " + user.id());
-  return ...
+type Address {
+  street: String
+  suite: String
 }
 ```
 
-so better, use BatchMapping, which will avoid N+1 problem  
-the way that we are doing this in batch is hidden for client,  
-client will not know is it SchemaMapping or BatchMapping
+GraphQL has three verbs:  
+queries: reads  
+mutations: writes  
+subscriptions: long lived reads
+
+And if you want GraphQL to expose endpoint,  
+you have to describe it in schema.  
+Example of query returning single
+
+```
+type Query {
+  user: User
+}
+```
+
+Schema definition for endpoint returning multiple
+
+```
+type Query {
+  users: [User]
+}
+```
+
+Complete schema  
+src/main/resources/graphql/users.graphqls
+
+```
+type User {
+    id : Int
+    name:String
+    username:String
+    email: String
+    address: Address
+}
+
+type Geo {
+    lat:Float
+    lng: Float
+}
+
+type Address {
+    street:String
+    suite:String
+    city:String
+    zipcode:String
+    geo: Geo
+}
+
+type Query {
+    users : [User]
+}
+```
+
+#### Controller
+Instead for `@GetMapping`, which is for http we use `@QueryMapping`.
+
+```java
+@Controller
+class GraphqlController {
+  private final DeclarativeUsersClient declarativeUsersClient;
+
+  GraphqlController(DeclarativeUsersClient declarativeUserClient) {
+    this.declarativeUsersClient = declarativeUserClient;
+  }
+
+  @QueryMapping
+  Collection<User> users() {
+    return declarativeUsersClient.users();
+  }
+}
+```
+
+#### GraphiQL
+A client to test our graph queries.  
+Can be enabled in application properties
+
+src/main/resources/application.properties
+
+```
+spring.graphql.graphiql.enabled=true
+```
+
+After that, go to   
+http://localhost:8080/graphiql
+
+Type query
+
+```
+query {
+  users {
+    id, name, username
+  }
+}
+```
+
+And see the result
+
+```
+{
+  "data": {
+    "users": [
+      {
+        "id": 1,
+        "name": "Leanne Graham",
+        "username": "Bret"
+      },
+      {
+        "id": 2,
+        "name": "Ervin Howell",
+        "username": "Antonette"
+      },
+      {
+        "id": 3,
+        "name": "Clementine Bauch",
+        "username": "Samantha"
+      },
+      // ...
+    ]
+  }
+}
+```
+
+Ask for as much or as little data. We can ask to include address.  
+(not whole, we have to specify which parts of address)
+
+```
+{
+  users {
+    id
+    name
+    username
+    address {
+      suite
+      street
+    }
+  }
+}
+```
+
+#### Graph part of GraphQL
+Let's imagine that user address is not stored in memory,  
+together with user data, but that it's separate microservice just for addresses.  
+Called AddressService and it just serves address details.
+
+In that situation we would like to somehow resolve that address for the user.  
+Let's pretend we need to call another service to get that address.  
+Do to this we will override resolution behaviour, by adding SchemaMapping.
+
+```java
+@Controller
+class GraphqlController {
+  // ...
+  
+	@SchemaMapping
+	Address address (User user) {
+		System.out.println("returning address for " + user.id());
+		// here imagine a call to another service
+		return user.address();
+	}
+}
+```
+
+This will result in N calls visible in console.
+
+```
+returning address for 1
+returning address for 2
+returning address for 3
+```
+
+#### Solving N+1 problem
+Big problem is that for every user we call address endpoint.  
+To solve this, we want to resolve User to Address in batch.  
+Schema will stay the same.
+
+For that purpose we will use `@BatchMapping` instead of `@SchemaMapping`.  
+Contract for BatchMapping is quite simple: given collections of users,  
+return a mapping User to Address, `Map<User, Address>`
 
 ```java
 @BatchMapping
-Map <User, Address addresses(Collection<User> users) {
-  var addresses = new HashMap<User, Address>()
-  users.forEach(User user -> addresses.put(user, ...))
-  System.out.println("Resolving")
-  return addresses
+Map<User, Address> address(Collection<User> users) {
+  var addresses = new HashMap<User, Address>();
+  System.out.println("getting all addresses [" + users + "]");
+  users.forEach(user -> addresses.put(user, user.address()));
+  return addresses;
 }
 ```
 
-#### gRPC
+And now it resolves all the addresses in one call.
+
+#### Hiding implementation details
+GraphQL allows to hide implementation details.  
+We started with a thing locally, then made a separate service for address  
+with resolving address on that service, and the refactored to resolve in batch.
+
+And for all that time client stayed the same.  
+Contract with consumer of api stayed all time the same.
+
+#### Complete code
+(/my-graphql)
+
+```java
+package com.example.web;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.graphql.data.method.annotation.BatchMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.support.RestClientAdapter;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+
+@SpringBootApplication
+public class WebApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(WebApplication.class, args);
+  }
+}
+
+@Controller
+class GraphqlController {
+  private final DeclarativeUsersClient declarativeUsersClient;
+
+  GraphqlController(DeclarativeUsersClient declarativeUserClient) {
+    this.declarativeUsersClient = declarativeUserClient;
+  }
+
+  @QueryMapping
+  Collection<User> users() {
+    return declarativeUsersClient.users();
+  }
+
+  @BatchMapping
+  Map<User, Address> address(Collection<User> users) {
+    var addresses = new HashMap<User, Address>();
+    System.out.println("getting all addresses [" + users + "]");
+    users.forEach(user -> addresses.put(user, user.address()));
+    return addresses;
+  }
+}
+
+record User(int id, String name, String username, String email, Address address) {}
+record Address(String street, String suite, String city, String zipcode, Geo geo) {}
+record Geo(float lat, float lng) {}
+
+@Configuration
+class WebConfiguration {
+  @Bean
+  HttpServiceProxyFactory httpServiceProxyFactory(RestClient http) {
+    return HttpServiceProxyFactory
+      .builder()
+      .exchangeAdapter(RestClientAdapter.create(http))
+      .build();
+  }
+
+  @Bean
+  DeclarativeUsersClient declarativeUserClient(HttpServiceProxyFactory h) {
+    return h.createClient(DeclarativeUsersClient.class);
+  }
+
+  @Bean
+  RestClient restClient(RestClient.Builder builder) {
+    return builder.baseUrl("https://jsonplaceholder.typicode.com").build();
+  }
+}
+
+interface DeclarativeUsersClient {
+  @GetExchange("/users/{id}")
+  User user(@PathVariable int id);
+
+  @GetExchange("/users")
+  Collection <User> users();
+}
+```
+
+### gRPC
 This is also schema first approach.
 
 users.proto

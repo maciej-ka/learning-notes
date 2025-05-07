@@ -259,7 +259,7 @@ help for cli commands
 it's on a ECR page  
 copy paste them
 
-**1 Sign in**
+**1 Sign in**  
 Retrieve an authentication token and authenticate your Docker client to your registry.
 ```bash
 aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 730...837.dkr.ecr.eu-central-1.amazonaws.com
@@ -277,7 +277,7 @@ becuase on first we were running on new ARM MacBooks
 and build would work only on ARM MacBook  
 the second command is needed to make it multiplatform
 
-**3 Tag**
+**3 Tag**  
 tag your image so you can push the image to this repository:
 ```bash
 docker tag fem-fd-service:latest 730...837.dkr.ecr.eu-central-1.amazonaws.com/fem-fd-service:latest
@@ -372,11 +372,11 @@ Assume policy: I want to use that resource
 Just "policy"
 
 #### IAM Policy
-defines what actions can be performed
+defines what actions can be performed  
 once the role is assumed
 
 #### Assume Role Policy
-aka trust policy
+aka trust policy  
 defines who can assume a role
 
 #### App Runner
@@ -442,35 +442,140 @@ on the bottom we can see pending
 and see logs
 
 #### Updating Parameter Store
-to apply changes in parameter store
+to apply changes in parameter store  
 redeploy in AppRunner after change
 
 #### App Runner
-It is that it can provide a bit of metrics,
+It is that it can provide a bit of metrics,  
 how many requests what CPU and memory consumption
 
 #### Small summary
-We had a lot of work done and imagine,
+We had a lot of work done and imagine,  
 we would have to deploy whole Kubernetes cluster like this
 
-99% of the work is in the browser
+99% of the work is in the browser  
 you didn't had to learn terraform
 
 #### AWS calc runner
-main cost will be Cpu
-AWS calc runner
-https://calculator.aws/
-https://calculator.aws/#/createCalculator/apprunner
-concurency: 20
-min prov containers 1
-peak traffic hours 8
-number of req in peak 10
+main cost will be Cpu  
+AWS calc runner  
+https://calculator.aws/  
+https://calculator.aws/#/createCalculator/apprunner  
+concurency: 20  
+min prov containers 1  
+peak traffic hours 8  
+number of req in peak 10  
 number of req off-peak 1
 
 Cost: Total Monthly cost:
 14.10 USD
 
+### Growth Phase
+Scenario
+- we are shipping code to production
+- we have no integration process
+- we have no delivery process
+- we don't want to replace anything
 
+Goals
+- improve data reliability
+- improve developer experience
+- create integration solution
+- create delivery solution
+
+Once you have more developers  
+you want to separate them from resources  
+because this is a point where things can break
+
+#### Makefile
+been for a long time  
+it's a file for running commands  
+so you can run much simpler commands
+
+```makefile
+DOCKERIZE_HOST := $(shell echo $(GOOSE_DBSTRING) | cut -d "@" -f 2 | cut -d ":" -f 1)
+DOCKERIZE_URL := tcp://$(if $(DOCKERIZE_HOST),$(DOCKERIZE_HOST):5432,localhost:5432)
+.DEFAULT_GOAL := build
+
+build:
+  go build -o ./goals main.go
+
+build-image:
+  docker buildx build \
+    --platform "linux/amd64" \
+    --tag "$(BUILD_IMAGE):$(GIT_SHA)-build" \
+    --target "build" \
+    .
+  docker buildx build \
+    --cache-from "$(BUILD_IMAGE):$(GIT_SHA)-build" \
+    --platform "linux/amd64" \
+    --tag "$(BUILD_IMAGE):$(GIT_SHA)" \
+    .
+```
+
+#### Goose
+migration tool in Go  
+Create migrations in SQL
+
+```bash
+go install github.com/pressly/goose/v3/cmd/goose@latest
+```
+
+craete migration
+
+```bash
+mkdir -p migrations
+goose -dir "migrations" create base_schema sql
+```
+
+it will create empty file for us to fill
+
+migrations/20250507203205_base_schema.sql
+
+```sql
+-- +goose Up
+-- +goose StatementBegin
+SELECT 'up SQL query';
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+SELECT 'down SQL query';
+-- +goose StatementEnd
+```
+
+add two new variables to .env  
+this is a way to reuse same value  
+in two env variables
+
+```env
+export GOOSE_DBSTRING=$POSTGRES_URL
+export GOOSE_DRIVER=postgres
+```
+
+then test
+
+```bash
+source .env
+echo $GOOSE_DBSTRING
+```
+
+restart: stop postgres and remove volume,  
+because we will manage using migrations
+
+```bash
+docker compose down --remove-orphans --volumes
+docker compose up --detach
+```
+
+check is goose working  
+and run it
+
+```bash
+goose -dir "migrations" status
+goose -dir "migrations" validate
+goose -dir "migrations" up
+```
 
 
 

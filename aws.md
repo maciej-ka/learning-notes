@@ -128,7 +128,8 @@ and switch between branches
 with worktrees you have folder for each branch,  
 it's great if you need to switch branches a lot
 
-#### Google cloud, GCP
+#### Google Cloud, GCP
+Google Cloud Platform (GCP)
 we are using it so that Google handles authentication  
 http://cloud.google.com
 
@@ -144,6 +145,7 @@ fem-fd-service
 http://cloud.google.com  
 GCP > Api and Services > Credentials > Create OAuth client ID  
 (before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)
+click + create client
 
 #### OAuth redirect flow
 Authorized redirect URIs  
@@ -188,8 +190,30 @@ source .env
 
 (under the hook source runs bash)
 
+#### run containers
+```bash
+docker compose up --detach
+```
 
+#### OrbStack
+Alternative to Docker desktop
+That can also create VMs Virtual Machines
 
+Seed database schema
+
+```bash
+source .env
+docker compose exec postgres psql -U postgres -d postgres
+```
+
+Start app
+```bash
+source .env
+go run main.go
+```
+
+#### ECR
+Elastic Container Registry
 
 
 

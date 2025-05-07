@@ -581,15 +581,15 @@ build-image:
 
 in purest form it's for making files.
 
-`make some-binary`: if that file exists, 
+`make some-binary`: if that file exists,   
 then makefile will not make it
 
-but we will use makefile to run commands
+but we will use makefile to run commands  
 so this is a bit like scripts
 
-first we will add bunch of variables
-makefile has its syntax, not really a language
-we are telling make, that there is a
+first we will add bunch of variables  
+makefile has its syntax, not really a language  
+we are telling make, that there is a  
 bunchof variables we want to use
 
 ```makefile
@@ -599,11 +599,11 @@ BUILD_TAG := $(if $(BUILD_TAG),$(BUILD_TAG),latest)
 DOCKERIZE_HOST := $(shell echo $(GOOSE_DBSTRING) | cut -d "@" -f 2 | cut -d ":" -f 1)
 ```
 
-in variables we can run bash commands
+in variables we can run bash commands  
 by using `$(...)` and run conditionals
 
-next we write "targets"
-which are list of commands
+next we write "targets"  
+which are list of commands  
 make build => docker build ...
 
 ```makefile
@@ -611,11 +611,11 @@ build:
   go build -o ./goals main.go
 ```
 
-anything you need to run
+anything you need to run  
 and memorize ... put it into makefile
 
-there is a way to use variable
-but if not present, use default value
+there is a way to use variable  
+but if not present, use default value  
 (few ways to do it)
 
 ```makefile
@@ -638,32 +638,121 @@ all: target1 target2 target3
 ```
 
 #### makefile for ci/cd
-another use case ... github actions
-you can run exactly same commands
+another use case ... github actions  
+you can run exactly same commands  
 that you run locally and in github actions
 
-makefile alternatives (task runners)
+makefile alternatives (task runners)  
 `just` is popular
 
 #### check image sizes
 docker images --format "{{.Repository}}:{{.Tag}} {{.Size}}"
 
-we are having a lot of packages that we don't use
+we are having a lot of packages that we don't use  
 we should switch to "alpine"
 
 #### Dockerfile
 you can have one stage
 
-but you can also build many images in several steps
+but you can also build many images in several steps  
 and next step can use files from previous stage
 
 #### Github actions
-don't abuse them
-if you have unit tests, first run it locally
+don't abuse them  
+if you have unit tests, first run it locally  
 this will save you a ton of money
 
 yaml
+
+we will use docker instead of calling go manually  
+this way we prevent problems with changing go versions
+
+check that build command works  
 build-and-deploy.yml
+
+```yaml
+name: build-and-deploy
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: make build-image
+```
+
+#### from ci/cd to aws
+for github actions to talk to aws we need:  
+cli and secrets
+
+in IAM we will create user  
+fem-fd-service-github-actions  
+click attach policies directly  
+click AdministratorAccess  
+(in future better use granular)
+
+AdministratorAccess  
+will allow to do everything
+
+Security credentils > create Access key > CLI > I understand  
+copy paste access key (or download)
+
+go to github actions and save this in  
+secrets and variables > actions
+
+#### Github Secrets vs Variables
+difference is that first ones are not visible  
+(you can put all into secrets but it's not recommended)
+
+in github actions we can provide secrets and variables  
+just for one selected action, with syntax like:
+
+```yaml
+name: build-and-deploy
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: make build-image
+
+      - env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: make build-image-promote
+```
+
+if in github actions you need some specific tools  
+you can create docker image with them and then  
+use that docker image as a worker
+
+```yaml
+runs-on: ubuntu-latest
+```
+
+#### sha as image version
+tip: use sha as a version for docker image  
+this way we don't build one code twice  
+(build once, push many)
+
+#### dependent github actions
+one task in github actions can depend on another
+
 
 
 AWS For Front-End Engineers

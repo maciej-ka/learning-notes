@@ -487,32 +487,6 @@ Once you have more developers
 you want to separate them from resources  
 because this is a point where things can break
 
-#### Makefile
-been for a long time  
-it's a file for running commands  
-so you can run much simpler commands
-
-```makefile
-DOCKERIZE_HOST := $(shell echo $(GOOSE_DBSTRING) | cut -d "@" -f 2 | cut -d ":" -f 1)
-DOCKERIZE_URL := tcp://$(if $(DOCKERIZE_HOST),$(DOCKERIZE_HOST):5432,localhost:5432)
-.DEFAULT_GOAL := build
-
-build:
-  go build -o ./goals main.go
-
-build-image:
-  docker buildx build \
-    --platform "linux/amd64" \
-    --tag "$(BUILD_IMAGE):$(GIT_SHA)-build" \
-    --target "build" \
-    .
-  docker buildx build \
-    --cache-from "$(BUILD_IMAGE):$(GIT_SHA)-build" \
-    --platform "linux/amd64" \
-    --tag "$(BUILD_IMAGE):$(GIT_SHA)" \
-    .
-```
-
 #### Goose
 migration tool in Go  
 Create migrations in SQL
@@ -577,6 +551,119 @@ goose -dir "migrations" validate
 goose -dir "migrations" up
 ```
 
+#### Makefile
+been for a long time  
+it's a file for running commands  
+so you can run much simpler commands
+
+name of file is `makefile`
+
+```makefile
+DOCKERIZE_HOST := $(shell echo $(GOOSE_DBSTRING) | cut -d "@" -f 2 | cut -d ":" -f 1)
+DOCKERIZE_URL := tcp://$(if $(DOCKERIZE_HOST),$(DOCKERIZE_HOST):5432,localhost:5432)
+.DEFAULT_GOAL := build
+
+build:
+  go build -o ./goals main.go
+
+build-image:
+  docker buildx build \
+    --platform "linux/amd64" \
+    --tag "$(BUILD_IMAGE):$(GIT_SHA)-build" \
+    --target "build" \
+    .
+  docker buildx build \
+    --cache-from "$(BUILD_IMAGE):$(GIT_SHA)-build" \
+    --platform "linux/amd64" \
+    --tag "$(BUILD_IMAGE):$(GIT_SHA)" \
+    .
+```
+
+in purest form it's for making files.
+
+`make some-binary`: if that file exists, 
+then makefile will not make it
+
+but we will use makefile to run commands
+so this is a bit like scripts
+
+first we will add bunch of variables
+makefile has its syntax, not really a language
+we are telling make, that there is a
+bunchof variables we want to use
+
+```makefile
+MIGRATION_DIR := migrations
+AWS_ACCOUNT_ID := 677459762413
+BUILD_TAG := $(if $(BUILD_TAG),$(BUILD_TAG),latest)
+DOCKERIZE_HOST := $(shell echo $(GOOSE_DBSTRING) | cut -d "@" -f 2 | cut -d ":" -f 1)
+```
+
+in variables we can run bash commands
+by using `$(...)` and run conditionals
+
+next we write "targets"
+which are list of commands
+make build => docker build ...
+
+```makefile
+build:
+  go build -o ./goals main.go
+```
+
+anything you need to run
+and memorize ... put it into makefile
+
+there is a way to use variable
+but if not present, use default value
+(few ways to do it)
+
+```makefile
+VARIABLE ?= default_value
+```
+
+Way to run list of targets
+
+```makefiel
+target1:
+    @echo "Running target1"
+
+target2:
+    @echo "Running target2"
+
+target3:
+    @echo "Running target3"
+
+all: target1 target2 target3
+```
+
+#### makefile for ci/cd
+another use case ... github actions
+you can run exactly same commands
+that you run locally and in github actions
+
+makefile alternatives (task runners)
+`just` is popular
+
+#### check image sizes
+docker images --format "{{.Repository}}:{{.Tag}} {{.Size}}"
+
+we are having a lot of packages that we don't use
+we should switch to "alpine"
+
+#### Dockerfile
+you can have one stage
+
+but you can also build many images in several steps
+and next step can use files from previous stage
+
+#### Github actions
+don't abuse them
+if you have unit tests, first run it locally
+this will save you a ton of money
+
+yaml
+build-and-deploy.yml
 
 
 AWS For Front-End Engineers

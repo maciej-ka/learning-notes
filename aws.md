@@ -1,16 +1,121 @@
 Fullstack Deployment: From Containers to production AWS
 =======================================================
-https://frontendmasters.com/workshops/modern-deployment/#player
+https://frontendmasters.com/workshops/modern-deployment/#player  
+https://github.com/ALT-F4-LLC/fem-fd-service  
+stage-01-start-up  
+stage-02-growth  
+stage-03-scale
+
 Erik Reinert
 
-Prerequisites Setup:
+Prerequisites Setup:  
 https://gist.github.com/dtauer/2fb90b55865cbb3e8a7c9b198ab19650
 
+Workshop perspective:  
+Focused on evolution of application.  
+Seeing application grow and scale.
 
+Consider watching also:  
+https://frontendmasters.com/courses/fullstack-v3/
 
+Manage growing infrastructure  
+Learn when to make changes  
+Balance pros and cons of solutions  
+Improve hands-on experience
 
+#### Linking in Docker
+legacy way for one container to communicate with another.  
+It works by exposing environemtn variables and updating /etc/hosts  
+As for today, use networks instead
 
+```bash
+docker network create mynet
+docker run -d --network=mynet --name db postgres
+docker run -d --network=mynet --name web my-web-app
+```
 
+#### Start-up Phase
+Just get it working
+
+#### Growth Phase
+We gotta go fast!
+
+#### Scale Phase
+Plan for the future  
+How much traffic we will have in year.
+
+### Start-up Phase
+looking for biggest wins with minimal setup
+
+we are learning about what needs to be maintained  
+don't optimize in that phase
+
+#### VPS
+Virtual Private Server  
+AWS EC2  
+Rackspace uses EC2
+
+in "good old days" everybody would get VPS  
+linux instace that you ssh into  
+vps is great but it's outdated
+
+arguments for VPS (arguments against containers)  
+majority of development today is not k8s and terraform  
+it's coolocated or vps
+
+instead we prefer to use containers,  
+so that in future it will be easier to grow
+
+#### Containers
+Our first decision, to use
+
+#### Target Setup
+Client browser will call AWS App Runner
+
+AWS App Runner
+- deploy image (AWS container image)
+- fetch data (supabase database)
+- get config (AWS parameter store)
+
+Developer (command line)
+- push image (AWS container image)
+- Update schema (supabase database)
+- Update config (AWS parameter store)
+- deploy changes (AWS App Runner)
+
+#### Database on AWS?
+raw RDS sucks  
+(AWS is generally great)
+
+DBA: database administrator  
+people which are hired to just work on database
+
+having a public database url connection string  
+makes things very, very easy on start
+
+we will not stay with supabase  
+because at some point it will start to cost a lot
+
+#### Parameter store
+Easy way to store secrets  
+And it comes with some UI
+
+Vault would be alternative,  
+but it would require another deployment
+
+AWS Secrets Manager?  
+like a book with ton of pages  
+good if you have a ton of secrets  
+in comparison, parameter store is  
+more like real key-value store
+
+Also service discovery works better  
+with approach of parameter store  
+and accessing one value
+
+#### CLI
+on startup phase you will run cli tools a lot  
+a lot of manual running commands
 
 
 
@@ -37,19 +142,19 @@ principle of least priviledged user
 ### IAM: manage users
 root  
 - setup it as secure as you can
-- hope to not ever use it again
+- hope to not ever use it again  
 administrative users  
-- the ones to use daily
+- the ones to use daily  
 Administrator  
 - access all but billing (this is left for root)
 
-- [ ] check how it works: IAM > user create > Identity center
+- [ ] check how it works: IAM > user create > Identity center  
   before it was "create IAM user"
 
 create new user:  
 - add to group
 - copy permissions from another user
-- attach policies directly
+- attach policies directly  
 AdministratorAccess
 
 AdministratorAccess Policy
@@ -159,7 +264,7 @@ and when health check is down reroute
 
 Records Type  
 - [ ] NS
-- [ ] SOA
+- [ ] SOA  
 A - connect to resource (can be aliased to s3 hosted site)
 
 ### Certificates
@@ -220,7 +325,7 @@ cloudfront can wrap anything
 s3 bucket,  
 api endpoints  
   hosted on ec2  
-  - [ ] check more about "aws api ec2"
+  - [ ] check more about "aws api ec2"  
   hosted on gateways  
   - [ ] check more about "aws api gateways"
 
@@ -415,7 +520,7 @@ create a user with least permissions possible to deploy
 
 create unique policy for CI/CD process  
 - [ ] cloud front: create invalidation
-- [ ] s3: PutObject, ListBucket
+- [ ] s3: PutObject, ListBucket  
 policy name: DeployStaticAssets
 
 ```

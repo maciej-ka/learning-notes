@@ -259,13 +259,13 @@ help for cli commands
 it's on a ECR page  
 copy paste them
 
-#### 1 Sign in 
+**1 Sign in**
 Retrieve an authentication token and authenticate your Docker client to your registry.
 ```bash
 aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 730...837.dkr.ecr.eu-central-1.amazonaws.com
 ```
 
-#### 2 Build Docker image
+**2 Build Docker image**
 ```bash
 docker build -t fem-fd-service .
 docker buildx build --platform linux/amd64 --tag fem-fd-service:latest .
@@ -277,13 +277,13 @@ becuase on first we were running on new ARM MacBooks
 and build would work only on ARM MacBook  
 the second command is needed to make it multiplatform
 
-#### 3 Tag
+**3 Tag**
 tag your image so you can push the image to this repository:
 ```bash
 docker tag fem-fd-service:latest 730...837.dkr.ecr.eu-central-1.amazonaws.com/fem-fd-service:latest
 ```
 
-#### 4 Push image to ECR
+**4 Push image to ECR**
 ```bash
 docker push 730...837.dkr.ecr.eu-central-1.amazonaws.com/fem-fd-service:latest
 ```
@@ -371,6 +371,14 @@ Two types of policy on AWS
 Assume policy: I want to use that resource  
 Just "policy"
 
+#### IAM Policy
+defines what actions can be performed
+once the role is assumed
+
+#### Assume Role Policy
+aka trust policy
+defines who can assume a role
+
 #### App Runner
 select ECR we crated
 
@@ -429,9 +437,42 @@ there are 100 concurrent requests
 we will resize up, and then auto scale down  
 when usage is back down below 100
 
-craete and deploy  
+create and deploy  
 on the bottom we can see pending  
 and see logs
+
+#### Updating Parameter Store
+to apply changes in parameter store
+redeploy in AppRunner after change
+
+#### App Runner
+It is that it can provide a bit of metrics,
+how many requests what CPU and memory consumption
+
+#### Small summary
+We had a lot of work done and imagine,
+we would have to deploy whole Kubernetes cluster like this
+
+99% of the work is in the browser
+you didn't had to learn terraform
+
+#### AWS calc runner
+main cost will be Cpu
+AWS calc runner
+https://calculator.aws/
+https://calculator.aws/#/createCalculator/apprunner
+concurency: 20
+min prov containers 1
+peak traffic hours 8
+number of req in peak 10
+number of req off-peak 1
+
+Cost: Total Monthly cost:
+14.10 USD
+
+
+
+
 
 AWS For Front-End Engineers
 ===========================

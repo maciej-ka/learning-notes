@@ -291,7 +291,147 @@ docker push 730...837.dkr.ecr.eu-central-1.amazonaws.com/fem-fd-service:latest
 When this is done and ECR page is refreshed  
 then image tag "latest" should be visible on list
 
+#### Supabase
+Has many alternatives
 
+Create schema from sql
+
+And then click "Connect"  
+Direct connection is not IPv4 compatible  
+Transaction pooler is more for lambda case  
+Session pooler - we will use that one
+
+#### Parameter store
+AWS console  
+SSM > Parameter Store  
+click create
+
+name:  
+/fem-fd-service/google-client-id
+
+select SecureString
+
+key-value store  
+key is a bit like url
+
+you can later see these  
+and use Parameter Store as a documentation place  
+for yourself, in case you need to restore secret
+
+#### IAM Role
+To give permissions to execute actions  
+which service needs to execute.
+
+IAM is biggest point of pain for every developer
+
+IAM > Policies  
+Everthing with organge box is AWS managed  
+try to use these AWS managed as much, as you can  
+although sometimes you cannot  
+and App Runner is a good example of that 
+
+```json
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": ["ssm:GetParameters"],
+			"Resource": ["arn:aws:ssm<account-region>:<account-id>:parameter/fem-fd-service/*"]
+		}
+	]
+}
+```
+
+get account id from right top menu
+
+we also create role  
+but we don't create a user  
+because Amazon is user
+
+Create role  
+"Custom trust policy"
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "tasks.apprunner.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+        }
+    ]
+}
+```
+
+Two types of policy on AWS  
+Assume policy: I want to use that resource  
+Just "policy"
+
+#### App Runner
+select ECR we crated
+
+deployment settings: automatic  
+everytime I push to ECR, automatically buildt
+
+Create new service role  
+(or reuse it if exists)  
+AppRunnerECRAccessRole
+
+select minimum
+0.25vCPU
+0.5GB
+
+add 4 environemnt variables
+
+SSM Parameter Store  
+GOOGLE_CLIENT_ID  
+arn:aws:ssm:eu-central-1:730...837:parameter/fem-fd-service/google-client-id
+
+Plain text  
+GOOGLE_REDIRECT_URL  
+localhost:8080/auth/google/callback
+
+SSM Parameter Store  
+GOOGLE_CLIENT_SECRET  
+arn:aws:ssm:eu-central-1:730...837:parameter/fem-fd-service/google-client-secret
+
+SSM Parameter Store  
+POSTGRES_URL  
+arn:aws:ssm:eu-central-1:730...837:parameter/fem-fd-service/postgres-url
+
+in AWS  
+ARN: identifier of the resource
+
+port 8080
+
+in Security select role we created  
+fem-fd-service
+
+Auto scaling  
+App runner supports  
+Minimum size / Maxium size  
+it scales automatically to your use
+
+Concurrency  
+100  
+Minimum size  
+1  
+Maximum size  
+25
+
+these settings mean that when  
+there are 100 concurrent requests
+
+we will resize up, and then auto scale down  
+when usage is back down below 100
+
+craete and deploy  
+on the bottom we can see pending  
+and see logs
 
 AWS For Front-End Engineers
 ===========================

@@ -23,6 +23,9 @@ Learn when to make changes
 Balance pros and cons of solutions  
 Improve hands-on experience
 
+#### Neovim markdown plugin
+render markdown
+
 #### Linking in Docker
 legacy way for one container to communicate with another.  
 It works by exposing environemtn variables and updating /etc/hosts  
@@ -214,6 +217,79 @@ go run main.go
 
 #### ECR
 Elastic Container Registry
+
+To run containers  
+first step is to put images something
+
+create repository  
+all resources are separated by account id
+
+730...337.dkr.ecr.eu-central-1.amazonaws.com
+
+#### Add a Dockerfile
+
+```Dockerfile
+FROM public.ecr.aws/docker/library/golang:1.24.2-alpine
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the go.mod and go.sum files
+COPY go.mod go.sum ./
+
+# Download the dependencies
+RUN go mod download
+
+# Copy the source code
+COPY . .
+
+# Build the Go application
+RUN go build -o main .
+
+# Expose the port the app runs on
+EXPOSE 8080
+
+# Command to run the application
+CMD ["./main"]
+```
+
+#### Work with ECR
+Push Commands  
+help for cli commands   
+it's on a ECR page  
+copy paste them
+
+#### 1 Sign in 
+Retrieve an authentication token and authenticate your Docker client to your registry.
+```bash
+aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin 730...837.dkr.ecr.eu-central-1.amazonaws.com
+```
+
+#### 2 Build Docker image
+```bash
+docker build -t fem-fd-service .
+docker buildx build --platform linux/amd64 --tag fem-fd-service:latest .
+```
+
+AMD 64  
+Second command `buildx build` is neccessary  
+becuase on first we were running on new ARM MacBooks  
+and build would work only on ARM MacBook  
+the second command is needed to make it multiplatform
+
+#### 3 Tag
+tag your image so you can push the image to this repository:
+```bash
+docker tag fem-fd-service:latest 730...837.dkr.ecr.eu-central-1.amazonaws.com/fem-fd-service:latest
+```
+
+#### 4 Push image to ECR
+```bash
+docker push 730...837.dkr.ecr.eu-central-1.amazonaws.com/fem-fd-service:latest
+```
+
+When this is done and ECR page is refreshed  
+then image tag "latest" should be visible on list
 
 
 

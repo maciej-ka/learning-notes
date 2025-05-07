@@ -129,7 +129,7 @@ with worktrees you have folder for each branch,
 it's great if you need to switch branches a lot
 
 #### Google Cloud, GCP
-Google Cloud Platform (GCP)
+Google Cloud Platform (GCP)  
 we are using it so that Google handles authentication  
 http://cloud.google.com
 
@@ -144,7 +144,7 @@ fem-fd-service
 
 http://cloud.google.com  
 GCP > Api and Services > Credentials > Create OAuth client ID  
-(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)
+(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)  
 click + create client
 
 #### OAuth redirect flow
@@ -180,8 +180,8 @@ export GOOGLE_REDIRECT_URL=http://localhost:8080/auth/google/callback
 export POSTGRES_URL=postgresql://postgres:password@localhost:5432/postgres?sslmode=disable
 ```
 
-and with that its possible to 
-load and export environment variables
+and with that its possible to   
+load and export environment variables  
 (for duration of terminal session)
 
 ```bash
@@ -196,7 +196,7 @@ docker compose up --detach
 ```
 
 #### OrbStack
-Alternative to Docker desktop
+Alternative to Docker desktop  
 That can also create VMs Virtual Machines
 
 Seed database schema

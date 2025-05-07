@@ -1,3 +1,19 @@
+Fullstack Deployment: From Containers to production AWS
+=======================================================
+https://frontendmasters.com/workshops/modern-deployment/#player
+Erik Reinert
+
+Prerequisites Setup:
+https://gist.github.com/dtauer/2fb90b55865cbb3e8a7c9b198ab19650
+
+
+
+
+
+
+
+
+
 AWS For Front-End Engineers
 ===========================
 https://frontendmasters.com/courses/aws-v2/  

@@ -11,6 +11,7 @@
 [AWS](./aws.md)
 =================
 ● [**AWS For Front-End Engineers**](https://github.com/maciej-ka/learning-notes/blob/main/aws.md#aws-for-front-end-engineers), Steve Kinney, Frontend Masters  
+● [Fullstack Deployment: From Containers to production AWS](), Erik Reinert, Frontend Masters  
 [*lambdas*](https://github.com/maciej-ka/learning-notes/blob/main/aws.md#lambdas)
 
 [C language](./c.md)

@@ -117,6 +117,80 @@ and accessing one value
 on startup phase you will run cli tools a lot  
 a lot of manual running commands
 
+#### push to main
+you can, but better not  
+get used 
+
+#### git worktrees
+with normal git you have repo  
+and switch between branches
+
+with worktrees you have folder for each branch,  
+it's great if you need to switch branches a lot
+
+#### Google cloud, GCP
+we are using it so that Google handles authentication  
+http://cloud.google.com
+
+do I want to roll my own Auth?  
+how do I know who is who, you can use Google/Apple/MS/...  
+rolling your own auth is not that complicated  
+just get it started and not overcomplicate
+
+but for simplicity you can also use something ready  
+something like GCP  
+fem-fd-service
+
+http://cloud.google.com  
+GCP > Api and Services > Credentials > Create OAuth client ID  
+(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)(before there is a wizard to setup up OAuth)
+
+#### OAuth redirect flow
+Authorized redirect URIs  
+OAuth is about handshaking  
+We will go somewhere, we will validate  
+and we will go back  
+the provider needs to know who you are  
+and how to redirect user back?
+
+user goes to 3rd party  
+3rd party generates token  
+goes back to your site with that token
+
+users go to 3rd party api  
+before visiting your application
+
+type  
+http://localhost:8080/auth/google/callback
+
+not https  
+but its localhost  
+(no one will get to localhost)  
+(unless your computer is being hacked)
+
+#### .env
+possible to have export statements
+
+```.env
+export GOOGLE_CLIENT_ID=<google-client-id>
+export GOOGLE_CLIENT_SECRET=<google-client-secret>
+export GOOGLE_REDIRECT_URL=http://localhost:8080/auth/google/callback
+export POSTGRES_URL=postgresql://postgres:password@localhost:5432/postgres?sslmode=disable
+```
+
+and with that its possible to 
+load and export environment variables
+(for duration of terminal session)
+
+```bash
+source .env
+```
+
+(under the hook source runs bash)
+
+
+
+
 
 
 AWS For Front-End Engineers

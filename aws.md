@@ -1587,12 +1587,209 @@ terraform plan -out "terraform.tfplan"
 terraform apply "terraform.tfplan"
 ```
 
-output in console will be list of all resources
-that were linked, in some situations this can take
+output in console will be list of all resources  
+that were linked, in some situations this can take  
 even up to 30 minutes to synchronize
 
-it's easy to duplicate everything in terraform
+it's easy to duplicate everything in terraform  
 configurations
+
+#### database module
+create database/main.tf  
+main tf for out terraform module  
+we need to access password
+
+we create random string  
+and we store it in the SSM  
+and under that variable we are accessing it to futher
+
+its possible to use VPC name as the network name
+
+#### RDS can be very confusing
+you normally hire a person DBA who can manage it  
+and manage creating settings
+
+#### Parameter Groups and Option Groups
+Options that you provide and parameters to the Postgres  
+Amazon provides defaults for each, so you don't have to create one  
+And we are using the default groups here
+
+it always worked for me,   
+and I never needed to tweak anything about it
+
+```tf
+resource "random_string" "password" {
+  length  = 32
+  special = false
+}
+
+resource "aws_ssm_parameter" "password" {
+  name  = "/${var.name}/database/password"
+  type  = "SecureString"
+  value = random_string.password.result
+}
+
+module "this" {
+  source  = "terraform-aws-modules/rds/aws"
+  version = "6.12.0"
+
+  allocated_storage                   = 50
+  create_db_option_group              = false
+  create_db_parameter_group           = false
+  create_db_subnet_group              = false
+  create_monitoring_role              = false
+  db_subnet_group_name                = var.vpc_name
+  engine                              = "postgres"
+  engine_version                      = "17.2"
+  iam_database_authentication_enabled = false
+  identifier                          = var.name
+  instance_class                      = "db.t4g.micro"
+  manage_master_user_password         = false
+  max_allocated_storage               = 100
+  option_group_name                   = "default:postgres-17"
+  parameter_group_name                = "default.postgres17"
+  password                            = random_string.password.result
+  publicly_accessible                 = false
+  skip_final_snapshot                 = true
+  username                            = replace(var.name, "-", "_")
+  vpc_security_group_ids              = var.security_groups
+}
+```
+
+We use Bastion Host  
+so this part is important that it stays like this
+
+```tf
+publicly_accessible                 = false
+```
+
+this one is up to you  
+it will create snapshot in case you delete accidentally
+
+```tf
+skip_final_snapshot                 = true
+```
+
+### Terraform organization example
+#### Reason for Terraform
+To be able to fastly create environments
+
+Terraform is about abstracting what you need for deployment  
+and parametrizing that provisioning process  
+(with variables)
+
+#### Just convention
+All these below are common convesion  
+because terraform can get confusing.
+
+But with other filenames,  
+these things would still work.
+
+(all could be merged into one main.tf)  
+some examples in internet are doing that
+
+#### Environment
+this is a place, where modules are created  
+and they receive variables
+
+this is a create place,  
+where variables are bounded to modules
+
+terraform/module/environment/main.tf
+
+```tf
+// ...
+
+module "database" {
+  source = "../database"
+
+  security_groups = [module.network.database_security_group]
+  subnets         = module.network.database_subnets
+  name            = var.name
+  vpc_name        = module.network.vpc_name
+}
+
+module "service" {
+  source = "../service"
+
+  capacity_provider = "spot"
+  cluster_id        = module.cluster.cluster_arn
+  cluster_name      = var.name
+  image_registry    = "${data.aws_caller_identity.this.account_id}.dkr.ecr.${data.aws_region.this.name}.amazonaws.com"
+  image_repository  = "fem-fd-service-preview"
+  image_tag         = var.name
+  listener_arn      = module.cluster.listener_arn
+  name              = "service"
+  paths             = ["/*"]
+  port              = 8080
+  vpc_id            = module.network.vpc_id
+
+  config = {
+    GOOGLE_REDIRECT_URL = "https://${module.cluster.distribution_domain}/auth/google/callback"
+    GOOSE_DRIVER        = "postgres"
+  }
+
+  secrets = [
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "GOOSE_DBSTRING",
+    "POSTGRES_URL",
+  ]
+}
+```
+
+#### Define values
+This is declaration of exports
+
+terraform/module/network/outputs.tf
+
+```tf
+output "database_security_group" {
+  value = module.security_group_db.security_group_id
+}
+
+output "database_subnets" {
+  value = module.vpc.database_subnets
+}
+
+// ...
+
+```
+
+and this is place where variable possible values are held
+
+terraform/module/database/main.tf
+
+```
+// ...
+
+module "this" {
+  source  = "terraform-aws-modules/rds/aws"
+  version = "6.12.0"
+
+  allocated_storage                   = 50
+  create_db_option_group              = false
+  create_db_parameter_group           = false
+  create_db_subnet_group              = false
+  create_monitoring_role              = false
+  db_subnet_group_name                = var.vpc_name
+  engine                              = "postgres"
+  engine_version                      = "17.2"
+  iam_database_authentication_enabled = false
+  identifier                          = var.name
+  instance_class                      = "db.t4g.micro"
+  manage_master_user_password         = false
+  max_allocated_storage               = 100
+  option_group_name                   = "default:postgres-17"
+  parameter_group_name                = "default.postgres17"
+  password                            = random_string.password.result
+  publicly_accessible                 = false
+  skip_final_snapshot                 = true
+  username                            = replace(var.name, "-", "_")
+  vpc_security_group_ids              = var.security_groups
+}
+```
+
 
 
 

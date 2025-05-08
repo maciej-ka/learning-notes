@@ -1034,6 +1034,13 @@ you get a ton of value by using one of these
 instead than building all these resources for yourself  
 resource by resource
 
+#### Safety?
+There are some famous modules, that can be trusted
+well known modules in community and official ones.
+
+To be sure about other modules, it makes sense
+to look into their source code.
+
 #### Terraform Kubernetes module
 This module makes it very easy to get from nothing  
 to having Kubernetes working, it's massivelly used  
@@ -1902,6 +1909,208 @@ you want to scale in response to CPU utilization
 not the number of requests. Because with number of  
 resources you risk having a lot of unused resources,  
 for which you pay for.
+
+#### Additional tools
+We need some of things
+that if we only stop on ECS cluster
+without additional tools,
+then its like we would just have
+a network of computing onlyu nodes
+
+ingress
+load balancer
+and firewall rules
+and security groups
+
+terraform/module/cluster/load_balancer.tf
+
+```tf
+resource "aws_security_group" "load_balancer" {
+  name_prefix = var.name
+  vpc_id      = var.vpc_id
+}
+
+resource "aws_vpc_security_group_ingress_rule" "http" {
+  security_group_id = aws_security_group.load_balancer.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  from_port   = 80
+  ip_protocol = "tcp"
+  to_port     = 80
+}
+
+resource "aws_vpc_security_group_egress_rule" "all" {
+  security_group_id = aws_security_group.load_balancer.id
+
+  cidr_ipv4   = "0.0.0.0/0"
+  ip_protocol = "-1"
+}
+
+resource "aws_lb" "this" {
+  enable_deletion_protection = false
+  idle_timeout               = 300
+  internal                   = true
+  load_balancer_type         = "application"
+  preserve_host_header       = false
+  subnets                    = var.subnets
+
+  security_groups = concat(
+    [aws_security_group.load_balancer.id],
+    var.security_groups,
+  )
+}
+
+resource "aws_lb_listener" "http" {
+  load_balancer_arn = aws_lb.this.arn
+  port              = "80"
+  protocol          = "HTTP"
+
+  default_action {
+    type = "fixed-response"
+
+    fixed_response {
+      content_type = "text/plain"
+      message_body = "404 Not Found"
+      status_code  = "404"
+    }
+  }
+}
+```
+
+#### Ingress / Egress
+refer to the direction of data or traffic flow.
+ingress: data entering a system or network,
+egress data leaving a system or network
+
+we define what should happen if the load balancer
+cannot resolve resource (respond with 404)
+
+#### CDN for API
+network performance of Amazon is unmatched
+because of that it makes sense to put
+CDN in front of load balancer
+
+#### CDN handles the first layer of delivery,
+By placing a CDN in front of a load balancer,
+CDN handles the first layer of delivery,
+caching content and delivering it to users closer
+to the source, and then the load balancer directs
+any traffic that cannot be served by the CDN
+to the appropriate backend servers.
+
+### CloudFront
+CloudFront is a beast
+and you can spend a lot of money
+if you don't know what you're doing
+
+#### Price class
+setting price class is important
+we bound load balancer to our cloud infrastructure
+
+```tf
+resource "aws_cloudfront_vpc_origin" "this" {
+  vpc_origin_endpoint_config {
+    arn                    = aws_lb.this.arn
+    http_port              = 80
+    https_port             = 443
+    name                   = "cluster-${var.name}"
+    origin_protocol_policy = "http-only"
+
+    origin_ssl_protocols {
+      items    = ["TLSv1.2"]
+      quantity = 1
+    }
+  }
+}
+
+resource "aws_cloudfront_distribution" "this" {
+  enabled     = true
+  price_class = "PriceClass_100"
+
+  origin {
+    domain_name = aws_lb.this.dns_name
+    origin_id   = "cluster-${var.name}"
+
+    vpc_origin_config {
+      vpc_origin_id = aws_cloudfront_vpc_origin.this.id
+    }
+  }
+
+  default_cache_behavior {
+    allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = "cluster-${var.name}"
+    viewer_protocol_policy = "redirect-to-https"
+
+    forwarded_values {
+      query_string = true
+
+      cookies {
+        forward = "none"
+      }
+    }
+  }
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    cloudfront_default_certificate = true
+  }
+}
+```
+
+#### GET HEAD
+we only cache GET and HEAD
+because all the others are modifying the data
+
+#### Block countries?
+If you know for sure, that your product
+is not to be used from other countries,
+then it makes sense to block all the other traffic
+because this will prevent DDos and many other attacts.
+
+You will frustrate some people,
+but value gained may be worth it,
+if this can save you.
+
+#### container organization
+We may have further granulality
+of how we organize our containers in cluster
+
+Backend Tier (does not have access to net)
+Gateway Tier (has access to net)
++
+Frontend Tier
+
+#### It's compiling time
+Some parts of `terraform apply` will take 20 minutes
+this is equivalent of "its compiling time"
+
+#### Terraform vs Pullumi
+If you want to use programming language
+you use Pullumi
+
+There is a lot of similarity with Terraform.
+
+#### OpenTofu, sell Terraform as Product
+It seems a lot of people like to say they use OpenTofu
+for no good reason. Hashicorp did something not nice
+but it only affected companies that tried to sell
+terraform as a product.
+
+Its probable that Terraform will close OpenTofu
+
+#### IBM bought Terraform
+they asked who is you competitor?
+they answered few names that IBM would not like
+and they said "we are shutting it"
+
+### Service Automation
+This is part where
 
 
 

@@ -1790,7 +1790,55 @@ module "this" {
 }
 ```
 
+### Automation
+Automation is beatifull
+because it does a lot for you
+its here to avoid repetitive tasks
 
+to do the same manually it would take a lot
+lot of clicking in AWS interface for you
+
+if you are self hosting, you don't get UI
+like you have in AWS interface
+(never mind the look, it gives a lot of functionality)
+
+#### Roles
+you can make Role for Plan
+and a Role for apply
+
+#### Terraform Enterprise
+Terraform enterprise is about not running
+apply and plan locally but running on the cloud
+
+#### What Terraform Plan does?
+It's a dry run that previews the changes
+terraform will make to your infrastructure.
+
+#### Routing
+destination and target
+0.0.0.0/0 is from the NAT gateway
+and if you're local, then 
+
+#### Grafana
+Amazon is such is a big ecosystem
+Don't stop obervability in those tabs
+
+There are solutions like Grafana
+where you can make customized alerts
+(and you can also use Grafana Cloud)
+
+CloudWatch UI
+you may not like to work with it,
+and in that case,
+Grafana Cloud would be better option
+
+#### Backups
+You will probably configure this in terraform module
+that created an instance, but also make sure you have
+automated backups set in the AWS UI (web console)
+
+Perhaps set them to 7 days retention
+There is a lot in terraform to find out
 
 
 AWS For Front-End Engineers

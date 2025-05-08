@@ -1072,6 +1072,283 @@ cd terraform
 terraform init
 ```
 
+it should result in something like:
+```
+Initializing the backend...
+
+Successfully configured the backend "s3"! Terraform will automatically
+use this backend unless the backend configuration changes.
+Initializing provider plugins...
+
+Terraform has been successfully initialized!
+```
+
+idemponent  
+you can call terraform init many times,  
+it will not break anything
+
+#### .terraform.local.hcl
+it's something like package-lock.json  
+Terraform is worried that some of providers could become malicious  
+so they started to record hashes of what you use  
+all dependencies for hasicor aws 5.0
+
+#### environment description
+first problem is how to describe our environment  
+and we want that description to be composable  
+so that we don't have to copy a lot of staff
+
+we wan't to organize our large module  
+and inside of it have separated smaller modules
+
+#### main.tf
+you don't have to call it like this  
+but this is an often convention  
+and other files in folder are usually relative to this file
+
+#### reuse existing in terraform
+if something already exists  
+you don't have to necessary create it
+
+module/environment/data.tf
+```tf
+data "aws_caller_identity" "this" {}
+data "aws_region" "this" {}
+```
+
+this is setting that we are expecting some things to exist  
+we will use monorepo approach here for simplicity
+
+#### terraform modules
+have a separate module for each concern,  
+separate for network, separate for database, separate for ECS
+
+#### terraform variables
+one example of using variables in terraform is:  
+if you want to restrict who you want to access Bastion on dev  
+and if you want to say that on production even no one should be able  
+you can change these dynamically by tweaking one variable
+
+module/environment/variables.tf
+```tf
+variable "bastion_ingress" {
+  default     = []
+  description = "CIDR blocks for bastion ingress"
+  type        = list(string)
+}
+
+variable "name" {
+  description = "Name of the cloud environment"
+  type        = string
+}
+```
+
+#### root main.tf
+place where we define staging
+
+benefit of using terraform is solving  
+hard problems with easy solutions
+
+IaC Infrastructure code
+
+```tf
+module "staging" {
+  source = "./module/environment"
+
+  bastion_ingress = local.bastion_ingress
+  name            = "staging"
+}
+```
+
+```bash
+terraform plan -out "terraform.tfplan"
+```
+
+will not work, because module has to be initialized
+
+```bash
+terraform init
+```
+
+every time you create module, you have to call `terraform init`  
+you don't have to run it for variables
+
+#### Next step
+we have environment, we can go with next step  
+what is the first thing you create inside Amazon?  
+Network
+
+#### Network
+In amazon world everthing is VPC  
+VPC, Virtual Private Cloud  
+we need network to provision everything  
+we own the network
+
+and network is first thing we want to have
+
+we will use terraform module  
+because we don't want  
+to build own secure network  
+that's the beauty of Open Source
+
+```tf
+module "subnets" {
+  source  = "hashicorp/subnets/cidr"
+  version = "1.0.0"
+
+  base_cidr_block = var.cidr
+
+  networks = flatten([
+    for k, v in local.subnets : [
+      for az in var.availability_zones : {
+        name     = "${k}-${az}"
+        new_bits = v
+      }
+    ]
+  ])
+}
+
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.21.0"
+
+  azs                    = var.availability_zones
+  cidr                   = var.cidr
+  database_subnets       = [for az in var.availability_zones : module.subnets.network_cidr_blocks["database-${az}"]]
+  elasticache_subnets    = [for az in var.availability_zones : module.subnets.network_cidr_blocks["elasticache-${az}"]]
+  enable_nat_gateway     = true
+  intra_subnets          = [for az in var.availability_zones : module.subnets.network_cidr_blocks["intra-${az}"]]
+  name                   = var.name
+  one_nat_gateway_per_az = false
+  private_subnets        = [for az in var.availability_zones : module.subnets.network_cidr_blocks["private-${az}"]]
+  public_subnets         = [for az in var.availability_zones : module.subnets.network_cidr_blocks["public-${az}"]]
+  single_nat_gateway     = true
+
+  default_security_group_ingress = [
+    {
+      self = true
+    }
+  ]
+}
+```
+
+#### Cidr
+Actuall network address space  
+that you want to own
+10.0.0.0/16  
+...  
+means I will have how many addresses?
+10.0.0.0 - 10.100.0.0
+
+and the lower the value  
+the higher the address space
+
+32bits in total  
+16bits for network
+
+here we define the size
+
+terraform/module/network/locals.tf
+```tf
+locals {
+  subnets = {
+    "database"    = 6,
+    "elasticache" = 6,
+    "intra"       = 5,
+    "private"     = 3,
+    "public"      = 5,
+  }
+}
+```
+
+these are octets, how many octets  
+private will have around 10-20k
+
+we are dividing network into multiple spaces
+
+who can calculate cidr (pronounced "siders")?  
+we are using cird to calculate all the cidr
+
+Classless Inter-Domain Routing.   
+A method for allocating IP addresses and routing IP packets  
+more efficiently than the older class-based system.
+
+format of Cidr
+```
+192.168.0.0/24
+```
+
+192.168.0.0 is the IP address  
+(often a network address).
+
+/24 is the prefix length, meaning the first 24 bits  
+are the network part, and the rest (8 bits) are available for hosts.
+
+it reduces IP address waste
+
+#### Intra network
+what is the purpose?  
+we had intranets and internet
+
+intranet is completely isolated  
+it's completely offline for the internet  
+boxed internet
+
+if you need subnet that is not connected to internet  
+you can put databases there, this is one of candidates  
+(if you want to)
+
+#### Security groups
+Place to set custom preferences  
+to say that we want something to be able to connect to database
+
+here is security group for database, here is for something  
+its better than saying "this database can connect to this resource"  
+it's higher level security groups that everything shares  
+so if something is provisioned it gets one or many security groups  
+it makes networking way simpler, avoiding definition of 1:1 connections
+
+```security_group.tf
+module "security_group_db" {
+  source  = "terraform-aws-modules/security-group/aws"
+  version = "5.3.0"
+
+  description        = "Security group for db subnet"
+  egress_cidr_blocks = ["0.0.0.0/0"]
+  name               = "${var.name}-db"
+  vpc_id             = module.vpc.vpc_id
+
+  ingress_with_self = [
+    {
+      rule = "all-all"
+    }
+  ]
+
+  egress_with_cidr_blocks = [
+    {
+      rule = "all-all"
+    }
+  ]
+}
+
+...
+
+resource "aws_vpc_security_group_ingress_rule" "db_allow_private" {
+  description                  = "Allow private subnet to access db"
+  from_port                    = 5432
+  ip_protocol                  = "tcp"
+  referenced_security_group_id = module.security_group_private.security_group_id
+  security_group_id            = module.security_group_db.security_group_id
+  to_port                      = 5432
+}
+
+...
+```
+
+If we put some resources in one subnets  
+by definition, Amazon will allow it to talk to everything else  
+in the same subnet
+
 
 
 AWS For Front-End Engineers

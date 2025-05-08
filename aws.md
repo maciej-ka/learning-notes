@@ -950,30 +950,30 @@ are becomming more and more important and crucial that they are not
 exposed, then you will be better using RDS, because this way secrets  
 never leave Amazon Cloud.
 
-It's using PostgreSQL
-which is great has a lot of features
+It's using PostgreSQL  
+which is great has a lot of features  
 and plugins
 
 #### General note about scale phase
-It will take a lot of consideration about existing elements.
+It will take a lot of consideration about existing elements.  
 And you can do it normally without a lot of pain
 
-Apart from migration of Database
+Apart from migration of Database  
 for which you will have to find night with less traffic
 
 #### Terraform
 terraform state
 
-terraform keeps data that is referential to things that are created
-so that this resource with this id is represented by this data in state
+terraform keeps data that is referential to things that are created  
+so that this resource with this id is represented by this data in state  
 it's very sensitive piece of data, that you have to make sure you have data
 
-you have many options for setting it up and storing it
-you can store it in many places, we will choose S3
+you have many options for setting it up and storing it  
+you can store it in many places, we will choose S3  
 because it has high avaibility, high redundancy and versioning if we would need it
 
 #### S3
-amazon s3 bucket names are globally unique
+amazon s3 bucket names are globally unique  
 this is quite annoying, because often you cannot use some name
 
 #### terraform
@@ -988,17 +988,17 @@ add to gitignore
 create folder `terraform`
 
 #### Bastion Host
-backdoor connection
-way to inspect your network
-old way is to only permit your ip
+backdoor connection  
+way to inspect your network  
+old way is to only permit your ip  
 backdoor to your network
 
-we will make instance public
-of that private network
-and limit access to known IP
+we will make instance public  
+of that private network  
+and limit access to known IP  
 Bastion Host
 
-new better way is vpn
+new better way is vpn  
 but Amazon VPN are not cheap
 
 terraform/locals.tf
@@ -1006,6 +1006,70 @@ terraform/locals.tf
 locals {
   bastion_ingress = ["<ip-address>/32"]
 }
+```
+
+#### Terraform Registry
+https://registry.terraform.io/  
+great docs  
+has interesting one..
+
+instruction how to controll Spotify with terraform  
+(also potentially you can manage Kubernetes with terraform)
+
+#### Terraform modules
+Terraform provides normally "resources"
+
+one unit, one resource that terraform  
+will create, provision and manage
+
+Terraform modules are  
+community prebuild solutions
+
+aws_vpc  
+but what if you don't want to care for every resource  
+and this is where aws module comes in  
+https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest
+
+you get a ton of value by using one of these  
+instead than building all these resources for yourself  
+resource by resource
+
+#### Terraform Kubernetes module
+This module makes it very easy to get from nothing  
+to having Kubernetes working, it's massivelly used  
+https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
+
+#### State
+instruction for terraform where to store state
+
+terraform/backend.tf
+```tf
+terraform {
+  backend "s3" {
+    bucket = "fem-fd-service-altf4"
+    key = "terraform.tfstate"
+    region = "us-west-2"
+  }
+}
+```
+
+#### Terraform providers
+terraform/providers.tf
+```tf
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+```
+
+#### Run Terraform
+```bash
+cd terraform
+terraform init
 ```
 
 

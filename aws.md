@@ -1248,6 +1248,8 @@ the higher the address space
 
 here we define the size
 
+we define variable cidr
+
 terraform/module/network/locals.tf
 ```tf
 locals {
@@ -1348,6 +1350,242 @@ resource "aws_vpc_security_group_ingress_rule" "db_allow_private" {
 If we put some resources in one subnets  
 by definition, Amazon will allow it to talk to everything else  
 in the same subnet
+
+we made small hole, but it's very small hole  
+on 5432 port and we didn't complicate it with using random port
+
+if we will change the port, you will get devs comming to you  
+with question, why it's not available,  
+because you will be just using the default port  
+and that is easier to work with
+
+we are putting some security, but not very granual
+
+#### variables
+if you have variable on package above  
+you have to pass it down manually  
+it's like React props
+
+this way if you change in one place on top  
+you want to propagate that change all the way down
+
+terraform/module/network/variables.tf
+
+```tf
+variable "availability_zones" {
+  description = "List of availability zones"
+  type        = list(string)
+}
+
+variable "bastion_ingress" {
+  default     = []
+  description = "List of CIDR blocks to whitelist for bastion host"
+  type        = list(string)
+}
+
+variable "cidr" {
+  description = "CIDR block"
+  type        = string
+}
+
+variable "name" {
+  description = "Name of the network"
+  type        = string
+}
+```
+
+#### AZ Avaibility Zone
+Only scenario that AZ will go down  
+is if the world goes down
+
+You normally don't need 5 Avaibility zones  
+usually just 2 are enough, one that you use  
+and the another one as the failback
+
+something you have two
+
+It's very difficult to create a new Avaibility Zone  
+if you don't use something like terraform.  
+Because to add one, you would need to replicate everything
+
+With IaC you can just create one variable  
+and see all the resource being replicated in new place
+
+#### Terraform outputs
+What is output in terraform
+
+If you group several resources in module  
+how do you access them from outside?
+
+Like how to do you tell that you want some security group or network  
+as a value in other modules and resource
+
+```tf
+output "database_security_group" {
+  value = module.security_group_db.security_group_id
+}
+
+output "database_subnets" {
+  value = module.vpc.database_subnets
+}
+
+output "private_security_group" {
+  value = module.security_group_private.security_group_id
+}
+
+output "private_subnets" {
+  value = module.vpc.private_subnets
+}
+
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
+
+output "vpc_name" {
+  value = module.vpc.name
+}
+```
+
+#### Depends_on
+Terraform runs by building graph  
+Directed Acyclic Graph  
+and this is a way it build
+
+there is also a way to write explicit `depends_on: [module_name]`  
+which is what you sometimes do, when terraform has a problem  
+to calculate the graph for some reason
+
+#### Basion module
+Example of how flexible terraform is
+
+```tf
+resource "tls_private_key" "bastion" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "bastion" {
+  key_name   = "${var.name}-bastion"
+  public_key = tls_private_key.bastion.public_key_openssh
+}
+
+module "bastion-private-key" {
+  source  = "terraform-aws-modules/ssm-parameter/aws"
+  version = "1.1.2"
+
+  name        = "/${var.name}/bastion/private-key"
+  secure_type = true
+  value       = tls_private_key.bastion.private_key_pem
+}
+
+module "bastion" {
+  source  = "terraform-aws-modules/ec2-instance/aws"
+  version = "5.8.0"
+
+  associate_public_ip_address = true
+  instance_type               = "t3a.micro"
+  key_name                    = aws_key_pair.bastion.key_name
+  monitoring                  = true
+  name                        = "${var.name}-bastion"
+  subnet_id                   = module.vpc.public_subnets[0]
+
+  vpc_security_group_ids = [
+    module.security_group_bastion.security_group_id,
+    module.security_group_private.security_group_id,
+  ]
+}
+```
+
+We want to use a lot of modules  
+because you don't want to check each individual resource manually
+
+here is place we use module
+```tf
+module "bastion" {
+  source  = "terraform-aws-modules/ec2-instance/aws"
+```
+
+And above we are asking terraform to generate SSH keys  
+so that you don't have to generate them manually  
+here we are asking to create private and public RSA keys
+
+```tf
+resource "tls_private_key" "bastion" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "bastion" {
+  key_name   = "${var.name}-bastion"
+  public_key = tls_private_key.bastion.public_key_openssh
+}
+```
+
+from that point, when developer wants ssh key  
+you don't give it to him, you give him permission to get it
+
+we also enabled monitoring  
+and provided security groups  
+(gave it two security groups)
+
+basion and private because it has to connect to both of them  
+we are using access via security group  
+its giving bastion access to whole private network
+
+And later if we tell private that it can access some new network  
+then bastion will also be able to access that network  
+which is again nice way to manage
+
+```
+subnet_id                   = module.vpc.public_subnets[0]
+```
+
+#### do we have per environment name space?
+environment contains all it needs, including network  
+so when creating environment, we are creating new network  
+and production and staging will have separate VPC  
+and this means there is no connection
+
+In Amazon world VPC is also tool for telling what is isolated
+
+But if in future we decide, that we want to have some things  
+that were isolated, now merged into one network  
+then we are risking that resources will have conflict of IP  
+(this can happen when you want to refresh production with preproduction)  
+for that reason we give something like
+
+staging 10.0.0.0/16  
+production 10.100.0.0/16
+
+
+#### Three classes of private IP addresses
+Class A 10.0.0.0 - 10.255.255.255  
+Class B 172.16.0.0 - 172.31.255.255  
+Class C 192.168.0.0 - 192.168.255.255
+
+The Class B private IP address range 172.16.0.0 to 172.31.255.255  
+uses the first two octets (172. and 16-31) to identify the network portion,  
+and the last two octets for host addresses.
+
+In binary, this range translates to
+10101100.00010000.00000000.00000000 to
+10101100.00011111.11111111.11111110  
+, offering a large address space for medium-sized networks. 
+
+
+#### Create resources in terraform
+Provision everything  
+and list what was created  
+you will also see calculated IP addresses  
+together with cidr_block
+
+first we run plan  
+then apply will really create and provision
+
+```bash
+terraform plan -out "terraform.tfplan"
+terraform apply "terraform.tfplan"
+```
 
 
 

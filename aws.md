@@ -753,6 +753,65 @@ this way we don't build one code twice
 #### dependent github actions
 one task in github actions can depend on another
 
+#### deploy
+make github actions migrate supabase schema
+we add for that another job in github action
+called "deploy"
+
+```yaml
+  deploy:
+    concurrency:
+      cancel-in-progress: false
+      group: deploy-lock
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}
+      AWS_DEFAULT_REGION: ${{ vars.AWS_DEFAULT_REGION }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      DOCKERIZE_URL: ${{ secrets.GOOSE_DBSTRING }}
+      GOOSE_DBSTRING: ${{ secrets.GOOSE_DBSTRING }}
+      GOOSE_DRIVER: ${{ vars.GOOSE_DRIVER }}
+    if: github.ref == 'refs/head/main'
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - run: make build-image-pull
+      - run: make build-image-migrate
+      - run: make build-image-promote
+```
+
+will make sure that in case two actions trigger
+then only one will work at any point
+
+```yaml
+group: deploy-lock
+```
+
+only run it when on main branch
+
+```yaml
+if: github.ref = "refs/main/href"
+```
+
+#### Dockerize
+a way to tell is container running inside ci/cd
+(because it's not really easy to tell)
+
+#### "Closed loops" in CI/CD
+We first test that migration is valid in ci/cd
+and then, when PR is merged, we apply it on real database
+
+#### Future growth
+these both allow for easy extension in future
+github actions
+makefile
+
+Cons of growth phase
+no netowrk
+no way to build services indepedengly
 
 
 AWS For Front-End Engineers

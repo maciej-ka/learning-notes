@@ -754,8 +754,8 @@ this way we don't build one code twice
 one task in github actions can depend on another
 
 #### deploy
-make github actions migrate supabase schema
-we add for that another job in github action
+make github actions migrate supabase schema  
+we add for that another job in github action  
 called "deploy"
 
 ```yaml
@@ -783,7 +783,7 @@ called "deploy"
       - run: make build-image-promote
 ```
 
-will make sure that in case two actions trigger
+will make sure that in case two actions trigger  
 then only one will work at any point
 
 ```yaml
@@ -797,21 +797,217 @@ if: github.ref = "refs/main/href"
 ```
 
 #### Dockerize
-a way to tell is container running inside ci/cd
+a way to tell is container running inside ci/cd  
 (because it's not really easy to tell)
 
 #### "Closed loops" in CI/CD
-We first test that migration is valid in ci/cd
+We first test that migration is valid in ci/cd  
 and then, when PR is merged, we apply it on real database
 
 #### Future growth
-these both allow for easy extension in future
-github actions
+these both allow for easy extension in future  
+github actions  
 makefile
 
-Cons of growth phase
-no netowrk
+Cons of growth phase  
+no netowrk  
 no way to build services indepedengly
+
+#### lowest denominator: fastest way
+generally try to find lowest denominator  
+of many problems you want to solve
+
+#### summary
+before we were looking for minimal effort to get to cloud
+
+we started with Dockerfile  
+set up repository  
+we added parameters and database and deployed to containers
+
+and then in phase two  
+we though: how to have better ci/cd  
+how to be sure that we are deliverying correct thing  
+we were cleaning a bit, so that we can keep moving at same pace
+
+### Scale Phase
+Scale is about concurent users,
+
+#### organization scale
+but it's even more about organization scale:  
+how many teams you have  
+you will have to navigate pretty efficient
+
+more team members  
+more services  
+you want to support multiple teams
+
+we want better environemnt
+
+#### money: there is some budget
+in scale phase we have some money to spend
+
+in start and growth phase you look for  
+cheap and free solutions
+
+in this state you have some budget
+
+#### example circle CI
+it makes sense to spend some money to not think about something  
+in ci/cd you are provisioning many workers on demand,  
+and you don't have to think about it
+
+it's about focusing on business  
+and not thinking about some things
+
+also vertical scalling: strong VPS may sometimes be better  
+as it's generally easier to manage
+
+#### promotion process
+when you merge into main  
+but then you want to merge that into staging  
+and tag it and deploy in docker on staging  
+and then promote to production
+
+### Terraform
+can get really big
+
+#### plan
+client calls Cloudfront CDN  
+then call goes to AWS ALB (load balancer)  
+then to AWS ECS (containers)
+
+we will swap supabase to AWS RDS (database)
+
+#### changes
+we are only changing selected places  
+not everything and these changes should be not visible  
+to the end user (begind browser)
+
+#### aws
+we will stay on Amazon
+
+#### CloudFront
+Cloudfront CND is quite good solution  
+it's all around the world  
+and has good integrations with other solutions  
+and this is important because we don't want to expose many things
+
+#### Amazon accessible network
+and with amazon we can create private subnetwork  
+and load balancer will be private  
+load balancer will be only available locally for cloudfront CDN
+
+#### ECS
+container orchestrator  
+place which runs containers
+
+it tries little bit to be Docker competitor
+
+#### Kubernetes
+if you want to have unified platform  
+with which you can move everywhere...  
+this is way another world  
+in most cases you don't need it
+
+as alternative you can also go for Kubernetes  
+Kubernetes does it way better
+
+it's actually suprising that there are many devs  
+which got used to Kubernetes and didn't had experience with ECS  
+and they have to learn ECS
+
+biggest difference between Kubernetes and ECS  
+is support of Open Source. Because if you need something  
+that it's not there, then you have to wait for AWS to add it
+
+With Kubernetes you have more options to do what you can need  
+And you may like ArgoCD, but its entirelly Kubernetes thing
+
+#### Evolution
+Levels of complexity/control/abstraction  
+App Runner  
+ECS  
+Kubernetes (probably you don't need it)
+
+#### VPC
+Virtual Private Cloud  
+it just means private network  
+in which you can run services
+
+#### ownership
+compared to previous step  
+this step is much more about ownership  
+so that you want want to run resources  
+and not buy from other vendors
+
+#### how many people to run?
+DBA  
+Devops more then one
+
+#### RDS
+If as organization you are in situation where you database secrets  
+are becomming more and more important and crucial that they are not  
+exposed, then you will be better using RDS, because this way secrets  
+never leave Amazon Cloud.
+
+It's using PostgreSQL
+which is great has a lot of features
+and plugins
+
+#### General note about scale phase
+It will take a lot of consideration about existing elements.
+And you can do it normally without a lot of pain
+
+Apart from migration of Database
+for which you will have to find night with less traffic
+
+#### Terraform
+terraform state
+
+terraform keeps data that is referential to things that are created
+so that this resource with this id is represented by this data in state
+it's very sensitive piece of data, that you have to make sure you have data
+
+you have many options for setting it up and storing it
+you can store it in many places, we will choose S3
+because it has high avaibility, high redundancy and versioning if we would need it
+
+#### S3
+amazon s3 bucket names are globally unique
+this is quite annoying, because often you cannot use some name
+
+#### terraform
+add to gitignore
+
+```
+*.tfplan
+.terraform
+.overrides.txt
+```
+
+create folder `terraform`
+
+#### Bastion Host
+backdoor connection
+way to inspect your network
+old way is to only permit your ip
+backdoor to your network
+
+we will make instance public
+of that private network
+and limit access to known IP
+Bastion Host
+
+new better way is vpn
+but Amazon VPN are not cheap
+
+terraform/locals.tf
+```tf
+locals {
+  bastion_ingress = ["<ip-address>/32"]
+}
+```
+
 
 
 AWS For Front-End Engineers

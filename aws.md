@@ -1587,6 +1587,13 @@ terraform plan -out "terraform.tfplan"
 terraform apply "terraform.tfplan"
 ```
 
+output in console will be list of all resources
+that were linked, in some situations this can take
+even up to 30 minutes to synchronize
+
+it's easy to duplicate everything in terraform
+configurations
+
 
 
 AWS For Front-End Engineers

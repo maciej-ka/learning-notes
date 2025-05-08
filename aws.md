@@ -1840,6 +1840,70 @@ automated backups set in the AWS UI (web console)
 Perhaps set them to 7 days retention  
 There is a lot in terraform to find out
 
+### Cluser module
+We are creating cluster (EC2)  
+that will host virtual machines  
+that will run container cluster (ECS)
+
+#### Cloud In it
+you can give it scripts  
+that load the moment instance starts to run
+
+this way you can configure instance  
+this is purpose of this file
+
+terraform/module/cluster/user_data.tpl
+
+```tf
+#cloud-config
+write_files:
+  - path: /etc/ecs/ecs.config
+    permissions: 0400
+    owner: root
+    content: |
+      ECS_CLUSTER=${cluster_name}
+      ECS_ENABLE_SPOT_INSTANCE_DRAINING=true
+      ECS_ENABLE_TASK_IAM_ROLE=true
+      ECS_LOGLEVEL=debug
+
+# vim:ft=yaml sw=2 ts=2 et
+```
+
+compared to App Runner, this is huge difference
+
+#### Amazon is still a bit like hobbyst tool
+it's a kit to be glued by you  
+and terraform is trying  
+to reproduce that glueing for you
+
+#### ECS cluster module?
+there is no good terraform module for ECS  
+so in the workshop definition of it is verbose
+
+#### Instance Profiles
+Like Users have Roles  
+Instance have Instance Profiles
+
+#### Launch template
+initial values that ECS will be using  
+for load balancer and scalling
+
+in the end we would have several laucn templates  
+depending on number of enrionments we will run on
+
+#### Base64
+it's a format that will solve problem of multiline  
+and whitespaces, because it will convert to letters  
+that are safe to pass trough network
+
+### Scaling
+#### criteria for scaling?
+you want to scale in response to CPU utilization  
+not the number of requests. Because with number of  
+resources you risk having a lot of unused resources,  
+for which you pay for.
+
+
 
 AWS For Front-End Engineers
 ===========================

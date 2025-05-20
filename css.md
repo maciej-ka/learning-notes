@@ -113,12 +113,20 @@ body {
   font-size: var(--base-font-size);
 }
 
+footer {
+  font-size: calc(var(--base-font-size) * 0.85);
+}
+
 @media (min-width: 750px) {
   :root {
     --base-font-size: 1.125rem;
   }
 }
 ```
+
+#### one h1
+A page should generally have a single <h1> element
+that describes the content of the page
 
 
 Keep specificity low

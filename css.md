@@ -1,17 +1,17 @@
 Getting Started with CSS v2
 ===========================
-https://frontendmasters.com/workshops/intro-css-v2/#player
-Frontend Masters
+https://frontendmasters.com/workshops/intro-css-v2/#player  
+Frontend Masters  
 Jen Kramer
 
-color palette
+color palette  
 https://color.adobe.com/explore
 
 ### porfolio
-most portfolios are surprisingly similar
+most portfolios are surprisingly similar  
 how to stand out?
 
-genera ideas
+genera ideas  
 https://docs.google.com/document/d/1D8jbwHegkmxopPcPBbvtAPEzJ_O0KEl4dmAL00BL81o/edit?tab=t.0#heading=h.p5m9122suls4
 
 #### goal
@@ -20,12 +20,12 @@ https://docs.google.com/document/d/1D8jbwHegkmxopPcPBbvtAPEzJ_O0KEl4dmAL00BL81o/
 - demonstrate expertise in some field (to get promotion)
 
 #### title
-good: Using Rect.js to create an e-commerce app for physical goods
-bad: xyz website
+good: Using Rect.js to create an e-commerce app for physical goods  
+bad: xyz website  
 unless you are working in well recognized project, be most 
 
 #### photo
-you want most boring photo of yourself
+you want most boring photo of yourself  
 and no photo may be better then weird photo
 
 

@@ -27,7 +27,7 @@
 [CSS](./css.md)
 =================
 ● [**Tailwind CSS**](https://github.com/maciej-ka/learning-notes/blob/main/css.md#tailwind-css-frontend-masters), Steve Kinney, Frontend Masters  
-Getting Started with CSS v2, Jen Kramer, Frontend Masters  
+● [Getting Started with CSS v2](https://github.com/maciej-ka/learning-notes/blob/main/css.md#getting-started-with-css-v2), Jen Kramer, Frontend Masters  
 [*cascade*](https://github.com/maciej-ka/learning-notes/blob/main/css.md#cascade)  
 [*flex*](https://github.com/maciej-ka/learning-notes/blob/main/css.md#-flex-)  
 [*where/is*](https://github.com/maciej-ka/learning-notes/blob/main/css.md#keep-specificity-low)

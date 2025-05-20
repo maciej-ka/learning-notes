@@ -92,6 +92,14 @@ fracition, used in grids
 }
 ```
 
+#### rounded corners
+border-radius: 15px 50px 30px 5px;  
+first value applies to top-left corner,  
+second value applies to top-right corner,  
+third value applies to bottom-right corner,  
+and fourth value applies to bottom-left corner
+
+
 
 Keep specificity low
 ====================

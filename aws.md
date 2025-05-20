@@ -1035,10 +1035,10 @@ instead than building all these resources for yourself
 resource by resource
 
 #### Safety?
-There are some famous modules, that can be trusted
+There are some famous modules, that can be trusted  
 well known modules in community and official ones.
 
-To be sure about other modules, it makes sense
+To be sure about other modules, it makes sense  
 to look into their source code.
 
 #### Terraform Kubernetes module
@@ -1911,15 +1911,15 @@ resources you risk having a lot of unused resources,
 for which you pay for.
 
 #### Additional tools
-We need some of things
-that if we only stop on ECS cluster
-without additional tools,
-then its like we would just have
+We need some of things  
+that if we only stop on ECS cluster  
+without additional tools,  
+then its like we would just have  
 a network of computing onlyu nodes
 
-ingress
-load balancer
-and firewall rules
+ingress  
+load balancer  
+and firewall rules  
 and security groups
 
 terraform/module/cluster/load_balancer.tf
@@ -1978,33 +1978,33 @@ resource "aws_lb_listener" "http" {
 ```
 
 #### Ingress / Egress
-refer to the direction of data or traffic flow.
-ingress: data entering a system or network,
+refer to the direction of data or traffic flow.  
+ingress: data entering a system or network,  
 egress data leaving a system or network
 
-we define what should happen if the load balancer
+we define what should happen if the load balancer  
 cannot resolve resource (respond with 404)
 
 #### CDN for API
-network performance of Amazon is unmatched
-because of that it makes sense to put
+network performance of Amazon is unmatched  
+because of that it makes sense to put  
 CDN in front of load balancer
 
 #### CDN handles the first layer of delivery,
-By placing a CDN in front of a load balancer,
-CDN handles the first layer of delivery,
-caching content and delivering it to users closer
-to the source, and then the load balancer directs
-any traffic that cannot be served by the CDN
+By placing a CDN in front of a load balancer,  
+CDN handles the first layer of delivery,  
+caching content and delivering it to users closer  
+to the source, and then the load balancer directs  
+any traffic that cannot be served by the CDN  
 to the appropriate backend servers.
 
 ### CloudFront
-CloudFront is a beast
-and you can spend a lot of money
+CloudFront is a beast  
+and you can spend a lot of money  
 if you don't know what you're doing
 
 #### Price class
-setting price class is important
+setting price class is important  
 we bound load balancer to our cloud infrastructure
 
 ```tf
@@ -2064,53 +2064,92 @@ resource "aws_cloudfront_distribution" "this" {
 ```
 
 #### GET HEAD
-we only cache GET and HEAD
+we only cache GET and HEAD  
 because all the others are modifying the data
 
 #### Block countries?
-If you know for sure, that your product
-is not to be used from other countries,
-then it makes sense to block all the other traffic
+If you know for sure, that your product  
+is not to be used from other countries,  
+then it makes sense to block all the other traffic  
 because this will prevent DDos and many other attacts.
 
-You will frustrate some people,
-but value gained may be worth it,
+You will frustrate some people,  
+but value gained may be worth it,  
 if this can save you.
 
 #### container organization
-We may have further granulality
+We may have further granulality  
 of how we organize our containers in cluster
 
-Backend Tier (does not have access to net)
-Gateway Tier (has access to net)
-+
+Backend Tier (does not have access to net)  
+Gateway Tier (has access to net)  
++  
 Frontend Tier
 
 #### It's compiling time
-Some parts of `terraform apply` will take 20 minutes
+Some parts of `terraform apply` will take 20 minutes  
 this is equivalent of "its compiling time"
 
 #### Terraform vs Pullumi
-If you want to use programming language
+If you want to use programming language  
 you use Pullumi
 
 There is a lot of similarity with Terraform.
 
 #### OpenTofu, sell Terraform as Product
-It seems a lot of people like to say they use OpenTofu
-for no good reason. Hashicorp did something not nice
-but it only affected companies that tried to sell
+It seems a lot of people like to say they use OpenTofu  
+for no good reason. Hashicorp did something not nice  
+but it only affected companies that tried to sell  
 terraform as a product.
 
 Its probable that Terraform will close OpenTofu
 
 #### IBM bought Terraform
-they asked who is you competitor?
-they answered few names that IBM would not like
+they asked who is you competitor?  
+they answered few names that IBM would not like  
 and they said "we are shutting it"
 
 ### Service Automation
-This is part where
+This is part where we actually deploy our code
+
+#### Importance of organisation
+It's really important. And being able to go to  
+module with good name, named in general terms,  
+and we change value in that for example database module
+
+#### Compute Plain
+Anything that computes something.
+Lambdas, ECS
+anything that can act
+we create assume role for that service
+
+#### Node / service separation
+Main point is separation between node and service.
+In contrast, VPS (Virtual Machines) doesn't have
+that separation.
+
+There may be even separation between execution and service separation
+all this is example of how annoying VCS can be
+
+#### Resource
+Resource is anything that can exist
+
+this goes to ...
+difference between Terraform and Pullumi
+
+#### Parameter store
+they are way to say:
+"put it here, let me access it later"
+
+#### If you use terraform
+you have to keep using it
+
+#### target group
+how long 
+
+#### responsibility
+it's ok to deploy broken services
+but at least have intend to fix, if service fails
 
 
 

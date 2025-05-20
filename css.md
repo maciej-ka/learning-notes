@@ -100,8 +100,8 @@ third value applies to bottom-right corner,
 and fourth value applies to bottom-left corner
 
 #### responsive font size
-at root define variable with font size
-use it in h1, h2, ...
+at root define variable with font size  
+use it in h1, h2, ...  
 and target it in media query
 
 ```css
@@ -125,8 +125,63 @@ footer {
 ```
 
 #### one h1
-A page should generally have a single <h1> element
+A page should generally have a single <h1> element  
 that describes the content of the page
+
+#### flex-flow
+way to select direction and wrapping behaviour
+
+```css
+flex-flow: column nowrap;
+```
+
+### dark mode
+relativelly new css property
+
+```css
+html {
+  color-scheme: light dark;
+}
+```
+
+to fine tune it
+
+```css
+:root {
+  --ld-bkgd: light-dark(var(--platinum), var(--charcoal));
+  --ld-text: light-dark(var(--onyx), var(--white));
+}
+
+body {
+  background-color: var(--ld-bkgd);
+  color: var(--ld-text);
+}
+```
+
+#### css only theme switcher
+```html
+<fieldset id="mode-switcher">
+  <legend>Select a color mode:</legend>
+  <div>
+    <input type="radio" id="light" name="mode" value="light" checked>
+    <label for="light">Light</label>
+  </div>
+  <div>
+    <input type="radio" id="dark" name="mode" value="dark">
+    <label for="dark">Dark</label>
+  </div>
+</fieldset>
+```
+
+```css
+html:has(#mode-switcher #light:checked) {
+  color-scheme: light;
+}
+```
+
+#### styling two checkboxes as switch
+https://codepen.io/scottohara/pen/zLZwNv?editors=1100
+
 
 
 Keep specificity low

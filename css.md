@@ -1,6 +1,8 @@
 Getting Started with CSS v2
 ===========================
 https://frontendmasters.com/workshops/intro-css-v2/#player  
+https://gettingstartedwith.css.education/v2/  
+https://codepen.io/  
 Frontend Masters  
 Jen Kramer
 
@@ -11,7 +13,7 @@ https://color.adobe.com/explore
 most portfolios are surprisingly similar  
 how to stand out?
 
-genera ideas  
+general ideas for porfolio materials  
 https://docs.google.com/document/d/1D8jbwHegkmxopPcPBbvtAPEzJ_O0KEl4dmAL00BL81o/edit?tab=t.0#heading=h.p5m9122suls4
 
 #### goal
@@ -28,6 +30,67 @@ unless you are working in well recognized project, be most
 you want most boring photo of yourself  
 and no photo may be better then weird photo
 
+#### accessibility in svg
+```html
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">  
+  <title>LinkedIn</title>  
+  ...  
+</svg>
+```
+
+#### border-box
+Change from default content box to border box.  
+By default box sizing is not inherited.
+
+```css
+html {
+  box-sizing: border-box;
+}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+```
+
+#### margins are not additive
+but only vertical!  
+they overlap, collapse, don't add
+
+div with 2px margin bottom  
+and div below with 1px margin will be  
+not 3px but 2px
+
+#### em
+high of lowercase letter m
+
+#### rem
+em size of html root element
+
+#### line-height
+you may prefer to use no units  
+it's relative to size of font
+
+```css
+line-height: 1.5
+```
+
+#### div alternatives
+div: no sematic meaning, just grouping  
+section: related elements with title  
+article: this content could stand alone
+
+#### fr
+fracition, used in grids
+
+#### general centered layout
+```css
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+```
 
 
 Keep specificity low

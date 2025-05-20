@@ -99,6 +99,26 @@ second value applies to top-right corner,
 third value applies to bottom-right corner,  
 and fourth value applies to bottom-left corner
 
+#### responsive font size
+at root define variable with font size
+use it in h1, h2, ...
+and target it in media query
+
+```css
+:root {
+  --base-font-size: 1rem;
+}
+
+body {
+  font-size: var(--base-font-size);
+}
+
+@media (min-width: 750px) {
+  :root {
+    --base-font-size: 1.125rem;
+  }
+}
+```
 
 
 Keep specificity low

@@ -1,3 +1,26 @@
+Java Fundamentals
+=================
+https://frontendmasters.com/courses/java
+
+#### package name
+```java
+package basics;
+```
+
+lowercase underline
+used for logical separation of files
+
+#### class name
+```java
+public class GrossPayCalculator {
+}
+```
+
+class name has to be same as filename
+class names are case sensitive
+
+
+
 Enterprise Java: Spring Boot Fundamentals
 =========================================
 https://frontendmasters.com/workshops/spring-boot/  

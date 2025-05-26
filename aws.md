@@ -2118,27 +2118,53 @@ module with good name, named in general terms,
 and we change value in that for example database module
 
 #### Compute Plain
-Anything that computes something.
-Lambdas, ECS
-anything that can act
+Anything that computes something.  
+Lambdas, ECS  
+anything that can act  
 we create assume role for that service
 
+#### Common language
+Terraform Modules don't mention exact service names.  
+That's on purpose, a terraform module is more  
+an abastract description of what "database means to us"
+
+Compute Plane will require policies  
+Used in Lambdas, ECS  
+anything that can act, may need Assume Role
+
 #### Node / service separation
-Main point is separation between node and service.
-In contrast, VPS (Virtual Machines) doesn't have
+two types of roles  
+Roles for services: Assume Role  
+Roles for nodes  
+what is important is separation of these two
+
+Node may need permission to mount a volume  
+or do other cluster related operations
+
+But in case service needs to connect to SQS  
+we don't want to give that permission to Node
+
+Main point is separation between node and service.  
+In contrast, VPS (Virtual Machines) doesn't have  
 that separation.
 
-There may be even separation between execution and service separation
+There may be even separation between execution and service separation  
 all this is example of how annoying VCS can be
+
+#### AWS two ECS roles
+one used to start containers  
+one used to perform container work
 
 #### Resource
 Resource is anything that can exist
 
-this goes to ...
+this goes to ...  
 difference between Terraform and Pullumi
 
+Terraform has predefined roles
+
 #### Parameter store
-they are way to say:
+they are way to say:  
 "put it here, let me access it later"
 
 #### If you use terraform
@@ -2148,8 +2174,34 @@ you have to keep using it
 how long 
 
 #### responsibility
-it's ok to deploy broken services
-but at least have intend to fix, if service fails
+it's ok to deploy broken services  
+have intend to fix, if service fails
+
+#### ECS retry
+ECS default strategy is to try again  
+if service start failed
+
+but this can lead to retrying for months,  
+so watch out for it
+
+#### Parameter store
+They way we configured terraform is that parameters  
+will be created with default value "example" and then  
+when they are populated, its manual work to visit  
+parameter store and substitute values with the real ones
+
+Alternative is to keep values in terraform  
+but then there will be no UI and all changes  
+will have to be maintaned in that terraform code
+
+#### ECS
+can run services  
+but can also run adhoc tasks
+
+#### Obervability
+we can monitor traffic on VPC  
+we can change metrics on RDS about connections  
+ECS with container insights turned on
 
 
 

@@ -2203,6 +2203,22 @@ we can monitor traffic on VPC
 we can change metrics on RDS about connections  
 ECS with container insights turned on
 
+#### Tear down everything
+Make sure pipeline is not working in background
+
+Two things  
+App Runner: make sure all applications are deleted  
+SSM, parameter store: remove fem-fd-service/google-client-id ....  
+ECR: remove repositories
+
+```bash
+terraform destroy
+```
+
+Supabase: click service, delete
+
+Also you can check cost explorer
+
 
 
 AWS For Front-End Engineers

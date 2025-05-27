@@ -2647,12 +2647,28 @@ a list of exposed endpoints
 info about component that handles them  
 and what content type they expect and produce
 
-
-
 #### Secure Actuator
-Can be local network only, so only via VPN.  
-Can be given different port.  
-And handled by Spring security policy.
+By default Actuator only shows three subpages.
+health and two more
+
+a) app is local network only, so only via VPN.  
+b) use Spring Security, security configurations (will be talked later).
+c) change default endpoint name
+
+You can remap endpoint from /actuator to any name
+and change port number
+
+#### Actuator has separate thread pool
+It will work even if main Spring cannot handle anymore traffic.
+
+### Go to production
+
+#### Build native image
+Build native graal image
+
+```bash
+./mvnw -DskipTests -Pnative native:compile
+```
 
 #### Outside dev
 Docker will not be started  

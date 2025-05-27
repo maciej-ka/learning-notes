@@ -2317,8 +2317,10 @@ Docker Compose Support Developer Tools
 Spring Data JDBC SQL  
 Spring Boot DevTools Developer Tools
 
-if you forget to pick them on web site,  
+#### if you forget to pick them on web site
 then it's possible to add them later in pom.xml
+go to https://start.spring.io/, configure as you want
+and preview `pom.xml` file with ctrl + space
 
 and to find out the xml snippet that is needed  
 it's possible to find this out on maven repository site:  
@@ -2365,8 +2367,8 @@ record Customer(@Id int id, String name) {}
 interface CustomerRepository extends ListCrudRepository<Customer, Integer> {}
 ```
 
-And modify files in `/main/resources`  
-Create database schema:
+#### initialize schema
+By convention `/main/resources/schema.sql` will initialize database schema
 
 ```sql
 -- schema.sql
@@ -2376,13 +2378,19 @@ create table if not exists customer(
 );
 ```
 
-Seed the database
+#### seed
+Seed the database has another convention file
+`/main/resources/data.sql`
 
 ```sql
 -- data.sql
 insert into customer(name) values('Maciejka');
 insert into customer(name) values('Agata');
 ```
+
+#### spring config
+in application.properties tell spring
+that you want to run init sql
 
 Set application.properties  
 enable automatically loading above sql files  
@@ -2395,6 +2403,17 @@ spring.threads.virtual.enabled=true
 spring.docker.compose.lifecycle-management=start_only
 ```
 
+#### @Id
+A part of Spring JDBC
+which is a part of Spring Data
+
+#### install maven dependencies
+```bash
+./mvnw package
+./mvnw -DskipTests package
+```
+
+#### run
 Run (it will start postgres container for you)
 
 ```bash
@@ -2404,6 +2423,10 @@ Run (it will start postgres container for you)
 and visit  
 
 http://localhost:8080/customers
+
+#### Build tools
+Maven
+Gradle: more concise, but may be problematic
 
 #### Actuator
 application.properties
@@ -2499,7 +2522,6 @@ and give run permission
 ```bash
 chmod a+x run.sh
 ```
-
 
 #### Build docker image
 ```bash

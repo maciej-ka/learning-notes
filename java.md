@@ -3026,25 +3026,99 @@ whole world of enterprise integration
 
 everything today is distributed  
 nowadays you have applications that need to talk to each other  
-and what if you need something more than messaging bus?
+and what if you need something more than messaging bus?  
+something more than getting the message and process it
 
 OpenSource, integrations  
 when you don't want to pay for 10 consultants  
 Mule, MuleSoft, Ross Maison
 
+Mule was huge some years ago
+
+#### Four integration styles
 Four styles of integrations:  
 (mentioned in the book)  
 
-**File Transfer**  
-**Shared Database**  
-**Remote Procedure Invocation**  
-**Messaging**
+**1 File Transfer**  
+When one system produces files  
+which are then input to another system.
+
+**2 Shared Database**  
+A bit of antipattern today.  
+Very antimicroservices approach.
+
+Having one system write to database  
+and another reading from it at the same time.
+
+**3 Remote Procedure Invocation**  
+Invocation of methods on remote services.  
+Asynchronously.  
+What if that message dissapears.
+
+This is probably the worst of options.
+
+**4 Messaging**  
+Combines all benefits of previous ones.
+
+Like file transfer  
+Not coupled like with file, services don't have to be  
+in same space, asynchronous. They only have to agree  
+on the location of the file.
+
+RPC requires to be at the same place and the same time
+
+#### Decoupling with messaging
+Messaging requires that you know about the same broker.  
+You can do "fire and forget". It gives a lot of decoupling.
+
+Final form of distributed system has to be messaging.
+
+You start to see messaging as "I send the message and that updates the state"  
+opposed to "I ask the system to give me the state"
 
 #### Spring Integration
-Project that supports all these four styles.
+Project that supports all these four styles.  
+Made by Mark Fisher and Josh Long
 
 Microservices should be mainstream  
 they are not at the moment.
+
+#### Pipelines and components
+In most examples you have thing that produces events  
+and a thing that consumes those events.
+
+A source and a sink.
+
+#### Inbound adapter: consumer
+takes message from kafka, file system, ...
+
+Consumers sit in a pipeline  
+And there are components that act in that pipeline  
+filters, transforming, splitting, aggregating
+
+and finally, when you're done, you write file somewhere  
+a result of that processing, out, usually.  
+and that's done with
+
+#### Outbound adapter: producer
+You may take data and put it to database, send to kafka
+
+the point is: code in the middle is unaware of what code  
+in the beginning and in the end did.
+
+code in the middle is unaware of Inbound Adapter.
+
+#### Pipes and filters
+It's a pipes and filters architecture
+
+
+
+
+
+
+
+
+
 
 ### Modularity
 Allows to not have to constantly synchronize with other people.  

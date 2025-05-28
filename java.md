@@ -2792,22 +2792,43 @@ Client of endpoints
 
 We will look into: messaging
 
+### Beyond apps that are database wrapper
+Also apps that started as database wrapper  
+can be expanded with these capabilities.
+
+#### Messaging
+known as:
+- Messaging,
+- Rabbit,
+- Redis Queue,
+- Kafka,
+- Apache Pulsar,
+- Amazon SQS,
+- Google Cloud Pub-Sub
+
 #### Kafka
-Reliable.
+We will choose Kafka because its reliable.  
+Kafka is written in Scala, running on JVM
 
 Spring has few layers of support for Kafka  
-spring Kafka  
-spring for Apache Pulsar
 
-RabbitMQ is made from same group of devs as Spring  
-Spring AMPQ, open standard to work with RabbitMQ
+#### kafka lowest level
+At the lowest level there is
 
-JMS: very misguided "standard" from Oracle  
-25 years ago, meant as abstraction for messaging  
-but run away from it
+"Spring for <X>" project  
+Spring for Apache Kafka  
+Spring for Apache Pulsar
+
+or Spring AMQP  
+AMQP is a general protocol  
+of which RabbitMQ is largest implementation
+
+Rabbit team is close to devs at Spring  
+but Kafka is the new thing
 
 Docker container for kafka
 
+compose.yml
 ```
 services:
   kafka:
@@ -2819,13 +2840,144 @@ services:
       - '2181:2181'
 ```
 
-Send and receive  
-Code is quite easy  
-Configuration is tedious
+run
 
+```bash
+docker compose up
+```
+
+#### Kafka demo app
+We will just send and receive.  
+Code is quite easy, configuration is tedious.
+
+Bean to start application  
+We are using similar to `@EventListener`, a `@KafkaListener`
+
+#### Kafka Group id
+Group id in Kafka is exclusive consumer grouper
+
+if you say you are part of a group you will  
+not get messages duplicated across partitions
+
+it's a arbitrary name, just be consistient
+
+
+#### Kafka client app code
+KafkaesqueApplication.java
+
+```java
+package com.example.kafkaesque;
+
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
+
+@SpringBootApplication
+public class KafkaesqueApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(KafkaesqueApplication.class, args);
+  }
+
+  static final String TOPIC = "dog-adoption-request";
+
+  @Bean
+  ApplicationRunner sender(KafkaTemplate<String, DogAdoptionRequest> kafkaTemplate) {
+    return _ -> kafkaTemplate.send(TOPIC, new DogAdoptionRequest(1, "Bella"));
+  }
+
+  @KafkaListener(topics = TOPIC, groupId = "mygroup")
+  void listen(DogAdoptionRequest request) {
+    System.out.println("got " + request);
+  }
+}
+
+record DogAdoptionRequest (int dogId, String dogName) {}
+```
+
+#### Client Agnostic: Kafka, RabbitMQ
+Kafka, like RabbitMQ, is client agnostic.  
+It doesn't require Java, it can work with any language.
+
+#### Not client agnostic: JMS
+This is in contrast to JMS  
+JMS: very misguided "standard" from Oracle  
+25 years ago, meant as abstraction for messaging  
+if you ever encounter this, run away.
+
+Problems with JMS  
+if you want to upgrade server, you have to upgrade all the clients  
+it introduces some terms:  
+Topics, Queues, Producer, Consumer  
+it's just set of JAVA interfaces, no protocol implied  
+any client can break it
+
+#### add processing step
+If there is a producer and consumer, with Kafka or RabbitMQ  
+its possible to add intermediary computing step  
+without need to modify consumer.
+
+
+#### Annoying Kafka Configuration
 Messages travel through the wire, and a part of incomming message  
 is a field which says what classname should it deserialize to.  
 But for that to work, we have to approve to that
+
+src/main/resources/application.properties
+
+```
+spring.application.name=kafkaesque
+
+spring.kafka.producer.key-serializer=org.springframework.kafka.support.serializer.JsonSerializer
+spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer
+spring.kafka.consumer.key-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer
+spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer
+```
+
+add dependency for JsonSerializer
+
+pom.xml
+
+```xml
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+</dependency>
+```
+
+or add larger dependency
+
+```xml
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+```
+
+add to configuration  
+application.properties
+```
+spring.kafka.consumer.group-id=mygroup
+```
+
+then we try to run
+
+```bash
+./mvnw spring-boot:run
+```
+
+#### JSON over the wire and trust
+and get error message about `DogAdoptionRequest`  
+not in the trusted packages
+
+We are receiving JSON Payload over the wire and Payload  
+has information about class it should be deserialized into.  
+Would you blindly trust Payload to choose class?
+
+You need to allow Kafka to do that, to turn JSON into class.
 
 application.properties
 
@@ -2833,8 +2985,34 @@ application.properties
 spring.kafka.consumer.properties.spring.json.trusted.packages=*
 ```
 
-in real scenarios use comma list of allowed  
+in real scenarios don't do that, use comma list of allowed  
 but for demo purpose, we will use *
+
+#### Kafka application.properties
+
+group-id seems to be optional
+
+application.properties
+```
+spring.application.name=kafkaesque
+
+spring.kafka.producer.key-serializer=org.springframework.kafka.support.serializer.JsonSerializer
+spring.kafka.producer.value-serializer=org.springframework.kafka.support.serializer.JsonSerializer
+spring.kafka.consumer.key-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer
+spring.kafka.consumer.value-deserializer=org.springframework.kafka.support.serializer.JsonDeserializer
+
+spring.kafka.consumer.properties.spring.json.trusted.packages=*
+
+# this one is optional
+spring.kafka.consumer.group-id=mygroup
+```
+
+#### Pulsar, Rabbit
+It's very easy to switch to other, change configuration and then in code  
+change from `@KafkaListener` to `@PulsarListener` or `@Rabbitlistener`.
+
+#### Kafka future
+It's going to be big.
 
 ### Enterprise Integration Patterns
 Book by Bobby Wolf, Hoppe, 2004  

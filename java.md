@@ -2429,7 +2429,18 @@ http://localhost:8080/customers
 
 #### Build tools
 Maven  
-Gradle: more concise, but may be problematic
+
+Gradle  
+more concise, but may be problematic  
+It uses Kotlin or Groovy to express its config files  
+so you have code before code that you have to have working  
+(and not being broken) before you can run the actuall code of app.  
+... it's better in that case to have declarative configuration
+
+#### Groovy/Kotlin waiting for new Java
+But becaue Gradle uses Kotlin or Groovy, when there is a new Java version  
+you will like to install it immediatelly but in Kotlin/Groovy you have to  
+wait for language to adopt that new version.
 
 ### Actuator
 Observability module.  
@@ -2648,14 +2659,14 @@ info about component that handles them
 and what content type they expect and produce
 
 #### Secure Actuator
-By default Actuator only shows three subpages.
+By default Actuator only shows three subpages.  
 health and two more
 
 a) app is local network only, so only via VPN.  
-b) use Spring Security, security configurations (will be talked later).
+b) use Spring Security, security configurations (will be talked later).  
 c) change default endpoint name
 
-You can remap endpoint from /actuator to any name
+You can remap endpoint from /actuator to any name  
 and change port number
 
 #### Actuator has separate thread pool
@@ -2664,21 +2675,63 @@ It will work even if main Spring cannot handle anymore traffic.
 ### Go to production
 
 #### Build native image
-Build native graal image
+Build native graal image  
+and run it
 
 ```bash
 ./mvnw -DskipTests -Pnative native:compile
 ```
 
+#### Run native image
+
+```bash
+cd target
+./e2e
+```
+
+warning: it will not work when trying `./target/e2e`  
+application.properties seems to require being in  
+a current working directory at the moment of running e2e.
+
+at this point it will fail  
+because it doesn't have credentials for the database
+
+```
+Failed to configure a DataSource: 'url' attribute is not specified and no embedded datasource could be configured.
+```
+
+Development env  
+It was working in development, because that environment  
+runs docker compose and starts database for you. Production  
+behaves diferently
+
 #### Outside dev
-Docker will not be started  
-we need to provide how to connect:
+In production we are working without Docker compose
+
+We need to provide how to connect  
+We store these in separate application.properties file  
+inside target folder.
 
 target/application.properties
 ```
 spring.datasource.password=secret
 spring.datasource.username=myuser
-spring.datasource.url=jdbc:postgresql://localhost:5432/mydatabase
+spring.datasource.url=jdbc:postgresql://localhost/mydatabase
+```
+
+make sure port is exposed  
+(by default it's not)
+
+```yaml
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_PASSWORD=secret'
+      - 'POSTGRES_USER=myuser'
+    ports:
+      - '5432:5432'
 ```
 
 or make sure you have env variables set  
@@ -2687,26 +2740,37 @@ in a terminal in which you run docker image
 ```
 export SPRING_DATASOURCE_PASSWORD=secret
 export SPRING_DATASOURCE_USERNAME=myuser
-export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mydatabase
+export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost/mydatabase
 ```
 
-or consider bash script for running run.sh
+Consider bash script for running run.sh  
+Path to docker.io... is taken from the end of previous step,  
+in which we builded native image with: `./mvnw -DskipTests -Pnative native:compile`
 
 ```bash
 #!/usr/bin/env bash
 
-export SPRING_DATASOURCE_PASSWORD=secret
+export SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal/mydatabase
 export SPRING_DATASOURCE_USERNAME=myuser
-export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mydatabase
+export SPRING_DATASOURCE_PASSWORD=secret
 
-docker run -e SPRING_DATASOURCE_PASSWORD=$SPRING_DATASOURCE_PASSWORD \
-  -e SPRING_DATASOURCE_URL = $SPRING_DATASOURCE_URL \
-  -e SPRING_DATASOURCE_USERNAME = $SPRING_DATASOURCE_USERNAME \
+docker run \
+  -e SPRING_DATASOURCE_PASSWORD=$SPRING_DATASOURCE_PASSWORD \
+  -e SPRING_DATASOURCE_URL=$SPRING_DATASOURCE_URL \
+  -e SPRING_DATASOURCE_USERNAME=$SPRING_DATASOURCE_USERNAME \
   -p 8080:8080 \
   docker.io/library/e2e:0.0.1-SNAPSHOT
 ```
 
-and give run permission
+pay attention, the datasource url is NOT  
+`export SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/mydatabase`  
+correct value for running in docker is
+
+```bash
+export SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal/mydatabase
+```
+
+give a run permission
 
 ```bash
 chmod a+x run.sh
@@ -2716,6 +2780,10 @@ chmod a+x run.sh
 ```bash
 ./mvnw -DskipTests -Pnative spring-boot:build-image
 ```
+
+It will create docker image that is also native.
+
+This way is reliable enough to be used on production
 
 #### Typical Spring cases
 Data loading and formatting  

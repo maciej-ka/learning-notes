@@ -3886,26 +3886,34 @@ and its actually worth doing it as it will pay in future.
 For small systems it's too much.  
 How do I organize my code to have gains from well organized code?
 
-### Spring Moduleth
+### Spring Modulith
 Organized to stay on rails,  
 to build a code so that it's clean and scales well.
 
-#### Moduleth Goal
+#### Modulith Goal
 To write a code so that changes have minimal blast radius.
 
+You don't want to have public elements
+that a lot of other parts depend on.
+If they can depend on it, they will.
+Spagetti code.
 
+Follow natural design of the system.
 
+#### Avoid public
+Don't use public by default.
+Try to remove public as much as possible.
 
+Fix compiler errors while doing this.
+You should design system so that
+there are few known core interfaces and types
+that the rest of the system depends on
 
+src/main/java/com/example/adoptions/adoptions/DogAdoptionService.java
 
+```java
+// don't use public here
+public class DogAdoptionService {
+```
 
-
-If you organize your code in a way  
-that rest of the system can depend on it,  
-then rest of the system will depend on it  
-and it will become a problem
-
-don't use public by default,  
 remove it as much as you can.
-
-

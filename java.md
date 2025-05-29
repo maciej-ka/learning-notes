@@ -4181,6 +4181,40 @@ Remove dependency.
 https://martinfowler.com/articles/201701-event-driven.html
 What do you mean by "Event-Driven"? by Martin Fowler
 
-Event notification
-Event with no details, like 
+#### Event notification
+Event with no details, like `document.onLoad` in javascript
+you just know which one because there is one.
+
+#### Event-Carried State Transfer
+When you need details.
+Each event has actionable items
+that consumer can use to work on something.
+And this avoids coupling the consume with the producer
+
+Because in Event-Carried State Transfer
+consumer doesn't have to know the origin of the message.
+All the details consumer needs are in the body of the event.
+
+#### Event-Sourcing
+When you communicate all changes using Event-Carried State Transfer
+something interesting happens, what becomes your source of truth,
+and it's not Postgres, or Redis, or you may have Elastic Search
+but source of truth is collection of all messages
+and you can rebuild all services, Posgres, Redis from it.
+It gives audit log, backdoor.
+
+Fraction of a penny bank transaction bug? 
+Go back to situation when bug was introduced,
+apply changes in the algorithm
+and replay all the events to see how the state should look.
+
+#### Preserving history in Event Sourcing
+For smaller systems you can use Kafka for that.
+You can also use SQL database for that kind of thing.
+It's just a matter of preserving history
+
+#### CQRS
+Idea that from one event source you can rebuild many interfaces:
+PostgreSQL, Redis...
+
 

@@ -4160,3 +4160,27 @@ spring.datasource.url=jdbc:postgresql://localhost/mydatabase
 management.endpoints.web.exposure.include=*
 ```
 
+runnnig
+
+```bash
+curl -X POST -F "owner=jlong" http://localhost:8080/dogs/45/adoptions
+```
+
+result
+
+```
+scheduling for 45
+adopted [Dog[id=45, name=Prancer, owner=jlong, description=a neurotic dog]]
+```
+
+#### Asynchronous Event Integration
+Service is only calling Dogtor and not waiting for response.
+Remove knowledge about Dogtor in DogAdoptionService.
+Remove dependency.
+
+https://martinfowler.com/articles/201701-event-driven.html
+What do you mean by "Event-Driven"? by Martin Fowler
+
+Event notification
+Event with no details, like 
+

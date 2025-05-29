@@ -1,6 +1,54 @@
+### What do you mean by "Event-Driven"?
+=======================================
+Martin Fowler  
+https://martinfowler.com/articles/201701-event-driven.html
+
+#### Event notification
+event doesn't have much data on it  
+reciever knows something has changed,  
+issues a request back to sender to decide what to do next
+
+problem: you cannot see the whole flow  
+(only with monitoring system)
+
+#### Event-carried state transfer
+event contains all the detail information
+
+problem: a lot of data around  
+but it's less of a problem in age of abudndant storage
+
+we get resilience  
+reduce latency
+
+don't have to worry about load on customer system  
+to satisfy queries from all the consumer systems
+
+it involves complexity on receiver  
+it has to sort out maintaining aall the state  
+(when it's usually easier to call sender form more information)
+
+#### Event Sourcing
+Using event in such rigid way, that event store is source of truth  
+and system state is purely derived from it.
+
+Introduces lot of issues.  
+(not listed here).
+
+Use snapshots for performance.
+
+#### CQRS
+Having separate data structures for reading ad writing information.  
+CQRS isn't really about events, but commonly its combined with.  
+Especially when you have lots of reads with few writes.
+
+But gain from using CQRS has to be balanced against  
+the additional complexity of having separate models.
+
+
+
 Building a Static Type-Inferring Compiler
 =========================================
-https://frontendmasters.com/workshops/static-type-compiler/#player
+https://frontendmasters.com/workshops/static-type-compiler/#player  
 https://docs.google.com/presentation/d/1EkOFQCGFAIuIKG7sJB2ibsWE3Q8eti9UShLgo_z0rwo/edit?slide=id.g3478b1c1c1a_0_3445#slide=id.g3478b1c1c1a_0_3445  
 https://github.com/rtfeldman/compiler-workshop-v1  
 Richard Feldman
@@ -1081,7 +1129,7 @@ cons: more expensive
 
 Become a VSCode Power User
 ===========================
-https://frontendmasters.com/workshops/visual-studio-code-v2/
+https://frontendmasters.com/workshops/visual-studio-code-v2/  
 with Steve Kinney  
 https://stevekinney.net/courses/visual-studio-code
 
@@ -1734,7 +1782,7 @@ a{Click me}
 
 Web Accessibility, v3
 =====================
-https://frontendmasters.com/courses/accessibility-v3/
+https://frontendmasters.com/courses/accessibility-v3/  
 Frontend Masters, Jon Kuperman  
 https://github.com/jkup/learn-a11y  
 slides:  
@@ -2399,7 +2447,7 @@ docs have to describe every part in-depth
 
 Introduction to developer tools v3
 ==================================
-https://frontendmasters.com/workshops/dev-tools-v4/
+https://frontendmasters.com/workshops/dev-tools-v4/  
 Frontend Masters, Jon Kuperman  
 https://github.com/jkup/mastering-devtools-static
 
@@ -3183,7 +3231,7 @@ Provides a read-optimized view of the user's profile (e.g., a denormalized or ca
 
 Microfrontends
 ==============
-https://learning.oreilly.com/library/view/micro-frontends-in/9781617296871/
+https://learning.oreilly.com/library/view/micro-frontends-in/9781617296871/  
 Micro Frontends in Action  
 Manning book by Michael Geers  
 https://learning.oreilly.com/library/view/micro-frontends-in/9781617296871/
@@ -3574,7 +3622,7 @@ describe.todo
 
 Fudamentals of web performance
 ==============================
-https://frontendmasters.com/courses/web-perf-v2/
+https://frontendmasters.com/courses/web-perf-v2/  
 https://github.com/toddhgardner/fundametals-of-web-performance
 
 #### perfomance

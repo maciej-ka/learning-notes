@@ -4642,3 +4642,330 @@ am.verify();
 
 Verify...
 that my code is modular.
+
+my-modulith/src/test/java/com/example/adoptions/AdoptionsApplicationTests.java
+
+```java
+package com.example.adoptions;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.modulith.core.ApplicationModules;
+
+@SpringBootTest
+class AdoptionsApplicationTests {
+
+  @Test
+  void contextLoads() {
+    var am = ApplicationModules.of(AdoptionsApplication.class);
+    am.verify();
+  }
+
+}
+```
+
+run test
+
+```bash
+./mvnw test
+```
+
+#### Show the modules
+
+my-modulith/src/test/java/com/example/adoptions/AdoptionsApplicationTests.java
+
+```java
+@Test
+void contextLoads() {
+  var am = ApplicationModules.of(AdoptionsApplication.class);
+  am.verify();
+  System.out.println(am);
+}
+```
+
+Output
+
+```
+# Adoptions
+> Logical name: adoptions
+> Base package: com.example.adoptions.adoptions
+> Excluded packages: none
+> Direct module dependencies: none
+> Spring beans:
+  o ….DogAdoptionService
+  o ….DogController
+  o ….DogRepository
+
+# Vet
+> Logical name: vet
+> Base package: com.example.adoptions.vet
+> Excluded packages: none
+> Direct module dependencies: none
+> Spring beans:
+  o ….Dogtor
+```
+
+Looks like we have two modules, adoptions and vet.
+These are logical beans inside each module.
+And here are dependencies (none).
+
+Dependencies are when package is injecting from another package.
+
+#### Moduleth Documentation
+Spring provides information in documentation format.
+It will create `target/spring-modulith-docs`
+
+my-modulith/src/test/java/com/example/adoptions/AdoptionsApplicationTests.java
+
+```java
+@Test
+void contextLoads() {
+  var am = ApplicationModules.of(AdoptionsApplication.class);
+  am.verify();
+
+  System.out.println(am);
+
+  new  Documenter(am).writeDocumentation();
+}
+```
+
+It will create puml files.
+It gives architecture diagram, C4 component diagram.
+Way to model components in a system boundaries.
+Not like UML, but system boundaries.
+
+This uses PlotUml which uses text format,
+so you can check it into version control
+and then use something like graphVis or plantuml
+https://plantuml.com/class-diagram
+
+It's a nice image that will evolve with a code base.
+And it will be up to date with the code.
+
+#### Modulith Summary
+So it all alright, we were able to write modular code.
+We were able to observe it, write decoupled code and test it.
+This is Spring Modulith.
+
+It's support for writing code that is modular.
+
+Behind the scenes, Modulith is packaging up
+something called `ArchUnit`
+It's a way to test architecture contstrains in your system.
+
+#### ArchUnit in practice
+When you invalidate rules, the unit test will fail.
+
+src/main/java/com/example/adoptions/adoptions/validation/Validation.java
+
+```java
+package com.example.adoptions.adoptions.validation;
+
+import org.springframework.stereotype.Component;
+
+@Component
+public class Validation {
+}
+```
+
+This one has to be public in order to be used in parent.
+package com.example.adoptions.adoptions.
+So it's limitation of language.
+But Spring Modulith will detect when it's used in wrong way.
+
+#### Allowed dependency of packages
+
+package com.example.adoptions.adoptions
+can be dependendent on public classec in package
+import com.example.adoptions.adoptions.validation
+
+Same named module root (chatbot)
+Both packages are under the same module root (adoptions),
+so adoptions.validation is considered an internal subpackage
+of the adoptions module.
+
+src/main/java/com/example/adoptions/adoptions/DogAdoptionService.java
+
+```java
+package com.example.adoptions.adoptions;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.example.adoptions.adoptions.validation.Validation;
+
+@Controller
+@ResponseBody
+class DogController {
+  private final DogAdoptionService dogAdoptionService;
+
+  DogController(DogAdoptionService dogAdoptionService) {
+    this.dogAdoptionService = dogAdoptionService;
+  }
+
+  @PostMapping ("/dogs/{dogId}/adoptions")
+  void adopt (@PathVariable int dogId, @RequestParam String owner) {
+    dogAdoptionService.adopt(dogId, owner);
+  }
+}
+
+@Service
+@Transactional
+class DogAdoptionService {
+  private final Validation validation;
+  private final DogRepository dogRepository;
+  private final ApplicationEventPublisher applicationEventPublisher;
+
+  DogAdoptionService(DogRepository dogRepository, ApplicationEventPublisher applicationEventPublisher, Validation validation) {
+    this.dogRepository = dogRepository;
+    this.applicationEventPublisher = applicationEventPublisher;
+    this.validation = validation;
+  }
+
+  void adopt(int dogId, String owner) {
+    this.dogRepository.findById(dogId).ifPresent(dog -> {
+      var updated = dogRepository.save(new Dog(dog.id(), dog.name(), owner, dog.description()));
+      applicationEventPublisher.publishEvent(new DogAdoptionEvent(dogId));
+      System.out.println("adopted [" + updated + "]");
+    });
+  }
+}
+
+interface DogRepository extends ListCrudRepository<Dog, Integer> {}
+
+record Dog(@Id int id, String name, String owner, String description) {};
+```
+
+test
+
+```bash
+ ./mvnw test
+```
+
+#### Modulith Failing Case
+
+This is forbidden because packages are not sharing root
+package com.example.adoptions.vet;
+com.example.adoptions.adoptions.validation;
+
+src/main/java/com/example/adoptions/vet/Dogtor.java
+
+```java
+package com.example.adoptions.vet;
+
+import org.springframework.modulith.events.ApplicationModuleListener;
+import org.springframework.stereotype.Service;
+
+import com.example.adoptions.adoptions.DogAdoptionEvent;
+import com.example.adoptions.adoptions.validation.Validation;
+
+@Service
+class Dogtor {
+
+  private final Validation validation;
+
+  public Dogtor(Validation validation) {
+    this.validation = validation;
+  }
+
+  @ApplicationModuleListener
+  void schedule(DogAdoptionEvent dogId) throws InterruptedException {
+    Thread.sleep(5000);
+    System.out.println("scheduling for " + dogId);
+  }
+
+}
+```
+
+and running test will fail
+because Validation is implementation detail.
+It's a nested package in another, adjecent root package.
+I'm injecting it into another root package.
+
+That broke the test.
+"You leaked implementation detail of one module into another"
+Module vet depends on non-exposed type called Validation within module adoptions
+
+Event though it's public
+it's not meant for everybody to consue.
+
+```
+Errors:
+[ERROR]   AdoptionsApplicationTests.contextLoads:14 » Violations - Module 'vet' depends on non-exposed type com.example.adoptions.adoptions.validation.Validation within module 'adoptions'!
+Dogtor declares constructor Dogtor(Validation) in (Dogtor.java:0)
+- Module 'vet' depends on non-exposed type com.example.adoptions.adoptions.validation.Validation within module 'adoptions'!
+Field <com.example.adoptions.vet.Dogtor.validation> has type <com.example.adoptions.adoptions.validation.Validation> in (Dogtor.java:0)
+- Module 'vet' depends on non-exposed type com.example.adoptions.adoptions.validation.Validation within module 'adoptions'!
+Constructor <com.example.adoptions.vet.Dogtor.<init>(com.example.adoptions.adoptions.validation.Validation)> has parameter of type <com.example.adoptions.adoptions.validation.Validation> in (Dogtor.java:0)
+[INFO]
+[ERROR] Tests run: 1, Failures: 0, Errors: 1, Skipped: 0
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  3.290 s
+[INFO] Finished at: 2025-05-29T21:57:12+02:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project adoptions:
+[ERROR]
+[ERROR] See /Users/maciejka/learn/java-spring-fundamentals/my-modulith/target/surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR]
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR]
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+```
+
+It would work if one top module would be dependent on another.
+But it's not happy when one module is dependent on subpackage of another module.
+(Like we seen with using DogAdoptionEvent)
+
+#### Notes on Modulith event communication
+
+When running ` ./mvnw test`
+
+Why i don't see DogAdoptionEvent  and dependency of it in Doctor. All I see is:
+
+```
+# Adoptions
+> Logical name: adoptions
+> Base package: com.example.adoptions.adoptions
+> Excluded packages: none
+> Direct module dependencies: none
+> Spring beans:
+  o ….DogAdoptionService
+  o ….DogController
+  o ….DogRepository
+  o ….validation.Validation
+
+# Vet
+> Logical name: vet
+> Base package: com.example.adoptions.vet
+> Excluded packages: none
+> Direct module dependencies: none
+> Spring beans:
+  o ….Dogtor
+```
+
+This is an event-based communication pattern, which is different from direct module dependencies
+
+Spring Modulith treats event-based communication as a special case.
+When you use @ApplicationModuleListener, it creates a loose coupling
+between modules through events, rather than creating a direct module dependency.
+This is actually a good thing because:
+It maintains better module boundaries
+It allows for asynchronous communication
+It reduces tight coupling between modules
+
+#### Favorite antipattern

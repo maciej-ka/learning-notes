@@ -3768,7 +3768,7 @@ public class EipApplication {
 ```
 
 #### Handling errors
-In case something goes wrong,
+In case something goes wrong,  
 you can listen on error channel.
 
 (inside `public class EipApplication`)
@@ -3783,111 +3783,111 @@ IntegrationFlow errorIntegrationFlow(@Qualifier("errorchannel") MessageChannel e
 ```
 
 #### Synchronous by default
-By default dispatch from one component to another
-in the same integration flow is synchronous.
+By default dispatch from one component to another  
+in the same integration flow is synchronous.  
 which means they are on the same thread
 
-so you can use database transactions
+so you can use database transactions  
 in case postPurchaseOrder POST endpoint needs to do all actions
 
-You can put executoner there and make them all asynchronous.
-(And it's very expected that you do that)
+You can put executoner there and make them all asynchronous.  
+(And it's very expected that you do that)  
 And by definition, if it's handled to Kafka it's asynchronous
 
 #### Messaging / REST Summary
-Not everyone is using messaging. I'm argueing: you should be.
+Not everyone is using messaging. I'm argueing: you should be.  
 REST is a really bad way to build decoupled systems at scale.
 
-Everyone with experience is moving away from synchronous blocking
+Everyone with experience is moving away from synchronous blocking  
 RPC style interactions by default, the have to.
 
 #### Channels
-Are tissues in terms of Enterprise Integration.
+Are tissues in terms of Enterprise Integration.  
 You can connect database, so that every message is stored in db.
 
 You can add filters to channels,
 
 #### Security Filter, refuse to process request
-For example when doing security
-you may want to validate that person who send request
+For example when doing security  
+you may want to validate that person who send request  
 has a right to do so
 
-To do it, pack JWT token in the body of the message,
-unpack that in the filter in the channel and call
-OAuth issuer to make sure that this is valid
+To do it, pack JWT token in the body of the message,  
+unpack that in the filter in the channel and call  
+OAuth issuer to make sure that this is valid  
 and if it doesn't, it's not valid I can refuse to process the request.
 
 #### How to test channels
-They are just Beans, so you can inject them in any test code.
+They are just Beans, so you can inject them in any test code.  
 But if you also downcast them, there are bunch of different downcastable versions
 
-Instead of MesssageChannel use SubscribableChannel
-if you do that, you can programmatically call subscribe
+Instead of MesssageChannel use SubscribableChannel  
+if you do that, you can programmatically call subscribe  
 and fix a message after assert whatever you want in that handler
 
 #### Awaitility
-And there is also a great library called "Awaitility"
-not part of a Spring, great for things like
+And there is also a great library called "Awaitility"  
+not part of a Spring, great for things like  
 I want to wait 5 seconds and do something.
 
 ### Modularity
-Java is really good at building large codebases.
-Fast compiler, has modularity, rigity.
+Java is really good at building large codebases.  
+Fast compiler, has modularity, rigity.  
 But also because of that it's easy to create a mess
 
-a very large code
-with too many moving parts
+a very large code  
+with too many moving parts  
 that don't talk well together.
 
-Modularity is super important.
-It's how you keep peace in the organization.
+Modularity is super important.  
+It's how you keep peace in the organization.  
 Your ability to evolve code quickly.
 
-Modularity allows you to stay on your swimlane
-and not having to constantly synchronize
+Modularity allows you to stay on your swimlane  
+and not having to constantly synchronize  
 with rest of system teams.
 
-What slows down software is the need
+What slows down software is the need  
 of constant synchronization between members.
 
 Mill Conway, computer scientist, coined:
 - Null was one billion mistake
 - Software reflects organization which built it
 
-If you have four teams working on a compiler
+If you have four teams working on a compiler  
 it will likely be a four pass compiler.
 
-And if you have two components with problems in integration
-that probably means that developer teams behind them
+And if you have two components with problems in integration  
+that probably means that developer teams behind them  
 didn't communicate well.
 
 #### Microservices
-Microservices were not about technology,
+Microservices were not about technology,  
 there is not a one true technology stack you can use for them.
 
-they are about culture.
-they are about agility
-your ability to make changes quickly
+they are about culture.  
+they are about agility  
+your ability to make changes quickly  
 without having constant interactions with other people
 
-I love microservices. They have complexity cost.
-You have to be that tall to take a ride, to so speak
-It's a very complex thing.
+I love microservices. They have complexity cost.  
+You have to be that tall to take a ride, to so speak  
+It's a very complex thing.  
 It's a lot of moving parts.
 
-Anytime you add moving part to system
-you introduce technical complexity
+Anytime you add moving part to system  
+you introduce technical complexity  
 and therefore risk of technical debt.
 
-At large enough team that complexity is ok to take
-and its actually worth doing it as it will pay in future.
+At large enough team that complexity is ok to take  
+and its actually worth doing it as it will pay in future.  
 (Amortyzacja)
 
-For small systems it's too much.
+For small systems it's too much.  
 How do I organize my code to have gains from well organized code?
 
 ### Spring Moduleth
-Organized to stay on rails,
+Organized to stay on rails,  
 to build a code so that it's clean and scales well.
 
 #### Moduleth Goal

@@ -202,6 +202,7 @@ record UnsecuredLoad (float interest) implements Load {}
 ```
 
 previous way
+
 ```java
 class Loans {
   String displayMessageFor(Load loan) {
@@ -215,6 +216,7 @@ class Loans {
 ```
 
 smart switch way
+
 ```java
 class Loans {
   String dsplayMessageFor(Load loan) {
@@ -3893,20 +3895,20 @@ to build a code so that it's clean and scales well.
 #### Modulith Goal
 To write a code so that changes have minimal blast radius.
 
-You don't want to have public elements
-that a lot of other parts depend on.
-If they can depend on it, they will.
+You don't want to have public elements  
+that a lot of other parts depend on.  
+If they can depend on it, they will.  
 Spagetti code.
 
 Follow natural design of the system.
 
 #### Avoid public
-Don't use public by default.
+Don't use public by default.  
 Try to remove public as much as possible.
 
-Fix compiler errors while doing this.
-You should design system so that
-there are few known core interfaces and types
+Fix compiler errors while doing this.  
+You should design system so that  
+there are few known core interfaces and types  
 that the rest of the system depends on
 
 src/main/java/com/example/adoptions/adoptions/DogAdoptionService.java
@@ -3917,3 +3919,244 @@ public class DogAdoptionService {
 ```
 
 remove it as much as you can.
+
+#### Spring Boot Dev tools
+JetBrains doesn't work right when its added later  
+to an already started project in that IDE.  
+You have to recreate project in JetBrains.
+
+#### Divide software to modules
+If you prefer to have one global space for everything  
+just use C language, it's more honest. Don't torture Java like this.
+
+#### Database configuration
+
+application.properties
+
+```
+spring.application.name=adoptions
+
+spring.datasource.username=myuser
+spring.datasource.password=secret
+spring.datasource.url=jdbc:postgresql://localhost/mydatabase
+```
+
+#### First version of adoption service
+
+schema.sql
+
+```java
+create table if not exists dog
+(
+    id          serial primary key,
+    name        text not null,
+    owner       text null,
+    description text not null
+);
+
+```
+
+data.sql
+
+```sql
+delete from dog;
+
+insert into dog (name, owner, description)
+values ('Rocky', null, 'A brown Chihuahua known for being protective');
+
+insert into dog (name, owner, description)
+values ('Charlie', null, 'A black Bulldog known for being curious.');
+
+insert into dog (name, owner, description)
+values ('Duke', null, 'A white German Shepherd known for being friendly.');
+
+insert into dog (id, name, owner, description) values (45, 'Prancer', null, 'a neurotic dog');
+```
+
+DogAdoptionService.java
+
+```java
+package com.example.adoptions.adoptions;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+@ResponseBody
+class DogController {
+  private final DogAdoptionService dogAdoptionService;
+
+  DogController(DogAdoptionService dogAdoptionService) {
+    this.dogAdoptionService = dogAdoptionService;
+  }
+
+  @PostMapping ("/dogs/{dogId}/adoptions")
+  void adopt (@PathVariable int dogId, @RequestParam String owner) {
+    dogAdoptionService.adopt(dogId, owner);
+  }
+}
+
+@Service
+@Transactional
+class DogAdoptionService {
+  private final DogRepository dogRepository;
+
+  DogAdoptionService(DogRepository dogRepository) {
+    this.dogRepository = dogRepository;
+  }
+
+  void adopt(int dogId, String owner) {
+    this.dogRepository.findById(dogId).ifPresent(dog -> {
+      var updated = dogRepository.save(new Dog(dog.id(), dog.name(), owner, dog.description()));
+      System.out.println("adopted [" + updated + "]");
+    });
+  }
+}
+
+interface DogRepository extends ListCrudRepository<Dog, Integer> {}
+
+record Dog(@Id int id, String name, String owner, String description) {};
+```
+
+compose.yml
+
+```yaml
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_PASSWORD=secret'
+      - 'POSTGRES_USER=myuser'
+    ports:
+      - '5432:5432'
+```
+
+then, in two terminals
+
+```bash
+docker compose up
+./mvnw spring-boot:run
+```
+
+to observe database
+
+```bash
+psql -h localhost -p 5432 -U myuser -d mydatabase
+secret
+select * from dog;
+```
+
+and run
+
+```bash
+curl -X POST -F "owner=jlong" http://localhost:8080/dogs/45/adoptions
+# or with HTTPie
+http --form POST :8080/dogs/45/adoptions owner==jlong
+```
+
+#### Add Complication: Veterinary check
+This worked, but let's be honest: thats a lot of code  
+to just update one dog. And yes, it's pretty trivial.  
+It's not realistic. In most real situations you cannot just edit db like that.  
+You have to schedule a meeting to see veterinary.
+
+#### Early Solution: public Dogtor Service
+
+src/main/java/com/example/adoptions/vet/Dogtor.java
+
+```java
+package com.example.adoptions.vet;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class Dogtor {
+  public void schedule(int dogId) {
+    System.out.println("scheduling for " + dogId);
+  }
+
+}
+```
+
+src/main/java/com/example/adoptions/adoptions/DogAdoptionService.java
+
+```java
+package com.example.adoptions.adoptions;
+
+import org.springframework.data.annotation.Id;
+import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.example.adoptions.vet.Dogtor;
+
+@Controller
+@ResponseBody
+class DogController {
+  private final DogAdoptionService dogAdoptionService;
+
+  DogController(DogAdoptionService dogAdoptionService) {
+    this.dogAdoptionService = dogAdoptionService;
+  }
+
+  @PostMapping ("/dogs/{dogId}/adoptions")
+  void adopt (@PathVariable int dogId, @RequestParam String owner) {
+    dogAdoptionService.adopt(dogId, owner);
+  }
+}
+
+@Service
+@Transactional
+class DogAdoptionService {
+  private final DogRepository dogRepository;
+  private final Dogtor dogtor;
+
+  DogAdoptionService(DogRepository dogRepository, Dogtor dogtor) {
+    this.dogRepository = dogRepository;
+    this.dogtor = dogtor;
+  }
+
+  void adopt(int dogId, String owner) {
+    this.dogRepository.findById(dogId).ifPresent(dog -> {
+      var updated = dogRepository.save(new Dog(dog.id(), dog.name(), owner, dog.description()));
+      dogtor.schedule(dogId);
+      System.out.println("adopted [" + updated + "]");
+    });
+  }
+}
+
+interface DogRepository extends ListCrudRepository<Dog, Integer> {}
+
+record Dog(@Id int id, String name, String owner, String description) {};
+```
+
+application.properties
+
+```
+spring.application.name=adoptions
+
+spring.docker.compose.lifecycle-management=start_only
+spring.sql.init.mode=always
+spring.modulith.events.republish-outstanding-events-on-restart=true
+spring.modulith.events.jdbc.schema-initialization.enabled=true
+
+spring.datasource.username=myuser
+spring.datasource.password=secret
+spring.datasource.url=jdbc:postgresql://localhost/mydatabase
+
+management.endpoints.web.exposure.include=*
+```
+

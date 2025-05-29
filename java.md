@@ -3111,6 +3111,545 @@ code in the middle is unaware of Inbound Adapter.
 #### Pipes and filters
 It's a pipes and filters architecture
 
+#### Integration flow
+We are defining integration flow. It's an arragement of steps.
+
+We could put InboundAdapter directly into IntegrationFlow.from  
+and we will use files inbound adapter by the way.
+
+#### Add file integration
+we could add like this Kafka, Pulsar, MongoDB
+
+pom.xml
+```xml
+<dependency>
+  <groupId>org.springframework.integration</groupId>
+  <artifactId>spring-integration-file</artifactId>
+</dependency>
+```
+
+#### Using Spring Integrate transform
+before transform
+
+EipApplication.java
+
+```java
+return IntegrationFlow
+  .from(filesInboundAdapter)
+  .handle(new GenericHandler<File>() {
+    @Override
+    public Object handle(File payload, MessageHeaders headers) {
+      return null;
+    }
+  })
+  .get();
+```
+
+after adding transform
+
+```java
+return IntegrationFlow
+  .from(filesInboundAdapter)
+  .transform(new FileToStringTransformer())
+  .handle(new GenericHandler<String>() {
+    @Override
+    public Object handle(String payload, MessageHeaders headers) {
+      return null;
+    }
+  })
+  .get();
+```
+
+#### Writing Spring Integration Client
+
+EipApplication.java
+
+```java
+package com.example.eip;
+
+import java.io.File;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.integration.core.GenericHandler;
+import org.springframework.integration.dsl.IntegrationFlow;
+import org.springframework.integration.file.dsl.Files;
+import org.springframework.integration.file.transformer.FileToStringTransformer;
+import org.springframework.messaging.MessageHeaders;
+
+@SpringBootApplication
+public class EipApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(EipApplication.class, args);
+  }
+
+  @Bean
+  IntegrationFlow purchaseOrderIntegrationFlow(@Value("file://${HOME}/learn/java-spring-fundamentals/my-integration/purchase-orders/") File file) {
+    var filesInboundAdapter = Files
+      .inboundAdapter(file)
+      .autoCreateDirectory(true);
+
+    return IntegrationFlow
+      .from(filesInboundAdapter)
+      .transform(new FileToStringTransformer())
+      .handle(new GenericHandler<String>() {
+        @Override
+        public Object handle(String payload, MessageHeaders headers) {
+          System.out.println("-------");
+          System.out.println("payload: " + payload + ".");
+          headers.keySet().forEach(System.out::println);
+          return null;
+        }
+      })
+      .get();
+  }
+}
+```
+
+running
+
+```bash
+./mvnw spring-boot:run
+```
+
+will print
+
+```
+payload: {
+  "orderId": "PO-1001",
+  "country": "USA",
+  "lineItems": [
+    { "sku": "SKU-001", "productName": "Bluetooth Speaker", "quantity": 2, "unitPrice": 49.99 },
+    { "sku": "SKU-002", "productName": "USB-C Cable", "quantity": 3, "unitPrice": 9.99 }
+  ],
+  "total": 129.95
+}
+file_originalFile
+id
+file_name
+file_relativePath
+timestamp
+```
+
+#### Pull/Push on example of email protocols
+POP is a protocol you pull
+
+IMAP lets you can establish socket connection  
+and receive push notification, so that you know  
+immediatelly when you have a new email.
+
+But it's bad for battery.
+
+POP: pull  
+IMAP: push
+
+Databases don't push
+
+Messaging Queues do push  
+Kafka can tell you when something has changed
+
+how to controll pulling rate
+```java
+.from(filesInboundAdapter, pc -> pc.poller(pm ->
+			pm.fixedRate(Duration.ofMinutes(1))
+```
+
+#### Queue
+new files will not be given at the same time  
+Puller is buffering, it gives one message every second.
+
+It's Staged Event-Driven Archtecture (SEDA)  
+you have steps in a sequence,  
+each of the steps may get overwhelmed  
+so you serialize the results that go into those things  
+they get absorbed by intristic buffering  nature
+
+#### Kafka
+So when you do true pipes and fiters driven architecture  
+use something like Kafka or RabitMQ. You send message to Kafka  
+deliver it to component, process it, deliver it to Kafka,  
+deliver to com component, process it, deliver to Kafka... etc.
+
+#### Integration with JSON Model
+Transform String 
+
+EipApplication.java
+
+```java
+return IntegrationFlow
+  .from(filesInboundAdapter)
+  .transform(new FileToStringTransformer())
+  .transform(new JsonToObjectTransformer(PurchaseOrder.class))
+  .handle(new GenericHandler<PurchaseOrder>() {
+    @Override
+    public Object handle(PurchaseOrder payload, MessageHeaders headers) {
+      System.out.println("-----------------------------");
+      System.out.println("payload: " + payload + ".");
+      headers.keySet().forEach(System.out::println);
+      payload.lineItems().forEach(System.out::println);
+      return null;
+    }
+  })
+  .get();
+```
+
+which will print
+
+```
+-----------------------------
+payload: PurchaseOrder[orderId=PO-1008, country=Australia, lineItems=[LineItem[sku=SKU-013, productionName=null, quantity=1, unitPrice=229.99], LineItem[sku=SKU-014, productionName=null, quantity=2, unitPrice=12.49]], total=254.97].
+file_originalFile
+id
+file_name
+file_relativePath
+timestamp
+LineItem[sku=SKU-013, productionName=null, quantity=1, unitPrice=229.99]
+LineItem[sku=SKU-014, productionName=null, quantity=2, unitPrice=12.49]
+```
+
+#### print one of headers
+Supplementary information
+
+EipApplication.java
+
+```java
+System.out.println("-----------------------------");
+System.out.println("payload: " + payload + ".");
+System.out.println(headers.get("file_originalFile"));
+```
+
+result
+
+```
+payload: PurchaseOrder[orderId=PO-1010, country=Italy, lineItems=[LineItem[sku=SKU-016, productionName=null, quantity=1, unitPrice=349.99]], total=349.99].
+/Users/maciejka/learn/java-spring-fundamentals/my-integration/purchase-orders/1010.json
+```
+
+#### split along lines of order
+
+When we return null, like we did in handle
+that will stop subsequent execution flow.
+
+EipApplication.java
+
+```java
+return IntegrationFlow
+  .from(filesInboundAdapter)
+  // .from(filesInboundAdapter, pc -> pc.poller(pm ->
+  // 			pm.fixedRate(Duration.ofMinutes(1))
+  .transform(new FileToStringTransformer())
+  .transform(new JsonToObjectTransformer(PurchaseOrder.class))
+  .handle(new GenericHandler<PurchaseOrder>() {
+    @Override
+    public Object handle(PurchaseOrder payload, MessageHeaders headers) {
+      System.out.println("-----------------------------");
+      System.out.println("payload: " + payload + ".");
+      System.out.println(headers.get("file_originalFile"));
+      headers.keySet().forEach(System.out::println);
+      payload.lineItems().forEach(System.out::println);
+      return payload;
+    }
+  })
+  .split(PurchaseOrder.class, po -> po.lineItems())
+  .handle(new GenericHandler<LineItem>() {
+    @Override
+    public Object handle(LineItem payload, MessageHeaders headers) {
+      System.out.println("got line item " + payload + '.');
+      return null;
+    }
+  })
+  .get();
+}
+```
+
+returns
+
+```
+-----------------------------
+payload: PurchaseOrder[orderId=PO-1008, country=Australia, lineItems=[LineItem[sku=SKU-013, productionName=null, quantity=1, unitPrice=229.99], LineItem[sku=SKU-014, productionName=null, quantity=2, unitPrice=12.49]], total=254.97].
+/Users/maciejka/learn/java-spring-fundamentals/my-integration/purchase-orders/1008.json
+file_originalFile
+id
+file_name
+file_relativePath
+timestamp
+LineItem[sku=SKU-013, productionName=null, quantity=1, unitPrice=229.99]
+LineItem[sku=SKU-014, productionName=null, quantity=2, unitPrice=12.49]
+got line item LineItem[sku=SKU-013, productionName=null, quantity=1, unitPrice=229.99].
+got line item LineItem[sku=SKU-014, productionName=null, quantity=2, unitPrice=12.49].
+```
+
+#### split and aggregate
+
+And its possible to split it to send to Kafka
+wait for the thing to come back and process it.
+
+```java
+return IntegrationFlow
+  .from(filesInboundAdapter)
+  // .from(filesInboundAdapter, pc -> pc.poller(pm ->
+  // 			pm.fixedRate(Duration.ofMinutes(1))
+  .transform(new FileToStringTransformer())
+  .transform(new JsonToObjectTransformer(PurchaseOrder.class))
+  .handle(new GenericHandler<PurchaseOrder>() {
+    @Override
+    public Object handle(PurchaseOrder payload, MessageHeaders headers) {
+      System.out.println("-----------------------------");
+      System.out.println("payload: " + payload + ".");
+      System.out.println(headers.get("file_originalFile"));
+      headers.keySet().forEach(System.out::println);
+      payload.lineItems().forEach(System.out::println);
+      return payload;
+    }
+  })
+  .split(PurchaseOrder.class, po -> po.lineItems())
+  .handle(new GenericHandler<LineItem>() {
+    @Override
+    public Object handle(LineItem payload, MessageHeaders headers) {
+      System.out.println("got line item " + payload + '.');
+      return payload;
+    }
+  })
+  .aggregate()
+  .handle(new GenericHandler<Object>() {
+    @Override
+    public Object handle(Object payload, MessageHeaders headers) {
+      System.out.println("final payload: " + payload + ".");
+      return null;
+    }})
+  .get();
+}
+```
+
+We could transform LineItems into network call after split
+and then we would aggregate results.
+
+returns
+
+```
+-----------------------------
+payload: PurchaseOrder[orderId=PO-1008, country=Australia, lineItems=[LineItem[sku=SKU-013, productionName=null, quantity=1, unitPrice=229.99], LineItem[sku=SKU-014, productionName=null, quantity=2, unitPrice=12.49]], total=254.97].
+/Users/maciejka/learn/java-spring-fundamentals/my-integration/purchase-orders/1008.json
+file_originalFile
+id
+file_name
+file_relativePath
+timestamp
+LineItem[sku=SKU-013, productionName=null, quantity=1, unitPrice=229.99]
+LineItem[sku=SKU-014, productionName=null, quantity=2, unitPrice=12.49]
+got line item LineItem[sku=SKU-013, productionName=null, quantity=1, unitPrice=229.99].
+got line item LineItem[sku=SKU-014, productionName=null, quantity=2, unitPrice=12.49].
+final payload: [LineItem[sku=SKU-013, productionName=null, quantity=1, unitPrice=229.99], LineItem[sku=SKU-014, productionName=null, quantity=2, unitPrice=12.49]].
+```
+
+#### More integration methods
+Has way more
+
+```
+.route()
+.controlerBusOnRegistry()
+.transform()
+...
+```
+
+
+#### Complete integration client
+
+EipApplication.java
+
+```java
+package com.example.eip;
+
+import java.io.File;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.integration.core.GenericHandler;
+import org.springframework.integration.dsl.IntegrationFlow;
+import org.springframework.integration.file.dsl.Files;
+import org.springframework.integration.file.transformer.FileToStringTransformer;
+import org.springframework.integration.json.JsonToObjectTransformer;
+import org.springframework.messaging.MessageHeaders;
+
+@SpringBootApplication
+public class EipApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(EipApplication.class, args);
+  }
+
+  @Bean
+  IntegrationFlow purchaseOrderIntegrationFlow(@Value("file://${HOME}/learn/java-spring-fundamentals/my-integration/purchase-orders/") File file) {
+    var filesInboundAdapter = Files
+      .inboundAdapter(file)
+      .autoCreateDirectory(true);
+
+    return IntegrationFlow
+      .from(filesInboundAdapter)
+      .transform(new FileToStringTransformer())
+      .transform(new JsonToObjectTransformer(PurchaseOrder.class))
+      .handle(new GenericHandler<PurchaseOrder>() {
+        @Override
+        public Object handle(PurchaseOrder payload, MessageHeaders headers) {
+          System.out.println("-----------------------------");
+          System.out.println("payload: " + payload + ".");
+          System.out.println(headers.get("file_originalFile"));
+          headers.keySet().forEach(System.out::println);
+          payload.lineItems().forEach(System.out::println);
+          return payload;
+        }
+      })
+      .split(PurchaseOrder.class, po -> po.lineItems())
+      .handle(new GenericHandler<LineItem>() {
+        @Override
+        public Object handle(LineItem payload, MessageHeaders headers) {
+          System.out.println("got line item " + payload + '.');
+          return payload;
+        }
+      })
+      .aggregate()
+      .handle(new GenericHandler<Object>() {
+        @Override
+        public Object handle(Object payload, MessageHeaders headers) {
+          System.out.println("final payload: " + payload + ".");
+          return null;
+        }})
+      .get();
+  }
+
+  record LineItem(String sku, String productionName, int quantity, double unitPrice) {}
+  record PurchaseOrder(String orderId, String country, Set<LineItem> lineItems, double total) {}
+}
+```
+
+#### Reuse integration flows
+
+In integration world I may want to take that whole integration flow
+and make it reusable and available on multiple channels.
+
+#### @Value
+https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/value-annotations.html#page-title
+@Value is typically used to inject externalized properties:
+
+```java
+@Component
+public class MovieRecommender {
+
+	private final String catalog;
+
+	public MovieRecommender(@Value("${catalog.name}") String catalog) {
+		this.catalog = catalog;
+	}
+}
+```
+
+With the following configuration:
+
+```java
+@Configuration
+@PropertySource("classpath:application.properties")
+public class AppConfig { }
+```
+
+And the following application.properties file:
+
+```
+catalog.name=MovieCatalog
+```
+
+#### var
+```java
+Message<String> build = MessageBuilder.withPayload(content).build();
+```
+
+is same as
+
+```java
+var build = MessageBuilder.withPayload(content).build();
+```
+
+#### Refactor and web api
+Make reusable integration flows
+Add endpoint to upload file
+
+Allow to have two origins that will produce Message
+Either way we end in purchaseOrderIntegrationFlow
+
+to test run and upload
+
+```bash
+./mvnw spring-boot:run
+curl -F "file=@/Users/maciejka/learn/java-spring-fundamentals/my-integration/purchase-orders/1010.json" http://localhost:8080/post
+```
+
+server logs on first curl run
+(on next one there will bo no initialization)
+
+```
+2025-05-29T12:54:45.132+02:00  INFO 53990 --- [eip] [nio-8080-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-05-29T12:54:45.132+02:00  INFO 53990 --- [eip] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-05-29T12:54:45.133+02:00  INFO 53990 --- [eip] [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+-----------------------------
+payload: PurchaseOrder[orderId=PO-1010, country=Italy, lineItems=[LineItem[sku=SKU-016, productionName=null, quantity=1, unitPrice=349.99]], total=349.99].
+null
+id
+timestamp
+LineItem[sku=SKU-016, productionName=null, quantity=1, unitPrice=349.99]
+got line item LineItem[sku=SKU-016, productionName=null, quantity=1, unitPrice=349.99].
+final payload: [LineItem[sku=SKU-016, productionName=null, quantity=1, unitPrice=349.99]].
+```
+
+#### httpie
+```bash
+brew install httpie
+```
+
+these are same
+
+```bash
+curl -F "file=@/Users/maciejka/learn/java-spring-fundamentals/my-integration/purchase-orders/1010.json" http://localhost:8080/post
+http --form POST :8080/post file@~/Users/maciejka/learn/java-spring-fundamentals/my-integration/purchase-orders/1010.json
+```
+
+#### Only care about Inbound
+As a principle you should assume anything
+about futher routing or where result goes afterward.
+
+```
+Message-processing components should focus only on consuming input (inbound messages).
+They shouldn't be concerned with how the result is routed or where it goes afterward.
+```
+
+#### Summary, Indirection with Channels
+We created channel to create indirection
+between origin of the message and processing of the message.
+
+There are two sources of the message.
+As long as I have the channel, I can send any message into that channel.
+
+origin 1)
+We added Rest controller, with "Post"
+in endpoint handler we are creating message from Post File Payload
+
+origin 2)
+Or I drop a new file in this folder.
+And this folder looks at the new file turns it into string
+and puts it into channel, 
+
+either way message is going to the channel
+and they end up in purchaseOrderIntegrationFlow
+
+(which injects MessageChannel inbound)
+and reads from it immediatelly
+
+We used files adapter, but it could be Kafka, Pulsar it will be almost the same
+instead `Files.inboundAdapter(directory)` you would use `Amqp.inboundAdapter(...)`
 
 
 
@@ -3121,6 +3660,7 @@ It's a pipes and filters architecture
 
 
 ### Modularity
+
 Allows to not have to constantly synchronize with other people.  
 Mill Conway
 - null was one billion mistake

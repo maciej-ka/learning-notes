@@ -3651,22 +3651,255 @@ and reads from it immediatelly
 We used files adapter, but it could be Kafka, Pulsar it will be almost the same  
 instead `Files.inboundAdapter(directory)` you would use `Amqp.inboundAdapter(...)`
 
+#### Refactor full code
+
+EipApplication.java
+
+```java
+package com.example.eip;
+
+import java.io.File;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.integration.core.GenericHandler;
+import org.springframework.integration.dsl.DirectChannelSpec;
+import org.springframework.integration.dsl.IntegrationFlow;
+import org.springframework.integration.dsl.MessageChannels;
+import org.springframework.integration.file.dsl.Files;
+import org.springframework.integration.file.transformer.FileToStringTransformer;
+import org.springframework.integration.json.JsonToObjectTransformer;
+import org.springframework.integration.support.MessageBuilder;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.MessageHeaders;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+@SpringBootApplication
+public class EipApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(EipApplication.class, args);
+  }
+
+  @Bean
+  DirectChannelSpec inbound() {
+    return MessageChannels.direct();
+  }
+
+  @Controller
+  @ResponseBody
+  class PurchaseOrderController {
+    private final MessageChannel inbound;
+
+    PurchaseOrderController(MessageChannel inbound) {
+      this.inbound = inbound;
+    }
 
 
+    @PostMapping("/post")
+    void postPurchaseOrder(@RequestBody MultipartFile file) throws Exception {
+      var content = new String(file.getBytes());
+      var build = MessageBuilder.withPayload(content).build();
+      this.inbound.send(build);
+    }
+  }
 
+  @Bean
+  IntegrationFlow fileInboundFlow (
+      MessageChannel inbound,
+      @Value("file://${HOME}/learn/java-spring-fundamentals/my-integration/purchase-orders/") File directory) {
+    var filesInboundAdapter = Files
+      .inboundAdapter(directory)
+      .autoCreateDirectory(true);
 
+    return IntegrationFlow
+      .from(filesInboundAdapter)
+      .transform(new FileToStringTransformer())
+      .channel(inbound())
+      .get();
+  }
 
+  @Bean
+  IntegrationFlow purchaseOrderIntegrationFlow(
+      MessageChannel inbound) {
 
+    return IntegrationFlow
+      .from(inbound)
+      .transform(new JsonToObjectTransformer(PurchaseOrder.class))
+      .handle(new GenericHandler<PurchaseOrder>() {
+        @Override
+        public Object handle(PurchaseOrder payload, MessageHeaders headers) {
+          System.out.println("-----------------------------");
+          System.out.println("payload: " + payload + ".");
+          System.out.println(headers.get("file_originalFile"));
+          headers.keySet().forEach(System.out::println);
+          payload.lineItems().forEach(System.out::println);
+          return payload;
+        }
+      })
+      .split(PurchaseOrder.class, po -> po.lineItems())
+      .handle(new GenericHandler<LineItem>() {
+        @Override
+        public Object handle(LineItem payload, MessageHeaders headers) {
+          System.out.println("got line item " + payload + '.');
+          return payload;
+        }
+      })
+      .aggregate()
+      .handle(new GenericHandler<Object>() {
+        @Override
+        public Object handle(Object payload, MessageHeaders headers) {
+          System.out.println("final payload: " + payload + ".");
+          return null;
+        }})
+      .get();
+  }
 
+  record LineItem(String sku, String productionName, int quantity, double unitPrice) {}
+  record PurchaseOrder(String orderId, String country, Set<LineItem> lineItems, double total) {}
+}
+```
+
+#### Handling errors
+In case something goes wrong,
+you can listen on error channel.
+
+(inside `public class EipApplication`)
+
+```java
+@Bean
+IntegrationFlow errorIntegrationFlow(@Qualifier("errorchannel") MessageChannel errorChannel) {
+  return Integrationflow
+    .from(errorChannel)
+    ...
+  }
+```
+
+#### Synchronous by default
+By default dispatch from one component to another
+in the same integration flow is synchronous.
+which means they are on the same thread
+
+so you can use database transactions
+in case postPurchaseOrder POST endpoint needs to do all actions
+
+You can put executoner there and make them all asynchronous.
+(And it's very expected that you do that)
+And by definition, if it's handled to Kafka it's asynchronous
+
+#### Messaging / REST Summary
+Not everyone is using messaging. I'm argueing: you should be.
+REST is a really bad way to build decoupled systems at scale.
+
+Everyone with experience is moving away from synchronous blocking
+RPC style interactions by default, the have to.
+
+#### Channels
+Are tissues in terms of Enterprise Integration.
+You can connect database, so that every message is stored in db.
+
+You can add filters to channels,
+
+#### Security Filter, refuse to process request
+For example when doing security
+you may want to validate that person who send request
+has a right to do so
+
+To do it, pack JWT token in the body of the message,
+unpack that in the filter in the channel and call
+OAuth issuer to make sure that this is valid
+and if it doesn't, it's not valid I can refuse to process the request.
+
+#### How to test channels
+They are just Beans, so you can inject them in any test code.
+But if you also downcast them, there are bunch of different downcastable versions
+
+Instead of MesssageChannel use SubscribableChannel
+if you do that, you can programmatically call subscribe
+and fix a message after assert whatever you want in that handler
+
+#### Awaitility
+And there is also a great library called "Awaitility"
+not part of a Spring, great for things like
+I want to wait 5 seconds and do something.
 
 ### Modularity
+Java is really good at building large codebases.
+Fast compiler, has modularity, rigity.
+But also because of that it's easy to create a mess
 
-Allows to not have to constantly synchronize with other people.  
-Mill Conway
-- null was one billion mistake
-- software reflects team organization
+a very large code
+with too many moving parts
+that don't talk well together.
 
-#### Spring Moduleth
+Modularity is super important.
+It's how you keep peace in the organization.
+Your ability to evolve code quickly.
+
+Modularity allows you to stay on your swimlane
+and not having to constantly synchronize
+with rest of system teams.
+
+What slows down software is the need
+of constant synchronization between members.
+
+Mill Conway, computer scientist, coined:
+- Null was one billion mistake
+- Software reflects organization which built it
+
+If you have four teams working on a compiler
+it will likely be a four pass compiler.
+
+And if you have two components with problems in integration
+that probably means that developer teams behind them
+didn't communicate well.
+
+#### Microservices
+Microservices were not about technology,
+there is not a one true technology stack you can use for them.
+
+they are about culture.
+they are about agility
+your ability to make changes quickly
+without having constant interactions with other people
+
+I love microservices. They have complexity cost.
+You have to be that tall to take a ride, to so speak
+It's a very complex thing.
+It's a lot of moving parts.
+
+Anytime you add moving part to system
+you introduce technical complexity
+and therefore risk of technical debt.
+
+At large enough team that complexity is ok to take
+and its actually worth doing it as it will pay in future.
+(Amortyzacja)
+
+For small systems it's too much.
+How do I organize my code to have gains from well organized code?
+
+### Spring Moduleth
+Organized to stay on rails,
+to build a code so that it's clean and scales well.
+
+#### Moduleth Goal
+To write a code so that changes have minimal blast radius.
+
+
+
+
+
+
+
+
 If you organize your code in a way  
 that rest of the system can depend on it,  
 then rest of the system will depend on it  

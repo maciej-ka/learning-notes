@@ -4648,17 +4648,17 @@ my-modulith/src/test/java/com/example/adoptions/AdoptionsApplicationTests.java
 ```java
 package com.example.adoptions;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Test;  
+import org.springframework.boot.test.context.SpringBootTest;  
 import org.springframework.modulith.core.ApplicationModules;
 
-@SpringBootTest
+@SpringBootTest  
 class AdoptionsApplicationTests {
 
-  @Test
-  void contextLoads() {
-    var am = ApplicationModules.of(AdoptionsApplication.class);
-    am.verify();
+  @Test  
+  void contextLoads() {  
+    var am = ApplicationModules.of(AdoptionsApplication.class);  
+    am.verify();  
   }
 
 }
@@ -4675,33 +4675,33 @@ run test
 my-modulith/src/test/java/com/example/adoptions/AdoptionsApplicationTests.java
 
 ```java
-@Test
-void contextLoads() {
-  var am = ApplicationModules.of(AdoptionsApplication.class);
-  am.verify();
-  System.out.println(am);
+@Test  
+void contextLoads() {  
+  var am = ApplicationModules.of(AdoptionsApplication.class);  
+  am.verify();  
+  System.out.println(am);  
 }
 ```
 
 Output
 
 ```
-# Adoptions
-> Logical name: adoptions
-> Base package: com.example.adoptions.adoptions
-> Excluded packages: none
-> Direct module dependencies: none
-> Spring beans:
-  o ….DogAdoptionService
-  o ….DogController
+# Adoptions  
+> Logical name: adoptions  
+> Base package: com.example.adoptions.adoptions  
+> Excluded packages: none  
+> Direct module dependencies: none  
+> Spring beans:  
+  o ….DogAdoptionService  
+  o ….DogController  
   o ….DogRepository
 
-# Vet
-> Logical name: vet
-> Base package: com.example.adoptions.vet
-> Excluded packages: none
-> Direct module dependencies: none
-> Spring beans:
+# Vet  
+> Logical name: vet  
+> Base package: com.example.adoptions.vet  
+> Excluded packages: none  
+> Direct module dependencies: none  
+> Spring beans:  
   o ….Dogtor
 ```
 
@@ -4718,14 +4718,14 @@ It will create `target/spring-modulith-docs`
 my-modulith/src/test/java/com/example/adoptions/AdoptionsApplicationTests.java
 
 ```java
-@Test
-void contextLoads() {
-  var am = ApplicationModules.of(AdoptionsApplication.class);
+@Test  
+void contextLoads() {  
+  var am = ApplicationModules.of(AdoptionsApplication.class);  
   am.verify();
 
   System.out.println(am);
 
-  new  Documenter(am).writeDocumentation();
+  new  Documenter(am).writeDocumentation();  
 }
 ```
 
@@ -4763,8 +4763,8 @@ package com.example.adoptions.adoptions.validation;
 
 import org.springframework.stereotype.Component;
 
-@Component
-public class Validation {
+@Component  
+public class Validation {  
 }
 ```
 
@@ -4789,54 +4789,54 @@ src/main/java/com/example/adoptions/adoptions/DogAdoptionService.java
 ```java
 package com.example.adoptions.adoptions;
 
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.repository.ListCrudRepository;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.context.ApplicationEventPublisher;  
+import org.springframework.data.annotation.Id;  
+import org.springframework.data.repository.ListCrudRepository;  
+import org.springframework.stereotype.Controller;  
+import org.springframework.stereotype.Service;  
+import org.springframework.transaction.annotation.Transactional;  
+import org.springframework.web.bind.annotation.PathVariable;  
+import org.springframework.web.bind.annotation.PostMapping;  
+import org.springframework.web.bind.annotation.RequestParam;  
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.adoptions.adoptions.validation.Validation;
 
-@Controller
-@ResponseBody
-class DogController {
+@Controller  
+@ResponseBody  
+class DogController {  
   private final DogAdoptionService dogAdoptionService;
 
-  DogController(DogAdoptionService dogAdoptionService) {
-    this.dogAdoptionService = dogAdoptionService;
+  DogController(DogAdoptionService dogAdoptionService) {  
+    this.dogAdoptionService = dogAdoptionService;  
   }
 
-  @PostMapping ("/dogs/{dogId}/adoptions")
-  void adopt (@PathVariable int dogId, @RequestParam String owner) {
-    dogAdoptionService.adopt(dogId, owner);
-  }
+  @PostMapping ("/dogs/{dogId}/adoptions")  
+  void adopt (@PathVariable int dogId, @RequestParam String owner) {  
+    dogAdoptionService.adopt(dogId, owner);  
+  }  
 }
 
-@Service
-@Transactional
-class DogAdoptionService {
-  private final Validation validation;
-  private final DogRepository dogRepository;
+@Service  
+@Transactional  
+class DogAdoptionService {  
+  private final Validation validation;  
+  private final DogRepository dogRepository;  
   private final ApplicationEventPublisher applicationEventPublisher;
 
-  DogAdoptionService(DogRepository dogRepository, ApplicationEventPublisher applicationEventPublisher, Validation validation) {
-    this.dogRepository = dogRepository;
-    this.applicationEventPublisher = applicationEventPublisher;
-    this.validation = validation;
+  DogAdoptionService(DogRepository dogRepository, ApplicationEventPublisher applicationEventPublisher, Validation validation) {  
+    this.dogRepository = dogRepository;  
+    this.applicationEventPublisher = applicationEventPublisher;  
+    this.validation = validation;  
   }
 
-  void adopt(int dogId, String owner) {
-    this.dogRepository.findById(dogId).ifPresent(dog -> {
-      var updated = dogRepository.save(new Dog(dog.id(), dog.name(), owner, dog.description()));
-      applicationEventPublisher.publishEvent(new DogAdoptionEvent(dogId));
-      System.out.println("adopted [" + updated + "]");
-    });
-  }
+  void adopt(int dogId, String owner) {  
+    this.dogRepository.findById(dogId).ifPresent(dog -> {  
+      var updated = dogRepository.save(new Dog(dog.id(), dog.name(), owner, dog.description()));  
+      applicationEventPublisher.publishEvent(new DogAdoptionEvent(dogId));  
+      System.out.println("adopted [" + updated + "]");  
+    });  
+  }  
 }
 
 interface DogRepository extends ListCrudRepository<Dog, Integer> {}
@@ -4861,25 +4861,25 @@ src/main/java/com/example/adoptions/vet/Dogtor.java
 ```java
 package com.example.adoptions.vet;
 
-import org.springframework.modulith.events.ApplicationModuleListener;
+import org.springframework.modulith.events.ApplicationModuleListener;  
 import org.springframework.stereotype.Service;
 
-import com.example.adoptions.adoptions.DogAdoptionEvent;
+import com.example.adoptions.adoptions.DogAdoptionEvent;  
 import com.example.adoptions.adoptions.validation.Validation;
 
-@Service
+@Service  
 class Dogtor {
 
   private final Validation validation;
 
-  public Dogtor(Validation validation) {
-    this.validation = validation;
+  public Dogtor(Validation validation) {  
+    this.validation = validation;  
   }
 
-  @ApplicationModuleListener
-  void schedule(DogAdoptionEvent dogId) throws InterruptedException {
-    Thread.sleep(5000);
-    System.out.println("scheduling for " + dogId);
+  @ApplicationModuleListener  
+  void schedule(DogAdoptionEvent dogId) throws InterruptedException {  
+    Thread.sleep(5000);  
+    System.out.println("scheduling for " + dogId);  
   }
 
 }
@@ -4898,32 +4898,32 @@ Event though it's public
 it's not meant for everybody to consue.
 
 ```
-Errors:
-[ERROR]   AdoptionsApplicationTests.contextLoads:14 » Violations - Module 'vet' depends on non-exposed type com.example.adoptions.adoptions.validation.Validation within module 'adoptions'!
+Errors:  
+[ERROR]   AdoptionsApplicationTests.contextLoads:14 » Violations - Module 'vet' depends on non-exposed type com.example.adoptions.adoptions.validation.Validation within module 'adoptions'!  
 Dogtor declares constructor Dogtor(Validation) in (Dogtor.java:0)
-- Module 'vet' depends on non-exposed type com.example.adoptions.adoptions.validation.Validation within module 'adoptions'!
+- Module 'vet' depends on non-exposed type com.example.adoptions.adoptions.validation.Validation within module 'adoptions'!  
 Field <com.example.adoptions.vet.Dogtor.validation> has type <com.example.adoptions.adoptions.validation.Validation> in (Dogtor.java:0)
-- Module 'vet' depends on non-exposed type com.example.adoptions.adoptions.validation.Validation within module 'adoptions'!
-Constructor <com.example.adoptions.vet.Dogtor.<init>(com.example.adoptions.adoptions.validation.Validation)> has parameter of type <com.example.adoptions.adoptions.validation.Validation> in (Dogtor.java:0)
-[INFO]
-[ERROR] Tests run: 1, Failures: 0, Errors: 1, Skipped: 0
-[INFO]
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  3.290 s
-[INFO] Finished at: 2025-05-29T21:57:12+02:00
-[INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project adoptions:
-[ERROR]
-[ERROR] See /Users/maciejka/learn/java-spring-fundamentals/my-modulith/target/surefire-reports for the individual test results.
-[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
-[ERROR] -> [Help 1]
-[ERROR]
-[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
-[ERROR] Re-run Maven using the -X switch to enable full debug logging.
-[ERROR]
-[ERROR] For more information about the errors and possible solutions, please read the following articles:
+- Module 'vet' depends on non-exposed type com.example.adoptions.adoptions.validation.Validation within module 'adoptions'!  
+Constructor <com.example.adoptions.vet.Dogtor.<init>(com.example.adoptions.adoptions.validation.Validation)> has parameter of type <com.example.adoptions.adoptions.validation.Validation> in (Dogtor.java:0)  
+[INFO]  
+[ERROR] Tests run: 1, Failures: 0, Errors: 1, Skipped: 0  
+[INFO]  
+[INFO] ------------------------------------------------------------------------  
+[INFO] BUILD FAILURE  
+[INFO] ------------------------------------------------------------------------  
+[INFO] Total time:  3.290 s  
+[INFO] Finished at: 2025-05-29T21:57:12+02:00  
+[INFO] ------------------------------------------------------------------------  
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.3:test (default-test) on project adoptions:  
+[ERROR]  
+[ERROR] See /Users/maciejka/learn/java-spring-fundamentals/my-modulith/target/surefire-reports for the individual test results.  
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.  
+[ERROR] -> [Help 1]  
+[ERROR]  
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.  
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.  
+[ERROR]  
+[ERROR] For more information about the errors and possible solutions, please read the following articles:  
 [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
 ```
 
@@ -4938,23 +4938,23 @@ When running ` ./mvnw test`
 Why i don't see DogAdoptionEvent  and dependency of it in Doctor. All I see is:
 
 ```
-# Adoptions
-> Logical name: adoptions
-> Base package: com.example.adoptions.adoptions
-> Excluded packages: none
-> Direct module dependencies: none
-> Spring beans:
-  o ….DogAdoptionService
-  o ….DogController
-  o ….DogRepository
+# Adoptions  
+> Logical name: adoptions  
+> Base package: com.example.adoptions.adoptions  
+> Excluded packages: none  
+> Direct module dependencies: none  
+> Spring beans:  
+  o ….DogAdoptionService  
+  o ….DogController  
+  o ….DogRepository  
   o ….validation.Validation
 
-# Vet
-> Logical name: vet
-> Base package: com.example.adoptions.vet
-> Excluded packages: none
-> Direct module dependencies: none
-> Spring beans:
+# Vet  
+> Logical name: vet  
+> Base package: com.example.adoptions.vet  
+> Excluded packages: none  
+> Direct module dependencies: none  
+> Spring beans:  
   o ….Dogtor
 ```
 

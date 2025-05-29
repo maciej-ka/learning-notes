@@ -1,3 +1,4 @@
+```java
 Java Fundamentals
 =================
 https://frontendmasters.com/courses/java
@@ -4148,16 +4149,9 @@ application.properties
 ```
 spring.application.name=adoptions
 
-spring.docker.compose.lifecycle-management=start_only
-spring.sql.init.mode=always
-spring.modulith.events.republish-outstanding-events-on-restart=true
-spring.modulith.events.jdbc.schema-initialization.enabled=true
-
 spring.datasource.username=myuser
 spring.datasource.password=secret
 spring.datasource.url=jdbc:postgresql://localhost/mydatabase
-
-management.endpoints.web.exposure.include=*
 ```
 
 runnnig
@@ -4217,4 +4211,434 @@ It's just a matter of preserving history
 Idea that from one event source you can rebuild many interfaces:  
 PostgreSQL, Redis...
 
+#### Refactor, Event-Carried State Transfer
 
+src/main/java/com/example/adoptions/adoptions/DogAdoptionEvent.java
+
+```java
+package com.example.adoptions.adoptions;
+
+public record DogAdoptionEvent (int dogId) {
+}
+```
+
+src/main/java/com/example/adoptions/adoptions/DogAdoptionService.java
+
+```java
+package com.example.adoptions.adoptions;
+
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+@ResponseBody
+class DogController {
+  private final DogAdoptionService dogAdoptionService;
+
+  DogController(DogAdoptionService dogAdoptionService) {
+    this.dogAdoptionService = dogAdoptionService;
+  }
+
+  @PostMapping ("/dogs/{dogId}/adoptions")
+  void adopt (@PathVariable int dogId, @RequestParam String owner) {
+    dogAdoptionService.adopt(dogId, owner);
+  }
+}
+
+@Service
+@Transactional
+class DogAdoptionService {
+  private final DogRepository dogRepository;
+  private final ApplicationEventPublisher applicationEventPublisher;
+
+  DogAdoptionService(DogRepository dogRepository, ApplicationEventPublisher applicationEventPublisher) {
+    this.dogRepository = dogRepository;
+    this.applicationEventPublisher = applicationEventPublisher;
+  }
+
+  void adopt(int dogId, String owner) {
+    this.dogRepository.findById(dogId).ifPresent(dog -> {
+      var updated = dogRepository.save(new Dog(dog.id(), dog.name(), owner, dog.description()));
+      applicationEventPublisher.publishEvent(new DogAdoptionEvent(dogId));
+      System.out.println("adopted [" + updated + "]");
+    });
+  }
+}
+
+interface DogRepository extends ListCrudRepository<Dog, Integer> {}
+
+record Dog(@Id int id, String name, String owner, String description) {};
+```
+
+src/main/java/com/example/adoptions/vet/Dogtor.java
+
+
+```java
+package com.example.adoptions.vet;
+
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Service;
+
+import com.example.adoptions.adoptions.DogAdoptionEvent;
+
+@Service
+class Dogtor {
+
+  @EventListener
+  void schedule(DogAdoptionEvent dogId) {
+    System.out.println("scheduling for " + dogId);
+  }
+
+}
+src/main/java/com/example/adoptions/vet/Dogtor.java
+```
+
+run
+
+```bash
+docker compose up
+./mvnw spring-boot:run
+curl -X POST -F "owner=jlong" http://localhost:8080/dogs/45/adoptions
+```
+
+output
+
+```
+scheduling for DogAdoptionEvent[dogId=45]
+adopted [Dog[id=45, name=Prancer, owner=jlong, description=a neurotic dog]]
+```
+
+#### Refactor summary
+
+DogAdoptioEvent is our first purpously public event.  
+First type that we intentionally made public.
+
+We change Doktor to become lister for DogAdoptionEvent.  
+And add publishing in the AdoptionService.
+
+Dogtor can be package private again
+(we can remove public from `public class Dogtor {...}`).
+
+Two modules are talking to each other but they are decoupled.
+One doesn't know about the other. They don't need to know about each other.
+
+...Except they are kind of coupled, aren't they?
+Events are published synchronously, in the same thread.
+Adding sleep, will be visible in curl.
+
+```java
+class Dogtor {
+  void schedule(DogAdoption Event dogId) throws Exception {
+    Thread.sleep(5000);
+    // ...
+  }
+}
+```
+
+#### Fire and Forget
+
+That synchronous behaviour would be very hard for developers to work with
+if someone by accident introduces such a delay to whole system.
+
+Because of that many people think about asychronous "Fire and Forget"
+
+src/main/java/com/example/adoptions/vet/Dogtor.java
+
+```java
+package com.example.adoptions.vet;
+
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import com.example.adoptions.adoptions.DogAdoptionEvent;
+
+@Service
+class Dogtor {
+
+  @Async
+  @EventListener
+  void schedule(DogAdoptionEvent dogId) throws InterruptedException {
+    Thread.sleep(5000);
+    System.out.println("scheduling for " + dogId);
+  }
+
+}
+```
+
+With that change the response to curl is immediate
+but logs will be visible later.
+Result of quick schedule of 3 same requests
+
+```
+adopted [Dog[id=45, name=Prancer, owner=jlong, description=a neurotic dog]]
+adopted [Dog[id=45, name=Prancer, owner=jlong, description=a neurotic dog]]
+adopted [Dog[id=45, name=Prancer, owner=jlong, description=a neurotic dog]]
+scheduling for DogAdoptionEvent[dogId=45]
+scheduling for DogAdoptionEvent[dogId=45]
+scheduling for DogAdoptionEvent[dogId=45]
+```
+
+#### Outbox pattern, ApplicationModuleListener
+
+But now I'm in a risk of loosing data.
+If someone would put the plug off during the 5s sleep,
+then some data is lost.
+
+We can use Outbox pattern
+
+src/main/java/com/example/adoptions/vet/Dogtor.java
+
+```java
+package com.example.adoptions.vet;
+
+import org.springframework.modulith.events.ApplicationModuleListener;
+import org.springframework.stereotype.Service;
+
+import com.example.adoptions.adoptions.DogAdoptionEvent;
+
+@Service
+class Dogtor {
+
+  @ApplicationModuleListener
+  void schedule(DogAdoptionEvent dogId) throws InterruptedException {
+    Thread.sleep(5000);
+    System.out.println("scheduling for " + dogId);
+  }
+
+}
+```
+
+We will use @ApplicationModuleListener,
+which pairs like fine wine with these lines of application.properties
+(especially second of these settings)
+
+src/main/resources/application.properties
+
+```
+spring.modulith.events.jdbc.schema-initialization.enabled=true
+spring.modulith.events.republish-outstanding-events-on-restart=true
+```
+
+It will create event_publication table in database.
+There will still be delay, like with `@Async`.
+
+event_publication table has columns:
+- id
+- listener_id
+- event_type
+- serialized_event
+- publication_date
+- completion_date
+
+In our example, table row will have no completion date
+while we are waiting for 5 second sleep in service.
+
+Which we can check using `select * from event_publication;`
+
+#### Auto Retrying of ApplicationModuleListener
+If during 5s wait we kill the database and then application
+and then restart it, we will see that event was resent.
+
+```
+scheduling for DogAdoptionEvent[dogId=45]
+```
+
+#### You use Outbox pattern
+To reconcile nontransactional state against transactional ledger.
+(in this case a SQL table, but intergation with Mongo, S3 ... is available)
+Sometimes S3 api is not responding. It's nature of the cloud.
+I want to put into ledger "keep trying to put s3 until it's there"
+and after, update the database, to track, that it has been done.
+Now I have guarantee it has been done.
+Reconciliation is important bit.
+
+options for filter
+```java
+ep.<method name>
+isCompleted()
+getApplicationEvent(DogAdoptionEvent)
+getCompletionDate()
+getIdentifier()
+getEvent() // gets element itself
+```
+
+you can do consistient hashing and load balancing,
+you can use spring cloud discovery client support
+and do load balancing that way
+
+src/main/java/com/example/adoptions/AdoptionsApplication.java
+
+```java
+package com.example.adoptions;
+
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.modulith.events.IncompleteEventPublications;
+
+@SpringBootApplication
+public class AdoptionsApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(AdoptionsApplication.class, args);
+  }
+
+  @Bean
+  ApplicationRunner youIncompleteMe(IncompleteEventPublications eventPublications) {
+    return new ApplicationRunner() {
+      @Override
+      public void run(ApplicationArguments args) throws Exception {
+        eventPublications.resubmitIncompletePublications(
+            _ -> true
+        );
+      }
+    };
+  }
+}
+```
+
+if you want to resubmit everything, `ep -> true`
+it means all messages will get resubmitted
+when JVM that has that code is restarted.
+
+What happens if you have 10 instances of the same node?
+And if you don't do anything, on failed restart all ten nodes
+will try to do failed job.
+
+#### LockRegistry
+There are many solutions, one is LockRegistry.
+You can configure JDBCLockRegistry, MongoDBLockRegistry,
+a bunch of implementations.
+
+src/main/java/com/example/adoptions/AdoptionsApplication.java
+
+```java
+package com.example.adoptions;
+
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.modulith.events.IncompleteEventPublications;
+
+@SpringBootApplication
+public class AdoptionsApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(AdoptionsApplication.class, args);
+  }
+
+  @Bean
+  ApplicationRunner youIncompleteMe(IncompleteEventPublications eventPublications) {
+    return args -> {
+      LockRegistry lockRegistry;
+      lockRegistry.tryActquire("myLock", new runnable (){
+        // whatever you do here will be run only once per cluster
+      });
+      eventPublications
+        .resubmitIncompletePublications(ep -> true);
+    };
+  }
+}
+```
+
+#### Idempotent
+Last solution: write your code to be idempotent.
+I know it's cheeky. It's not nice to say that.
+But sometimes that's just best medicine.
+Make your code idempotent, if you can.
+
+It's not easy,
+when you are charging money you want to be sure
+that it's running only once
+
+#### @Externalized, Breaking one JVM
+At the moment we are running all in one JVM.
+What if we want o change that?
+
+You have Externalisation
+In addition to publishing messages from one component to another in same jvm
+you can add @Externalised and you put there the scheme
+
+```java
+@Externalized(...)
+public record DogAdoptionEvent (int dogId) {
+}
+```
+
+You put into there the scheme for any messaging system your using
+so if you're using Kafka you put a topic name
+
+```java
+@Externalized("topicName")
+```
+
+In rabbitMQ you use exchange name
+
+```java
+@Externalized("exchangeName")
+```
+
+#### Spring Integration Messaging Module
+It can talk to anything. You create a channel and a intergation flow.
+Well here, in Externalised you put a channelName
+
+```java
+@Externalized("channelName")
+```
+
+And then message will be published tot channel
+and there you can talk to anything Spring Integration can talk to
+including SQS, Pulsar, Kafka, JMS, File Systems, FTP, Email and TCP/IP
+
+We will not set it up, but when you will, just make sure that you
+use correct dependency, for example
+
+pom.xml
+
+```xml
+<dependency>
+  <groupId>org.springframework.modulith</groupId>
+  <artifactId>spring-modulith-events-messaging</artifactId>
+</dependency>
+```
+
+and there will be one for events
+
+```xml
+<dependency>
+  <groupId>org.springframework.modulith</groupId>
+  <artifactId>spring-modulith-events-kafka</artifactId>
+</dependency>
+
+<dependency>
+  <groupId>org.springframework.modulith</groupId>
+  <artifactId>spring-modulith-events-sqs</artifactId>
+</dependency>
+```
+
+... and more
+
+#### are we Modular, Test
+How do I know that code is modular?
+What does it mean?
+
+```java
+var am = ApplicationModules.of(AdoptionsApplication.class);
+am.verify();
+```
+
+Verify...
+that my code is modular.

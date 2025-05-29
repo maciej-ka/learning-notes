@@ -3330,7 +3330,7 @@ payload: PurchaseOrder[orderId=PO-1010, country=Italy, lineItems=[LineItem[sku=S
 
 #### split along lines of order
 
-When we return null, like we did in handle
+When we return null, like we did in handle  
 that will stop subsequent execution flow.
 
 EipApplication.java
@@ -3384,7 +3384,7 @@ got line item LineItem[sku=SKU-014, productionName=null, quantity=2, unitPrice=1
 
 #### split and aggregate
 
-And its possible to split it to send to Kafka
+And its possible to split it to send to Kafka  
 wait for the thing to come back and process it.
 
 ```java
@@ -3424,7 +3424,7 @@ return IntegrationFlow
 }
 ```
 
-We could transform LineItems into network call after split
+We could transform LineItems into network call after split  
 and then we would aggregate results.
 
 returns
@@ -3530,11 +3530,11 @@ public class EipApplication {
 
 #### Reuse integration flows
 
-In integration world I may want to take that whole integration flow
+In integration world I may want to take that whole integration flow  
 and make it reusable and available on multiple channels.
 
 #### @Value
-https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/value-annotations.html#page-title
+https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/value-annotations.html#page-title  
 @Value is typically used to inject externalized properties:
 
 ```java
@@ -3575,10 +3575,10 @@ var build = MessageBuilder.withPayload(content).build();
 ```
 
 #### Refactor and web api
-Make reusable integration flows
+Make reusable integration flows  
 Add endpoint to upload file
 
-Allow to have two origins that will produce Message
+Allow to have two origins that will produce Message  
 Either way we end in purchaseOrderIntegrationFlow
 
 to test run and upload
@@ -3588,7 +3588,7 @@ to test run and upload
 curl -F "file=@/Users/maciejka/learn/java-spring-fundamentals/my-integration/purchase-orders/1010.json" http://localhost:8080/post
 ```
 
-server logs on first curl run
+server logs on first curl run  
 (on next one there will bo no initialization)
 
 ```
@@ -3618,7 +3618,7 @@ http --form POST :8080/post file@~/Users/maciejka/learn/java-spring-fundamentals
 ```
 
 #### Only care about Inbound
-As a principle you should assume anything
+As a principle you should assume anything  
 about futher routing or where result goes afterward.
 
 ```
@@ -3627,28 +3627,28 @@ They shouldn't be concerned with how the result is routed or where it goes after
 ```
 
 #### Summary, Indirection with Channels
-We created channel to create indirection
+We created channel to create indirection  
 between origin of the message and processing of the message.
 
-There are two sources of the message.
+There are two sources of the message.  
 As long as I have the channel, I can send any message into that channel.
 
-origin 1)
-We added Rest controller, with "Post"
+origin 1)  
+We added Rest controller, with "Post"  
 in endpoint handler we are creating message from Post File Payload
 
-origin 2)
-Or I drop a new file in this folder.
-And this folder looks at the new file turns it into string
+origin 2)  
+Or I drop a new file in this folder.  
+And this folder looks at the new file turns it into string  
 and puts it into channel, 
 
-either way message is going to the channel
+either way message is going to the channel  
 and they end up in purchaseOrderIntegrationFlow
 
-(which injects MessageChannel inbound)
+(which injects MessageChannel inbound)  
 and reads from it immediatelly
 
-We used files adapter, but it could be Kafka, Pulsar it will be almost the same
+We used files adapter, but it could be Kafka, Pulsar it will be almost the same  
 instead `Files.inboundAdapter(directory)` you would use `Amqp.inboundAdapter(...)`
 
 

@@ -1,4 +1,3 @@
-```java
 Java Fundamentals
 =================
 https://frontendmasters.com/courses/java
@@ -4324,14 +4323,14 @@ First type that we intentionally made public.
 We change Doktor to become lister for DogAdoptionEvent.  
 And add publishing in the AdoptionService.
 
-Dogtor can be package private again
+Dogtor can be package private again  
 (we can remove public from `public class Dogtor {...}`).
 
-Two modules are talking to each other but they are decoupled.
+Two modules are talking to each other but they are decoupled.  
 One doesn't know about the other. They don't need to know about each other.
 
-...Except they are kind of coupled, aren't they?
-Events are published synchronously, in the same thread.
+...Except they are kind of coupled, aren't they?  
+Events are published synchronously, in the same thread.  
 Adding sleep, will be visible in curl.
 
 ```java
@@ -4345,7 +4344,7 @@ class Dogtor {
 
 #### Fire and Forget
 
-That synchronous behaviour would be very hard for developers to work with
+That synchronous behaviour would be very hard for developers to work with  
 if someone by accident introduces such a delay to whole system.
 
 Because of that many people think about asychronous "Fire and Forget"
@@ -4374,8 +4373,8 @@ class Dogtor {
 }
 ```
 
-With that change the response to curl is immediate
-but logs will be visible later.
+With that change the response to curl is immediate  
+but logs will be visible later.  
 Result of quick schedule of 3 same requests
 
 ```
@@ -4389,8 +4388,8 @@ scheduling for DogAdoptionEvent[dogId=45]
 
 #### Outbox pattern, ApplicationModuleListener
 
-But now I'm in a risk of loosing data.
-If someone would put the plug off during the 5s sleep,
+But now I'm in a risk of loosing data.  
+If someone would put the plug off during the 5s sleep,  
 then some data is lost.
 
 We can use Outbox pattern
@@ -4417,8 +4416,8 @@ class Dogtor {
 }
 ```
 
-We will use @ApplicationModuleListener,
-which pairs like fine wine with these lines of application.properties
+We will use @ApplicationModuleListener,  
+which pairs like fine wine with these lines of application.properties  
 (especially second of these settings)
 
 src/main/resources/application.properties
@@ -4428,7 +4427,7 @@ spring.modulith.events.jdbc.schema-initialization.enabled=true
 spring.modulith.events.republish-outstanding-events-on-restart=true
 ```
 
-It will create event_publication table in database.
+It will create event_publication table in database.  
 There will still be delay, like with `@Async`.
 
 event_publication table has columns:
@@ -4439,13 +4438,13 @@ event_publication table has columns:
 - publication_date
 - completion_date
 
-In our example, table row will have no completion date
+In our example, table row will have no completion date  
 while we are waiting for 5 second sleep in service.
 
 Which we can check using `select * from event_publication;`
 
 #### Auto Retrying of ApplicationModuleListener
-If during 5s wait we kill the database and then application
+If during 5s wait we kill the database and then application  
 and then restart it, we will see that event was resent.
 
 ```
@@ -4453,12 +4452,12 @@ scheduling for DogAdoptionEvent[dogId=45]
 ```
 
 #### You use Outbox pattern
-To reconcile nontransactional state against transactional ledger.
-(in this case a SQL table, but intergation with Mongo, S3 ... is available)
-Sometimes S3 api is not responding. It's nature of the cloud.
-I want to put into ledger "keep trying to put s3 until it's there"
-and after, update the database, to track, that it has been done.
-Now I have guarantee it has been done.
+To reconcile nontransactional state against transactional ledger.  
+(in this case a SQL table, but intergation with Mongo, S3 ... is available)  
+Sometimes S3 api is not responding. It's nature of the cloud.  
+I want to put into ledger "keep trying to put s3 until it's there"  
+and after, update the database, to track, that it has been done.  
+Now I have guarantee it has been done.  
 Reconciliation is important bit.
 
 options for filter
@@ -4471,8 +4470,8 @@ getIdentifier()
 getEvent() // gets element itself
 ```
 
-you can do consistient hashing and load balancing,
-you can use spring cloud discovery client support
+you can do consistient hashing and load balancing,  
+you can use spring cloud discovery client support  
 and do load balancing that way
 
 src/main/java/com/example/adoptions/AdoptionsApplication.java
@@ -4508,17 +4507,17 @@ public class AdoptionsApplication {
 }
 ```
 
-if you want to resubmit everything, `ep -> true`
-it means all messages will get resubmitted
+if you want to resubmit everything, `ep -> true`  
+it means all messages will get resubmitted  
 when JVM that has that code is restarted.
 
-What happens if you have 10 instances of the same node?
-And if you don't do anything, on failed restart all ten nodes
+What happens if you have 10 instances of the same node?  
+And if you don't do anything, on failed restart all ten nodes  
 will try to do failed job.
 
 #### LockRegistry
-There are many solutions, one is LockRegistry.
-You can configure JDBCLockRegistry, MongoDBLockRegistry,
+There are many solutions, one is LockRegistry.  
+You can configure JDBCLockRegistry, MongoDBLockRegistry,  
 a bunch of implementations.
 
 src/main/java/com/example/adoptions/AdoptionsApplication.java
@@ -4555,21 +4554,21 @@ public class AdoptionsApplication {
 ```
 
 #### Idempotent
-Last solution: write your code to be idempotent.
-I know it's cheeky. It's not nice to say that.
-But sometimes that's just best medicine.
+Last solution: write your code to be idempotent.  
+I know it's cheeky. It's not nice to say that.  
+But sometimes that's just best medicine.  
 Make your code idempotent, if you can.
 
-It's not easy,
-when you are charging money you want to be sure
+It's not easy,  
+when you are charging money you want to be sure  
 that it's running only once
 
 #### @Externalized, Breaking one JVM
-At the moment we are running all in one JVM.
+At the moment we are running all in one JVM.  
 What if we want o change that?
 
-You have Externalisation
-In addition to publishing messages from one component to another in same jvm
+You have Externalisation  
+In addition to publishing messages from one component to another in same jvm  
 you can add @Externalised and you put there the scheme
 
 ```java
@@ -4578,7 +4577,7 @@ public record DogAdoptionEvent (int dogId) {
 }
 ```
 
-You put into there the scheme for any messaging system your using
+You put into there the scheme for any messaging system your using  
 so if you're using Kafka you put a topic name
 
 ```java
@@ -4592,18 +4591,18 @@ In rabbitMQ you use exchange name
 ```
 
 #### Spring Integration Messaging Module
-It can talk to anything. You create a channel and a intergation flow.
+It can talk to anything. You create a channel and a intergation flow.  
 Well here, in Externalised you put a channelName
 
 ```java
 @Externalized("channelName")
 ```
 
-And then message will be published tot channel
-and there you can talk to anything Spring Integration can talk to
+And then message will be published tot channel  
+and there you can talk to anything Spring Integration can talk to  
 including SQS, Pulsar, Kafka, JMS, File Systems, FTP, Email and TCP/IP
 
-We will not set it up, but when you will, just make sure that you
+We will not set it up, but when you will, just make sure that you  
 use correct dependency, for example
 
 pom.xml
@@ -4632,7 +4631,7 @@ and there will be one for events
 ... and more
 
 #### are we Modular, Test
-How do I know that code is modular?
+How do I know that code is modular?  
 What does it mean?
 
 ```java
@@ -4640,7 +4639,7 @@ var am = ApplicationModules.of(AdoptionsApplication.class);
 am.verify();
 ```
 
-Verify...
+Verify...  
 that my code is modular.
 
 my-modulith/src/test/java/com/example/adoptions/AdoptionsApplicationTests.java
@@ -4705,14 +4704,14 @@ Output
   o ….Dogtor
 ```
 
-Looks like we have two modules, adoptions and vet.
-These are logical beans inside each module.
+Looks like we have two modules, adoptions and vet.  
+These are logical beans inside each module.  
 And here are dependencies (none).
 
 Dependencies are when package is injecting from another package.
 
 #### Moduleth Documentation
-Spring provides information in documentation format.
+Spring provides information in documentation format.  
 It will create `target/spring-modulith-docs`
 
 my-modulith/src/test/java/com/example/adoptions/AdoptionsApplicationTests.java
@@ -4729,28 +4728,28 @@ void contextLoads() {
 }
 ```
 
-It will create puml files.
-It gives architecture diagram, C4 component diagram.
-Way to model components in a system boundaries.
+It will create puml files.  
+It gives architecture diagram, C4 component diagram.  
+Way to model components in a system boundaries.  
 Not like UML, but system boundaries.
 
-This uses PlotUml which uses text format,
-so you can check it into version control
-and then use something like graphVis or plantuml
+This uses PlotUml which uses text format,  
+so you can check it into version control  
+and then use something like graphVis or plantuml  
 https://plantuml.com/class-diagram
 
-It's a nice image that will evolve with a code base.
+It's a nice image that will evolve with a code base.  
 And it will be up to date with the code.
 
 #### Modulith Summary
-So it all alright, we were able to write modular code.
-We were able to observe it, write decoupled code and test it.
+So it all alright, we were able to write modular code.  
+We were able to observe it, write decoupled code and test it.  
 This is Spring Modulith.
 
 It's support for writing code that is modular.
 
-Behind the scenes, Modulith is packaging up
-something called `ArchUnit`
+Behind the scenes, Modulith is packaging up  
+something called `ArchUnit`  
 It's a way to test architecture contstrains in your system.
 
 #### ArchUnit in practice
@@ -4768,20 +4767,20 @@ public class Validation {
 }
 ```
 
-This one has to be public in order to be used in parent.
-package com.example.adoptions.adoptions.
-So it's limitation of language.
+This one has to be public in order to be used in parent.  
+package com.example.adoptions.adoptions.  
+So it's limitation of language.  
 But Spring Modulith will detect when it's used in wrong way.
 
 #### Allowed dependency of packages
 
-package com.example.adoptions.adoptions
-can be dependendent on public classec in package
+package com.example.adoptions.adoptions  
+can be dependendent on public classec in package  
 import com.example.adoptions.adoptions.validation
 
-Same named module root (chatbot)
-Both packages are under the same module root (adoptions),
-so adoptions.validation is considered an internal subpackage
+Same named module root (chatbot)  
+Both packages are under the same module root (adoptions),  
+so adoptions.validation is considered an internal subpackage  
 of the adoptions module.
 
 src/main/java/com/example/adoptions/adoptions/DogAdoptionService.java
@@ -4852,8 +4851,8 @@ test
 
 #### Modulith Failing Case
 
-This is forbidden because packages are not sharing root
-package com.example.adoptions.vet;
+This is forbidden because packages are not sharing root  
+package com.example.adoptions.vet;  
 com.example.adoptions.adoptions.validation;
 
 src/main/java/com/example/adoptions/vet/Dogtor.java
@@ -4885,16 +4884,16 @@ class Dogtor {
 }
 ```
 
-and running test will fail
-because Validation is implementation detail.
-It's a nested package in another, adjecent root package.
+and running test will fail  
+because Validation is implementation detail.  
+It's a nested package in another, adjecent root package.  
 I'm injecting it into another root package.
 
-That broke the test.
-"You leaked implementation detail of one module into another"
+That broke the test.  
+"You leaked implementation detail of one module into another"  
 Module vet depends on non-exposed type called Validation within module adoptions
 
-Event though it's public
+Event though it's public  
 it's not meant for everybody to consue.
 
 ```
@@ -4927,8 +4926,8 @@ Constructor <com.example.adoptions.vet.Dogtor.<init>(com.example.adoptions.adopt
 [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
 ```
 
-It would work if one top module would be dependent on another.
-But it's not happy when one module is dependent on subpackage of another module.
+It would work if one top module would be dependent on another.  
+But it's not happy when one module is dependent on subpackage of another module.  
 (Like we seen with using DogAdoptionEvent)
 
 #### Notes on Modulith event communication
@@ -4960,12 +4959,106 @@ Why i don't see DogAdoptionEvent  and dependency of it in Doctor. All I see is:
 
 This is an event-based communication pattern, which is different from direct module dependencies
 
-Spring Modulith treats event-based communication as a special case.
-When you use @ApplicationModuleListener, it creates a loose coupling
-between modules through events, rather than creating a direct module dependency.
-This is actually a good thing because:
-It maintains better module boundaries
-It allows for asynchronous communication
+Spring Modulith treats event-based communication as a special case.  
+When you use @ApplicationModuleListener, it creates a loose coupling  
+between modules through events, rather than creating a direct module dependency.  
+This is actually a good thing because:  
+It maintains better module boundaries  
+It allows for asynchronous communication  
 It reduces tight coupling between modules
 
 #### Favorite antipattern
+as seen in Ruby on Rails
+
+```
+app.controllers.CustomerController
+app.services.CustomerServices
+app.repositories.CustomerRepository
+app.models.Customer
+```
+
+This is terrible way to organize  
+and it's organized by a role in architecture.
+
+A much more natural way is to say you have
+
+```
+app.customers.{Customer,CustomerController,...}
+```
+
+In this approach you can be deliberate what needs to be public.  
+And you can test this slice by itself.
+
+You can test just related to customers
+
+and you know what component boundary is  
+beucase it's the events or public types that you export
+
+This has right to say "it's on rails projectt".  
+It's scalable architecture.
+
+#### @Service annotation
+@Service is a stereotype annotation.  
+@Component is a signal "this class should be managed by Spring"
+
+@Component is a part of @Service  
+It will try to construct and if there is one constructor  
+it will try to satisfy its parameters by dependency injection registered beans.  
+And anything that has @Component gets that behaviour.
+
+You can also have constructor without paramaters.  
+Or no constructor.
+
+#### Create your own meta annotation
+
+As long as it's annotated with @Component  
+then it's still valid
+
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Indexed
+@Component
+@interface FrontendMastersService {
+
+  /**
+   * The value may indicate a suggestion for a logical component name,
+   * to be turned into a Spring bean name in case of an autodetected component.
+   * @return the suggested component name, if any (or empty String otherwise)
+   */
+  String value() default "";
+
+}
+
+@FrontendMastersService
+class Dogtor {
+  @ApplicationModuleListener
+  void schedule(DogAdoptionEvent dogId) throws InterruptedException {
+    Thread.sleep(5000);
+    System.out.println("scheduling for " + dogId);
+  }
+}
+```
+
+Service annotation indeed reuses Component.  
+Sometimes meta annotation is just an alias for concept.
+
+Technically it's a component, but in aspect  
+of logical place in system, it's a service.
+
+Stereotype comes from UML, it describes category of thing.
+
+@Controller  
+@RestController  
+@Repository  
+@Service
+
+all are @Component
+
+Modulith is how you build system  
+in a single JVM
+
+### Spring Cloud
+Sometimes you have to build distributed system.  
+Even if you're not intentionally building microservice.

@@ -140,22 +140,26 @@
 [*grab type of Props*](https://github.com/maciej-ka/learning-notes/blob/main/typescript.md#grab-type-of-properties-in-react)  
 [*variance*](https://github.com/maciej-ka/learning-notes/blob/main/typescript.md#variance-notes)
 
-[Various](./various.md)
+[Various1](./various1.md)
 =========================
-● [**Building a Static Type-Inferring Compiler**](https://github.com/maciej-ka/learning-notes/blob/main/various.md#building-a-static-type-inferring-compiler), Richard Feldman, Frontend Masters  
-● [**Introduction to developer tools**](https://github.com/maciej-ka/learning-notes/blob/main/various.md#introduction-to-developer-tools-v3), Jon Kuperman, Frontend Masters  
-● [**Web Accessibility**](https://github.com/maciej-ka/learning-notes/blob/main/various.md#web-accessibility-v3), Jon Kuperman, Frontend Masters  
-● [**Become a VSCode Power User**](https://github.com/maciej-ka/learning-notes/blob/main/various.md#become-a-vscode-power-user), Steve Kinney, Frontend Masters  
-● [**Web Performance Fundamentals**](https://github.com/maciej-ka/learning-notes/blob/main/various.md#fudamentals-of-web-performance), Todd Gardner, Frontend Masters  
-○ [**Microfrontends in Action**](https://github.com/maciej-ka/learning-notes/blob/main/various.md#microfrontends-1), Michael Geers, Manning  
-[*AI tools talk Addy Osmani*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#ai-tools)  
-[*comparing software architectures*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#comparing-software-architectures)  
-[*contributing to OS*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#how-to-contribute-to-open-source-nextjs)  
-[*CQRS*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#cqrs-command-query-responsibility-segregation)  
-[*Emmet*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#emmet)  
-[*Martin Fowler on microservices*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#martin-fowler-microservices)  
-[*startup directories*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#startup-directories)  
-[*tenant apps*](https://github.com/maciej-ka/learning-notes/blob/main/various.md#tenant)
+● [**Building a Static Type-Inferring Compiler**](https://github.com/maciej-ka/learning-notes/blob/main/various1#building-a-static-type-inferring-compiler), Richard Feldman, Frontend Masters  
+● [**Introduction to developer tools**](https://github.com/maciej-ka/learning-notes/blob/main/various1#introduction-to-developer-tools-v3), Jon Kuperman, Frontend Masters  
+● [**Web Accessibility**](https://github.com/maciej-ka/learning-notes/blob/main/various1#web-accessibility-v3), Jon Kuperman, Frontend Masters  
+● [**Become a VSCode Power User**](https://github.com/maciej-ka/learning-notes/blob/main/various1#become-a-vscode-power-user), Steve Kinney, Frontend Masters  
+● [**Web Performance Fundamentals**](https://github.com/maciej-ka/learning-notes/blob/main/various1#fudamentals-of-web-performance), Todd Gardner, Frontend Masters  
+○ [**Microfrontends in Action**](https://github.com/maciej-ka/learning-notes/blob/main/various1#microfrontends-1), Michael Geers, Manning  
+[*AI tools talk Addy Osmani*](https://github.com/maciej-ka/learning-notes/blob/main/various1#ai-tools)  
+[*comparing software architectures*](https://github.com/maciej-ka/learning-notes/blob/main/various1#comparing-software-architectures)  
+[*contributing to OS*](https://github.com/maciej-ka/learning-notes/blob/main/various1#how-to-contribute-to-open-source-nextjs)  
+[*CQRS*](https://github.com/maciej-ka/learning-notes/blob/main/various1#cqrs-command-query-responsibility-segregation)  
+[*Emmet*](https://github.com/maciej-ka/learning-notes/blob/main/various1#emmet)  
+[*Martin Fowler on microservices*](https://github.com/maciej-ka/learning-notes/blob/main/various1#martin-fowler-microservices)  
+[*startup directories*](https://github.com/maciej-ka/learning-notes/blob/main/various1#startup-directories)  
+[*tenant apps*](https://github.com/maciej-ka/learning-notes/blob/main/various1.md#tenant)
+
+[Various2](./various2.md)
+=========================
+State Management at Scale in React & Next.js, David Khourshid, Frontend Masters
 
 [Vim](./vim.md)
 =================

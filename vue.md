@@ -425,7 +425,10 @@ create folder pages
 /pages/tasks/index.vue
 /pages/tasks/[id].vue
 /pages/tasks/task-[id].vue
+/pages/tasks/[...path].vue
 ```
+
+last one is catch all
 
 #### import paths with @
 all imports like this
@@ -449,3 +452,178 @@ export default defineConfig({
 ```
 
 it makes moving files easier
+
+development is about creating faster feedback loops
+
+### Composables part 2
+#### shallowRef
+Helper method, similar to ref,  
+but with difference that reactivity is not deep.
+
+Some people thing it should be the default,  
+not not be deep. Will not react to changes on level 2  
+of json object. Will only look at top level of object / array.
+
+#### Composable Singleton
+
+```typescript
+// Singleton - Shared state
+export const weeks = ref<Week[]>([])
+
+// Factory - Generated unique state
+export function generateWeeks() {
+  const newWeeks = ref<Week[]>([])
+
+  return newWeeks
+}
+```
+
+Singleton will be shared.  
+Factories are not great if you want to share.
+
+#### Data Store
+When you have something that is shared  
+and then functions, that modify it.
+
+```typescript
+export const weeks = ref<Week[]>([])
+
+export function fetchWeeks() {
+  weekIsLoading.value = true
+  // ....
+}
+
+export const numberOfWeeks = computed(() => {
+  return weeks.value.length
+})
+```
+
+#### function vs const
+If you use function keyword it will be more clear  
+what is the type of the thing you have.
+
+#### VueUse
+https://vueuse.org/  
+If you are looking for examples of how composable could work.  
+It's standard elements of browser, like localStorage and other  
+but they are made reactive.
+
+(react version)  
+https://streamich.github.io/react-use/
+
+#### Options parameter object
+When you are archtecting your functions.  
+Even when you have three, it starts to get confusing,  
+which parameter is which, what is their order.
+
+```typescript
+export function useFetch(url, methods, bodyType)
+```
+
+instead use
+
+```typescript
+export function useFetch(url, methods, options = {})
+```
+
+#### Progressivelly enhance return
+simple way to use
+
+```typescript
+const video = usePlayVideo(VIDEO_URL)
+video()
+```
+
+but if user want's more control then he passes additional flag  
+and return type changes in a way that user has more controll
+
+```typescript
+const { play, pause, stop, fastForward } = usePlayVideo(VIDEO_URL, { controls: true })
+```
+
+#### useMagicKey
+great demo here  
+https://vueuse.org/core/useMagicKeys/
+
+```typescript
+import { useMagicKeys, whenever } from '@vueuse/core'
+import { setTheme, themes } from './useTheme'
+
+export function useHotThemeKeys() {
+  const keys = useMagicKeys()
+
+  whenever(keys.ctrl_shift_1, () => setTheme(themes[0]))
+  whenever(keys.ctrl_shift_2, () => setTheme(themes[1]))
+  whenever(keys.ctrl_shift_3, () => setTheme(themes[2]))
+}
+```
+
+generally hot keys are tricky thing to do  
+useMagicKeys make it way easier
+
+#### useMediaControls
+if you need to create video player  
+it has all reactive properties
+
+#### State management
+Reason to use them is to provide team a set of standards  
+for all to follow.
+
+#### useStorage
+
+```typescript
+import { useStorage } from '@vueuse/core'
+```
+
+#### Avoid global stores
+Don't put everything into single store.  
+Instead, don't be afraid to create several small stores.
+
+#### Copose Stores with other Stores
+For example you can have a getter in store  
+that will pull values from two stores.
+
+It's easy to rip big store into smaller ones  
+and mix them togheter.
+
+#### Pinia
+intuitive store for Vue.js  
+https://pinia.vuejs.org/
+
+#### Vue vapor
+https://github.com/vuejs/vue-vapor  
+Option to render project without virtual DOM  
+Variant of vue. This is future idea.
+
+#### Signals
+Vue, Angular, Svelte, Solid seem to converge  
+and they agreed on similar vision of signals.
+
+#### Vue VSCode Snippets
+to bootstrap new empty component, install and then type  
+`vbase-ss`
+
+Probably you will in the end create own snippets,  
+inspired by these ones.
+
+### What's next
+**Typescript**: hate/love relationship
+
+**Nuxt**: full-stack development with Vue.js  
+api fetching, auto imports, SSR, hydration,  
+hybrid of static and dynamic pages, rendering modes
+
+**VitePress**: Static Site Generator  
+that creates docs page,  
+everything is configued via markdown.  
+You get navigation / theming / next page ...
+
+A lot of non vue related projects use it,  
+to just create docs page. For example if you have team  
+and want to create shared docs for you team.
+
+#### About trends
+We are overusing SSR right now. It used to be default way,  
+then we forgot about it, now we rediscovered it,  
+and we tend to overuse whatever is the new hot thing.
+

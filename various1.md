@@ -4830,3 +4830,6 @@ and is often the better choice for cloud-native applications.
 spring initializr  
 https://start.spring.io/
 
+### DRY / WET
+dry: don't repeat yourself  
+wet: write everything twice

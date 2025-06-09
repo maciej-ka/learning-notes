@@ -5060,5 +5060,37 @@ Modulith is how you build system
 in a single JVM
 
 ### Spring Cloud
-Sometimes you have to build distributed system.  
-Even if you're not intentionally building microservice.
+Sometimes you have to build distributed system.
+Even if you're not intentionally building microservice
+you probably have more than one server.
+
+Spring Cloud: set of extensions for building microservices
+layered on top of Spring Boot.
+
+#### Configuration
+When having more than on service,
+you want to have one place for configuration.
+
+By configuration we mean keys and values.
+Alternatives:
+- environment variables
+- property files
+- Hashicorp Vault
+- Spring Cloud Config Server
+
+We will use Spring Cloud Config Server (and Spring Web).
+
+This will give us repository that will babysit configuration files
+with api to access them (for localhost development)
+or hosted server configuration (for production).
+
+config/src/main/resources/application.properties
+
+```
+spring.application.name=config
+spring.cloud.config.server.git.uri=${HOME}/learn/java-spring-fundamentals/my-microservice/config/
+server.port=8888
+```
+
+spring.cloud.config.server.git.uri
+has to be pointed to git repository

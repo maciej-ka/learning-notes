@@ -5646,8 +5646,8 @@ And if you deal with JWT (often pronounced "jot") tokens on gateway,
 then dealing with JWT tokens dissapears from you javascript apis.  
 Life becomes much easier by sticking nice gateway in front of your system.
 
-Spring Cloud is used by everybody.
-It was build on top of Netflix code,
-then Netflix rewrote on top of Spring Cloud.
-Their systems use Spring Cloud and Spring Boot.
+Spring Cloud is used by everybody.  
+It was build on top of Netflix code,  
+then Netflix rewrote on top of Spring Cloud.  
+Their systems use Spring Cloud and Spring Boot.  
 It's great stack to build systems that scale.

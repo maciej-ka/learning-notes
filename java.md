@@ -5060,18 +5060,18 @@ Modulith is how you build system
 in a single JVM
 
 ### Spring Cloud
-Sometimes you have to build distributed system.
-Even if you're not intentionally building microservice
+Sometimes you have to build distributed system.  
+Even if you're not intentionally building microservice  
 you probably have more than one server.
 
-Spring Cloud: set of extensions for building microservices
+Spring Cloud: set of extensions for building microservices  
 layered on top of Spring Boot.
 
-#### Configuration
-When having more than on service,
+### Microservice: Configuration service
+When having more than on service,  
 you want to have one place for configuration.
 
-By configuration we mean keys and values.
+By configuration we mean keys and values.  
 Alternatives:
 - environment variables
 - property files
@@ -5080,17 +5080,574 @@ Alternatives:
 
 We will use Spring Cloud Config Server (and Spring Web).
 
-This will give us repository that will babysit configuration files
-with api to access them (for localhost development)
+This will give us repository that will babysit configuration files  
+with api to access them (for localhost development)  
 or hosted server configuration (for production).
 
 config/src/main/resources/application.properties
 
 ```
 spring.application.name=config
-spring.cloud.config.server.git.uri=${HOME}/learn/java-spring-fundamentals/my-microservice/config/
+spring.cloud.config.server.git.uri=${HOME}/learn/java-spring-fundamentals/config-example/
 server.port=8888
 ```
 
-spring.cloud.config.server.git.uri
+`spring.cloud.config.server.git.uri`  
 has to be pointed to git repository
+
+ConfigApplication.java
+
+```java
+package com.example.config;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.config.server.EnableConfigServer;
+
+@EnableConfigServer
+@SpringBootApplication
+public class ConfigApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(ConfigApplication.class, args);
+  }
+
+}
+```
+
+By just using `@EnableConfigServer` it will enable config server  
+and point it to directory defined by `spring.cloud.config.server.git.uri`
+
+```bash
+sdk use java 24-graalce
+./mvnw spring-boot:run
+```
+
+and then visit for example  
+http://localhost:8888/auth/default
+
+auth  
+and concept of a profile, in this case "default"
+
+#### Profile
+Profile in spring is label that you can attach to objects  
+to determine are they loaded or not.  
+For most of you do, stick with default.
+
+when we ask http://localhost:8888/auth/default  
+we get them from two property sources:  
+`auth.yml` and `application.properties`
+
+We will setup service, that will consume this configuration.  
+It will identify itself as "auth" and say  
+"hey, I'm auth, what are my configuration"
+
+And because config live in separate service, we can change them  
+and we don't need to redeploy the service.
+
+### Service Registry, Eureka
+Service Registry is a great way to advertise,  
+what services are available.
+
+#### DNS vs Service registry
+DNS is not your friend. DNS is flaky.  
+It encourages caching, which is great for whole large web.  
+It's really bad for dynamic, turbulent, volatile microservice systems,  
+cloud native systems, where things come and go all the time.  
+So use service registry.
+
+#### Service registry
+We will do service registration and discovery.  
+In order to do that we need service registry,  
+something like:
+- HashiCorp Consul,
+- Apache Zookeeper,
+- Netflix Eureka
+
+Spring Eureka, from 2015,  
+module build on top of Netflix Eureka  
+Netflix deployed to AWS their entire time.  
+(btw. lot of these patterns come from Netflix)
+
+There are things you need to do to tame cloud environment.  
+Netflix made utils to make that easier, later open sourced them,  
+Spring repackaged that code but also abstracted,  
+so that there is choice between solutions (there are more players)
+
+#### dependecies
+Eureka Server  
+Spring Web  
+Config Client
+
+Add `@EnableEurekaServer` to Application  
+eureka/src/main/java/com/example/eureka/EurekaApplication.java
+
+```java
+package com.example.eureka;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
+@EnableEurekaServer
+@SpringBootApplication
+public class EurekaApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(EurekaApplication.class, args);
+  }
+
+}
+```
+
+#### Specify config server
+
+We need to designate port and some eureka flags,  
+but instead of adding them to eureka server service,  
+we will store them in config.
+
+eureka/src/main/resources/application.properties
+
+```
+spring.application.name=eureka
+spring.config.import=configserver:
+```
+
+`configserver:` is protocol  
+and this value is using default port and url  
+`spring.config.import=configserver:`  
+which is same as  
+`spring.config.import=configserver:http://localhost:8888`
+
+Create new property file in directory with configurations.  
+The name will come from `spring.application.name=eureka`
+
+config-examples/eureka.properties
+
+```
+server.port=8761
+eureka.client.fetch-registry=false
+eureka.client.register-with-eureka=false
+```
+
+(then git push config-examples repository)
+
+Then, in Eureka Server Service folder, start it
+
+```bash
+sdk use java 24-graalce
+./mvnw spring-boot:run
+```
+
+#### Config service lookup
+It will fetch settings from config service  
+(that has been started before)  
+just like if you would manually visit config service  
+http://localhost:8888/eureka/default  
+which will give settings from `eureka.properties` (or yaml)  
+and `application.properties`
+
+All microservices will see application.properties.  
+Only microservice named `eureka` will see what's in `eureka.properties`
+
+And if there is duplicate, same key twice,  
+then setting from more specific will overwrite more general one  
+(`eureka.properties` will overwrite `application.properties`)
+
+
+```
+2025-06-10T19:22:59.602+02:00  INFO 49551 --- [eureka] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8888
+2025-06-10T19:22:59.602+02:00  INFO 49551 --- [eureka] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=eureka, profiles=[default], label=null, version=5e5cce91bab79f07ad7f41a3822b9835b3d727ed, state=
+```
+
+#### Eureka status page
+visit eureka status page  
+http://localhost:8761
+
+it will list instances registered with Eureka  
+(with just one annotation we have full service registry)
+
+### Microservices: Service
+We have config service and Eureka service registry  
+that talks with that config service.
+
+Now we will add service that talks with both of them.  
+It will use Eureka, to advertise its location.
+
+#### dependencies
+Config Client  
+Spring Web  
+Eureka Discovery Client
+
+Set configuration to read from configuration service.
+
+service/src/main/resources/application.properties
+
+```
+spring.application.name=service
+spring.config.import=configserver:
+```
+
+#### Inject current port
+this time check that config doesn't specify port  
+http://localhost:8888/service/default
+
+We will inject current port in the service,  
+using EventListener `onStartup`
+
+service/src/main/java/com/example/service/ServiceApplication.java
+
+```java
+package com.example.service;
+
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.context.WebServerInitializedEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+@ResponseBody
+@SpringBootApplication
+public class ServiceApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(ServiceApplication.class, args);
+  }
+
+  private final AtomicInteger port = new AtomicInteger(0);
+
+  @GetMapping("/hello")
+  Map<String, String> hello() {
+    return Map.of("message", "hello from port " + port.get());
+  }
+
+  @EventListener
+  void onStartup(WebServerInitializedEvent event) {
+    this.port.set(event.getWebServer().getPort());
+  }
+}
+```
+
+#### Random port
+Then go back to settings and tell spring to start on random port.  
+Port equal to zero means start on random port.  
+It will pick any port that is not used.
+
+application.properties
+
+```
+spring.application.name=service
+spring.config.import=configserver:
+server.port=0
+```
+
+#### Start the service
+```bash
+sdk use java 24-graalce
+./mvnw spring-boot:run
+```
+
+it will select random port  
+and connect to eureka
+
+```
+2025-06-10T23:12:52.758+02:00  INFO 52078 --- [service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 65313 (http) with context path '/'
+2025-06-10T23:12:52.759+02:00  INFO 52078 --- [service] [           main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 65313
+...
+2025-06-10T23:12:52.938+02:00  INFO 52078 --- [service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_SERVICE/192.168.0.193:service:0: registering service...
+2025-06-10T23:12:52.946+02:00  INFO 52078 --- [service] [           main] com.example.service.ServiceApplication   : Started ServiceApplication in 1.278 seconds (process running for 1.504)
+2025-06-10T23:12:52.975+02:00  INFO 52078 --- [service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_SERVICE/192.168.0.193:service:0 - registration status: 204
+```
+
+after which service will be visible on eureka page http://localhost:8761/
+
+```
+SERVICE	n/a (1)	(1)	UP (1) - 192.168.0.193:service:0
+```
+
+and we can visit it
+
+http://192.168.0.193:65313/hello
+
+if we stop it, for a moment Eureka will report it as DOWN,  
+it can't establish hearthbeat with it anymore,  
+after which it will remove it from list.
+
+#### Eureka instance id
+To help Eureka distinguish services,  
+we can instance id to application configuration
+
+service/src/main/resources/application.properties
+
+```
+spring.application.name=service
+spring.config.import=configserver:
+server.port=0
+eureka.instance.instance-id=${random.uuid}-${spring.application.name}
+```
+
+Restart service, and it's reported as:
+
+```
+SERVICE	n/a (1)	(1)	UP (1) - c1026629-1dfd-43b1-b06a-4bf8b72990d0-service
+```
+
+Run same service multiple times.  
+Now there will be two instances of same service in Eureka
+
+```
+SERVICE	n/a (2)	(2)	UP (2) - 92948fe4-16ed-457c-a1d1-524d0a1d61df-service , c1026629-1dfd-43b1-b06a-4bf8b72990d0-service
+```
+
+### Microservice Client
+#### Clientside loadbalancing
+You can programmatically interact with service registry.  
+You can ask it questions.
+
+We can do client side load balancing,
+
+before making REST call,  
+the client will look service registry  
+to find which service instances are available  
+and say "I will take this one, please"
+
+you can do (in client)
+- round robin
+- sticky sessions
+- other
+
+There is no one "true load balancing",  
+different services may use different strategy.  
+This is a problem with centralized gateways,  
+that can do such things.
+
+#### Dependencies
+Gateway (Spring cloud routing) (it's a microproxy)  
+Spring Web  
+Config client  
+Eureka Discovery Client
+
+client/src/main/resources/application.properties
+
+```
+spring.application.name=client
+spring.config.import=configserver:
+```
+
+#### @LoadBalanced
+We will create REST client that is load balanced, `@LoadBalanced`.  
+(with bean we create REST client builder, not REST client)
+
+When we access service in restClient, we call http://service  
+this is logical name, not host name of DNS,  
+it's a logical name as registered in registry
+
+client/src/main/java/com/example/client/ClientApplication.java
+
+```java
+package com.example.client;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestClient;
+
+@SpringBootApplication
+public class ClientApplication {
+
+  @Bean
+  @LoadBalanced
+  RestClient.Builder restClientBuilder() {
+    return RestClient.builder();
+  }
+
+  public static void main(String[] args) {
+    SpringApplication.run(ClientApplication.class, args);
+  }
+}
+
+@Controller
+@ResponseBody
+class LoadBalancedController {
+
+  private final RestClient restClient;
+
+  LoadBalancedController(RestClient.Builder restClient) {
+    this.restClient = restClient.build();
+  }
+
+  @GetMapping("/hello")
+  String hello() {
+    return this.restClient
+      .get()
+      .uri("http://service/hello")
+      .retrieve()
+      .body(String.class);
+  }
+}
+```
+
+#### start
+```bash
+sdk use java 24-graalce
+./mvnw spring-boot:run
+```
+
+visit http://localhost:8081/hello  
+and see that LoadBalanced RestClient is working
+
+LoadBalancer is an abstraction. You can plugin your own,  
+or use other delivered by Spring.
+
+#### Spring Gateway
+Since our client is not doing anything with response  
+and it's just a proxy, we can use Spring Gateway.  
+It's a microproxy, like nginx or Apache with modrewrite.  
+It's super fast.
+
+Minimal controller looks like
+
+```java
+@Controller
+@ResponseBody
+class MyController {
+
+  @GetMapping("/foo")
+  String bar() {
+    return "baz";
+  }
+}
+```
+
+#### Lambda routes, Router Based
+People comming from Ruby on Rails, Sinatra, Express, Flask (Python)  
+they use different approach, which is more predicate -> lambda
+
+```java
+import org.springframework.web.servlet.function.RouterFunction;
+import org.springframework.web.servlet.function.ServerResponse;
+
+import static org.springframework.web.servlet.function.RouterFunctions.route;
+
+@Bean
+RouterFunction<ServerResponse> myRouterFunction() {
+  return route()
+    .GET("/hello1", req -> ServerResponse.ok().body("Hello 1 from client!"))
+    .GET("/hello2", req -> ServerResponse.ok().body("Hello 2 from client!"))
+    .build();
+}
+```
+
+#### Gateway micro proxy
+Make sure to remove `@LoadBalanced` `restClientBuilder` at this stage.  
+Otherwise you will have two things trying to load balance:  
+gateway and clientBuilder.
+
+```java
+.GET("/hello1", http("http://adobe.com"))
+```
+
+`http` is a static method that will create server response lambda.
+
+Load balanced proxied request
+
+```java
+return route()
+  .GET("/hello1", http())
+  .filter(lb("service"))
+  .build();
+}
+```
+
+full client code
+
+```java
+package com.example.client;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.function.RouterFunction;
+import org.springframework.web.servlet.function.ServerResponse;
+
+import static org.springframework.web.servlet.function.RouterFunctions.route;
+import static org.springframework.cloud.gateway.server.mvc.handler.HandlerFunctions.http;
+import static org.springframework.cloud.gateway.server.mvc.filter.LoadBalancerFilterFunctions.lb;
+
+@SpringBootApplication
+public class ClientApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(ClientApplication.class, args);
+  }
+
+  @Bean
+  RouterFunction<ServerResponse> myRouterFunction() {
+    return route()
+      .GET("/hello", http())
+      .filter(lb("service"))
+      .build();
+  }
+}
+```
+
+#### Filters
+If we want to add rewrite from "/foo" to "http://service/hello"
+
+```java
+return route()
+  .before(BeforeFilterFunctions.rewritePath("/foo", "/hello"))
+  .GET("/**", http())
+  .filter(lb("service"))
+  .build();
+```
+
+This can be used to rewrite api paths, like:
+
+```java
+route()
+  .before(BeforeFitlerFunctions.rewritePath("/api", "/"))
+  .GET("/api/**", http())
+  .filter(lb("service"))
+  .build();
+```
+
+It will strip down "api" and send proxied request  
+to target server with "api" part.
+
+http://localhost:8081/api/hello
+
+#### Gateway summary
+One of the patterns you can enable is to use gateway  
+as first port of call from outside to our system.
+
+And this is natural place to do oAuth.  
+To secure access to the system.
+
+Restrict access to:
+- CDN (javascript)
+- backend api
+
+If your React/javascript is served via this gateway,  
+and your api are hosted on same host and port, just different path  
+then CORS problems dissapear.
+
+And if you deal with JWT (often pronounced "jot") tokens on gateway,  
+then dealing with JWT tokens dissapears from you javascript apis.  
+Life becomes much easier by sticking nice gateway in front of your system.
+
+Spring Cloud is used by everybody.
+It was build on top of Netflix code,
+then Netflix rewrote on top of Spring Cloud.
+Their systems use Spring Cloud and Spring Boot.
+It's great stack to build systems that scale.

@@ -6,6 +6,9 @@ https://github.com/rtfeldman/c-workshop-v1
 Richard Feldman  
 https://zed.dev/
 
+#### ISO/IEC 9899
+Spec for C language
+
 ### Programming Languages
 #### Zig
 quite cool, aim was to make it simple

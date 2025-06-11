@@ -1,3 +1,14 @@
+Model Complex Domains with TypeScript
+=====================================
+Frontend Masters, Mike North  
+https://frontendmasters.com/workshops/domain-modeling-typescript/#player
+https://github.com/mike-north/peashoot
+https://docs.google.com/document/d/168ziCgIe59ZSkfW2D13g2193FzwHcAZqoENyjhR5L1Y/edit?tab=t.0#heading=h.6r0xnes56bgv
+Diagram tool:
+https://whimsical.com/34CepeKWgXoCSCr793zTL2	
+
+
+
 Enterprise TypeScript
 =====================
 https://frontendmasters.com/courses/enterprise-typescript/

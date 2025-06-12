@@ -1,17 +1,730 @@
+Typescript monorepos v2
+=======================
+Frontend Masters, Mike North  
+https://frontendmasters.com/workshops/typescript-monorepos-v2/#player  
+repo:  
+git@github.com:mike-north/ts-monorepos-v2
+
+#### Monorepo
+Single repository that contains several packages.  
+Stripe has separate javascript monorepo, ruby monorepo, perl monorepo!  
+and other...
+
+#### What are benefits (vs Polyrepo)
+Dependency management.
+
+When there is improvement in your package,  
+you don't have a problem of extra work to propagate that improvement.
+
+Testing
+
+When you make improvement in deeply nested library  
+you can run tests and validate not only that small library  
+but also validate do bigger repositories that depend on it  
+still work.
+
+Allows to lint only packages affected by change.  
+Allows to setup boundaries between packages.
+
+#### pnpm
+Best today for TS monorepos.  
+Ready for enterprise level, it's a build tool.
+
+#### learna
+We will start with learna and convert to nx.
+
+#### turborepo vs nx
+They are similar. They have concept of cached lint steps.  
+They can detect which parts of code haven't changed  
+and serve them unchanged.
+
+#### how many people Stripe has in monorepo
+3000
+
+#### polyglot monorepos
+there is a tool for that: Bazel  
+https://bazel.build/
+
+not yet monorepo  
+run Client and Server
+
+```json
+"scripts": {
+  "dev": "concurrently -n \"Server,Client\" -c \"yellow,blue\" \"pnpm run dev-server\" \"pnpm run dev-client\"",
+},
+"devDependencies": {
+  "concurrently": "^9.1.2",
+}
+```
+
+### pnpn workspaces
+```bash
+mkdir -p packages/ui
+```
+
+other approach is to have `apps` and `libs` folders
+
+#### npm scopes
+This is way to have a concept for monorepo in package repository
+
+package.json
+
+```json
+"name": "@seeds/ui",
+```
+
+Adventage of pnpm is human readible lock file  
+and also by just moving some files into separate package  
+the lock file will not be affected, will not change.
+
+#### git moving
+Files that are reported as moving (instead of delete and create)  
+will still track history and git blame will still work.
+
+Git detects this at the moment when files are staged.  
+It can see that there are files not yet untracked and files removed  
+and it tries to find out which are same and moved.
+
+#### lowest level first
+Start extracting package with lowest level first.  
+We will start with models and introduce dependency of UI to models.
+
+create folders recursive
+
+```bash
+mkdir -p packages/models/src
+mkdir -p packages/models/tests
+```
+
+#### nice imports in mororepo
+```typescript
+import { ... } from '@seeds/models'
+```
+
+possible by creating entry point  
+(here we can decide what gets exposed)
+
+packages/models/src/index.ts
+
+```typescript
+export * from './seed-packet-collection.model.js'
+export * from './seed-packet.model.js'
+```
+
+Libraries generally should have one entry point  
+instead of exposing whole file structure for clients.
+
+#### linked node_modules
+Each package has node_modules but folders are symbolic links  
+to top level node_modules.
+
+#### -p for project
+packages/models/package.json
+
+```json
+"build": "tsc -p tsconfig.build.json",
+"dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput"
+```
+
+#### pnpm
+Way to say I'm dependent on another package from monorepo  
+and I will accept any version of it.
+
+packages/models/package.json
+
+```json
+"@seeds/models": "workspace:*",
+```
+
+#### ts references
+Enables building in way more efficient way
+
+#### ts Go rewrite
+Typescript team is in middle of Go rewrite  
+and rewrite of language server.  
+(before it was written in typescript)
+
+Typescript being slow is real problem.
+
+#### manypkg
+https://github.com/Thinkmill/manypkg
+
+tool for monorepos, linting `package.json` files  
+like prettier for package.json files
+
+```bash
+pnpm add -D @manypkg/cli
+pnpm manypkg check
+pnpm manypkg fix
+```
+
+#### syncpack
+https://github.com/JamieMason/syncpack
+
+Tool for monorepos, will make sure that versions are consistient,  
+will help to avoid situations where React has different versions  
+between one monorepo package and another package.
+
+```bash
+npm install --save-dev syncpack@alpha
+pnpm syncpack lint
+pnpm syncpack fix
+```
+
+Be carefull with using fix, in most situations you may prefer  
+to fix differences manually and one by one.
+
+opinionated formatting of package.json files
+
+```bash
+pnpm syncpack format
+```
+
+
+
 Model Complex Domains with TypeScript
 =====================================
 Frontend Masters, Mike North  
-https://frontendmasters.com/workshops/domain-modeling-typescript/#player
-https://github.com/mike-north/peashoot
-https://docs.google.com/document/d/168ziCgIe59ZSkfW2D13g2193FzwHcAZqoENyjhR5L1Y/edit?tab=t.0#heading=h.6r0xnes56bgv
-Diagram tool:
+https://frontendmasters.com/workshops/domain-modeling-typescript/#player  
+slides:  
+https://www.typescript-training.com/course/domain-modeling-with-ts  
+repo:  
+https://github.com/mike-north/peashoot  
+random notes:  
+https://docs.google.com/document/d/168ziCgIe59ZSkfW2D13g2193FzwHcAZqoENyjhR5L1Y/edit?tab=t.0#heading=h.6r0xnes56bgv  
+Diagram tool:  
 https://whimsical.com/34CepeKWgXoCSCr793zTL2	
+
+Taking complex problem, working on it with experts.  
+Creating conceptual representation of a business problem and its rules.  
+Offer low and high concepts and don't need to change api often.  
+Layer up concepts.
+
+#### Domain Modeling
+Identify key entities and model relationship between them.
+
+#### Domain Driven Design
+book by Eric Evans  
+Think about it as tools, but don't take it too rigidly.  
+Some concepts are really precious  
+and probably every developer should use them.
+
+#### Staff engineer
+Solving technological problems  
+Learn how to deal with technical ambiguity.  
+What software to reuse, what languas.
+
+Solving business problems  
+Domain modeling are tools for solving business problems.  
+Solving complex domain space.
+
+#### Typescript
+Can be used to describe contracts.  
+There are many alternatives, ex. protobuff.
+
+#### Tasks
+1) Model seed packets, seed collection.  
+2) Planting seeds into one of many plant beds.
+
+We will also think about operations and which of them are atomic.  
+Which parts of operations should pass or fail completely.
+
+### Value Objects and Entities
+#### Value Objects
+Things that DO NOT possess unique id.  
+Typically NOT mutable.
+
+```typescript
+import { IRGBColor } from '@peashoot/types'
+import { Column } from 'typeorm'
+
+export class RGBColor implements IRGBColor {
+  @Column()
+  red!: number
+
+  @Column()
+  green!: number
+
+  @Column()
+  blue!: number
+
+  @Column({ default: 1 })
+  alpha!: number
+}
+```
+
+When you compare value objects, are they equal  
+you compare them by values, not by identifier.
+
+#### TypeORM
+Tool that will create database tables for us,  
+we don't have to care about SQL.
+
+#### Zod
+Runtime type checking.  
+(and a way to extract typescript types)
+
+```typescript
+export const RGBColorSchema = z.object({
+  red: z.number(),
+  green: z.number(),
+  blue: z.number(),
+  alpha: z.number().optional(),
+})
+```
+
+#### Entities
+Contain id.  
+Mutable objects, they may change.  
+They usually represent a table.
+
+In typeORM they are annoted with `@Entity`
+
+```typescript
+import { CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from 'typeorm'
+import { v4 as uuidv4 } from 'uuid'
+
+const generatePrefixedUUID = <P extends string>(prefix: P): `${P}_${string}` => {
+  return `${prefix}_${uuidv4().slice(prefix.length)}`
+}
+
+export type BaseEntityId<Prefix extends string> = `${Prefix}_${string}`
+
+@Entity({ name: 'peashoot-entities' })
+export abstract class PeashootEntity<Prefix extends string> {
+  constructor(idPrefix: Prefix) {
+    this.id = generatePrefixedUUID(idPrefix)
+  }
+
+  @PrimaryColumn({
+    name: 'id',
+    type: 'text',
+    unique: true,
+  })
+  id!: BaseEntityId<Prefix>
+
+  @CreateDateColumn()
+  createdAt!: Date
+
+  @UpdateDateColumn()
+  updatedAt!: Date
+}
+```
+
+#### Setup repo
+(seems not to work inside /learn/typescript-modeling-domain)
+
+```bash
+brew install git-lfs
+git lfs instal
+git lfs pull
+npm i
+npm run build
+npm run dev
+```
+
+#### git lfs pull
+Images are stored in s3 bucket.  
+In repo they are just text files that describe location.  
+`git lfs pull` will pull them from s3.
+
+#### import type and code
+```typescript
+import {
+        CalculateDateResponseSchema,
+        LocationSchema,
+        type CalculateDateRequest,
+        type Location,
+} from '@peashoot/types'
+```
+
+#### existing code
+
+packages/types/src/resources/locations-calculate-date.ts
+
+```typescript
+import { z } from 'zod/v4'
+
+export const CalculateDateRequestSchema = z.object({
+        locationId: z.string(),
+        temperature: z.object({
+                value: z.number(),
+                unit: z.union([z.literal('C'), z.literal('F')]),
+        }),
+})
+
+export type CalculateDateRequest = z.infer<typeof CalculateDateRequestSchema>
+
+export const CalculateDateResponseSchema = z.object({
+        date: z.string(),
+})
+
+export type CalculateDateResponse = z.infer<typeof CalculateDateResponseSchema>
+```
+
+#### Domain Service
+Piece of code. This service should only deal with Location  
+And it should be possible to test it without http. And stub http.
+
+#### Location Entity
+
+```typescript
+import { Entity, Column } from 'typeorm'
+import { PeashootEntity } from './peashoot-entity'
+
+@Entity()
+export class Location extends PeashootEntity<'loc'> {
+  constructor() {
+    super('loc')
+  }
+
+  @Column('text')
+  name!: string
+
+  @Column('text')
+  region!: string
+
+  @Column('text')
+  country!: string
+}
+```
+
+#### Modeling Temperature and Range
+Value object has to be embeded into something.
+
+Location <Entity>  
+id  
+name  
+region  
+country  
+has many: MonthlyTemp
+
+MonthlyTemperature <Entity>  
+id  
+month: number  
+range: TemperatureRange
+
+TemperatureRange <Value object>  
+min: Temperature  
+max: Temperature
+
+Temperature <Value object>  
+unit: 'C' or 'F'  
+value: number
+
+#### Normalization
+We will not store some temperature values  
+in C and some in F, this is just UI representation.
+
+Because if we want to present charts,if we store in two units,  
+then charts will have to perform normalization.
+
+#### Remodeling TemperatureRange
+We could merge month with range into MonthlyTemperatureRange.  
+Risk is that we may have other places in system  
+where we would reuse temperature range without month.
+
+Location <Entity>  
+name  
+region  
+country  
+has many: MonthlyTemp
+
+MonthlyTemperatureRange <Entity>  
+id  
+month: number  
+min: Temperature  
+max: Temperature
+
+Temperature <Value object>  
+unit: 'C' or 'F'  
+value: number
+
+There is choice in how divide data between values  
+and entities. And often we will group some at start  
+to then evolve and split value objects out.
+
+#### Modeling temperature unit
+```typescript
+import { z } from 'zod/v4'
+
+export const TemperatureUnitSchema = z.union([z.literal('C'), z.literal('F')])
+
+export type TemperatureUnit = z.infer<typeof TemperatureUnitSchema>
+
+export const TemperatureSchema = z.object({
+        value: z.number(),
+        unit: TemperatureUnitSchema,
+})
+```
+
+By using infer we align runtime type with compile type.
+
+#### Description
+When there will be error, or sometimes used in tooltips.
+
+```typescript
+month: z.int().min(0).max(11).describe("month"),
+```
+
+#### Modeling range entity
+
+```typescript
+import { z } from 'zod/v4'
+import { TemperatureSchema } from '../value-objects/temperature.type.js'
+
+/**
+{
+        id: "123123123"
+        locationId: "qwerqwer"
+        month: 4,
+        min: { value: 34, unit: "F"},
+        min: { value: 35, unit: "F"},
+}
+*/
+
+export const MonthlyTemperatureRangeSchema = z.object({
+        id: z.string(),
+        locationId: z.string(),
+        month: z.int().min(0).max(11),
+        min: TemperatureSchema,
+        max: TemperatureSchema,
+})
+
+export type MonthlyTemperatureRange = z.infer<typeof MonthlyTemperatureRangeSchema>
+```
+
+#### direction
+when we store, we will store location.id inside 
+
+#### Persisting
+This is not @Entity, its a definition of Value Object  
+that it will be used in entity.
+
+```typescript
+import { Column } from 'typeorm'
+import { Temperature as ITemperature, TemperatureUnit } from '@peashoot/types'
+
+export class Temperature implements ITemperature {
+  @Column()
+  value!: number
+
+  @Column('text')
+  unit!: TemperatureUnit
+}
+```
+
+And then we reuse that value object when we create entity
+
+```typescript
+import { Column, Entity } from 'typeorm'
+import { MonthlyTemperatureRange as IMonthlyTemperatureRange } from "@peashoot/types"
+import { Temperature } from '../values/temperature'
+
+@Entity()
+export class MonthlyTemperatureRange implements IMonthlyTemperatureRange {
+  @Column()
+  month!: number
+
+  @Column(() => Temperature)
+  min!: Temperature
+  @Column(() => Temperature)
+  max!: Temperature
+}
+```
+
+we tell typescript: there is some process that will make sure this is populated
+
+```typescript
+month!: number
+```
+
+Set relation between TemperatureRange and Location
+
+```typescript
+import { Column, Entity, ManyToOne } from 'typeorm'
+import { MonthlyTemperatureRange as IMonthlyTemperatureRange } from "@peashoot/types"
+import { Temperature } from '../values/temperature'
+import { Location } from './location'
+
+@Entity()
+export class MonthlyTemperatureRange implements IMonthlyTemperatureRange {
+  @Column()
+  month!: number
+
+  @ManyToOne(() => Location, (location) => location.monthlyTemps)
+  location!: Location
+
+  @Column(() => Temperature)
+  min!: Temperature
+  @Column(() => Temperature)
+  max!: Temperature
+}
+```
+
+we have to define entities available:
+
+```typescript
+import { DataSource } from 'typeorm'
+import { Plant } from './entities/plant'
+import { SeedPacket } from './entities/seed-packet'
+import { Garden } from './entities/garden'
+import { RGBColor } from './values/rgb-color'
+import { XYCoordinate } from './values/xy-coordinate'
+import { Location } from './entities/location'
+import { MonthlyTemperatureRange } from './entities/monthly-temperature-range'
+import { Temperature } from './values/temperature'
+
+export const AppDataSource = new DataSource({
+        type: 'sqlite',
+        database: 'peashoot.sqlite',
+        synchronize: true, // For dev only; use migrations in prod
+        logging: false,
+        entities: [Plant, SeedPacket, Garden, Location, RGBColor, XYCoordinate, MonthlyTemperatureRange, Temperature],
+        migrations: [],
+        subscribers: [],
+})
+```
+
+and we are missing id  
+which we can do by adding one column
+```typescript
+@PrimaryGeneratedColumn({ type: 'uuid' })
+id!: string
+```
+
+but we created a base class that we can extend from
+
+packages/server/src/entities/monthly-temperature-range.ts
+
+```typescript
+@Entity()
+export class MonthlyTemperatureRange extends PeashootEntity<'mtr'> {
+```
+
+Also fix problem with unknown column type
+
+```typescript
+@Column('text')
+unit!: TemperatureUnit
+```
+
+We will create locations as part of reading data.
+
+#### Repository
+The way to engage with data from database.
+
+```typescript
+const locRepo = AppDataSource.getRepository(Location)
+const l = locRepo.create({
+  name: locData.name,
+  region: locData.region,
+  country: locData.country,
+})
+locRepo.save(l);
+```
+
+In dev mode of this project, on each change in code  
+database is completely recreated and repopulated.  
+(it's sqllite database)
+
+#### template string in typescript type
+```typescript
+locationId as `loc_${string}`
+```
+
+#### typeORM find one
+and traverse relation
+
+```typescript
+const location = await this.locationRepository.findOne({
+        where: { id: `loc_${id}` },
+        relations: ['monthlyTemperatures'],
+})
+```
+
+#### Developing shared vocabulary
+Things lost in translation.
+
+You want to correct misconceptions you have about domain.  
+So when you speak with them, you have to avoid talkings things,  
+that will end in you loosing their attention and not understanding.
+
+Connect words used in problem space  
+with words in solution space.
+
+- clarify terminology
+- use graphs and illustrations
+- minimize jargon
+
+#### Stay curious and open
+Don't go into details of solution too early.
+
+Often if you offer some solution, people will accept it  
+without understanding, that there are limitations of that solution.
+
+Ask about core pain  
+ask "why"
+
+Sometimes edge cases will help you understand domain  
+even if you will not handle them at early, MVP phase.  
+"let's worry about this, when we get there"
+
+User journey  
+Request concrete example for complex scenarios.  
+Take my step by step trough process.  
+This will help you to not miss things.
+
+Maintain glossary of terms in a simple form  
+which will allow to keep it up to date.
+
+#### Identify core value
+Save last 3 or 4 minutes for question  
+"from talk we had, what is especially worth keeping?"
+
+#### Avoid overkill
+Do not attempt to model every detail of real world.  
+You are making usefull software, not perfect representation.
+
+Ask: what we need to make useful software  
+(and discard the rest)
+
+Avoid modeling more than is neccessary to solve problem.  
+Our work is to enhance selected fragment of reality.
+
+#### Questions
+Ask how things are done today.
+
+#### Bounded context
+Area of a problem space or problem domain  
+where ubiquos language (common shared) applies  
+and there is internal consistency within bounded context.
+
+If you have very generic name, like "item",  
+it may mean seed, plant or something other  
+but withing bounded context you don't have to specify it.
+
+It's like saying: this is related group of entities.
+
+It allows to use simple terminology,  
+while always remembering in what bounded context you operate in.
+
+#### Anti-corruption layers
+Way to bridge two bounded contexts.  
+Very closely scoped layer that we use to convert  
+between entities of one bounded context to another.
+
+Well contained adapters.
+
+#### Domain modeling exercise
+Users which to do something that is difficult today.  
+We will refine knowledge
 
 
 
 Enterprise TypeScript
 =====================
-https://frontendmasters.com/courses/enterprise-typescript/
+https://frontendmasters.com/courses/enterprise-typescript/  
 Frontend Masters, Mike North  
 https://www.typescript-training.com/course/enterprise-v2
 
@@ -433,7 +1146,7 @@ yarn lint
 
 Build End to End TypeScript Apps
 ================================
-https://frontendmasters.com/workshops/fullstack-typescript-v2/
+https://frontendmasters.com/workshops/fullstack-typescript-v2/  
 Frontend Masters, Steve Kinney  
 https://stevekinney.net/courses/full-stack-typescript  
 https://github.com/stevekinney/full-stack-typescript
@@ -1998,7 +2711,7 @@ https://github.com/DefinitelyTyped/DefinitelyTyped
 
 Intermediate Typescript
 =======================
-https://frontendmasters.com/courses/intermediate-typescript-v2/
+https://frontendmasters.com/courses/intermediate-typescript-v2/  
 Mike North  
 https://frontendmasters.com/courses/intermediate-typescript-v2/introduction/  
 https://www.typescript-training.com/course/intermediate-v2

@@ -180,6 +180,292 @@ opinionated formatting of package.json files
 pnpm syncpack format
 ```
 
+#### prettier
+at the moment we left it only in `ui` package  
+with modern es modules it's easy to think you're editing source  
+while you are editing output
+
+we didn't pull project wide tool to project root  
+prettier will be running at a project root
+
+```bash
+pnpm dlx prettier packages/*/src/**/*
+```
+
+#### linter
+same as prettier, we will have eslinter working at top level  
+with benefit of having one shared config file that will controll  
+settings in all the packages.
+
+we need to add @types/node for this line of configuration
+
+eslint.config.mts
+
+```typescript
+tsconfigRootDir: process.cwd()
+```
+
+#### declaration files
+Any library should have declaration files,  
+it will allow users to jump to source code with comments  
+and to navigate your code.
+
+Also, when publishing library, for the same reason  
+its good to leave source files there.
+
+#### git patch
+Another reason to include source files.  
+If your users find problem, then they can fix it.  
+It would be best to create PR in original and so,  
+but as alternative fix they have also option to create git patch.
+
+#### knip
+https://knip.dev/
+
+Tool for monorepo and not.
+
+Identify exports that are not used within monorepo  
+and dependencies that are not used.
+
+Conceptually close to tree shaking.  
+However tree shaking is typically happening during build  
+and it will identify unused code and not include it in build.
+
+It's another root level tool
+
+```bash
+pnpm i -D knip
+```
+
+knip.json
+
+```json
+{
+  "workspaces": {
+    "packages/*": {
+      "entry": ["src/{index.main}.ts"],
+      "project": "src/**/*.{ts,svelte}"
+    }
+  }
+}
+```
+
+and then, to run:
+
+```bash
+pnpm knip
+```
+
+It will allow you to find dependencies you don't need  
+in your package.json file. In some cases you may want  
+to ignore warning, if you know that you need it (but knip is not aware).
+
+And it will detect your unused exports and duplicate one  
+especially if you export something as default and named  
+(in that case perhaps it's better to use named export).
+
+knip could be a part of your normal build.
+
+#### language server problems
+Often when working in monorepo and changing configurations,  
+IDE will need a restart of a language server.
+
+#### dev script, concurrently package
+Way to run dev server in one command (both client and server).  
+And to rebuild on any change. Quick feedback loop.
+
+`pnpm run` is good for tasks that exit.  
+npm package `concurrently` is aimed to solve this   
+it accepts commands and list of colors
+
+```json
+"scripts": {
+  "dev": "concurrently -n \"Server,Client\" -c \"yellow,blue\" \"pnpm run dev-server\" \"pnpm run dev-client\"",
+}
+```
+
+and in case of monorepo, to run from top level one package, use
+
+```bash
+pnpm --filter=server run dev
+```
+
+because this command can easily grow,  
+it's good idea to have bash file to run it
+
+`dlx` is for download and execute  
+like `npx`
+
+dev.sh
+
+```bash
+#!/bin/bash
+pnpm dlx concurrently -n "dev-models,dev-ui,dev-server" \
+                 -c "yellow,blue,green" \
+                 "pnpm --filter=@seeds/models --stream run dev" \
+                 "pnpm --filter=@seeds/ui --stream run dev" \
+                 "pnpm --filter=@seeds/server --stream run dev"
+
+```
+
+#### incremental builds
+We can speed up building, if we think about dependency graph.
+
+tsconfig.build.json
+
+```json
+"compierOptions": {
+  "composite": true
+}
+```
+
+This setting will make your project have build file,  
+will store additional build information.
+
+After that we need to establish references.  
+If your package.json has a dependency between one monorepo package and another  
+then you should also add it in references part in typescript configuration.
+
+tsconfig.build.json
+
+```json
+"references": [
+  {
+    "path": "../models"
+  }
+]
+```
+
+After these changes, there will be new file:  
+make sure to add them to .gitignore  
+`tsconfig.build.tsbuildinfo`
+
+To see speed up in project, project has to be significantly large.  
+(in both cases, dist folder will look the same, it's just faster)
+
+#### Api extractor
+https://api-extractor.com/
+
+Will create rollup file of your public types api.  
+(rollup is a single, consolidated file .d.ts that has all TS declarations)
+
+And a markdown file that will report public api  
+(meant for being added to repository)
+
+It will track api at different levels of maturity.  
+alpha, beta
+
+And in your code use JSDocs to notify  
+which elements are `@public` and which are `@beta`, `@alpha`
+
+```bash
+mkdir packages/models/etc
+pnpm api-extractor run --local --verbose
+```
+
+this will create  
+/etc/api-report.md
+
+Api extractor can make sure, that if you are exporting a function  
+that you also are exporting types needed for that function.
+
+Api extractor is good at detecting,  
+when a change in your code has a ripple effect.
+
+#### Api documenter
+https://www.npmjs.com/package/@microsoft/api-documenter  
+https://github.com/microsoft/rushstack
+
+You can select format.
+
+```bash
+pnpm api-documenter markdown -i temp -o docs
+```
+
+add this to .gitignore
+
+```
+**/temp
+```
+
+It can detect that you have more than one library.
+
+#### learna
+In some sense this tis original monorepo tool.  
+Today it works differently than years before  
+it's maintaned by the same team as nx  
+and it's a bit of a wrapper around nx.
+
+```bash
+pnpm dlx lerna init
+```
+
+You may want to add it as dev dependency also,  
+just to make sure, that you always have it.
+
+```bash
+pnpm learna build
+pnpm learna run lint
+```
+
+You will see that Nx is used.
+
+```bash
+pnpm learna run test --since=course-progress
+```
+
+This will make delta between head of course-progress branch  
+and run only tests for code that was touched, but also any code  
+that is dependendent indirectly on a code that you changed.
+
+(on the level of whole packages)
+
+#### Nx
+```bash
+npm add --global nx
+pnpm dlx nx init
+```
+
+This will many questions. Remote caching is payed after some time.  
+And probably you don't want to wrap all package.json scripts with nx commands  
+(which is last question).
+
+Cachable: same concept as learna diff testing. But used for linting,  
+And it can work for other scripts. For some kinds of tasks it's no brainer.  
+But for build, you will prefer to do it everytime fresh and clean.
+
+If you still like --since, you can keep using learna.
+
+https://nx.dev/recipes/running-tasks/reduce-repetitive-configuration  
+there is a way to define on nx level what it means to lint, test, etc...  
+it lets you strip a lot of details from packages of monorepo  
+and provide general rules and ways to perform these tasks.
+
+And it can also test against dist folder and not source  
+so that you can know, that when you will publish, it will work.  
+(you will see it's working, because you will see build before test)
+
+Nx provides:
+- tasks
+- understanding git diffs
+- dependencies between packages
+- dependencies between tasks
+
+#### Turborepo
+Also has remote caching.  
+It's kind of similar to nx in some fields.
+
+#### Q&A
+Nx diff testing will run all tests of a changed monorepo package  
+(and dependent packages) or a subset of tests in that changed monorepo package?
+
+Runtime validators  
+Zod: used extensively  
+ArkType: alternative (not so known)
+
+You can make Nx aware of projects outside monorepo,  
+separate folders, that is not mapped in project.json
+
 
 
 Model Complex Domains with TypeScript

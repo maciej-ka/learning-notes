@@ -1,10 +1,10 @@
 Tailwind CSS v2
 ===============
-Steve Kinney  
-https://frontendmasters.com/workshops/tailwind-css-v2/#player  
-course website  
-https://stevekinney.com/courses/tailwind  
-repo  
+Steve Kinney
+https://frontendmasters.com/workshops/tailwind-css-v2/#player
+course website
+https://stevekinney.com/courses/tailwind
+repo
 https://github.com/stevekinney/tailwind-skatepark
 
 ```html
@@ -24,17 +24,17 @@ Tailwind will figure out class that you need.
 - Learning curve, have to learn utility class names
 - No semantic: class don't convey element meaning
 
-Tailwind presumes that you use some kind of component system.  
-Because if you don't, then you will go crazy trying to update style  
+Tailwind presumes that you use some kind of component system.
+Because if you don't, then you will go crazy trying to update style
 using multi-cursors of find or replace in a lot of places.
 
 #### Why it works
-Predictable cascade,  
-utilites override compnent and base styles,  
+Predictable cascade,
+utilites override compnent and base styles,
 you don't need !important.
 
 #### Oxide
-Tool written in Rust.  
+Tool written in Rust.
 Used by Tailwind to figure what classes are used or not.
 
 #### Vite setup
@@ -56,27 +56,27 @@ exrpot default defineConfig({
 ```
 
 #### How it works
-Treats files as plain text, no code parsing  
-Although with Oxide this is less true now (it used regexp before)  
-Looks for tokens resembling class names  
+Treats files as plain text, no code parsing
+Although with Oxide this is less true now (it used regexp before)
+Looks for tokens resembling class names
 Generates CSS for for recognized utilities
 
 #### Bootstrap
-In bootstrap days you knew, that website used bootstrap.  
+In bootstrap days you knew, that website used bootstrap.
 With tailwind everything is customizable.
 
 #### Tailwind scans files except
 .gitignored files
 
 #### Dynamic template injected will not work
-This will not work, tailwind cannot run your code  
+This will not work, tailwind cannot run your code
 and figure out what dynamic classes you wil have.
 
 ```javascript
 text-${color}-600
 ```
 
-Also if you don't have all markup, becuase perhaps   
+Also if you don't have all markup, becuase perhaps 
 you pull some part of it outside of project.
 
 In that case you can tell which classes are used.
@@ -87,22 +87,22 @@ In that case you can tell which classes are used.
 ```
 
 #### Best practices and anti-patterns
-Css layers  
-modern css feature, not tailwind specific  
+Css layers
+modern css feature, not tailwind specific
 way to change order
 
 ```css
 @layer theme
 ```
 
-this is special, everything here becomes utility class  
+this is special, everything here becomes utility class
 design token variables
 
 ```css
 @layer base
 ```
 
-if you need to style base html, body, list  
+if you need to style base html, body, list
 you probably don't need to do that
 
 
@@ -110,7 +110,7 @@ you probably don't need to do that
 @layer components
 ```
 
-reusable overridable patterns  
+reusable overridable patterns
 if you need to add additional class
 
 ```css
@@ -136,7 +136,7 @@ md:hover:gb-primary-600
 ```
 
 #### Antipattern: magic values
-overusing `[]` notation with custom values  
+overusing `[]` notation with custom values
 (unless you really have one time situations)
 
 Instead use theme customization
@@ -147,30 +147,30 @@ Instead use theme customization
 }
 ```
 
-define components for reusablility  
-use @theme for consistient changes  
+define components for reusablility
+use @theme for consistient changes
 use @utility for custom utilities needing variant support
 
 #### uicolors
-https://uicolors.app/generate/f95629  
+https://uicolors.app/generate/f95629
 site to create color palette
 
 #### svelte
 Perhaps the best to dissapear and look like basic html.
 
 #### color naming
-no universal naming of color seems to work with dark/light  
+no universal naming of color seems to work with dark/light
 (tried strong/subtle, light/dark)
 
 #### IBM style design
-Carbon Design System  
+Carbon Design System
 https://carbondesignsystem.com/designing/design-resources/
 
 ### Mix
 `px-4` is 1rem
 
-`rounded-md`  
-`rounded-full`  
+`rounded-md`
+`rounded-full`
 full uses trick: calc(Infinity - 1)
 
 ```html
@@ -180,22 +180,22 @@ full uses trick: calc(Infinity - 1)
 
 slate: like gray but more blue
 
-`outline-8`  
-`outline-offset-4`  
-`outline-slate-400`  
-borders take space (use them if border is part of layout)  
-option to fix it is outline, which don't move elements  
+`outline-8`
+`outline-offset-4`
+`outline-slate-400`
+borders take space (use them if border is part of layout)
+option to fix it is outline, which don't move elements
 (when changing between outline and no outline on hover)
 
 
 
-ring  
-`ring` (outline with rounding, only for legacy browsers)  
-reason for it used exist, it doesn't anymore  
-outline didn't respect border radius, but browsers support that now  
+ring
+`ring` (outline with rounding, only for legacy browsers)
+reason for it used exist, it doesn't anymore
+outline didn't respect border radius, but browsers support that now
 (ring use hack, it's a shadow)
 
-however, ring can be also inset  
+however, ring can be also inset
 ring-inset
 
 and you can stack border, outline and ring in one element
@@ -215,36 +215,36 @@ Space
 </div>
 ```
 
-Divide will put solid color between  
-(almost never used, you probably want space)  
+Divide will put solid color between
+(almost never used, you probably want space)
 `divide-y-4 divide-cyan-400`
 
 #### Form Inputs
-inputs have a lot of pseudo classes, like: required, focused...  
+inputs have a lot of pseudo classes, like: required, focused...
 https://stevekinney.com/courses/tailwind/styling-form-state
 
-`invalid`  
+`invalid`
 check valid, however even before user interaction
 
-`user-invalid`  
+`user-invalid`
 checks after user interaction
 
-`focus`  
+`focus`
 always shows
 
-`focus-visible`  
+`focus-visible`
 shows only when needed (keyboard navigation, not mouse clicks)
 
-`focus-within`  
-`focus-within:bg-sky-200`  
+`focus-within`
+`focus-within:bg-sky-200`
 it's on parent, and styles that parent when any child has focus
 
-`accent-purple-400`  
+`accent-purple-400`
 change color of checkbox
 
 #### group
-You put it on parent element.  
-and then use it with something like group-hover  
+You put it on parent element.
+and then use it with something like group-hover
 and if parent gets hover, the child has style applied
 
 ```html
@@ -264,10 +264,10 @@ group-odd
 ```
 
 #### peer
-will work in a similar way like group  
+will work in a similar way like group
 but it works on sibiling level
 
-however, by default, it only works on sibiling elements  
+however, by default, it only works on sibiling elements
 which are located **after** the element with peer class
 
 (one way to do it on elements before is to use flex/grid with reverse)
@@ -282,12 +282,62 @@ which are located **after** the element with peer class
 
 other:
 
-`  
-peer-checked  
-...  
+`
+peer-checked
+...
 `
 
+#### Has
+we can mix:
+has group peer in not
 
+```css
+has-[input:checked]:border-green-500
+has-[input:invalid]:bg-red-50
+```
+
+Css will do work, javascript no longer required
+Style a label if the input next to it is checked
+
+```css
+label:has(+ input:checked) {
+  font-weight: bold;
+}
+```
+
+#### After
+Styling next element.
+Add red * in missing required input
+
+```css
+block font-medium text-slate-900 after:h-2 after:w-2 after:text-red-600 group-has-[input:required]:after:content-['*']
+```
+
+#### random Notes
+
+```css
+group-has-checked:line-through
+```
+
+
+make .target element yellow
+when any of it's sibilings has focus
+either near sibiling or far
+
+
+
+make element yellow
+when any of it's sibilings
+either direct or far
+receives focus
+
+.target element yellow
+when any of it's sibilings has focus
+either near sibiling or far
+
+.wrapper:has(.sibling:focus) .target {
+  background-color: yellow;
+}
 
 
 Getting Started with CSS v2

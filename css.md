@@ -1,3 +1,295 @@
+Tailwind CSS v2
+===============
+Steve Kinney  
+https://frontendmasters.com/workshops/tailwind-css-v2/#player  
+course website  
+https://stevekinney.com/courses/tailwind  
+repo  
+https://github.com/stevekinney/tailwind-skatepark
+
+```html
+<button class="bg-blue-600 px-3 py-2 text-white">Button</button>
+```
+
+Tailwind will figure out class that you need.
+
+#### Advantages
+- no switching of files
+- less styling conflicts (because style is scoped to individual element)
+- reusability:  single purpose
+- maintanability: effects are predictable and visible in markup
+
+#### Criticims
+- Cluttered markup, line length issue
+- Learning curve, have to learn utility class names
+- No semantic: class don't convey element meaning
+
+Tailwind presumes that you use some kind of component system.  
+Because if you don't, then you will go crazy trying to update style  
+using multi-cursors of find or replace in a lot of places.
+
+#### Why it works
+Predictable cascade,  
+utilites override compnent and base styles,  
+you don't need !important.
+
+#### Oxide
+Tool written in Rust.  
+Used by Tailwind to figure what classes are used or not.
+
+#### Vite setup
+
+```typescript
+import { defineConfig } from 'vite';
+import tailwindcss from '@tailwindcss/vite';
+
+exrpot default defineConfig({
+  plugins: [tainwindcss(),]
+});
+```
+
+#### Add to css
+(meant to be added at base index level)
+
+```css
+@import 'tailwindcss';
+```
+
+#### How it works
+Treats files as plain text, no code parsing  
+Although with Oxide this is less true now (it used regexp before)  
+Looks for tokens resembling class names  
+Generates CSS for for recognized utilities
+
+#### Bootstrap
+In bootstrap days you knew, that website used bootstrap.  
+With tailwind everything is customizable.
+
+#### Tailwind scans files except
+.gitignored files
+
+#### Dynamic template injected will not work
+This will not work, tailwind cannot run your code  
+and figure out what dynamic classes you wil have.
+
+```javascript
+text-${color}-600
+```
+
+Also if you don't have all markup, becuase perhaps   
+you pull some part of it outside of project.
+
+In that case you can tell which classes are used.
+
+#### Plugins
+```css
+@plugin
+```
+
+#### Best practices and anti-patterns
+Css layers  
+modern css feature, not tailwind specific  
+way to change order
+
+```css
+@layer theme
+```
+
+this is special, everything here becomes utility class  
+design token variables
+
+```css
+@layer base
+```
+
+if you need to style base html, body, list  
+you probably don't need to do that
+
+
+```css
+@layer components
+```
+
+reusable overridable patterns  
+if you need to add additional class
+
+```css
+@utility
+```
+
+one-off helpers that behave like core utilities
+
+#### Configure in CSS
+define tokens inside @theme using native css custom properties
+
+```css
+@theme {
+  --color-brand: #00adef;
+}
+```
+
+#### Responsive, state, container variants
+they are stackable
+
+```css
+md:hover:gb-primary-600
+```
+
+#### Antipattern: magic values
+overusing `[]` notation with custom values  
+(unless you really have one time situations)
+
+Instead use theme customization
+
+```css
+@theme {
+  --spacing-section: 123px;
+}
+```
+
+define components for reusablility  
+use @theme for consistient changes  
+use @utility for custom utilities needing variant support
+
+#### uicolors
+https://uicolors.app/generate/f95629  
+site to create color palette
+
+#### svelte
+Perhaps the best to dissapear and look like basic html.
+
+#### color naming
+no universal naming of color seems to work with dark/light  
+(tried strong/subtle, light/dark)
+
+#### IBM style design
+Carbon Design System  
+https://carbondesignsystem.com/designing/design-resources/
+
+### Mix
+`px-4` is 1rem
+
+`rounded-md`  
+`rounded-full`  
+full uses trick: calc(Infinity - 1)
+
+```html
+<button {...props} class="rounded-md bg-blue-600 text-white px-3 py-1.5 shadow-md hover:bg-blue-500">{label}</button>
+<button {...props} class="rounded-md bg-white px-3 py-1.5 shadow-sm outline-slate-600 hover:shadow-2xl hover:bg-slate-100">{label}</button>
+```
+
+slate: like gray but more blue
+
+`outline-8`  
+`outline-offset-4`  
+`outline-slate-400`  
+borders take space (use them if border is part of layout)  
+option to fix it is outline, which don't move elements  
+(when changing between outline and no outline on hover)
+
+
+
+ring  
+`ring` (outline with rounding, only for legacy browsers)  
+reason for it used exist, it doesn't anymore  
+outline didn't respect border radius, but browsers support that now  
+(ring use hack, it's a shadow)
+
+however, ring can be also inset  
+ring-inset
+
+and you can stack border, outline and ring in one element
+
+```html
+<div class="rounded-md border p-4 bg-slate-50 border-slate-300">
+  <h2 class="font-semibold text-lg">{title}</h2>
+  <p class="mt-1">{description}</p>
+</div>
+```
+
+Space
+
+```html
+<div class="space-y-4">
+  ...
+</div>
+```
+
+Divide will put solid color between  
+(almost never used, you probably want space)  
+`divide-y-4 divide-cyan-400`
+
+#### Form Inputs
+inputs have a lot of pseudo classes, like: required, focused...  
+https://stevekinney.com/courses/tailwind/styling-form-state
+
+`invalid`  
+check valid, however even before user interaction
+
+`user-invalid`  
+checks after user interaction
+
+`focus`  
+always shows
+
+`focus-visible`  
+shows only when needed (keyboard navigation, not mouse clicks)
+
+`focus-within`  
+`focus-within:bg-sky-200`  
+it's on parent, and styles that parent when any child has focus
+
+`accent-purple-400`  
+change color of checkbox
+
+#### group
+You put it on parent element.  
+and then use it with something like group-hover  
+and if parent gets hover, the child has style applied
+
+```html
+<div class="group">
+  <h3>Parent</h3>
+  <p class="group-hover:text-blue-500">Changes when parent is howevered</p>
+</div>
+```
+
+some options
+
+```
+group-focus
+group-active
+group-odd
+...
+```
+
+#### peer
+will work in a similar way like group  
+but it works on sibiling level
+
+however, by default, it only works on sibiling elements  
+which are located **after** the element with peer class
+
+(one way to do it on elements before is to use flex/grid with reverse)
+
+```html
+<div class="space-y-1">
+  <label class="block peer-invalid:text-red-500" for="email">Email</label>
+  <input type="email" id="email" class="peer block rounded-sm outline-1" />
+  <p class="peer-invalid:text-red-500">Please provide a valid email</p>
+</div>
+```
+
+other:
+
+`  
+peer-checked  
+...  
+`
+
+
+
+
 Getting Started with CSS v2
 ===========================
 https://frontendmasters.com/workshops/intro-css-v2/#player  

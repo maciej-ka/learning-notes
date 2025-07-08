@@ -1,3 +1,22 @@
+Notes
+=====
+Wyszukiwarka treści, która wykorzystuje duże modele językowe do odpowiadania na zapytania.
+https://www.perplexity.ai/
+
+context builder:
+Turn any Git repository into a simple text digest of its codebase
+https://gitingest.com/karpathy/nanogpt
+
+devin deepwiki
+Its not content of files of your repository
+and devin build docs pages on base of these raw files in repository
+https://deepwiki.com/karpathy/nanoGPT/1-overview
+
+map of github
+https://anvaka.github.io/map-of-github/#2.77/12.04/1.08
+
+
+
 State Management at Scale in React & Next.js
 ============================================
 https://frontendmasters.com/workshops/react-state-at-scale/#player  

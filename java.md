@@ -1,3 +1,17 @@
+Java primer
+===========
+
+```java
+@Data                    // getters, setters, toString, equals, hashCode
+@Builder                 // builder pattern
+@NoArgsConstructor       // no-args constructor
+@AllArgsConstructor      // all-args constructor
+@RequiredArgsConstructor // constructor for final fields
+@Slf4j                   // creates logger field
+```
+
+
+
 Java Fundamentals
 =================
 https://frontendmasters.com/courses/java

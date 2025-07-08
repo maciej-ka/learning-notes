@@ -1,3 +1,33 @@
+Kubernetes for developers
+=========================
+Manning
+https://livebook.manning.com/book/kubernetes-for-developers
+Repo
+https://github.com/WilliamDenniss/kubernetes-for-developers
+
+### Deploying to kubernetes
+#### authenticate to docker hub
+As alternative ECR or Artifact Registry (Google Cloud) can be used
+
+```bash
+cd Chapter02/timeserver
+IMAGE_TAG=us-docker.pkg.dev/wdenniss/ts/timeserver:1
+IMAGE_TAG=us-docker.pkg.dev/maciejka/ts/timeserver:1
+docker build . -t $IMAGE_TAG
+```
+
+In case of keychain problems
+
+```bash
+security -v unlock-keychain ~/Library/Keychains/login.keychain-db
+```
+
+Push docker image
+
+```bash
+docker push $IMAGE_TAG
+```
+
 Kubernetes in 4 Hours
 =====================
 https://learning.oreilly.com/live-events/kubernetes-in-4-hours/0636920056367/

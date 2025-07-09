@@ -1,8 +1,8 @@
 Kubernetes for developers
 =========================
-Manning
-https://livebook.manning.com/book/kubernetes-for-developers
-Repo
+Manning  
+https://livebook.manning.com/book/kubernetes-for-developers  
+Repo  
 https://github.com/WilliamDenniss/kubernetes-for-developers
 
 ### Deploying to kubernetes
@@ -28,9 +28,11 @@ Push docker image
 docker push $IMAGE_TAG
 ```
 
+
+
 Kubernetes in 4 Hours
 =====================
-https://learning.oreilly.com/live-events/kubernetes-in-4-hours/0636920056367/
+https://learning.oreilly.com/live-events/kubernetes-in-4-hours/0636920056367/  
 Sander van Vugt, O'Reilly
 
 Service: exposing to outside  
@@ -850,7 +852,7 @@ docker compose up db -d
 
 Kubernetes in action
 ====================
-https://www.manning.com/books/kubernetes-in-action-second-edition
+https://www.manning.com/books/kubernetes-in-action-second-edition  
 https://livebook.manning.com/book/kubernetes-in-action-second-edition/chapter-1/v-14/
 
 ### 1. Introducing Kubernetes
@@ -1008,7 +1010,7 @@ you create and retrieve these objects via k8s api
 several types of objects:  
 - application deployment as whole
 - running instance of application
-- service provided by a set of instances to reach single IP
+- service provided by a set of instances to reach single IP  
 and more
 
 defined in json / yaml manifest files
@@ -2343,7 +2345,7 @@ a manifesto of what goes into container
 - take this image
 - add these users
 - copy these files
-- run this command
+- run this command  
 you can build your own and run it over and over
 
 name: Dockerfile  
@@ -2470,7 +2472,7 @@ paths in COPY can be shorter
 **ADD**  
 works a bit like COPY but does more  
 - unzips if needed
-- can add from url
+- can add from url  
 in practice it's not commonly used
 
 **PUBLISH**  
@@ -2886,7 +2888,7 @@ Kubernetes:
 for more complex situations, like:  
 - more than one instance of docker
 - scale to zero
-- native (functions running in cluster)
+- native (functions running in cluster)  
 amazing but also complicated  
 rarelly used by devs for running local
 

@@ -5665,3 +5665,268 @@ It was build on top of Netflix code,
 then Netflix rewrote on top of Spring Cloud.  
 Their systems use Spring Cloud and Spring Boot.  
 It's great stack to build systems that scale.
+
+### Security
+We will look how it looks to do Security typically in application.
+
+https://start.spring.io/  
+new service called: auth
+
+Dependencies:  
+Spring Web  
+Spring Security  
+OAuth2 Authorization Server  
+JDBC API  
+PostresSQL Driver  
+Docker Compose Support
+
+There are ways to manage passwords  
+and ways to avoid passwords.
+
+#### Database
+compose.yaml
+```
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_PASSWORD=secret'
+      - 'POSTGRES_USER=myuser'
+    ports:
+      - '5432:5432'
+```
+
+start database:
+```bash
+docker compose up
+```
+
+configure connection
+
+src/main/resources/application.properties
+```
+spring.application.name=auth
+spring.datasource.url=jdbc:postgresql://localhost/mydatabase
+spring.datasource.username=myuser
+spring.datasource.password=secret
+```
+
+#### Security thoughts in general
+Security is really hard. It should be thinked ahead on start of project.  
+It's easy by centimeter, hard by meter: it gets hard if you wait with it.
+
+Security with passwords is fundamentally broken.
+
+#### com.webauthn4j
+We will add webauthn core as dependecy
+
+pom.xml
+```xml
+<dependency>
+  <groupId>com.webauthn4j</groupId>
+  <artifactId>webauthn4j-core</artifactId>
+  <version>0.28.6.RELEASE</version>
+</dependency>
+```
+
+#### Simple HTTP Controller
+src/main/java/com/example/auth/AuthApplication.java
+```java
+@Controller
+@ResponseBody
+class HelloController {
+
+  @GetMapping("/hello")
+  Map<String, String> hello(Principal principal) {
+    return Map.of("message", "Hello, " + principal.getName() + "!");
+  }
+}
+```
+
+We are injecting `Principal` object from Spring security.  
+(It's a part of Java Specification for something like last 20 years)  
+Principal has only one interesting method: `getName()`
+
+Where does that Principal come from?  
+Spring Security takes care about it.
+
+#### Security Filter Chain
+Think of Spring Security as a big filter,  
+surrounding your application and guarding it  
+and demanding that there will be some sort of authentication.
+
+And once you're authenticated, it handles authorization.  
+Authentication: who is the user  
+Authorization: what user can do
+
+By default there is Security is applied already  
+and our defined endpoint is not accessible.  
+just because Spring Security is on classpath endpoints are locked down.
+
+```bash
+./mvnw spring-boot:run
+```
+
+Visit http://localhost:8080/hello
+
+it will redirect to Sign in page:  
+Visit http://localhost:8080/login
+
+There used to be default username and password,  
+but this is no longer the case.
+
+#### In memory users
+It's terrible idea, but we can define user in the code.  
+We could provide plain text passwords, but you want to encode them.  
+For that purspose we use hierarchy in Spring Security called PasswordEncoder  
+And we inject that password encoder.
+
+src/main/java/com/example/auth/AuthApplication.java
+```java
+@SpringBootApplication
+public class AuthApplication {
+
+  @Bean
+  PasswordEncoder passwordEncoder() {
+    return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+  }
+
+  @Bean
+  InMemoryUserDetailsManager inMemoryUserDetailsManager(PasswordEncoder passwordEncoder) {
+    var encodedPw = passwordEncoder.encode("pass");
+    System.out.println("encodedPw: " + encodedPw);
+    var users = Set.of(
+      User.withUsername("maciejka").roles("USER").password(encodedPw).build(),
+      User.withUsername("rwinch").roles("USER", "ADMIN").password(encodedPw).build()
+    );
+    return new InMemoryUserDetailsManager(users);
+  }
+}
+```
+
+#### Encrypted Prefixes
+Restart app. Logs will show something like:  
+encodedPw: {bcrypt}$2a$10$4qOv5lwuj0tNyNPJ9cLKTudoe6CCaUfSDFzzTCRw6gM1GR1jEncrG
+
+Prefix {bcrypt} is used to support future migrations.  
+At the moment bcrypt is widely recognized as most secure (it's used as default).  
+If tommorow we need quantum cryptography this will be changed to new method,  
+and for old passwords to still work, we need information about encoding method.
+
+Visit http://localhost:8080/hello and sign in with maciejka/pass
+
+#### In database users
+src/main/java/com/example/auth/AuthApplication.java
+```java
+@SpringBootApplication
+public class AuthApplication {
+
+  // ...
+
+  @Bean
+  JdbcUserDetailsManager jdbcUserDetailsManager(DataSource dataSource) {
+    return new JdbcUserDetailsManager(dataSource);
+  }
+```
+
+This will require some schema.  
+Generic SQL variant of this schema is in Spring Security Jar.  
+Here is version tweaked for PostgreSQL:
+
+src/main/resources/schema.sql
+```sql
+drop table if exists authorities;
+drop table if exists users;
+
+CREATE TABLE authorities
+(
+    username  text NOT NULL,
+    authority text NOT NULL
+);
+
+CREATE TABLE users
+(
+    username text    NOT NULL,
+    password text    NOT NULL,
+    enabled  boolean NOT NULL
+);
+
+ALTER TABLE ONLY users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (username);
+
+CREATE UNIQUE INDEX ix_auth_username ON authorities USING btree (username, authority);
+
+ALTER TABLE ONLY authorities
+    ADD CONSTRAINT fk_authorities_users FOREIGN KEY (username) REFERENCES users (username);
+```
+
+And prefilled users on fresh start  
+So that database is not empty:
+
+src/main/resources/data.sql
+```sql
+insert into users (username, password, enabled) values ('maciejka', '843b103f6c09de407d366f8ff6553691767a35dbaf870cad47e86945c4103be85ee8ea49509b9502', true);
+insert into users (username, password, enabled) values ('rob', 'a94f80ed1a6677dedb489a6912e6c83a7c2a7ada2c4d739dd4a4ab9e454d3d875134fa4480b19c55', true);
+insert into users (username, password, enabled) values ('accountant', 'a94f80ed1a6677dedb489a6912e6c83a7c2a7ada2c4d739dd4a4ab9e454d3d875134fa4480b19c55', true);
+
+insert into authorities (username, authority) values ('maciejka', 'ROLE_USER');
+insert into authorities (username, authority) values ('rob', 'ROLE_USER');
+insert into authorities (username, authority) values ('rob', 'ROLE_ADMIN');
+insert into authorities (username, authority) values ('accountant', 'ROLE_ACCOUNTANT');
+
+update users set password = '{sha256}'|| password;
+```
+
+We have to instruct Spring to load the schema:
+
+src/main/resources/application.properties
+```
+spring.sql.init.mode=always
+```
+
+Restart, visit and log in:  
+maciejka/pw
+
+Start incognito window and log in:  
+rob/pw
+
+#### SHA256 migration
+data.sql we provided used old encryption method, sha256.  
+It wouldn't take a lot of time to reverse encoded sha into raw password.
+
+We can migrate these as users log in. When users will fill form,  
+and value of password is in memory and is confirmed ... migrate it.
+
+This migration is not fully automated on purpose, as it may be risky.  
+It's implemented in method `updatePassword` which receives user and new password.  
+And your implementation should create new user via user details manager.
+
+src/main/java/com/example/auth/AuthApplication.java
+```java
+@SpringBootApplication
+public class AuthApplication {
+
+  // ...
+
+  @Bean
+  UserDetailsPasswordService userDetailsPasswordService(JdbcUserDetailsManager userDetailsManager) {
+    return new UserDetailsPasswordService() {
+      @Override
+      public UserDetails updatePassword(UserDetails user, String newPassword) {
+        var updated = User.withUserDetails(user).password(newPassword).build();
+        userDetailsManager.updateUser(updated);
+        return updated;
+      }
+    };
+  }
+}
+```
+
+#### Password regulations
+There are government standards about managing passwords. And they change.  
+Atm it's NOT advised to force users to change password every month.  
+It's not a good practice anymore.
+
+#### How to avoid passwords?
+Use different factor.

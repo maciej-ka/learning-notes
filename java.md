@@ -38,7 +38,12 @@ class names are case sensitive
 Enterprise Java: Spring Boot Fundamentals
 =========================================
 https://frontendmasters.com/workshops/spring-boot/  
-Josh Long
+Josh Long  
+josh@joshlong.com  
+Code repo  
+https://github.com/joshlong-attic/2025-frontend-masters-spring-boot-course  
+Josh youtube  
+https://www.youtube.com/@coffeesoftware
 
 Java Spring was inspired by article about problems with Java.  
 It's rare case of documentation preceeding code.
@@ -5719,6 +5724,8 @@ It's easy by centimeter, hard by meter: it gets hard if you wait with it.
 Security with passwords is fundamentally broken.
 
 #### com.webauthn4j
+Tool for signing in with passkeys.  
+(webauthn is protocal name, passkeys is marketing name for it)  
 We will add webauthn core as dependecy
 
 pom.xml
@@ -5815,6 +5822,9 @@ If tommorow we need quantum cryptography this will be changed to new method,
 and for old passwords to still work, we need information about encoding method.
 
 Visit http://localhost:8080/hello and sign in with maciejka/pass
+
+One way to opt-out from encryption is to use: {noop}  
+(it's like saying it'a a no-encryption encryption method)
 
 #### In database users
 src/main/java/com/example/auth/AuthApplication.java
@@ -5928,5 +5938,397 @@ There are government standards about managing passwords. And they change.
 Atm it's NOT advised to force users to change password every month.  
 It's not a good practice anymore.
 
-#### How to avoid passwords?
+#### "Magic links": one time tokens
+How to avoid passwords?  
 Use different factor.
+
+Idea is that if you can access your email,  
+then this confirms that you are the right user.
+
+User visits website sign in form, tells name or email  
+and then application sends link in email, which when clicked will sign in.
+
+In a sense we are not trusting that we have secured solution  
+but that Google (or whatever mail provider) has.
+
+Same with phone number, presumelly you are the only one who can access your phone.
+
+There are integrations with Twillio, SendGrid ... (services that can send SMS and emails)  
+For simplicity we will "Send mail" to console, by just printing it out.
+
+#### Security filter (for one time tokens)
+src/main/java/com/example/auth/AuthApplication.java
+```java
+@SpringBootApplication
+public class AuthApplication {
+
+  // ...
+
+  @Bean
+  SecurityFilterChain myAuthSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    return httpSecurity
+      .authorizeHttpRequests(ae -> ae.anyRequest().authenticated())
+      .formLogin(Customizer.withDefaults())
+      .oneTimeTokenLogin(ott ->
+        ott.tokenGenerationSuccessHandler((_, response, oneTimeToken) -> {
+          System.out.println("please visit http://localhost:8080/login/ott?token=" + oneTimeToken.getTokenValue());
+          response.setHeader(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE);
+          response.getWriter().println("you've got console email!");
+          response.getWriter().flush();
+        })
+      )
+      .build();
+  }
+}
+```
+
+We override default sign in form by defining Security filter for our application.  
+As soon as you define one of these, you override defaults and go back to zero.  
+Because of that, in first line we define that any request hast to authenticated.  
+And in second line we make sure that standard form to sign in is provided
+
+(These two lines are equivalent of what you get by default when you don't define filter)
+
+```java
+.authorizeHttpRequests(ae -> ae.anyRequest().authenticated())
+.formLogin(Customizer.withDefaults())
+```
+
+These are low level Servlet API, that are running under typical Spring MVC
+
+```java
+response.setHeader
+response.getWriter
+```
+
+Restart app, visit http://localhost:8080/hello  
+(make sure that traditional sign in works)  
+ask for token, see the mail in console and follow the link  
+(which is somehting like...)  
+http://localhost:8080/login/ott?token=09cd0abe-d8ce-460c-b39a-e3f38408b26e  
+and you should be signed in
+
+Generally you would send email or SMS in real situation.
+
+#### Passkeys
+They start to be everywhere, Google will ask you.  
+Marketing name for protocol named webauthn.  
+Webauthn: open specification that packages usage of public keys,
+
+Usually by federating it and storing it on trusted agents  
+like browser, OS or password manager.
+
+In practice it means you can use your face to sign in,  
+or touch sensor, watch, UB key...  
+And passwords are stored in iCloud.  
+So any device I have access can authenticate as me.
+
+To have it working we needed this dependecy outside of Spring:
+
+pom.xml
+```xml
+<dependency>
+  <groupId>com.webauthn4j</groupId>
+  <artifactId>webauthn4j-core</artifactId>
+  <version>0.28.6.RELEASE</version>
+</dependency>
+```
+
+Add passkeys sign in inside security filter
+
+src/main/java/com/example/auth/AuthApplication.java
+```java
+@SpringBootApplication
+public class AuthApplication {
+
+  // ...
+
+  @Bean
+  SecurityFilterChain myAuthSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    return httpSecurity
+      .authorizeHttpRequests(ae -> ae.anyRequest().authenticated())
+      .formLogin(Customizer.withDefaults())
+      .webAuthn(wa -> wa
+          .allowedOrigins("http://localhost:8080")
+          .rpName("My beautifull frontend")
+          .rpId("localhost")
+      )
+      // ...
+  }
+}
+```
+
+To use it:
+1. First sign in using one of traditional methods.
+2. Visit http://localhost:8080/webauthn/register
+3. Then register passkey (via browser and iPhone)  
+   (it will be stored in cloud Passwords App)
+4. Open private tab
+5. Sign in using passkey
+
+In this implementation passkeys in app are stored in memory,  
+but obviously you can store it in databases.
+
+Clear in Passwords.App and restart application.  
+Follow same steps, but select "other options" instead touch  
+and use iPhone which will end in scanning QR code.
+
+To logout, visit:  
+http://localhost:8080/logout
+
+Passkeys are not only better user experience  
+but it's also more secure.
+
+And it's open specification, list of big players that support it:  
+http://fidoalliance.org/members
+
+#### OAuth Authorization Server (9090)
+Normally we have more than one application,  
+and we don't want to add authentication logic for every one.  
+We want to centralize our sign in.
+
+We will create our authentication logic to create tokens.  
+This is what OAuth Authorization Server does.
+
+OAuth: no RegisteredClientRepository in your configuration  
+OAuth is an identity provider.  
+It needs to know, what clients may connect to it.
+
+If you look at developer.facebook.com or other like it,  
+you can register new app there, which will be able to talk to facebook APIs.  
+That's OAuth behind the scenes and you're telling API who client will be.  
+And you need to specify some details, like: where redirect should be after sign in.  
+User will authenticate on facebook itself and after that will go to your app.  
+And app will receive a token, that it will use to talk with APIs.
+
+At no point that App has user password.
+
+And also App doesn't have full user persmissions, it can only do  
+what user agreed to "grant" while he was signing in on facebook.
+
+There are many ways to configure RegisteredClientRepository,  
+in memory, using jdbc... you can also use config file.
+
+Spring boot supports both `application.properties` and `application.yml`  
+We set the port of OAuth to be 9090
+
+auth/src/main/resources/application.yml
+```yaml
+server:
+  port: 9090
+spring:
+  datasource:
+    username: myuser
+    password: secret
+    url: jdbc:postgresql://localhost/mydatabase
+  application:
+    name: auth
+  sql:
+    init:
+      mode: always
+  security:
+    oauth2:
+      authorizationserver:
+        client:
+          oidc-client:
+            registration:
+              client-id: "spring"
+              client-secret: "{noop}spring"
+              client-authentication-methods:
+                - "client_secret_basic"
+              authorization-grant-types:
+                - "authorization_code"
+                - "refresh_token"
+              redirect-uris:
+                - "http://127.0.0.1:8081/login/oauth2/code/spring"
+              scopes:
+                - "openid"
+                - "profile"
+```
+
+We are building Authentication and Authorization service,  
+called also OAuth IdP (identity Provider). Other, 3rd party options  
+could be Okta, Active Directory, Keycloak (typical in Java community)...
+
+To enable OAuth IdP, extend security filter:
+
+auth/src/main/java/com/example/auth/AuthApplication.java
+```java
+import static org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer.authorizationServer;
+
+@SpringBootApplication
+public class AuthApplication {
+
+  // ...
+
+  @Bean
+  SecurityFilterChain myAuthSecurityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    return httpSecurity
+      .with(authorizationServer(), as -> as.oidc(Customizer.withDefaults()))
+      // ....
+}
+```
+
+#### OAuth Client Apps Setup: Rest API Service (8080)
+Rest API with protected endpoints using OAuth.  
+Users will not call it directly.
+
+https://start.spring.io/  
+name: service
+
+Dependencies:
+- OAuth2 Resource Server
+- Spring Web
+
+In OAuth Spec, there is:  
+OAuth Authorization Server  
+OAuth Resource Server (backend API)  
+OAuth Client (user facing part, it initializes token dance)
+
+Set the location of the oauth server.
+
+service/src/main/resources/application.properties
+```
+spring.application.name=service
+server.port=8080
+spring.security.oauth2.resourceserver.jwt.issuer-uri=http://localhost:9090
+```
+
+Thanks to this line, if the incomming request will not have a token  
+then they will be denied. And if there will be a token, we need to check is it valid.  
+(Resource server will call Authorization Server whenever the request comes)
+
+Define simple endpoint
+
+service/src/main/java/com/example/service/ServiceApplication.java
+```java
+@Controller
+@ResponseBody
+class HelloController {
+
+  @GetMapping("/")
+  Map<String,String> hello(Principal principal) {
+    return Map.of("name", principal.getName());
+  }
+}
+```
+
+And run it
+```bash
+./mvnw spring-boot:run
+```
+
+#### OAuth: Trivial frontend (8020)
+Javascript is calling /api and showing result
+
+ui/index.html
+```javascript
+addEventListener('load' , async (e) => {
+  const result =  await window.fetch('/api/') 
+  const json = await result.json()
+  const name = json['name']
+  document.getElementsByClassName('name')[0].innerHTML = name 
+})
+```
+
+and start it by some simple python server
+```bash
+./run.sh
+```
+
+#### Oauth Client App: Spring Clould Gateway (8081)
+Solution for centralizing authentication and providing easy access to APIs
+
+https://start.spring.io/  
+name: client
+
+Dependencies:
+- OAuth2 Client
+- Spring Web
+- Gateway (from Spring Cloud Routing)
+
+We have to select port that will match redirect defined in Authorization Server.  
+And provide settings of OAuth client, which mirror settings in Authorization Server.  
+Also point to Authorization Server (called issuer)
+
+client/src/main/resources/application.properties
+```
+spring.application.name=client
+server.port=8081
+
+spring.security.oauth2.client.provider.spring.issuer-uri=http://localhost:9090
+
+spring.security.oauth2.client.registration.spring.provider=spring
+spring.security.oauth2.client.registration.spring.client-id=spring
+spring.security.oauth2.client.registration.spring.client-secret=spring
+spring.security.oauth2.client.registration.spring.authorization-grant-type=authorization_code
+spring.security.oauth2.client.registration.spring.client-authentication-method=client_secret_basic
+spring.security.oauth2.client.registration.spring.redirect-uri={baseUrl}/login/oauth2/code/{registrationId}
+spring.security.oauth2.client.registration.spring.scope=openid
+```
+
+And we want this service to act as a proxy.
+
+We catch all requests that have no particular target `**` to be handled by localhost 8020  
+For all requests that are bould to api, let them be handled by 8080  
+Before filter is rewriting paths.
+
+And if request is not authenticated, we want to redirect to sign in page,  
+using `TokenRelayFilterFunctions.tokenRelay()`, which is aware of OAuth configuration.
+
+src/main/java/com/example/client/ClientApplication.java
+```java
+@SpringBootApplication
+public class ClientApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(ClientApplication.class, args);
+  }
+
+  @Bean
+  RouterFunction<ServerResponse> gateway() {
+    return route()
+      .filter(TokenRelayFilterFunctions.tokenRelay())
+      .before(BeforeFilterFunctions.rewritePath("/api", "/"))
+      .GET("/api/*", http("http://localhost:8080"))
+      .GET("/**", http("http://localhost:8020"))
+      .build();
+  }
+}
+```
+
+Run, Start the Gateway
+```bash
+./mvnw spring-boot:run
+```
+
+#### Test OAuth, gateway, resource server and ui
+1. Go to incognito mode, visit gateway http://127.0.0.1:8081
+2. It should redirect to http://127.0.0.1:9090/login (Authorization Server)
+3. Sign in
+4. It should redirect to http://127.0.0.1:8081/?continue  
+   (where / is proxied to frontend running on 8020)  
+   (and it calls /api which is proxied to 8080)
+
+#### Session and loadbalancing: Spring Session Projct
+Under the hook Spring uses cookies for authentication  
+and stores user data in the session, which is not the best  
+as it doesn't work well with load balancing.
+
+"I like stateless services"  
+there is no such thing,  
+as authentication is state.
+
+Spring Session wraps the Servlet API for the session,  
+So when you install a Spring Session for MongoDB or JDBC  
+it will automatically forward all session to a SQL database.  
+(perhaps the best one to use here is Redis)
+
+So Authorization Server does all that OAuth stuff,  
+but it establishes session which is written in Redis  
+and if instance dies and user get's loadbalanced  
+then the same cookie that browser had before will still work.
+
+In short: a way to store session in Redis
+
+Also you can look at it as moving what was a JVM memory (of session) to Redis,

@@ -10,6 +10,7 @@ https://github.com/WilliamDenniss/kubernetes-for-developers
 As alternative ECR or Artifact Registry (Google Cloud) can be used
 ```bash
 docker login
+docker login -u maciejka docker.io
 ```
 
 #### Build and tag
@@ -77,9 +78,12 @@ k delete
 #### Observe state of deployment
 ```bash
 k get deploy
+k get deploy timeserver
 k get pods
 k get pods --watch
 k get pods --selector=pod=timeserver-pod
+watch kubectl get deploy
+watch -d kubectl get deploy
 ```
 
 #### Port forward deployment to Interact
@@ -187,6 +191,7 @@ k exec -it deploy/timeserver -- echo "Testing exec"
 k cp timeserver-6ccf9cd79-g98c4:server.py server.py
 k cp test.txt timeserver-6ccf9cd79-g98c4:.
 ```
+
 
 
 Kubernetes in 4 Hours

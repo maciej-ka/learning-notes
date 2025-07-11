@@ -5,29 +5,188 @@ https://livebook.manning.com/book/kubernetes-for-developers
 Repo  
 https://github.com/WilliamDenniss/kubernetes-for-developers
 
-### Deploying to kubernetes
-#### authenticate to docker hub
+### Deploying to Kubernetes
+#### Authenticate in Docker Hub
 As alternative ECR or Artifact Registry (Google Cloud) can be used
+```bash
+docker login
+```
 
+#### Build and tag
 ```bash
 cd Chapter02/timeserver
-IMAGE_TAG=us-docker.pkg.dev/wdenniss/ts/timeserver:1
-IMAGE_TAG=us-docker.pkg.dev/maciejka/ts/timeserver:1
+IMAGE_TAG=maciejka/timeserver:1
 docker build . -t $IMAGE_TAG
 ```
 
-In case of keychain problems
-
-```bash
-security -v unlock-keychain ~/Library/Keychains/login.keychain-db
-```
-
-Push docker image
-
+#### Push docker image
 ```bash
 docker push $IMAGE_TAG
 ```
 
+#### Error getting credendials
+```bash
+security -v unlock-keychain ~/Library/Keychains/login.keychain-db
+```
+
+#### Minimal Deploy configuration
+Configuration files  
+YAML is more popular  
+JSON is another option (usually for automated access)
+
+deployment.yaml
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: timeserver
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      pod: timeserver-pod
+  # pod object template, "PodSpec"
+  template:
+    metadata:
+      labels:
+        pod: timeserver-pod
+    spec:
+      containers:
+        - name: timeserver-container
+          image: docker.io/maciejka/timeserver:1
+```
+
+Important parts are: name, replica count and image path.  
+If image doesn't have domain, then it's by default hosted on docker hub.  
+Labels and match-labels can be any key-value pair, even `foo: bar`.
+
+#### Deploy
+```bash
+k create -f deploy.yaml
+k apply -f deploy.yaml
+```
+
+#### kubectl CRUD
+```bash
+k get
+k create
+k apply
+k delete
+```
+
+#### Observe state of deployment
+```bash
+k get deploy
+k get pods
+k get pods --watch
+k get pods --selector=pod=timeserver-pod
+```
+
+#### Port forward deployment to Interact
+```bash
+k port-forward deploy/timeserver 8080:80
+
+# with ssh port forwarding
+ssh -L 8080:localhost:8080 maciejka@91.214.2.28
+k port-forward deploy/timeserver 8080:80
+```
+
+visit http://localhost:8080  
+more than one port pair can be provided in port-forward
+
+#### Log and troubleshoot
+For future troubleshooting it's good idea  
+to start app with log statement about port it's running on
+
+```bash
+k logs -f deploy/timeserver
+
+# inspect one selected
+k describe pod timeserver-6ccf9cd79-b98h6
+k logs timeserver-6ccf9cd79-b98h6
+k logs timeserver-6ccf9cd79-b98h6 --previous
+k events timeserver-6ccf9cd79-b98h6
+
+# check memory and disk
+minikube ssh -- free -m
+minikube ssh -- df -h
+minikube logs
+
+# remove pod and let k8s recreate it
+k delete pod timeserver-6ccf9cd79-b98h6
+```
+
+Any deployment that terminated is considered a crash.  
+Even if it ended with a successful exit code.  
+(for one shot tasks use "job" not "deployment")
+
+#### Minikube reset
+```bash
+minikube stop
+minikube reset
+minikube start --nodes=3
+```
+
+#### Service
+Way to expose pods (which get internal IP)
+
+It's possible to expose single Pod (using `hostPort`).  
+Way often pods are aggregated behind load balancer.  
+This makes even sense with one pod, to provide stable IP.
+
+Service will route traffic only to running pods.
+
+service.yaml
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: timeserver
+spec:
+  selector:
+    pod: timeserver-pod
+  ports:
+  - port: 80
+    targetPort: 80
+    protocol: TCP
+  type: LoadBalancer
+```
+
+it will enable outside port 80  
+that is routed to pod targetPort 80  
+(by default targetPort is same as port)
+
+```bash
+k apply -f service.yaml
+k get service
+```
+
+to get external IP, k has to be run in cluster  
+on local minikube, port-forward Service
+
+#### Port forward Service
+```bash
+k port-forward service/timeserver 8080:80
+```
+
+#### Get all
+```bash
+k get all
+```
+
+#### Exec
+Deployment will select a random pod
+```bash
+k exec -it pod/timeserver-6ccf9cd79-g98c4 -- sh
+k exec -it deploy/timeserver -- sh
+k exec -it deploy/timeserver -- echo "Testing exec"
+```
+
+#### Copy files from/to container
+```bash
+k cp timeserver-6ccf9cd79-g98c4:server.py server.py
+k cp test.txt timeserver-6ccf9cd79-g98c4:.
+```
 
 
 Kubernetes in 4 Hours

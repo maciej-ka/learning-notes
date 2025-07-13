@@ -45,10 +45,21 @@ watch kubectl get all
 helm install my-app .
 ```
 
-#### helm secrets
+#### providing values
+custom-values.yaml
+```yaml
+wordpressUsername: myuser
+wordpressPassword: mypass
+```
+
+usage examples
 ```bash
-k describe secrets my-wordpress
-k get secret my-wordpress -o jsonpath='{.data.wordpress-password}' | base64 -d
+helm install my-wordpress bitnami/wordpress -f custom-values.yaml
+helm install my-wordpress bitnami/wordpress \
+  --set "wordpressPassword=mypass"
+
+# check values provided in release
+helm get values my-wordpress
 ```
 
 #### helm values
@@ -392,6 +403,12 @@ sudo lsof -iTCP -sTCP:LISTEN -n -P
 ```bash
 k get secrets
 k describe secrets my-wordpress
+k get secret my-wordpress -o jsonpath='{.data.wordpress-password}' | base64 -d
+
+k create secret generic db-pass \
+  --from-literal password=mypass
+
+k get secret db-pass -o jsonpath='{.data.password}' | base64 -d
 ```
 
 #### Storageclass

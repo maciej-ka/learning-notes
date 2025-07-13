@@ -3,23 +3,23 @@ Helm, the definitive guide from beginner to master
 https://www.udemy.com/course/definitive-helm-course-beginner-master/learn/lecture/47512429#overview
 
 #### Helm Overview
-Way to describe, version and parametrize groups of k8s resources.
-Chart: application or a group of templates
+Way to describe, version and parametrize groups of k8s resources.  
+Chart: application or a group of templates  
 Template: kubernetes manifests
 
-Chart can be public or private,
+Chart can be public or private,  
 Helm will install it with its dependencies.
 
-Release: single installation of helm chart.
-Helm stores release state in Kubernetes Secrets.
+Release: single installation of helm chart.  
+Helm stores release state in Kubernetes Secrets.  
 (this can be a problem when removing these secrets)
 
 ```bash
 k describe secrets sh.helm.release.v1.my-wordpress.v1
 ```
 
-Repository: reusable charts stored as tar files
-May be private or public
+Repository: reusable charts stored as tar files  
+May be private or public  
 http://artifacthub.io
 
 #### Helm public repositories
@@ -182,21 +182,21 @@ more than one port pair can be provided in port-forward
 k port-forward deploy/timeserver 8080:80 9090:90
 ```
 
-to enable forwarded port from public,
+to enable forwarded port from public,  
 bind port on all network interfaces
 ```bash
 k port-forward --address 0.0.0.0 deploy/timeserver 8080:80
 k port-forward --address 0.0.0.0 service/timeserver 8080:80
 ```
 
-there is also minikube forwarding
+there is also minikube forwarding  
 however, it will use random high port
 ```bash
 minikube service timeserver
 ```
 
 #### Use local container registry
-For faster development
+For faster development  
 avoid pushing to docker hub.
 
 Change container part
@@ -230,9 +230,9 @@ minikube ssh -- docker image prune -f
 ```
 
 #### Accessing Kubernetes from local Docker
-If you have Docker running on some machine
-and want one container to access Kubernetes
-then that Docker can just reuse forwarded port
+If you have Docker running on some machine  
+and want one container to access Kubernetes  
+then that Docker can just reuse forwarded port  
 Under the host address of: `host.docker.internal`
 
 ```bash
@@ -246,7 +246,7 @@ redis.Redis(host='host.docker.internal', port= '6379')
 
 #### Log and troubleshoot
 For future troubleshooting it's good idea  
-to start app with log statement about port it's running on
+to start app with log statement about port it's running on  
 (describe also includes environment variables)
 
 ```bash

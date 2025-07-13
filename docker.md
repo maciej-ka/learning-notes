@@ -1,3 +1,73 @@
+Helm, the definitive guide from beginner to master
+==================================================
+https://www.udemy.com/course/definitive-helm-course-beginner-master/learn/lecture/47512429#overview
+
+#### Helm Overview
+Way to describe, version and parametrize groups of k8s resources.
+Chart: application or a group of templates
+Template: kubernetes manifests
+
+Chart can be public or private,
+Helm will install it with its dependencies.
+
+Release: single installation of helm chart.
+Helm stores release state in Kubernetes Secrets.
+(this can be a problem when removing these secrets)
+
+```bash
+k describe secrets sh.helm.release.v1.my-wordpress.v1
+```
+
+Repository: reusable charts stored as tar files
+May be private or public
+http://artifacthub.io
+
+#### Helm public repositories
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo list
+# update cache
+helm repo update
+helm repo remove bitnami
+
+helm search repo wordpress
+helm search repo wordpress --versions
+helm show chart bitnami/wordpress
+helm show readme bitnami/wordpress
+```
+
+#### helm install
+```bash
+helm install my-wordpress bitnami/wordpress
+helm install my-wordpress bitnami/wordpress --version 23.1.20
+watch kubectl get all
+# from private folder
+helm install my-app .
+```
+
+#### helm secrets
+```bash
+k describe secrets my-wordpress
+k get secret my-wordpress -o jsonpath='{.data.wordpress-password}' | base64 -d
+```
+
+#### helm values
+```bash
+helm show values bitnami/wordpress
+helm get values my-wordpress
+helm get values --all my-wordpress
+```
+
+#### helm uninstall
+```bash
+helm list
+helm uninstall my-wordpress
+k get pv
+k delete pvc data-my-wordpress-mariadb-0
+```
+
+
+
 Kubernetes for developers
 =========================
 Manning  
@@ -86,30 +156,107 @@ watch kubectl get deploy
 watch -d kubectl get deploy
 ```
 
-#### Port forward deployment to Interact
+#### Get all
 ```bash
+k get all
+k get deploy,svc
+```
+
+#### Expose with port forward
+```bash
+# deployment
 k port-forward deploy/timeserver 8080:80
 
 # with ssh port forwarding
 ssh -L 8080:localhost:8080 maciejka@91.214.2.28
 k port-forward deploy/timeserver 8080:80
+
+# service
+k port-forward service/timeserver 8080:80
 ```
 
 visit http://localhost:8080  
+
 more than one port pair can be provided in port-forward
+```bash
+k port-forward deploy/timeserver 8080:80 9090:90
+```
+
+to enable forwarded port from public,
+bind port on all network interfaces
+```bash
+k port-forward --address 0.0.0.0 deploy/timeserver 8080:80
+k port-forward --address 0.0.0.0 service/timeserver 8080:80
+```
+
+there is also minikube forwarding
+however, it will use random high port
+```bash
+minikube service timeserver
+```
+
+#### Use local container registry
+For faster development
+avoid pushing to docker hub.
+
+Change container part
+```yaml
+spec:
+  containers:
+  - name: timeserver-container
+    image: timeserver:latest
+    imagePullPolicy: Never
+```
+
+To run
+```bash
+minikube image build -t timeserver:latest app
+k apply -f .
+k port-forward --address 0.0.0.0 services/timeserver 8081:80
+```
+
+Minikube cannot reload image when it's running
+```bash
+k delete -f .
+minikube image build -t timeserver:latest app
+k apply -f .
+k port-forward --address 0.0.0.0 services/timeserver 8081:80
+```
+
+Get minikube image list and prune dangling
+```bash
+minikube image ls
+minikube ssh -- docker image prune -f
+```
+
+#### Accessing Kubernetes from local Docker
+If you have Docker running on some machine
+and want one container to access Kubernetes
+then that Docker can just reuse forwarded port
+Under the host address of: `host.docker.internal`
+
+```bash
+k port-forward service/timeserver 6379:6379
+```
+
+Configuration settings inside container app
+```
+redis.Redis(host='host.docker.internal', port= '6379')
+```
 
 #### Log and troubleshoot
 For future troubleshooting it's good idea  
 to start app with log statement about port it's running on
+(describe also includes environment variables)
 
 ```bash
-k logs -f deploy/timeserver
-
-# inspect one selected
-k describe pod timeserver-6ccf9cd79-b98h6
+k describe pod/timeserver-6ccf9cd79-b98h6
 k logs timeserver-6ccf9cd79-b98h6
 k logs timeserver-6ccf9cd79-b98h6 --previous
 k events timeserver-6ccf9cd79-b98h6
+
+# check 
+k logs -f deploy/timeserver
 
 # check memory and disk
 minikube ssh -- free -m
@@ -127,8 +274,15 @@ Even if it ended with a successful exit code.
 #### Minikube reset
 ```bash
 minikube stop
-minikube reset
+minikube delete
 minikube start --nodes=3
+minikube start --memory=4096 --cpus=2
+```
+
+#### Minikube virtualbox
+```bash
+minikube delete
+minikube config set driver virtualbox
 ```
 
 #### Service
@@ -168,16 +322,6 @@ k get service
 to get external IP, k has to be run in cluster  
 on local minikube, port-forward Service
 
-#### Port forward Service
-```bash
-k port-forward service/timeserver 8080:80
-```
-
-#### Get all
-```bash
-k get all
-```
-
 #### Exec
 Deployment will select a random pod
 ```bash
@@ -191,6 +335,82 @@ k exec -it deploy/timeserver -- echo "Testing exec"
 k cp timeserver-6ccf9cd79-g98c4:server.py server.py
 k cp test.txt timeserver-6ccf9cd79-g98c4:.
 ```
+
+#### Cleaning
+Deleting deployment will delete all pods
+```bash
+k delete deploy timeserver
+k delete service timeserver
+k delete pod timeserver
+```
+
+or delete by referencing files or directory
+```bash
+k delete -f deployment.yaml
+k delete -f .
+```
+
+#### Delete cluster itself
+in GKE
+```bash
+gcloud container clusters delete $CLUSTER_NAME --region $REGION
+```
+
+#### Imperative Kubernetes commands
+Create deployment, service and then update container version
+```bash
+k create deployment timeserver --image=docker.io/maciejka/timeserver:1
+k expose deployment timeserver --type=LoadBalancer --port 80
+k set image deployment timeserver timeserver=maciejka/timeserver:2
+```
+
+#### Export configuration from cluster
+Exported files will have some extra fields that you will need to remove.
+
+```bash
+k get -o yaml $RESOURCE_TYPE $RESOURCE_NAME
+```
+
+#### Change connected k8s instance
+```bash
+k config get-contexts
+k config use-context docker-desktop
+```
+
+there is also kubectx tool for that
+```bash
+kubectx
+kubectx $CONTEXT
+```
+
+#### Check all listened ports
+```bash
+sudo lsof -iTCP -sTCP:LISTEN -n -P
+```
+
+#### Secrets
+```bash
+k get secrets
+k describe secrets my-wordpress
+```
+
+#### Storageclass
+```bash
+k describe storageclass standard
+```
+
+#### Minikube addons
+```bash
+minikube addons enable storage-provisioner
+minikube addons enable default-storageclass
+```
+
+#### Persistent Volumes (Claims)
+```bash
+k get pv
+k delete pvc data-my-wordpress-mariadb-0
+```
+
 
 
 
@@ -3357,6 +3577,7 @@ Nomad: "we think kubernetes is too complex, use nomad if you just want to run so
 using fixed version: good, because you avoid suprises from breaking changes  
 but how often you update these manually typed versions?
 
+
 #### a bit of fastify
 solve cors issues in fastify:
 ```javascript
@@ -3364,7 +3585,9 @@ async function start() {
   await fastify.register(cors, {
     origin: "*",
   });
+} 
 ```
+
 #### a bit of mongo
 has an eventual consistency  
 after some time

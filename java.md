@@ -6332,3 +6332,655 @@ then the same cookie that browser had before will still work.
 In short: a way to store session in Redis
 
 Also you can look at it as moving what was a JVM memory (of session) to Redis,
+
+### Spring Ai
+Models and chatbot become new user interface.  
+Most AI engineers are not building their own model,  
+they are integrating.
+
+#### Options to run models locally
+Ollama: Spring dependency with colloection of models to choose from  
+Docker Model Runner: A way to run models in Docker
+
+it's not unreasonable to have two or more models in one application  
+some models are very specialized, very fast but narrow  
+some like Ollama can do anything
+
+#### Init AI project
+https://start.spring.io/
+- GraalVM
+- Spring Web
+- Open AI
+- PostgreSQL Dvier
+- PGverctor Vector Database
+- Model Context Protocl Client
+- Spring Data JDBC
+
+#### Setup database and openai key
+If using different public model than OpenAi  
+there is base-url setting to change it.
+
+src/main/resources/application.properties
+```
+spring.application.name=adoptions
+
+spring.datasource.password=secret
+spring.datasource.user=myuser
+spring.datasource.url=jdbc:postgresql://localhost/mydatabase
+
+spring.ai.openai.api-key=sk-...Wcl
+
+spring.threads.virtual.enabled=true
+```
+
+#### Simple controller
+Java class `ChatClient` is an easy way to talk to `ChatModel`.  
+There is also a TranscriptionModel, EmbeddingModel, ...  
+(not all models provide all these)
+
+```java
+@Controller
+@ResponseBody
+class AdoptionsController {
+  private final ChatClient ai;
+
+  AdoptionsController(ChatClient.Builder ai) {
+    this.ai = ai.build();
+  }
+
+  @PostMapping("/{user}/inquire")
+  String inquire(@RequestParam String question) {
+    return this.ai
+      .prompt()
+      .user(question)
+      .call()
+      .content();
+  }
+}
+```
+
+This controller will just send string to REST endpoint.
+
+```bash
+./mvnw spring-boot:run
+curl -X POST localhost:8080/maciejka/inquire -d "question=My name is Maciejka"
+curl -X POST localhost:8080/maciejka/inquire -d "question=What's my name?"
+```
+
+On the second question, the API will respond that it doesn't know.  
+It's a role of chat client to present API a history,  
+to attach to each request a transcript of chat log.
+
+```java
+import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
+import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.chat.client.ChatClient;
+
+@Controller
+@ResponseBody
+class AdoptionsController {
+  private final Map<String, PromptChatMemoryAdvisor> memory = new ConcurrentHashMap<>();
+  private final ChatClient ai;
+
+  AdoptionsController(ChatClient.Builder ai) {
+    this.ai = ai.build();
+  }
+
+  @PostMapping("/{user}/inquire")
+  String inquire(@PathVariable String user, @RequestParam String question) {
+    var advisor = this.memory.computeIfAbsent(
+      user,
+      _ -> PromptChatMemoryAdvisor.builder(new InMemoryChatMemory()).build()
+    );
+
+    return this.ai
+      .prompt()
+      .user(question)
+      .advisors(advisor)
+      .call()
+      .content();
+  }
+}
+```
+
+Each user will have its own memory advisor, it's multi tenant.  
+`ComputeIfAbsent` will run provided lambda if key is missing or null.  
+And we are using in memory chat memory, there is a jdbc version also.
+
+```bash
+./mvnw spring-boot:run
+curl -X POST localhost:8080/maciejka/inquire -d "question=My name is Maciejka"
+curl -X POST localhost:8080/maciejka/inquire -d "question=What's my name?"
+```
+
+And now response for second query is as expected.
+
+#### Add a System Prompt
+However this API can be used by anyone for any question, at the cost of our tokens.  
+We will give model an overall system prompt. It will inform what are we expecting.
+
+It can be set for all clients as `defaultSystem` or as `system` in each prompt.  
+`\s` is a space character
+
+```java
+var system = """
+  You are an AI powered assistant to help people adopt a dog from the adoption\s
+  agency named Pooch Palace with locations in Antwerp, Seoul, Tokyo, Singapore, Paris,\s
+  Mumbai, New Delhi, Barcelona, San Francisco, and London. Information about the dogs available\s
+  will be presented below. If there is no information, then return a polite response suggesting we\s
+  don't have any dogs available.
+""";
+
+return this.ai
+  .prompt()
+  .system(system)
+  .user(question)
+  .advisors(advisor)
+  .call()
+  .content();
+```
+
+#### Connect to data
+Asking about dog at the moment will not give any result.  
+And let's say we have a database with rows on dogs for adoptions.
+
+Today models, like Gemini, support 2 milion tokens context window.  
+Context window is measure of complexity of request or response.  
+(we can have a small request: give first 500 of book, but large response)
+
+It's our job to reduce token count. If you're using local Ollama,  
+then it's free, you don't have to pay anyone (although you pay for electricity).
+
+Even if we could send all data of dogs with each llm api request, we should not.  
+We want to give subselection of data.
+
+compose.yaml
+```yaml
+services:
+  pgvector:
+    image: 'pgvector/pgvector:pg16'
+    environment:
+      - 'POSTGRES_DB=mydatabase'
+      - 'POSTGRES_PASSWORD=secret'
+      - 'POSTGRES_USER=myuser'
+    labels:
+      - "org.springframework.boot.service-connection=postgres"
+    ports:
+      - '5432:5432'
+```
+
+#### Vector stores
+PostgreSQL database with vector extension that adds a new type `pgvector/pgvector:pg16`  
+It's probably already installed if you're using hosted database.  
+(popular alternatives are: Milvus, Pinecone, Weaviate and plugins for Neo4j, Maria....)
+
+Vector store is a database optimized for a semantic similarity search.  
+You give some content in format of text, audio, video,  
+it's turned into embedding (just a bunch of numbers).
+
+Turning into embedding is expensive.  
+It can be done locally or with public API.  
+OpenAI has an endpoint for making that embedding  
+which is then put into database.
+
+Having that embedding allows to calculate Cosine Similarity,  
+(to find similar elements).
+
+`SimpleVectorStore`: in memory vector store, don't use it in production.  
+Possible to use as alternative to PostgreSQL with Vector extension.
+
+But we will be using PgVectorStore.  
+We have to initialize schema of embedding database:
+
+src/main/resources/application.properties
+```
+spring.ai.vectorstore.pgvector.initialize-schema=true
+```
+
+Something has to write data into vector store.  
+We will do it on application start.
+
+```java
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
+import org.springframework.ai.vectorstore.VectorStore;
+
+record Dog (int id, String name, String owner, String description) {};
+interface DogRepository extends ListCrudRepository<Dog, Integer>{};
+
+@Controller
+@ResponseBody
+class AdoptionsController {
+  AdoptionsController(ChatClient.Builder ai, DogRepository repo, VectorStore vectorStore) {
+    repo.findAll().forEach(dog -> {
+      var document = new Document("id: %s, name: %s, description: %s".formatted(
+        dog.id(), dog.name(), dog.description())
+      );
+      vectorStore.add(List.of(document));
+    });
+
+    this.ai = ai
+      .defaultAdvisors(new QuestionAnswerAdvisor(vectorStore))
+      .build();
+  }
+}
+```
+
+Read the data from the repository and for each dog write it to vector store.  
+Content of `new Document` can be any string, just be consistent.
+
+To provide these embeddings to AI API we will use another advisor  
+Which needs one more dependency to be added:
+
+pom.xml
+```xml
+<dependency>
+  <groupId>org.springframework.ai</groupId>
+  <artifactId>spring-ai-advisors-vector-store</artifactId>
+</dependency>
+```
+
+How it works is that `QuestionAnswerAdvisor` will preprocess query  
+and then go back with that preprocessed query to the VectorStore  
+and ask that store: do you have something that matches that query.
+
+VectorStore will then look at text encapsulated in this embedding  
+`"id: %s, name: %s, description: %s"` and hopefully return with something  
+that has one of the keywords in query.
+
+Populate database:
+
+my-ai/ai/src/main/resources/schema.sql
+```sql
+create table if not exists dog (
+  id serial primary key,
+  name text not null,
+  owner text null,
+  description text not null
+);
+```
+
+my-ai/ai/src/main/resources/data.sql
+```sql
+insert into dog (id, name, owner, description)
+values (34, 'Charlie', null, 'A black Bulldog known for being curious.') on conflict do nothing;
+insert into dog (id, name, owner, description)
+values (44, 'Rocky', null, 'A brown Chihuahua known for being protective') on conflict do nothing;
+insert into dog (id, name, owner, description)
+values (45, 'Prancer', null, 'a neurotic dog') on conflict do nothing;
+insert into dog (id, name, owner, description)
+values (47, 'Duke', null, 'A white German Shepherd known for being friendly.') on conflict do nothing;
+```
+
+my-ai/ai/src/main/resources/application.properties
+```
+spring.sql.init.mode=always
+```
+
+Restart and check database, vector_store should be populated
+```bash
+./mvnw spring-boot:run
+PGPASSWORD=secret psql -h localhost -p 5432 -U myuser -d mydatabase -c "SELECT COUNT(*) FROM vector_store;"
+curl -X POST localhost:8080/maciejka/inquire -d "question=Do you have any neurotic dogs?"
+```
+
+To which example result is:  
+"Yes, we have a neurotic dog named Prancer available for adoption. If you're interested in learning more about Prancer or want to arrange a visit, feel free to ask!"
+
+#### Return strongly typed entity
+Instead of getting content response to query we could also get entities.  
+And we could have strongly typed result instead of string.
+
+```java
+record DogAdoptionSuggestion (int id, String name, String descrption) {}
+
+@PostMapping("/{user}/inquire")
+DogAdoptionSuggestion inquire(@PathVariable String user, @RequestParam String question) {
+  return this.ai
+    .prompt()
+    .system(system)
+    .user(question)
+    .advisors(advisor)
+    .call()
+    .entity(DogAdoptionSuggestion.class);
+}
+```
+
+And now response looks like:  
+{"id":45,"name":"Prancer","descrption":"a neurotic dog"}
+
+Which is nice fundation to work on, some usable data.  
+Btw. remember to install GraalVM hint for that type.
+
+#### Give option to create adoption
+We need model to give an option to create adoption.  
+To talk to your tools, your API.
+
+We have to tell model to invoke this tool  
+when answering question "when can I pickup this dog?"
+
+```java
+import org.springframework.ai.tool.annotation.Tool;
+import org.springframework.ai.tool.annotation.ToolParam;
+
+class AdoptionsController {
+  AdoptionsController(
+    ChatClient.Builder ai,
+    DogAdoptionScheduler dogAdoptionScheduler,
+    DogRepository repo,
+    VectorStore vectorStore) {
+      // ...
+      this.ai = ai
+        .defaultAdvisors(new QuestionAnswerAdvisor(vectorStore))
+        .defaultTools(dogAdoptionScheduler)
+        .build();
+    }
+
+// ...
+@Component
+class DogAdoptionScheduler {
+
+  @Tool(description = """
+    schedule an appointment to pickup or
+    adopt a dog at a Pooch Palace location
+  """)
+  String schedule (
+      @ToolParam(description = "the id of the dog") int dogId,
+      @ToolParam(description = "the name of the dog") String dogName) {
+    System.out.println("scheduling " + dogId + " and " + dogName);
+    return Instant
+      .now()
+      .plus(3, ChronoUnit.DAYS)
+      .toString();
+  }
+}
+```
+
+And when running, AI can figure out to call schedule method  
+and give that call a dogId and dogName parameters.
+
+```bash
+./mvnw spring-boot:run
+curl -X POST localhost:8080/maciejka/inquire -d "question=Do you have any neurotic dogs?"
+Yes, we have a neurotic dog named Prancer available for adoption. Would you like to know more about him or schedule an appointment to meet him
+curl -X POST localhost:8080/maciejka/inquire -d "question=fantastic when can i adopt Prancer from the London location?"
+You can adopt Prancer from the London location on July 17, 2025. Would you like to schedule an appointment for that date?
+```
+
+And in the console logs we can see
+```
+scheduling 45 and Prancer
+```
+
+We don't really understand how AI knows that it has to call that tool.  
+That tool is available and AI knows, from description `@Tool(description = "schedule...`  
+what that tool is about.
+
+There is a conversation happening.
+
+In the request to Ai API, Spring sent json schema saying
+- here is a function, we can call it for you.  
+For which Ai says
+- ye, I think I need it  
+Then Spring calls schedule function and sends result (in our case scheduled date) to AI  
+Which then AI uses to create final response.
+
+Spring provides tools  
+Model chooses to use them or not
+
+#### RAG: Retrieval Augmented Generation
+Taking business data from database  
+and using it to form response.
+
+This is 90% of what AI Engineering is about.  
+(and tool calling)
+
+#### Frontend
+Frontend today is Ai models, chat clients, assistants
+
+### MCP, Model Context Protocol
+From Antrophic, authors of Claude.  
+It's a protocol you can use to give Claude access to tools on your local machine.  
+It's a protocol (first version wasn't network protocol).
+
+The point is: two separate processess on same host can talk to each other.  
+There is Claude desktop App in which you can configure json file  
+and list paths of binaries that Claude can invoke to get responses.
+
+What protocol these binaries talk? It's MCP.
+
+And there are directories of MCPs that people did.  
+Every cloud hyperscaller has MCP services now.  
+Zappier just announced Cloud like MCP service.
+
+Eventually that intra host process-process evolved to support http.  
+So that processes don't have to be on same machine.
+
+Now you build a service which speaks MCP on top of regular Spring  
+and on top of web stack. You can also do MCP with standard io too (locally).
+
+Spring team loves that protocol. It provided SDK weeks before protocol it was announced  
+and Antrophic reached Spring team and Sprint team donated  
+core implementation to Antrophic open source MCP effort, core Java support for MCP.
+
+#### Create scheduler
+https://start.spring.io/  
+Name: scheduler  
+dependencies:
+- Model Context Protocol Server
+- Spring Web
+
+Change port  
+src/main/resources/application.properties
+```
+server.port=8081
+```
+
+Move tool we just wrote to schedule adoption  
+and tell autoconfiguration in MCP server to export that tool
+```java
+@SpringBootApplication
+public class SchedulerApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(SchedulerApplication.class, args);
+  }
+
+  @Bean
+  MethodToolCallbackProvider methodToolCallbackProvider(DogAdoptionScheduler scheduler) {
+    return MethodToolCallbackProvider
+      .builder()
+      .toolObjects(scheduler)
+      .build();
+  }
+
+}
+
+@Component
+class DogAdoptionScheduler {
+
+  @Tool(description = """
+    schedule an appointment to pickup or
+    adopt a dog at a Pooch Palace location
+  """)
+  String schedule (
+      @ToolParam(description = "the id of the dog") int dogId,
+      @ToolParam(description = "the name of the dog") String dogName) {
+    System.out.println("scheduling " + dogId + " and " + dogName);
+    return Instant
+      .now()
+      .plus(3, ChronoUnit.DAYS)
+      .toString();
+  }
+}
+```
+
+Run
+```bash
+sdk use java 24-graalce
+./mvnw spring-boot:run
+```
+
+#### MCP Client
+Let's go back to ai client and tell it to use `dogAdoptionScheduler`  
+from the service that we just started.
+
+Because we moved Scheduler tool to McpServer service,  
+then we change the way it's added to ai ChatClient ai object  
+from:
+```java
+this.ai = ai
+  // ...
+  .defaultTools(dogAdoptionScheduler)
+```
+
+to
+```java
+this.ai = ai
+// ...
+  .defaultTools(new SyncMcpToolCallbackProvider(mcpSyncClient))
+```
+
+Provide configuration to tell where to look for McpServer
+```java
+@Bean
+McpSyncClient mcpSyncClient() {
+  var mcp = McpClient
+    .sync(HttpClientSseClientTransport.builder("http://localhost:8081").build())
+    .build();
+  mcp.initialize();
+  return mcp;
+}
+```
+
+Full MCP client code
+
+src/main/java/com/example/adoptions/AdoptionsApplication.java
+```java
+package com.example.adoptions;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.Map;
+
+import org.springframework.ai.chat.client.advisor.PromptChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
+import org.springframework.ai.chat.memory.InMemoryChatMemory;
+import org.springframework.ai.mcp.SyncMcpToolCallbackProvider;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.data.repository.ListCrudRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import io.modelcontextprotocol.client.McpClient;
+import io.modelcontextprotocol.client.McpSyncClient;
+import io.modelcontextprotocol.client.transport.HttpClientSseClientTransport;
+
+@SpringBootApplication
+public class AdoptionsApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(AdoptionsApplication.class, args);
+  }
+
+  @Bean
+  McpSyncClient mcpSyncClient() {
+    var mcp = McpClient
+      .sync(HttpClientSseClientTransport.builder("http://localhost:8081").build())
+      .build();
+    mcp.initialize();
+    return mcp;
+  }
+}
+
+record Dog (int id, String name, String owner, String description) {};
+interface DogRepository extends ListCrudRepository<Dog, Integer>{};
+
+@Controller
+@ResponseBody
+class AdoptionsController {
+  private final Map<String, PromptChatMemoryAdvisor> memory = new ConcurrentHashMap<>();
+  private final ChatClient ai;
+
+  AdoptionsController(
+    ChatClient.Builder ai,
+    McpSyncClient mcpSyncClient,
+    DogRepository repo,
+    VectorStore vectorStore) {
+
+    // commented out to not run on every start, just once
+
+    // repo.findAll().forEach(dog -> {
+    // 	var document = new Document("id: %s, name: %s, description: %s".formatted(
+    // 		dog.id(), dog.name(), dog.description())
+    // 	);
+    // 	vectorStore.add(List.of(document));
+    // });
+
+    this.ai = ai
+      .defaultAdvisors(new QuestionAnswerAdvisor(vectorStore))
+      .defaultTools(new SyncMcpToolCallbackProvider(mcpSyncClient))
+      .build();
+  }
+
+  @PostMapping("/{user}/inquire")
+  String inquire(@PathVariable String user, @RequestParam String question) {
+    var advisor = this.memory.computeIfAbsent(
+      user,
+      _ -> PromptChatMemoryAdvisor.builder(new InMemoryChatMemory()).build()
+    );
+
+    var system = """
+      You are an AI powered assistant to help people adopt a dog from the adoption\s
+      agency named Pooch Palace with locations in Antwerp, Seoul, Tokyo, Singapore, Paris,\s
+      Mumbai, New Delhi, Barcelona, San Francisco, and London. Information about the dogs available\s
+      will be presented below. If there is no information, then return a polite response suggesting we\s
+      don't have any dogs available.
+    """;
+
+    return this.ai
+      .prompt()
+      .system(system)
+      .user(question)
+      .advisors(advisor)
+      .call()
+      .content();
+  }
+}
+```
+
+Run MVC Client
+```bash
+./mvnw spring-boot:run
+curl -X POST localhost:8080/maciejka/inquire -d "question=Do you have any neurotic dogs?"
+Yes, we have a neurotic dog named Prancer available for adoption. Would you like to know more about him or schedule an appointment to meet him
+curl -X POST localhost:8080/maciejka/inquire -d "question=fantastic when can i adopt Prancer from the London location?"
+You can adopt Prancer from the London location on July 17, 2025. Would you like to schedule an appointment for that date?
+```
+
+Which will result in logs of MCP Server
+```
+2025-07-14T11:56:13.107+02:00  INFO 59329 --- [scheduler] [nio-8081-exec-1] i.m.server.McpAsyncServer                : Client initialize request - Protocol: 2024-11-05, Capabilities: ClientCapabilities[experimental=null, roots=null, sampling=null], Info: Implementation[name=Java SDK MCP Client, version=1.0.0]
+scheduling 45 and Prancer
+```
+
+#### MCP summary
+You can write MCP services in all programming languages.  
+There are probably tens of thousands of MCP servers today.  
+And they are organized in public dictionaries.
+
+There are many types of MCP Servers: http, standard in/out  
+but there is also MCP that uses Blender tool, which can accept "Render Parisan Cafe".
+
+A lot of incredible things happening now  
+and interface for them is a chat.
+
+If you can export your business logic in terms of MCP Services.  
+Github released MCP Service that allows to ask questions and mutate state.  
+It allows for queries like: analyze this git repository and add readme.
+

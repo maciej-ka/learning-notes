@@ -39,11 +39,11 @@
 [*mongoDB overview*](https://github.com/maciej-ka/learning-notes/blob/main/databases.md#mongo-overview)  
 [*psql summary*](https://github.com/maciej-ka/learning-notes/blob/main/databases.md#psql-summary)
 
-[Docker](./docker.md)
+[Containers](./containers.md)
 =======================
-● [**Complete Intro to Containers**](https://github.com/maciej-ka/learning-notes/blob/main/docker.md#complete-intro-to-containers-v2), Brian Holt, Frontend Masters  
-● [**Kubernetes in 4 Hours**](https://github.com/maciej-ka/learning-notes/blob/main/docker.md#kubernetes-in-4-hours), Sander van Vught, O'Reilly  
-○ [**Kubernetes in action**](https://github.com/maciej-ka/learning-notes/blob/main/docker.md#kubernetes-in-action), Marko Lukša, Kevin Conner, Manning
+● [**Complete Intro to Containers**](https://github.com/maciej-ka/learning-notes/blob/main/containers.md#complete-intro-to-containers-v2), Brian Holt, Frontend Masters  
+● [**Kubernetes in 4 Hours**](https://github.com/maciej-ka/learning-notes/blob/main/containers.md#kubernetes-in-4-hours), Sander van Vught, O'Reilly  
+○ [**Kubernetes in action**](https://github.com/maciej-ka/learning-notes/blob/main/containers.md#kubernetes-in-action), Marko Lukša, Kevin Conner, Manning
 
 [Dotnet](./dotnet.md)
 =======================

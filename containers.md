@@ -333,7 +333,7 @@ k get service
 to get external IP, k has to be run in cluster  
 on local minikube, port-forward Service
 
-#### Exec
+#### Exec, SSH into
 Deployment will select a random pod
 ```bash
 k exec -it pod/timeserver-6ccf9cd79-g98c4 -- sh
@@ -382,7 +382,7 @@ Exported files will have some extra fields that you will need to remove.
 k get -o yaml $RESOURCE_TYPE $RESOURCE_NAME
 ```
 
-#### Change connected k8s instance
+#### Context, Change connected k8s instance
 ```bash
 k config get-contexts
 k config use-context docker-desktop
@@ -427,7 +427,6 @@ minikube addons enable default-storageclass
 k get pv
 k delete pvc data-my-wordpress-mariadb-0
 ```
-
 
 
 

@@ -146,6 +146,12 @@ that there is at least one full copy of kafka broker.
 With a distributed system, you must embrace failure as a way of life.  
 Be able to recognize retryable error from fatal error.
 
+#### What to Monitor Brokers for
+- request handling idle: `RequestHandlerAvgIdlePercent`
+- network idle metric: `NetworkProcessorAvgIdlePercent`
+- brokers not keeping up with replicating `UnderReplicatedPartitions`  
+You always want to see UnderReplicatedPartitions at 0
+
 ### Schema Registry
 docker-compose.yaml
 ```yaml

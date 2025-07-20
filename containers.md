@@ -1,3 +1,11 @@
+Notes
+=====
+```bash
+helm list
+helm get values nocode-x
+```
+
+
 Helm, the definitive guide from beginner to master
 ==================================================
 https://www.udemy.com/course/definitive-helm-course-beginner-master/learn/lecture/47512429#overview

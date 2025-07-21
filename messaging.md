@@ -7,7 +7,7 @@ Bill Bejeck, Manning
 kafka-topics --list --bootstrap-server localhost:9092
 ```
 
-#### Console Producer/Consumer
+#### Producer and Consumer
 ```bash
 docker compose exec broker bash
 # create topic
@@ -15,6 +15,20 @@ kafka-topics --create --topic first-topic \
   --bootstrap-server localhost:9092 \
   --replication-factor 1 \
   --partitions 1
+# check that topic exists
+kafka-topics --describe --topic first-topic \
+  --bootstrap-server localhost:9092
+# producer
+kafka-console-producer --topic first-topic \
+  --bootstrap-server localhost:9092
+# consumer
+kafka-console-consumer --topic first-topic \
+  --bootstrap-server localhost:9092 \
+  --from-beginning
+```
+
+#### Producer and Consumer with key
+```bash
 # producer
 kafka-console-producer --topic first-topic \
   --bootstrap-server localhost:9092 \
@@ -26,7 +40,8 @@ kafka-console-consumer --topic first-topic \
   --bootstrap-server localhost:9092 \
   --from-beginning \
   --property print.key=true \
-  --property key.separator=":"
+  --property key.separator=":" \
+  --partition 0 \
 ```
 
 #### Partitions
@@ -50,22 +65,24 @@ kafka-console-consumer --topic second-topic \
   --property key.separator=":" \
   --partition 0 \
   --from-beginning
-```
-type  
-key1:The lazy  
-key2:brown fox  
-key1:jumped over  
-key2:the lazy dog
-
-```bash
 # second consumer
 kafka-console-consumer --topic second-topic \
   --bootstrap-server localhost:9092 \
   --property print.key=true \
   --property key.separator=":" \
-  --partition 1 \
-  --from-beginning
+  --from-beginning \
+  --partition 1
 ```
+
+in producer type  
+key1:The lazy  
+key2:brown fox  
+key1:jumped over  
+key2:the lazy dog
+
+And see consumers one and two getting only parts.  
+As a rule one key will be sticky to one partition.  
+And kafka will try to distribute keys across partitions.
 
 #### Local setup
 docker-compose.yaml
@@ -184,7 +201,6 @@ We think this architecture centered around streams of events
 is a really important thing. In some ways these flows of data  
 are the most central aspect of a modern digital company.
 
-### Terms
 **topic**: like a database table or a file folder  
 **partition**: a single log in a "commit log" setup  
 **segment**: partition files are broken into parts called segments (1MB or 7 days)  
@@ -200,6 +216,34 @@ For multiple consumer message streaming
 Mutlple partition  
 (WAL: single partition)
 
+#### Consume Group
+More than one consumers. Group ensures that each partition  
+is consumed by exacly one consumer member. Not zero, not more than one.
+
+#### Broker
+Single Kafka server
+
+#### Controller (aka Leader)
+assigns partitions to brokers  
+monitors for broker failures
+
+All producers must connect to leader  
+All consumers to leader or follower
+
+#### Retention
+After what time message is not stored.  
+by default 7 days or 1GB
+
+#### MirrorMaker
+Tool used to replicate messages between clusters:
+- get all monitoring data from clusters
+- situations like mass update user information
+
+#### Kafka Connect
+Bridge with ElasticSearch, Snowflake, S3...
+
+Source connectors: pull data from external  
+Sink connectors: push data from Kafka to external
 
 
 Kafka Notes
